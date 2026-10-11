@@ -108,8 +108,8 @@ build_rust_service() {
   local version build_id
   version="$(nm_build_info_value "$REPO_ROOT" ".version")"
   build_id="$(nm_build_info_value "$REPO_ROOT" ".buildId")"
-  export NIUMMA_APP_VERSION="$version"
-  export NIUMMA_BUILD_ID="$build_id"
+  export ENSIS_APP_VERSION="$version"
+  export ENSIS_BUILD_ID="$build_id"
   nm_log "cargo build $bin_name -> $output ($target_triple)"
   (
     cd "$crate_dir"
@@ -127,20 +127,20 @@ build_rust_service() {
 nm_log "go generate (sync SQL migrations)"
 (cd "$REPO_ROOT/platform/internal/migrate" && go generate ./...)
 
-platform_out="$TARGET_BIN_DIR/$(binary_name niuma-platform-core "$PLATFORM")"
-ftp_out="$TARGET_BIN_DIR/$(binary_name niuma-ftp-service "$PLATFORM")"
-ssh_out="$TARGET_BIN_DIR/$(binary_name niuma-ssh-service "$PLATFORM")"
-sftp_out="$TARGET_BIN_DIR/$(binary_name niuma-sftp-service "$PLATFORM")"
-redis_out="$TARGET_BIN_DIR/$(binary_name niuma-redis-service "$PLATFORM")"
-mongo_out="$TARGET_BIN_DIR/$(binary_name niuma-mongodb-service "$PLATFORM")"
-vastbase_out="$TARGET_BIN_DIR/$(binary_name niuma-vastbase-service "$PLATFORM")"
-mysql_out="$TARGET_BIN_DIR/$(binary_name niuma-mysql-service "$PLATFORM")"
-sqlite_out="$TARGET_BIN_DIR/$(binary_name niuma-sqlite-service "$PLATFORM")"
-dameng_out="$TARGET_BIN_DIR/$(binary_name niuma-dameng-service "$PLATFORM")"
-clickhouse_out="$TARGET_BIN_DIR/$(binary_name niuma-clickhouse-service "$PLATFORM")"
-kingbase_out="$TARGET_BIN_DIR/$(binary_name niuma-kingbase-service "$PLATFORM")"
-postgres_out="$TARGET_BIN_DIR/$(binary_name niuma-postgres-service "$PLATFORM")"
-sqlserver_out="$TARGET_BIN_DIR/$(binary_name niuma-sqlserver-service "$PLATFORM")"
+platform_out="$TARGET_BIN_DIR/$(binary_name ensis-platform-core "$PLATFORM")"
+ftp_out="$TARGET_BIN_DIR/$(binary_name ensis-ftp-service "$PLATFORM")"
+ssh_out="$TARGET_BIN_DIR/$(binary_name ensis-ssh-service "$PLATFORM")"
+sftp_out="$TARGET_BIN_DIR/$(binary_name ensis-sftp-service "$PLATFORM")"
+redis_out="$TARGET_BIN_DIR/$(binary_name ensis-redis-service "$PLATFORM")"
+mongo_out="$TARGET_BIN_DIR/$(binary_name ensis-mongodb-service "$PLATFORM")"
+vastbase_out="$TARGET_BIN_DIR/$(binary_name ensis-vastbase-service "$PLATFORM")"
+mysql_out="$TARGET_BIN_DIR/$(binary_name ensis-mysql-service "$PLATFORM")"
+sqlite_out="$TARGET_BIN_DIR/$(binary_name ensis-sqlite-service "$PLATFORM")"
+dameng_out="$TARGET_BIN_DIR/$(binary_name ensis-dameng-service "$PLATFORM")"
+clickhouse_out="$TARGET_BIN_DIR/$(binary_name ensis-clickhouse-service "$PLATFORM")"
+kingbase_out="$TARGET_BIN_DIR/$(binary_name ensis-kingbase-service "$PLATFORM")"
+postgres_out="$TARGET_BIN_DIR/$(binary_name ensis-postgres-service "$PLATFORM")"
+sqlserver_out="$TARGET_BIN_DIR/$(binary_name ensis-sqlserver-service "$PLATFORM")"
 mcp_vast_out="$TARGET_BIN_DIR/$(binary_name mcp-vastbase-readonly "$PLATFORM")"
 
 build_go_service "$REPO_ROOT/platform" "./cmd/platform-core" "$platform_out"
@@ -160,39 +160,39 @@ build_go_service "$REPO_ROOT/services/postgres-service" "./cmd/postgres-service"
 build_go_service "$REPO_ROOT/services/sqlserver-service" "./cmd/sqlserver-service" "$sqlserver_out"
 build_go_service "$REPO_ROOT/services/mcp-vastbase-readonly" "." "$mcp_vast_out"
 ssh_built="false"
-if build_rust_service "$REPO_ROOT/services/ssh-service" "niuma-ssh-service" "$ssh_out"; then
+if build_rust_service "$REPO_ROOT/services/ssh-service" "ensis-ssh-service" "$ssh_out"; then
   ssh_built="true"
 fi
 sftp_built="false"
-if build_rust_service "$REPO_ROOT/services/sftp-service" "niuma-sftp-service" "$sftp_out"; then
+if build_rust_service "$REPO_ROOT/services/sftp-service" "ensis-sftp-service" "$sftp_out"; then
   sftp_built="true"
 fi
 redis_built="false"
-if build_rust_service "$REPO_ROOT/services/redis-service" "niuma-redis-service" "$redis_out"; then
+if build_rust_service "$REPO_ROOT/services/redis-service" "ensis-redis-service" "$redis_out"; then
   redis_built="true"
 fi
 
 if should_sync_legacy_bin; then
-  cp "$platform_out" "$BIN_DIR/$(binary_name niuma-platform-core "$PLATFORM")"
-  cp "$ftp_out" "$BIN_DIR/$(binary_name niuma-ftp-service "$PLATFORM")"
-  cp "$mongo_out" "$BIN_DIR/$(binary_name niuma-mongodb-service "$PLATFORM")"
-  cp "$vastbase_out" "$BIN_DIR/$(binary_name niuma-vastbase-service "$PLATFORM")"
-  cp "$mysql_out" "$BIN_DIR/$(binary_name niuma-mysql-service "$PLATFORM")"
-  cp "$sqlite_out" "$BIN_DIR/$(binary_name niuma-sqlite-service "$PLATFORM")"
-  cp "$dameng_out" "$BIN_DIR/$(binary_name niuma-dameng-service "$PLATFORM")"
-  cp "$clickhouse_out" "$BIN_DIR/$(binary_name niuma-clickhouse-service "$PLATFORM")"
-  cp "$kingbase_out" "$BIN_DIR/$(binary_name niuma-kingbase-service "$PLATFORM")"
-  cp "$postgres_out" "$BIN_DIR/$(binary_name niuma-postgres-service "$PLATFORM")"
-  cp "$sqlserver_out" "$BIN_DIR/$(binary_name niuma-sqlserver-service "$PLATFORM")"
+  cp "$platform_out" "$BIN_DIR/$(binary_name ensis-platform-core "$PLATFORM")"
+  cp "$ftp_out" "$BIN_DIR/$(binary_name ensis-ftp-service "$PLATFORM")"
+  cp "$mongo_out" "$BIN_DIR/$(binary_name ensis-mongodb-service "$PLATFORM")"
+  cp "$vastbase_out" "$BIN_DIR/$(binary_name ensis-vastbase-service "$PLATFORM")"
+  cp "$mysql_out" "$BIN_DIR/$(binary_name ensis-mysql-service "$PLATFORM")"
+  cp "$sqlite_out" "$BIN_DIR/$(binary_name ensis-sqlite-service "$PLATFORM")"
+  cp "$dameng_out" "$BIN_DIR/$(binary_name ensis-dameng-service "$PLATFORM")"
+  cp "$clickhouse_out" "$BIN_DIR/$(binary_name ensis-clickhouse-service "$PLATFORM")"
+  cp "$kingbase_out" "$BIN_DIR/$(binary_name ensis-kingbase-service "$PLATFORM")"
+  cp "$postgres_out" "$BIN_DIR/$(binary_name ensis-postgres-service "$PLATFORM")"
+  cp "$sqlserver_out" "$BIN_DIR/$(binary_name ensis-sqlserver-service "$PLATFORM")"
   cp "$mcp_vast_out" "$BIN_DIR/$(binary_name mcp-vastbase-readonly "$PLATFORM")"
   if [[ "$ssh_built" == "true" && -f "$ssh_out" ]]; then
-    cp "$ssh_out" "$BIN_DIR/$(binary_name niuma-ssh-service "$PLATFORM")"
+    cp "$ssh_out" "$BIN_DIR/$(binary_name ensis-ssh-service "$PLATFORM")"
   fi
   if [[ "$sftp_built" == "true" && -f "$sftp_out" ]]; then
-    cp "$sftp_out" "$BIN_DIR/$(binary_name niuma-sftp-service "$PLATFORM")"
+    cp "$sftp_out" "$BIN_DIR/$(binary_name ensis-sftp-service "$PLATFORM")"
   fi
   if [[ "$redis_built" == "true" && -f "$redis_out" ]]; then
-    cp "$redis_out" "$BIN_DIR/$(binary_name niuma-redis-service "$PLATFORM")"
+    cp "$redis_out" "$BIN_DIR/$(binary_name ensis-redis-service "$PLATFORM")"
   fi
 fi
 

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed } from 'vue'
+import { computed, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { RsButton, RsDialog, RsMarkdown } from 'ensis-ui'
 import AppBrandIcon from '@/shell/widgets/AppBrandIcon.vue'
@@ -36,6 +36,25 @@ function formatReleaseDate(iso?: string): string {
   const day = String(d.getDate()).padStart(2, '0')
   return `${y}-${m}-${day}`
 }
+
+function releaseKey(rel: { version: string; channel: string; platform: string }): string {
+  return `${rel.version}-${rel.channel}-${rel.platform}`
+}
+
+const selectedReleaseKey = ref('')
+
+watch(
+  () => store.changelogItems,
+  (items) => {
+    if (!items.some((rel) => releaseKey(rel) === selectedReleaseKey.value)) {
+      selectedReleaseKey.value = items[0] ? releaseKey(items[0]) : ''
+    }
+  },
+)
+
+const selectedRelease = computed(
+  () => store.changelogItems.find((rel) => releaseKey(rel) === selectedReleaseKey.value) ?? null,
+)
 </script>
 
 <template>
@@ -96,7 +115,7 @@ function formatReleaseDate(iso?: string): string {
     <RsDialog
       :open="store.changelogOpen"
       :title="t('shell.help.changelogTitle')"
-      width="md"
+      width="lg"
       layout="form"
       teleport-to="#nm-help-portal"
       :resizable="false"
@@ -116,25 +135,32 @@ function formatReleaseDate(iso?: string): string {
             <p v-if="store.changelogHasUpdate" class="nm-changelog__update">
               {{ t('shell.help.changelogUpdateAvailable') }}
             </p>
-            <article
-              v-for="rel in store.changelogItems"
-              :key="`${rel.version}-${rel.channel}-${rel.platform}`"
-              class="nm-changelog__ver"
-            >
-              <p class="nm-changelog__meta">
-                <span class="nm-mono">{{ rel.version }}</span>
-                <span v-if="formatReleaseDate(rel.publishedAt)">
-                  · {{ formatReleaseDate(rel.publishedAt) }}
-                </span>
-                <span v-if="rel.title"> · {{ rel.title }}</span>
-              </p>
+            <div class="nm-changelog__split">
+              <div class="nm-changelog__versions" role="tablist">
+                <button
+                  v-for="rel in store.changelogItems"
+                  :key="releaseKey(rel)"
+                  type="button"
+                  class="nm-changelog__ver"
+                  :class="{ 'nm-changelog__ver--active': releaseKey(rel) === selectedReleaseKey }"
+                  role="tab"
+                  :aria-selected="releaseKey(rel) === selectedReleaseKey"
+                  @click="selectedReleaseKey = releaseKey(rel)"
+                >
+                  <span class="nm-mono">{{ rel.version }}</span>
+                  <span v-if="formatReleaseDate(rel.publishedAt)" class="nm-changelog__date">
+                    {{ formatReleaseDate(rel.publishedAt) }}
+                  </span>
+                </button>
+              </div>
               <RsMarkdown
+                v-if="selectedRelease"
                 class="nm-changelog__notes"
-                :model-value="rel.notesMd || t('appUpdate.noNotes')"
+                :model-value="selectedRelease.notesMd || t('appUpdate.noNotes')"
                 readonly
-                height="10rem"
+                height="100%"
               />
-            </article>
+            </div>
           </template>
           <p v-else-if="changelogErrorText" class="nm-changelog__err">{{ changelogErrorText }}</p>
           <p v-else class="nm-changelog__meta">{{ t('shell.help.changelogEmpty') }}</p>
@@ -205,10 +231,14 @@ function formatReleaseDate(iso?: string): string {
   margin: 0;
 }
 .nm-changelog {
-  display: grid;
-  gap: 0.75rem;
-  max-height: 28rem;
-  overflow: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 0.65rem;
+  min-height: 0;
+  overflow: hidden;
+}
+.nm-changelog:has(.nm-changelog__split) {
+  height: 22rem;
 }
 .nm-changelog__meta {
   margin: 0;
@@ -217,16 +247,64 @@ function formatReleaseDate(iso?: string): string {
 }
 .nm-changelog__update {
   margin: 0;
+  flex: none;
   font-size: 0.85rem;
   color: var(--rs-primary);
 }
-.nm-changelog__ver {
+.nm-changelog__split {
   display: grid;
-  gap: 0.45rem;
-  min-width: 0;
+  grid-template-columns: 7.5rem minmax(0, 1fr);
+  grid-template-rows: minmax(0, 1fr);
+  gap: 0.75rem;
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+}
+.nm-changelog__versions {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  min-height: 0;
+  overflow: hidden;
+}
+.nm-changelog__ver {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.1rem;
+  width: 100%;
+  padding: 0.45rem 0.55rem;
+  border: none;
+  border-radius: var(--rs-radius-sm);
+  background: transparent;
+  color: var(--rs-text);
+  text-align: start;
+  cursor: pointer;
+}
+.nm-changelog__ver:hover {
+  background: color-mix(in srgb, var(--rs-text) 6%, transparent);
+}
+.nm-changelog__ver--active {
+  background: color-mix(in srgb, var(--rs-primary) 12%, transparent);
+  color: var(--rs-primary);
+}
+.nm-changelog__date {
+  font-size: 0.75rem;
+  color: var(--rs-muted);
+}
+.nm-changelog__ver--active .nm-changelog__date {
+  color: color-mix(in srgb, var(--rs-primary) 70%, var(--rs-muted));
 }
 .nm-changelog__notes {
   min-width: 0;
+  min-height: 0;
+  height: 100%;
+  border: none;
+  background: transparent;
+  border-radius: 0;
+}
+.nm-changelog__notes :deep(.rs-markdown__preview) {
+  padding: 0 0.15rem 0 0;
 }
 .nm-changelog__err {
   margin: 0;

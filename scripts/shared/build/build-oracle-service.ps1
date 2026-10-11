@@ -1,7 +1,7 @@
 #Requires -Version 5.1
 <#
 .SYNOPSIS
-  构建 niuma-oracle-service（C++20 + ODPI-C）到 services/bin/<platform>-<arch>/。
+  构建 ensis-oracle-service（C++20 + ODPI-C）到 services/bin/<platform>-<arch>/。
   不依赖 Instant Client SDK；运行时需旁载 Instant Client 到 bin/runtime/oracle。
   默认由 build-services.ps1（含 pnpm dev:hot → stage-services）调用；也可单独执行。
   产物写入矩阵目录 services/bin/<platform>-<arch>/，供 stage-services 拷贝。

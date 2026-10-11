@@ -234,8 +234,8 @@ function Build-RustService {
             $cargoArgs += '--release'
         }
         $info = Get-BuildInfo -RepoRoot $Root
-    $env:NIUMMA_APP_VERSION = [string]$info.version
-    $env:NIUMMA_BUILD_ID = [string]$info.buildId
+    $env:ENSIS_APP_VERSION = [string]$info.version
+    $env:ENSIS_BUILD_ID = [string]$info.buildId
     & $cargoExe @cargoArgs
         if ($LASTEXITCODE -ne 0) {
             throw "cargo build failed ($LASTEXITCODE): $BinName"
@@ -374,23 +374,23 @@ if (-not $SkipOracle) {
 }
 
 if (Should-SyncLegacyBin) {
-    $legacyPlatformOut = Join-Path $BinDir 'niuma-platform-core.exe'
-    $legacyApiOut = Join-Path $BinDir 'niuma-api-service.exe'
-    $legacyFtpOut = Join-Path $BinDir 'niuma-ftp-service.exe'
-    $legacySshOut = Join-Path $BinDir 'niuma-ssh-service.exe'
-    $legacySftpOut = Join-Path $BinDir 'niuma-sftp-service.exe'
-    $legacyRedisOut = Join-Path $BinDir 'niuma-redis-service.exe'
-    $legacyMongoOut = Join-Path $BinDir 'niuma-mongodb-service.exe'
-    $legacyVastbaseOut = Join-Path $BinDir 'niuma-vastbase-service.exe'
-    $legacyMysqlOut = Join-Path $BinDir 'niuma-mysql-service.exe'
-    $legacySqliteOut = Join-Path $BinDir 'niuma-sqlite-service.exe'
-    $legacyDamengOut = Join-Path $BinDir 'niuma-dameng-service.exe'
-    $legacyClickhouseOut = Join-Path $BinDir 'niuma-clickhouse-service.exe'
-    $legacyKingbaseOut = Join-Path $BinDir 'niuma-kingbase-service.exe'
-    $legacyPostgresOut = Join-Path $BinDir 'niuma-postgres-service.exe'
-    $legacySqlserverOut = Join-Path $BinDir 'niuma-sqlserver-service.exe'
+    $legacyPlatformOut = Join-Path $BinDir 'ensis-platform-core.exe'
+    $legacyApiOut = Join-Path $BinDir 'ensis-api-service.exe'
+    $legacyFtpOut = Join-Path $BinDir 'ensis-ftp-service.exe'
+    $legacySshOut = Join-Path $BinDir 'ensis-ssh-service.exe'
+    $legacySftpOut = Join-Path $BinDir 'ensis-sftp-service.exe'
+    $legacyRedisOut = Join-Path $BinDir 'ensis-redis-service.exe'
+    $legacyMongoOut = Join-Path $BinDir 'ensis-mongodb-service.exe'
+    $legacyVastbaseOut = Join-Path $BinDir 'ensis-vastbase-service.exe'
+    $legacyMysqlOut = Join-Path $BinDir 'ensis-mysql-service.exe'
+    $legacySqliteOut = Join-Path $BinDir 'ensis-sqlite-service.exe'
+    $legacyDamengOut = Join-Path $BinDir 'ensis-dameng-service.exe'
+    $legacyClickhouseOut = Join-Path $BinDir 'ensis-clickhouse-service.exe'
+    $legacyKingbaseOut = Join-Path $BinDir 'ensis-kingbase-service.exe'
+    $legacyPostgresOut = Join-Path $BinDir 'ensis-postgres-service.exe'
+    $legacySqlserverOut = Join-Path $BinDir 'ensis-sqlserver-service.exe'
     $legacyMcpVastOut = Join-Path $BinDir 'mcp-vastbase-readonly.exe'
-    $legacyOracleOut = Join-Path $BinDir 'niuma-oracle-service.exe'
+    $legacyOracleOut = Join-Path $BinDir 'ensis-oracle-service.exe'
     Copy-Item -Force $platformOut $legacyPlatformOut
     Copy-Item -Force $apiOut $legacyApiOut
     Copy-Item -Force $ftpOut $legacyFtpOut
