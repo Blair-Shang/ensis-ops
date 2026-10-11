@@ -4,8 +4,8 @@ import (
 	"strings"
 	"testing"
 
-	"niuma/pkg/sqllsp"
-	"niuma/services/mysql-service/internal/mysqlparser"
+	"ensis-ops/pkg/sqllsp"
+	"ensis-ops/services/mysql-service/internal/mysqlparser"
 )
 
 func TestFunctionOKNoDiagnostics(t *testing.T) {

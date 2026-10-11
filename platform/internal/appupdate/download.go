@@ -23,7 +23,7 @@ const (
 	httpTimeout       = 45 * time.Minute
 	progressMinGap    = 100 * time.Millisecond
 	maxRedirects      = 5
-	dirName           = "niuma-update"
+	dirName           = "ensis-update"
 	EventProgressType = "shell.update.download.progress"
 )
 
@@ -48,7 +48,7 @@ func New(allowedHosts []string) *Manager {
 	hosts := normalizeHosts(allowedHosts)
 	if len(hosts) == 0 {
 		// 默认允许官方站、GitHub Release（含跳转后的 objects.githubusercontent.com）
-		// 其它 CDN：设置 NIUMA_UPDATE_DOWNLOAD_HOSTS=cdn.example.com,niuma007.com
+		// 其它 CDN：设置 ENSIS_UPDATE_DOWNLOAD_HOSTS=cdn.example.com,niuma007.com
 		hosts = []string{"niuma007.com", "www.niuma007.com", "github.com", "githubusercontent.com"}
 	}
 	return &Manager{hosts: hosts, tempRoot: filepath.Join(os.TempDir(), dirName)}

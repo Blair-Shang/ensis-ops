@@ -8,7 +8,7 @@ import (
 	"testing"
 	"time"
 
-	"niuma/pkg/sqllsp"
+	"ensis-ops/pkg/sqllsp"
 )
 
 type stubParser struct{}
@@ -128,7 +128,7 @@ func TestInitializeAndCompletion(t *testing.T) {
 		"method":  "textDocument/didOpen",
 		"params": map[string]any{
 			"textDocument": map[string]any{
-				"uri":     "niuma-sql://mysql/sess-1/e1",
+				"uri":     "ensis-sql://mysql/sess-1/e1",
 				"version": 1,
 				"text":    "SELECT * FROM ",
 			},
@@ -143,7 +143,7 @@ func TestInitializeAndCompletion(t *testing.T) {
 		"id":      2,
 		"method":  "textDocument/completion",
 		"params": map[string]any{
-			"textDocument": map[string]any{"uri": "niuma-sql://mysql/sess-1/e1"},
+			"textDocument": map[string]any{"uri": "ensis-sql://mysql/sess-1/e1"},
 			"position":     map[string]any{"line": 0, "character": 14},
 		},
 	})
@@ -168,7 +168,7 @@ func TestInitializeAndCompletion(t *testing.T) {
 		"jsonrpc": "2.0",
 		"method":  "textDocument/didChange",
 		"params": map[string]any{
-			"textDocument":   map[string]any{"uri": "niuma-sql://mysql/sess-1/e1", "version": 2},
+			"textDocument":   map[string]any{"uri": "ensis-sql://mysql/sess-1/e1", "version": 2},
 			"contentChanges": []map[string]any{{"text": "BAD"}},
 		},
 	})
@@ -189,7 +189,7 @@ func TestAliasColumnCompletion(t *testing.T) {
 		"method":  "textDocument/didOpen",
 		"params": map[string]any{
 			"textDocument": map[string]any{
-				"uri": "niuma-sql://mysql/sess-1/e2", "version": 1, "text": sql,
+				"uri": "ensis-sql://mysql/sess-1/e2", "version": 1, "text": sql,
 			},
 		},
 	})
@@ -204,7 +204,7 @@ func TestAliasColumnCompletion(t *testing.T) {
 		"id":      2,
 		"method":  "textDocument/completion",
 		"params": map[string]any{
-			"textDocument": map[string]any{"uri": "niuma-sql://mysql/sess-1/e2"},
+			"textDocument": map[string]any{"uri": "ensis-sql://mysql/sess-1/e2"},
 			"position":     map[string]any{"line": 0, "character": pos},
 		},
 	})
@@ -454,7 +454,7 @@ func TestCompletionIsIncompleteWhenTruncated(t *testing.T) {
 		"method":  "textDocument/didOpen",
 		"params": map[string]any{
 			"textDocument": map[string]any{
-				"uri": "niuma-sql://mysql/sess-1/e3", "version": 1, "text": "SELECT * FROM ",
+				"uri": "ensis-sql://mysql/sess-1/e3", "version": 1, "text": "SELECT * FROM ",
 			},
 		},
 	})
@@ -466,7 +466,7 @@ func TestCompletionIsIncompleteWhenTruncated(t *testing.T) {
 		"id":      2,
 		"method":  "textDocument/completion",
 		"params": map[string]any{
-			"textDocument": map[string]any{"uri": "niuma-sql://mysql/sess-1/e3"},
+			"textDocument": map[string]any{"uri": "ensis-sql://mysql/sess-1/e3"},
 			"position":     map[string]any{"line": 0, "character": 14},
 		},
 	})
@@ -483,8 +483,8 @@ func TestCompletionIsIncompleteWhenTruncated(t *testing.T) {
 func TestSuggestDatabasePerDocument(t *testing.T) {
 	srv := sqllsp.NewServer(stubParser{}, stubCatalog{}, nil, nil)
 	conn := srv.Conns.Open("sess-1", "client-1", "app")
-	uriA := "niuma-sql://mysql/sess-1/a"
-	uriB := "niuma-sql://mysql/sess-1/b"
+	uriA := "ensis-sql://mysql/sess-1/a"
+	uriB := "ensis-sql://mysql/sess-1/b"
 	open := func(uri, text string) {
 		raw, _ := json.Marshal(map[string]any{
 			"jsonrpc": "2.0",
@@ -502,7 +502,7 @@ func TestSuggestDatabasePerDocument(t *testing.T) {
 	setDB := func(uri, db string) {
 		raw, _ := json.Marshal(map[string]any{
 			"jsonrpc": "2.0",
-			"method":  "niuma/setSuggestDatabase",
+			"method":  "ensis-ops/setSuggestDatabase",
 			"params":  map[string]any{"uri": uri, "database": db},
 		})
 		if _, err := srv.HandleMessage(context.Background(), conn, raw); err != nil {
@@ -542,7 +542,7 @@ func TestSemanticSkipsUnknownWhenTruncated(t *testing.T) {
 		"method":  "textDocument/didOpen",
 		"params": map[string]any{
 			"textDocument": map[string]any{
-				"uri": "niuma-sql://mysql/sess-1/e4", "version": 1,
+				"uri": "ensis-sql://mysql/sess-1/e4", "version": 1,
 				"text": "SELECT * FROM missing_table",
 			},
 		},
@@ -592,7 +592,7 @@ func TestSemanticSkipsUnknownColumnWhenEmptyHits(t *testing.T) {
 		"method":  "textDocument/didOpen",
 		"params": map[string]any{
 			"textDocument": map[string]any{
-				"uri": "niuma-sql://kingbase/sess-1/e5", "version": 1,
+				"uri": "ensis-sql://kingbase/sess-1/e5", "version": 1,
 				"text": "SELECT c.relkind FROM pg_class c",
 			},
 		},
@@ -810,7 +810,7 @@ func TestDidChangeDoesNotBlockOnDiagnostics(t *testing.T) {
 		"method":  "textDocument/didOpen",
 		"params": map[string]any{
 			"textDocument": map[string]any{
-				"uri": "niuma-sql://mysql/sess-1/e5", "version": 1,
+				"uri": "ensis-sql://mysql/sess-1/e5", "version": 1,
 				"text": "SELECT * FROM users",
 			},
 		},

@@ -7,6 +7,7 @@
 #include <cctype>
 #include <filesystem>
 #include <fstream>
+#include <mutex>
 #include <set>
 #include <sstream>
 
@@ -16,7 +17,7 @@
 
 namespace fs = std::filesystem;
 
-namespace niuma {
+namespace ensisops {
 
 namespace {
 
@@ -31,7 +32,34 @@ std::string DisabledPluginsPath() {
   return GetUserDataDir() + "/plugins-disabled.txt";
 }
 
+// 壳层可能先于 platform-core 读禁用列表。只补这一个文件，库文件仍由 platform-core 快照。
+void ImportLegacyPluginsFile() {
+#if defined(_WIN32)
+  static std::once_flag once;
+  std::call_once(once, [] {
+    const char* local = std::getenv("LOCALAPPDATA");
+    if (local == nullptr || local[0] == '\0') {
+      return;
+    }
+    const std::string dest = std::string(local) + "\\ensis-ops\\data\\plugins-disabled.txt";
+    std::error_code ec;
+    if (fs::exists(dest, ec)) {
+      return;
+    }
+    const std::string src = std::string(local) + "\\NiuMa\\data\\plugins-disabled.txt";
+    if (!fs::exists(src, ec)) {
+      return;
+    }
+    fs::create_directories(fs::path(dest).parent_path(), ec);
+    fs::copy_file(src, dest, fs::copy_options::skip_existing, ec);
+  });
+#else
+  // 非 Windows 的插件禁用列表跟安装目录走，不在 ~/.niuma 用户数据里。
+#endif
+}
+
 std::set<std::string> LoadDisabledPluginIds() {
+  ImportLegacyPluginsFile();
   std::set<std::string> disabled;
   const std::string path = DisabledPluginsPath();
   if (!fs::exists(path)) {
@@ -68,7 +96,7 @@ bool SaveDisabledPluginIds(const std::set<std::string>& disabled, std::string& e
     error = "failed to write plugins-disabled.txt";
     return false;
   }
-  output << "# NiuMa disabled plugin ids (one per line)\n";
+  output << "# ensis-ops disabled plugin ids (one per line)\n";
   for (const auto& id : disabled) {
     output << id << '\n';
   }
@@ -81,7 +109,7 @@ std::string GetUserDataDir() {
 #if defined(_WIN32)
   const char* local = std::getenv("LOCALAPPDATA");
   if (local && local[0] != '\0') {
-    return std::string(local) + "\\NiuMa\\data";
+    return std::string(local) + "\\ensis-ops\\data";
   }
 #endif
   return GetInstallDir() + "/data";
@@ -110,4 +138,4 @@ bool SetPluginEnabled(const std::string& plugin_id, bool enabled, std::string& e
   return SaveDisabledPluginIds(disabled, error);
 }
 
-}  // namespace niuma
+}  // namespace ensisops

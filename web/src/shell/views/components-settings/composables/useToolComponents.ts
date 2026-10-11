@@ -1,4 +1,4 @@
-import { useRsToast } from '@niuma/ui'
+import { useRsToast } from 'ensis-ui'
 import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { componentsApi, dialogApi, fsApi, shellApi, subscribeBridgeEventByPrefix } from '@/api'

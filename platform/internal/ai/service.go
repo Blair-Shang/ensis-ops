@@ -3,12 +3,12 @@ package ai
 import (
 	"context"
 
-	"niuma/platform/internal/ai/host"
-	"niuma/platform/internal/ai/loop"
-	"niuma/platform/internal/ai/mcp"
-	"niuma/platform/internal/ai/skill"
-	"niuma/platform/internal/idgen"
-	"niuma/platform/internal/store"
+	"ensis-ops/platform/internal/ai/host"
+	"ensis-ops/platform/internal/ai/loop"
+	"ensis-ops/platform/internal/ai/mcp"
+	"ensis-ops/platform/internal/ai/skill"
+	"ensis-ops/platform/internal/idgen"
+	"ensis-ops/platform/internal/store"
 )
 
 // EventPublisher 向 Shell 扇出 Platform 事件（由 eventhub 实现）。

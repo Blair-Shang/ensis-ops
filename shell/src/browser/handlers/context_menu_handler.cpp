@@ -1,13 +1,13 @@
 #include "browser/handlers/context_menu_handler.h"
 
-#if NIUMMA_WITH_CEF
+#if ENSIS_WITH_CEF
 #include "core/cef/cef_settings.h"
 #include "include/cef_menu_model.h"
 #endif
 
-namespace niuma {
+namespace ensisops {
 
-#if NIUMMA_WITH_CEF
+#if ENSIS_WITH_CEF
 
 namespace {
 
@@ -39,7 +39,7 @@ void RemoveTrailingSeparators(CefRefPtr<CefMenuModel> model) {
 
 }  // namespace
 
-void NiuMaContextMenuHandler::OnBeforeContextMenu(
+void EnsisContextMenuHandler::OnBeforeContextMenu(
     CefRefPtr<CefBrowser> browser,
     CefRefPtr<CefFrame> frame,
     CefRefPtr<CefContextMenuParams> params,
@@ -57,7 +57,7 @@ void NiuMaContextMenuHandler::OnBeforeContextMenu(
   RemoveTrailingSeparators(model);
 }
 
-bool NiuMaContextMenuHandler::OnContextMenuCommand(
+bool EnsisContextMenuHandler::OnContextMenuCommand(
     CefRefPtr<CefBrowser> browser,
     CefRefPtr<CefFrame> frame,
     CefRefPtr<CefContextMenuParams> params,
@@ -72,4 +72,4 @@ bool NiuMaContextMenuHandler::OnContextMenuCommand(
 
 #endif
 
-}  // namespace niuma
+}  // namespace ensisops

@@ -4,7 +4,7 @@
 #include <fstream>
 #include <string>
 
-namespace niuma::oracle::dataio {
+namespace ensisops::oracle::dataio {
 
 class AtomicOutput {
  public:
@@ -25,4 +25,4 @@ class AtomicOutput {
   bool committed_ = false;
 };
 
-}  // namespace niuma::oracle::dataio
+}  // namespace ensisops::oracle::dataio

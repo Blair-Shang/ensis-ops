@@ -1,4 +1,4 @@
-id: com.niuma.kingbase
+id: com.ensisops.kingbase
 name: Kingbase Service
 version: 0.1.0
 bridge:
@@ -45,17 +45,17 @@ session:
     - io.execSqlFile
     - io.cancel
 runtime:
-  executable: bin/niuma-kingbase-service.exe
-  executable_windows: bin/niuma-kingbase-service.exe
-  executable_unix: bin/niuma-kingbase-service
+  executable: bin/ensis-kingbase-service.exe
+  executable_windows: bin/ensis-kingbase-service.exe
+  executable_unix: bin/ensis-kingbase-service
   lang: go
 ipc:
   transport: named_pipe
   transport_windows: named_pipe
   transport_unix: unix_socket
-  address: '\\.\pipe\niuma.kingbase'
-  address_windows: '\\.\pipe\niuma.kingbase'
-  address_unix: '/tmp/niuma.kingbase.sock'
+  address: '\\.\pipe\ensis-ops.kingbase'
+  address_windows: '\\.\pipe\ensis-ops.kingbase'
+  address_unix: '/tmp/ensis-ops.kingbase.sock'
   protocol: length_prefixed_json
 lifecycle:
   startup: lazy

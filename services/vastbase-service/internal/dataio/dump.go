@@ -10,8 +10,8 @@ import (
 
 	"github.com/jackc/pgx/v5/pgxpool"
 
-	"niuma/services/vastbase-service/internal/meta"
-	"niuma/services/vastbase-service/internal/tree"
+	"ensis-ops/services/vastbase-service/internal/meta"
+	"ensis-ops/services/vastbase-service/internal/tree"
 )
 
 type dumpTarget struct {
@@ -48,7 +48,7 @@ func dumpSql(ctx context.Context, pool *pgxpool.Pool, taskID string, m *Manager,
 	}}
 
 	header := fmt.Sprintf(
-		"-- NiuMa Vastbase dump\n-- format: niuma-vastbase-dump/1\n-- database: %s\n-- generated: %s\n-- mode: %s\n-- dropIfExists: %v\n-- createSchema: %v\n-- truncateBeforeData: %v\n\nSET client_encoding = 'UTF8';\n\n",
+		"-- ensis-ops Vastbase dump\n-- format: ensis-vastbase-dump/1\n-- database: %s\n-- generated: %s\n-- mode: %s\n-- dropIfExists: %v\n-- createSchema: %v\n-- truncateBeforeData: %v\n\nSET client_encoding = 'UTF8';\n\n",
 		params.Database,
 		time.Now().UTC().Format(time.RFC3339),
 		params.Mode,

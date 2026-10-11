@@ -4,9 +4,9 @@ import (
 	"strings"
 	"testing"
 
-	"niuma/pkg/sqllsp"
-	"niuma/services/dameng-service/internal/meta"
-	"niuma/services/dameng-service/internal/tree"
+	"ensis-ops/pkg/sqllsp"
+	"ensis-ops/services/dameng-service/internal/meta"
+	"ensis-ops/services/dameng-service/internal/tree"
 )
 
 func TestMapRoutineHits(t *testing.T) {

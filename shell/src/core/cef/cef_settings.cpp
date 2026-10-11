@@ -3,7 +3,7 @@
 #include "util/runtime_paths.h"
 #include "util/session_log.h"
 
-#if NIUMMA_WITH_CEF
+#if ENSIS_WITH_CEF
 #include "include/cef_command_line.h"
 
 #include <cstdlib>
@@ -12,12 +12,12 @@
 
 namespace fs = std::filesystem;
 
-namespace niuma {
+namespace ensisops {
 
-#if NIUMMA_WITH_CEF
+#if ENSIS_WITH_CEF
 
 bool DevToolsAllowed() {
-  if (const char* env = std::getenv("NIUMMA_DEV_URL")) {
+  if (const char* env = std::getenv("ENSIS_DEV_URL")) {
     if (env[0] != '\0') {
       return true;
     }
@@ -67,4 +67,4 @@ void ConfigureCefSettings(CefSettings& settings) {
 
 #endif
 
-}  // namespace niuma
+}  // namespace ensisops

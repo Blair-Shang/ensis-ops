@@ -2,7 +2,7 @@ import {
   applyColorTheme,
   clearColorTheme,
   isSafeColorThemeValue,
-} from '@niuma/ui'
+} from 'ensis-ui'
 import { lantaiTheme } from './themes/lantai'
 import { wuxiaTheme } from './themes/wuxia'
 import { yuegongTheme } from './themes/yuegong'

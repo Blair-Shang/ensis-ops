@@ -4,7 +4,7 @@
 
 #include <string>
 
-namespace niuma::oracle::meta {
+namespace ensisops::oracle::meta {
 
 // 通过 DBMS_METADATA.GET_DDL 获取完整 DDL（CLOB 以 LOB 方式读取，避免 4K 截断）。
 bool FetchDbmsMetadataDdl(session::Session& session, const std::string& object_type,
@@ -21,4 +21,4 @@ std::string ResolveDictionaryObjectName(session::Session& session, const std::st
                                         const std::string& name, const std::string& object_type,
                                         std::string& error);
 
-}  // namespace niuma::oracle::meta
+}  // namespace ensisops::oracle::meta

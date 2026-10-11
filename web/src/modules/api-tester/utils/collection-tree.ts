@@ -2,7 +2,7 @@
  * 集合树：节点、搜索、拖放。对齐运维 useConnTree。
  * 数据已在 store，这里只组节点；不 default-expand-all，展开由面板受控。
  */
-import type { RsTreeDropPosition, RsTreeNode } from '@niuma/ui'
+import type { RsTreeDropPosition, RsTreeNode } from 'ensis-ui'
 import type { ApiFolder, ApiMethod } from '../types'
 import {
   buildFolderChildrenIndex,

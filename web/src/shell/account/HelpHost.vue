@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import { useI18n } from 'vue-i18n'
-import { RsButton, RsDialog, RsMarkdown } from '@niuma/ui'
+import { RsButton, RsDialog, RsMarkdown } from 'ensis-ui'
 import AppBrandIcon from '@/shell/widgets/AppBrandIcon.vue'
 import { useAppUpdateStore } from '@/stores/app-update'
 import { useBridgeStore } from '@/stores/bridge'

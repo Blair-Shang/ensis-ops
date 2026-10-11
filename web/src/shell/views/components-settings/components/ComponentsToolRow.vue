@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { RsBadge, RsButton, RsIcon, RsTooltip } from '@niuma/ui'
+import { RsBadge, RsButton, RsIcon, RsTooltip } from 'ensis-ui'
 import { computed } from 'vue'
 import { useI18n } from 'vue-i18n'
 import type { ToolComponentBundle, ToolComponentEntry } from '@/api/types/components'

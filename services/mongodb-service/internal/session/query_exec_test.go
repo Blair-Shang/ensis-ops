@@ -14,7 +14,7 @@ func TestWrapMongoshEval(t *testing.T) {
 	if !strings.Contains(got, "db.users.find({}).limit(20)") {
 		t.Fatalf("expected direct expression embed: %s", got)
 	}
-	for _, part := range []string{"toArray", "hasNext", "__niuma_safe", "Collection"} {
+	for _, part := range []string{"toArray", "hasNext", "__ensis_safe", "Collection"} {
 		if !strings.Contains(got, part) {
 			t.Fatalf("wrap missing %q: %s", part, got)
 		}

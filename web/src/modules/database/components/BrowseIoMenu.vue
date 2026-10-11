@@ -1,6 +1,6 @@
 <script setup lang="ts">
 /** 浏览面板导入 / 导出下拉菜单项列表（样式统一）。 */
-import { RsIcon } from '@niuma/ui'
+import { RsIcon } from 'ensis-ui'
 
 defineProps<{
   items: Array<{

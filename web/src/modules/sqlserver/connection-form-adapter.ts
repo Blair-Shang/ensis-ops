@@ -71,7 +71,7 @@ export const sqlserverConnectionFormAdapter: ConnectionFormAdapter = {
     form.ssEncrypt = encryptMode(options?.encrypt ?? '')
     form.ssTrustServerCertificate = String(options?.trust_server_certificate ?? false)
     form.ssHostNameInCertificate = options?.host_name_in_certificate ?? ''
-    form.ssAppName = options?.application_name ?? 'NiuMa'
+    form.ssAppName = options?.application_name ?? 'ensis-ops'
     form.ssExcludeSystemSchemas = String(options?.exclude_system_schemas ?? true)
     form.connectTimeoutSeconds = formatTimeoutFormValue(
       readStoredTimeoutSeconds(options as Record<string, unknown> | undefined, 10),
@@ -93,7 +93,7 @@ export const sqlserverConnectionFormAdapter: ConnectionFormAdapter = {
       encrypt,
       trust_server_certificate: trustCert,
       host_name_in_certificate: hostNameInCertificate,
-      application_name: formStr(form, 'ssAppName').trim() || 'NiuMa',
+      application_name: formStr(form, 'ssAppName').trim() || 'ensis-ops',
       exclude_system_schemas: formStr(form, 'ssExcludeSystemSchemas') !== 'false',
       connect_timeout_seconds: timeout,
       timeout_seconds: timeout,

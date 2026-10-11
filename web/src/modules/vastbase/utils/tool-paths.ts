@@ -1,7 +1,7 @@
 import { componentsApi } from '@/api/components'
 
 /** Vastbase 官方客户端工具组件包 ID。 */
-export const VASTBASE_TOOLS_BUNDLE_ID = 'com.niuma.components.vastbase-tools'
+export const VASTBASE_TOOLS_BUNDLE_ID = 'com.ensisops.components.vastbase-tools'
 
 function pathsFromBundle(bundle: { tools: { toolId: string; path?: string }[] }): Record<string, string> {
   const paths: Record<string, string> = {}

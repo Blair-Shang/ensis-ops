@@ -14,7 +14,7 @@ import {
   type RsSplitPaneItem,
   type RsSplitPaneInstance,
   type RsSelectOptions,
-} from '@niuma/ui'
+} from 'ensis-ui'
 import { computed, nextTick, onBeforeUnmount, onMounted, ref, toRef, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { connectionApi, dialogApi, fsApi, sshApi } from '@/api'

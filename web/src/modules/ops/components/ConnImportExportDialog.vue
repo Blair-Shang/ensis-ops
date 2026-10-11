@@ -4,7 +4,7 @@
  * 导出可选择含凭据（口令加密）；导入可输入口令还原凭据。
  * 对话框内明确提示妥善保管文件与口令。
  */
-import { RsButton, RsCheckbox, RsDialog, RsInput, RsLabel } from '@niuma/ui'
+import { RsButton, RsCheckbox, RsDialog, RsInput, RsLabel } from 'ensis-ui'
 import { computed, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 

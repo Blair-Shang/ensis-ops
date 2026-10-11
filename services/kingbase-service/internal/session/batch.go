@@ -7,7 +7,7 @@ import (
 	"time"
 
 	"github.com/jackc/pgx/v5/pgxpool"
-	"niuma/pkg/common/id"
+	"ensis-ops/pkg/common/id"
 )
 
 // QueryExecBatchParams 在同一条物理连接上顺序执行多条 SQL（保留临时表 / SET / 会话 GUC）。

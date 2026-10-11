@@ -21,7 +21,7 @@ describe('postgres-debug-assist', () => {
     expect(countPostgresDebugLogPoints(out)).toBe(1)
     expect(out).toContain('/* nm-debug-point:')
     expect(out).toContain('RAISE NOTICE')
-    expect(out).toContain("current_setting('niuma.debug'")
+    expect(out).toContain("current_setting('ensis-ops.debug'")
   })
 
   it('inserts at line', () => {
@@ -33,18 +33,18 @@ describe('postgres-debug-assist', () => {
 
   it('wraps call with debug session GUC', () => {
     const wrapped = wrapPostgresCallWithDebugSession('CALL public.demo(1);')
-    expect(wrapped).toContain("set_config('niuma.debug', '1'")
+    expect(wrapped).toContain("set_config('ensis-ops.debug', '1'")
     expect(wrapped).toContain('CALL public.demo(1);')
-    expect(wrapped).toContain("set_config('niuma.debug', ''")
+    expect(wrapped).toContain("set_config('ensis-ops.debug', ''")
   })
 
   it('detects debug session scaffold statements', () => {
     expect(
-      isPostgresDebugSessionScaffoldSql("SELECT set_config('niuma.debug', '1', false)"),
+      isPostgresDebugSessionScaffoldSql("SELECT set_config('ensis-ops.debug', '1', false)"),
     ).toBe(true)
     expect(
       isPostgresDebugSessionScaffoldSql(
-        "-- Enable NOTICE for RAISE NOTICE log points (session-local)\nSELECT set_config('niuma.debug', '1', false)",
+        "-- Enable NOTICE for RAISE NOTICE log points (session-local)\nSELECT set_config('ensis-ops.debug', '1', false)",
       ),
     ).toBe(true)
     expect(isPostgresDebugSessionScaffoldSql('SET client_min_messages TO NOTICE')).toBe(true)

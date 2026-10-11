@@ -1,3 +1,3 @@
-module niuma/services/mcp-skill-runner
+module ensis-ops/services/mcp-skill-runner
 
 go 1.25.0

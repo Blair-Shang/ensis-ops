@@ -4,8 +4,8 @@ import (
 	"strings"
 	"testing"
 
-	"niuma/pkg/sqllsp"
-	"niuma/services/kingbase-service/internal/kingbaseparser"
+	"ensis-ops/pkg/sqllsp"
+	"ensis-ops/services/kingbase-service/internal/kingbaseparser"
 )
 
 func TestKeywordsNonEmpty(t *testing.T) {

@@ -4,7 +4,7 @@
 #include <cctype>
 #include <string>
 
-namespace niuma::oracle::meta {
+namespace ensisops::oracle::meta {
 namespace {
 
 std::string Upper(std::string s) {
@@ -74,4 +74,4 @@ bool IsSystemSchema(const std::string& username) {
   return false;
 }
 
-}  // namespace niuma::oracle::meta
+}  // namespace ensisops::oracle::meta

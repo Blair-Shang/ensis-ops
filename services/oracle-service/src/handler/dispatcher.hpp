@@ -7,7 +7,7 @@
 #include <memory>
 #include <string>
 
-namespace niuma::oracle::handler {
+namespace ensisops::oracle::handler {
 
 class Dispatcher {
  public:
@@ -20,4 +20,4 @@ class Dispatcher {
   std::unique_ptr<lsp::Bridge> lsp_;
 };
 
-}  // namespace niuma::oracle::handler
+}  // namespace ensisops::oracle::handler

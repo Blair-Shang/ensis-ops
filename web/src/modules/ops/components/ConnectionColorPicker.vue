@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { RsLabel } from '@niuma/ui'
+import { RsLabel } from 'ensis-ui'
 import { useI18n } from 'vue-i18n'
 import { CONN_ACCENT_COLORS, type ConnAccentColor } from '@/modules/ops/types'
 

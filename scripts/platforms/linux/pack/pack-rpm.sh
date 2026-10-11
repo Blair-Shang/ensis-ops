@@ -9,9 +9,9 @@ REPO_ROOT="$(nm_repo_root "$SCRIPT_DIR")"
 PLATFORM="linux"
 ARCH="$(nm_detect_arch)"
 CONFIGURATION="Release"
-PACKAGE_ID="niuma"
-VENDOR="NiuMa"
-INSTALL_ROOT="/opt/niuma"
+PACKAGE_ID="ensis-ops"
+VENDOR="ensis-ops"
+INSTALL_ROOT="/opt/ensis-ops"
 OUTPUT_DIR=""
 
 while [[ $# -gt 0 ]]; do

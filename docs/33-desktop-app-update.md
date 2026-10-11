@@ -3,7 +3,7 @@
 > 版本：v0.3 · 日期：2026-08-06  
 > 状态：**P0 已落地**；官网读 cloud 版本/notes + 去 SQLite（计次 JSON）已接  
 
-> 相关仓：`NiuMa`（桌面）· `niuma-cloud`（发布 API / Admin）· `niuma-site`（官网展示与下载计次）
+> 相关仓：`ensis-ops`（桌面）· `ensis-cloud`（发布 API / Admin）· `ensis-site`（官网展示与下载计次）
 
 ---
 
@@ -14,14 +14,14 @@
 | 能力 | 现状 |
 |------|------|
 | 本地版本 | 根 `package.json` → `build/version.json` → Shell `AppConfig`；Web 经 `shell.version` 只读展示 |
-| 云端版本清单 | **无**；`niuma-cloud` 仅在反馈里存 `clientVersion` |
+| 云端版本清单 | **无**；`ensis-cloud` 仅在反馈里存 `clientVersion` |
 | Admin | 账户 / 员工 / 反馈 / 审计；**无**发布管理 |
-| 官网下载 | `niuma-site`：hit 计次写本地 JSON 后 302；版本/notes 读 cloud `updates/latest` |
-| 安装包 | Windows：Inno Setup 6 → `NiuMa-<ver>-windows-x64-Setup.exe`（固定 `AppId`，支持覆盖升级） |
+| 官网下载 | `ensis-site`：hit 计次写本地 JSON 后 302；版本/notes 读 cloud `updates/latest` |
+| 安装包 | Windows：Inno Setup 6 → `ensis-ops-<ver>-windows-x64-Setup.exe`（固定 `AppId`，支持覆盖升级） |
 
 市场主流（非 Electron / 非商店）路径：公开更新清单 → 应用比对 → 展示说明 → 下载完整安装包 → 校验 → 拉起安装程序 → 退出当前进程。本方案对齐该路径。
 
-与「设置 → 工具组件」的 `optional_download`（第三方 CLI）严格分离：本文只覆盖 **NiuMa 本体**升级。
+与「设置 → 工具组件」的 `optional_download`（第三方 CLI）严格分离：本文只覆盖 **ensis-ops 本体**升级。
 
 ---
 
@@ -30,7 +30,7 @@
 ### 2.1 目标
 
 1. 用户启动后可发现新版本，并选择「稍后」或「立即更新」。
-2. **更新说明（changelog）单一真相**：由 **niuma-cloud Admin** 维护，经业务 API 同时服务 **官网** 与 **桌面端**。
+2. **更新说明（changelog）单一真相**：由 **ensis-cloud Admin** 维护，经业务 API 同时服务 **官网** 与 **桌面端**。
 3. **专业主流安装**：应用内下载 Setup → SHA-256 校验 → 拉起安装包 → 退出应用（不做运行中热替换）。
 4. 支持**强制更新**（低于最低可用版本，或单版本标记强制）。
 5. P0 交付 **Windows x64**；Linux / macOS 共用契约后启。
@@ -47,7 +47,7 @@
 
 | 项 | 决定 |
 |----|------|
-| 清单与说明 | `niuma-cloud` 表 + Admin；公开 API 免登录 |
+| 清单与说明 | `ensis-cloud` 表 + Admin；公开 API 免登录 |
 | 官网 | 版本号 / 说明读 cloud；下载按钮仍可走 site `hit` 计次 |
 | 安装 | 应用内下载 + 校验 + 拉起 Inno Setup |
 | 渠道 | P0 仅 `stable` |
@@ -58,13 +58,13 @@
 
 ```mermaid
 flowchart TB
-  admin[niuma-cloud admin 发布版本]
+  admin[ensis-cloud admin 发布版本]
   api[cloud 公开 updates API]
-  site[niuma-site 下载页]
-  web[NiuMa Web UI]
+  site[ensis-site 下载页]
+  web[ensis-ops Web UI]
   shell[C++ Shell Bridge]
   cdn[安装包对象存储或静态 URL]
-  siteApi[niuma-site downloads hit]
+  siteApi[ensis-site downloads hit]
 
   admin -->|写入 app_releases| api
   site -->|展示版本与说明| api
@@ -78,11 +78,11 @@ flowchart TB
 
 | 组件 | 职责 |
 |------|------|
-| **niuma-cloud Admin** | 草稿 / 编辑说明 / 发布 / 撤回；审计 |
-| **niuma-cloud API** | `updates/latest` · `updates/check` · `updates/releases`；Ops CRUD |
+| **ensis-cloud Admin** | 草稿 / 编辑说明 / 发布 / 撤回；审计 |
+| **ensis-cloud API** | `updates/latest` · `updates/check` · `updates/releases`；Ops CRUD |
 | **安装包托管** | OSS / CDN / 静态站；HTTPS；URL 写入 release 记录 |
-| **niuma-site** | 展示 latest / notes；下载 hit 计次（可与 cloud 元数据解耦） |
-| **NiuMa Web** | 启动延迟 + 每小时检查、弹窗、进度；帮助菜单「关于」手动检查 |
+| **ensis-site** | 展示 latest / notes；下载 hit 计次（可与 cloud 元数据解耦） |
+| **ensis-ops Web** | 启动延迟 + 每小时检查、弹窗、进度；帮助菜单「关于」手动检查 |
 | **C++ Shell** | 受限 HTTPS 下载、SHA-256、拉起 Setup、退出进程 |
 
 版本比较规则：
@@ -93,7 +93,7 @@ flowchart TB
 
 ---
 
-## 4. 数据模型（niuma-cloud）
+## 4. 数据模型（ensis-cloud）
 
 ### 4.1 表 `app_releases`
 
@@ -102,7 +102,7 @@ SQLite / MySQL 双 migrate（接在现有 `001` / `002` 之后，如 `003_app_re
 | 列 | 类型（概念） | 说明 |
 |----|--------------|------|
 | `id` | string PK | 如 `rel_…` |
-| `product` | string | 固定起步：`niuma` |
+| `product` | string | 固定起步：`ensis-ops` |
 | `version` | string | semver，如 `1.0.1` |
 | `channel` | string | P0：`stable` |
 | `platform` | string | `windows` / `linux` / `macos` |
@@ -146,7 +146,7 @@ Query：
 
 | 参数 | 必填 | 示例 |
 |------|------|------|
-| `product` | 否 | 默认 `niuma` |
+| `product` | 否 | 默认 `ensis-ops` |
 | `platform` | 是 | `windows` |
 | `arch` | 是 | `x64` |
 | `channel` | 否 | 默认 `stable` |
@@ -155,14 +155,14 @@ Query：
 
 ```json
 {
-  "product": "niuma",
+  "product": "ensis-ops",
   "channel": "stable",
   "platform": "windows",
   "arch": "x64",
   "version": "1.0.1",
   "title": "1.0.1 稳定性修复",
   "notesMd": "## 修复\n- …\n",
-  "downloadUrl": "https://cdn.example.com/niuma/NiuMa-1.0.1-windows-x64-Setup.exe",
+  "downloadUrl": "https://cdn.example.com/ensis-ops/ensis-ops-1.0.1-windows-x64-Setup.exe",
   "sha256": "a1b2…",
   "fileSize": 123456789,
   "minSupportedVersion": "1.0.0",
@@ -192,7 +192,7 @@ Query：在 latest 参数基础上增加：
     "version": "1.0.1",
     "title": "1.0.1 稳定性修复",
     "notesMd": "## 修复\n- …\n",
-    "downloadUrl": "https://cdn.example.com/niuma/NiuMa-1.0.1-windows-x64-Setup.exe",
+    "downloadUrl": "https://cdn.example.com/ensis-ops/ensis-ops-1.0.1-windows-x64-Setup.exe",
     "sha256": "a1b2…",
     "fileSize": 123456789,
     "minSupportedVersion": "1.0.0",
@@ -225,7 +225,7 @@ Query：`product`、`platform`、`arch`、`channel`、`limit`（默认 20，最�
 ### 5.5 大文件与计次
 
 - Cloud **不**代理 Setup 字节流。
-- 官网下载按钮：继续 `GET|POST /api/v1/downloads/windows/hit`（niuma-site）；服务端 302 目标建议与当前 `published` 的 `download_url` 对齐（运维配置或后续 site 读 cloud）。
+- 官网下载按钮：继续 `GET|POST /api/v1/downloads/windows/hit`（ensis-site）；服务端 302 目标建议与当前 `published` 的 `download_url` 对齐（运维配置或后续 site 读 cloud）。
 - 桌面端下载 hit：`POST /niuma/cloud/api/v1/updates/hit` 已落地；失败不阻断更新。
 
 ---
@@ -293,7 +293,7 @@ Cloud 客户端：复用 `web/src/api/cloud/client.ts`（`VITE_CLOUD_API_BASE`�
 
 ```json
 {
-  "url": "https://cdn.example.com/.../NiuMa-1.0.1-windows-x64-Setup.exe",
+  "url": "https://cdn.example.com/.../ensis-ops-1.0.1-windows-x64-Setup.exe",
   "sha256": "a1b2…",
   "expectedSize": 123456789
 }
@@ -302,8 +302,8 @@ Cloud 客户端：复用 `web/src/api/cloud/client.ts`（`VITE_CLOUD_API_BASE`�
 行为：
 
 - 仅 `https:`。
-- Host 必须命中 **allowlist**（环境变量 `NIUMA_UPDATE_DOWNLOAD_HOSTS`；默认 `niuma007.com` / `www.niuma007.com`，子域如 `cdn.niuma007.com` 经后缀匹配放行）。
-- 写入 `%TEMP%/niuma-update/`（或等价临时目录），文件名来自 URL 最后一段并做消毒。
+- Host 必须命中 **allowlist**（环境变量 `ENSIS_UPDATE_DOWNLOAD_HOSTS`；默认 `niuma007.com` / `www.niuma007.com`，子域如 `cdn.niuma007.com` 经后缀匹配放行）。
+- 写入 `%TEMP%/ensis-update/`（或等价临时目录），文件名来自 URL 最后一段并做消毒。
 - 进度事件：`{ "received": n, "total": n }`。
 - 成功：`{ "path": "…", "bytes": n }`。
 
@@ -316,13 +316,13 @@ Cloud 客户端：复用 `web/src/api/cloud/client.ts`（`VITE_CLOUD_API_BASE`�
 
 请求：`{ "path": "…" }`  
 
-各平台：`path` 必须位于更新临时目录内。拉起成功后停 Platform 子进程并退出当前 NiuMa，避免占用安装目录。拉起失败才由 Web 回落 `openExternal(downloadUrl)`（错误码 `apply_unsupported_platform` 仅作兼容）。
+各平台：`path` 必须位于更新临时目录内。拉起成功后停 Platform 子进程并退出当前 ensis-ops，避免占用安装目录。拉起失败才由 Web 回落 `openExternal(downloadUrl)`（错误码 `apply_unsupported_platform` 仅作兼容）。
 
 | 平台 | 拉起 | 退出后谁再打开 |
 |------|------|----------------|
 | Windows `.exe` | Inno `/SILENT … /FORCECLOSEAPPLICATIONS`，`SW_SHOWNORMAL` | Setup `[Run]` |
 | Windows `.msi` | `/qn /norestart` | 系统安装器（无自动拉起） |
-| Linux `.run` | 独立会话 + `--unattended`（跳过 zenity，仍可能 polkit） | 向导结束启动 `niuma` |
+| Linux `.run` | 独立会话 + `--unattended`（跳过 zenity，仍可能 polkit） | 向导结束启动 `ensis-ops` |
 | Linux `.deb` / `.rpm` | `xdg-open` | 软件中心，需用户手动打开 |
 | macOS `.pkg` / `.dmg` | `open`（LaunchServices，已独立） | 用户从启动台打开 |
 
@@ -342,7 +342,7 @@ Cloud 客户端：复用 `web/src/api/cloud/client.ts`（`VITE_CLOUD_API_BASE`�
 
 ---
 
-## 9. 官网（niuma-site）对接
+## 9. 官网（ensis-site）对接
 
 | 页面 / 能力 | 状态 |
 |-------------|------|
@@ -350,7 +350,7 @@ Cloud 客户端：复用 `web/src/api/cloud/client.ts`（`VITE_CLOUD_API_BASE`�
 | 下载按钮 | site `downloads/windows/hit` 计次（JSON 元数据）+ 302 |
 | 存储 | **无 SQLite**；`data/download-stats.json` |
 | `VITE_DOWNLOAD_VERSION` | cloud 不可达时的展示回落 |
-| 文档 | `niuma-site/docs/06-site-api.md` |
+| 文档 | `ensis-site/docs/06-site-api.md` |
 
 桌面与官网展示同一份 `notesMd`，避免两套文案。
 
@@ -360,13 +360,13 @@ Cloud 客户端：复用 `web/src/api/cloud/client.ts`（`VITE_CLOUD_API_BASE`�
 
 ### 10.1 发布
 
-1. 在 NiuMa 仓执行 `pnpm release:win`（或等价），产出  
-   `output/windows-x64/setup/NiuMa-<ver>-windows-x64-Setup.exe`。
-2. 同目录会生成 `NiuMa-<ver>-windows-x64-Setup.release.json`（含 `sha256` / `fileSize`）；亦可手动：
+1. 在 ensis-ops 仓执行 `pnpm release:win`（或等价），产出  
+   `output/windows-x64/setup/ensis-ops-<ver>-windows-x64-Setup.exe`。
+2. 同目录会生成 `ensis-ops-<ver>-windows-x64-Setup.release.json`（含 `sha256` / `fileSize`）；亦可手动：
 
    ```powershell
-   Get-FileHash .\NiuMa-1.0.1-windows-x64-Setup.exe -Algorithm SHA256
-   (Get-Item .\NiuMa-1.0.1-windows-x64-Setup.exe).Length
+   Get-FileHash .\ensis-ops-2.0.0-windows-x64-Setup.exe -Algorithm SHA256
+   (Get-Item .\ensis-ops-2.0.0-windows-x64-Setup.exe).Length
    ```
 
 3. 上传至 CDN / 对象存储，得到 HTTPS `download_url`（host 须在 cloud 与桌面白名单内）。
@@ -388,7 +388,7 @@ Cloud 客户端：复用 `web/src/api/cloud/client.ts`（`VITE_CLOUD_API_BASE`�
 | 侧 | 配置 | 默认 / 建议 |
 |----|------|-------------|
 | **cloud Admin 校验** | `config/app.yaml` → `updates.download_url_hosts` | 生产填 `niuma007.com`（子域放行）；见 `app.yaml.example` |
-| **桌面 Platform 下载** | 环境变量 `NIUMA_UPDATE_DOWNLOAD_HOSTS`（逗号分隔） | 未设置时默认 `niuma007.com,www.niuma007.com`；CDN 为其它根域时两边同步追加 |
+| **桌面 Platform 下载** | 环境变量 `ENSIS_UPDATE_DOWNLOAD_HOSTS`（逗号分隔） | 未设置时默认 `niuma007.com,www.niuma007.com`；CDN 为其它根域时两边同步追加 |
 
 两侧规则均为：HTTPS、禁凭据/内网/localhost；host 精确匹配或 `*.allowed` 后缀匹配。
 
@@ -416,7 +416,7 @@ Cloud 客户端：复用 `web/src/api/cloud/client.ts`（`VITE_CLOUD_API_BASE`�
 - [x] Web 启动延迟 + 每小时检查；帮助菜单手动检查
 - [x] Shell/Platform download allowlist + sha256 + apply + 退出
 - [x] Inno `CloseApplications`；非 Windows 打开下载链（不半成品 apply）
-- [x] 生产白名单配置示例（cloud `updates.download_url_hosts` + 桌面 `NIUMA_UPDATE_DOWNLOAD_HOSTS`）
+- [x] 生产白名单配置示例（cloud `updates.download_url_hosts` + 桌面 `ENSIS_UPDATE_DOWNLOAD_HOSTS`）
 - [ ] **发版联调**：用真实 Setup 完成一次覆盖升级（须在装机环境人工跑）
 
 #### 覆盖升级联调步骤（人工）
@@ -431,7 +431,7 @@ Cloud 客户端：复用 `web/src/api/cloud/client.ts`（`VITE_CLOUD_API_BASE`�
 
 ## 12. 相关文件挂点（实现索引）
 
-### niuma-cloud
+### ensis-cloud
 
 | 区域 | 路径 |
 |------|------|
@@ -441,7 +441,7 @@ Cloud 客户端：复用 `web/src/api/cloud/client.ts`（`VITE_CLOUD_API_BASE`�
 | Admin 路由 / 页 | `admin/src/router/index.ts` · `admin/src/views/releases/` |
 | Admin API | `admin/src/api/releases.ts` |
 
-### NiuMa
+### ensis-ops
 
 | 区域 | 路径 |
 |------|------|
@@ -452,7 +452,7 @@ Cloud 客户端：复用 `web/src/api/cloud/client.ts`（`VITE_CLOUD_API_BASE`�
 | 版本源 | `package.json` · `scripts/shared/version/emit-build-info.mjs` · `build/version.json` |
 | Windows 安装包 | `scripts/platforms/windows/pack/build-installer.ps1` |
 
-### niuma-site
+### ensis-site
 
 | 区域 | 路径 |
 |------|------|

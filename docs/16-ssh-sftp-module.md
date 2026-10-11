@@ -47,7 +47,7 @@
 ```
 ┌ Layer 4 ─ Web ─────────────────────────────────────────────────────┐
 │ web/src/modules/ssh/  连接列表 · 终端 Tab · SFTP 文件浏览/编辑      │
-│   ↑ bridgeInvoke(ssh.*)              ↑ bridgeOnEvent(niuma:event)   │
+│   ↑ bridgeInvoke(ssh.*)              ↑ bridgeOnEvent(ensis-ops:event)   │
 └───┼──────────────────────────────────┼──────────────────────────────┘
     │ cefQuery（请求/响应）             │ PostMessage（事件推送）
 ┌ Layer 3 ─ C++ Shell ──────────────────┴────────────────────────────┐
@@ -79,8 +79,8 @@
 ```
 packages/rust/
 ├── Cargo.toml                 # Rust workspace
-├── niuma-logutil/             # 日志公共 crate
-└── niuma-serviceipc/          # 应用 IPC 公共 crate
+├── ensis-logutil/             # 日志公共 crate
+└── ensis-serviceipc/          # 应用 IPC 公共 crate
 
 services/
 ├── manifests/ssh-service.yaml
@@ -101,8 +101,8 @@ services/
 
 | crate | 作用 | 对齐现有实现 |
 |------|------|-------------|
-| `niuma-logutil` | 统一日志目录策略与滚动落盘 | 对齐 `packages/go/logutil` |
-| `niuma-serviceipc` | 4 字节小端长度前缀 + UTF-8 JSON 帧协议 | 对齐 `packages/go/serviceipc` |
+| `ensis-logutil` | 统一日志目录策略与滚动落盘 | 对齐 `packages/go/logutil` |
+| `ensis-serviceipc` | 4 字节小端长度前缀 + UTF-8 JSON 帧协议 | 对齐 `packages/go/serviceipc` |
 
 约束：
 
@@ -227,7 +227,7 @@ MVP 先返回一次性结果；后续可升级为流式事件：
 `services/manifests/ssh-service.yaml`：
 
 ```yaml
-id: com.niuma.ssh
+id: com.ensisops.ssh
 name: SSH Service
 version: 0.1.0
 bridge:
@@ -239,11 +239,11 @@ session:
     - session.open
     - session.test
 runtime:
-  executable: bin/niuma-ssh-service.exe
+  executable: bin/ensis-ssh-service.exe
   lang: rust
 ipc:
   transport: named_pipe
-  address: '\\.\pipe\niuma.ssh'
+  address: '\\.\pipe\ensis-ops.ssh'
   protocol: length_prefixed_json
 lifecycle:
   startup: lazy
@@ -263,7 +263,7 @@ permissions: []
 ### 7.1 服务入口
 
 - `main.rs` 只做日志初始化、信号处理、Dispatcher 装配、IPC 启动
-- 监听地址与 manifest 保持一致：Windows `\\.\pipe\niuma.ssh`
+- 监听地址与 manifest 保持一致：Windows `\\.\pipe\ensis-ops.ssh`
 
 ### 7.2 会话管理
 
@@ -273,7 +273,7 @@ permissions: []
 
 ### 7.3 日志与错误
 
-- 使用 `niuma-logutil` 初始化 `ssh-service.log`
+- 使用 `ensis-logutil` 初始化 `ssh-service.log`
 - 结构化日志字段至少包含：`session`、`host`、`port`、`path`、`method`
 - 错误字符串返回给 platform 时应可读，但避免泄露敏感信息
 
@@ -341,9 +341,9 @@ web/src/modules/ssh/
 
 输出：
 
-- `services/bin/niuma-platform-core.exe`
-- `services/bin/niuma-ftp-service.exe`
-- `services/bin/niuma-ssh-service.exe`
+- `services/bin/ensis-platform-core.exe`
+- `services/bin/ensis-ftp-service.exe`
+- `services/bin/ensis-ssh-service.exe`
 
 也可单独构建：
 

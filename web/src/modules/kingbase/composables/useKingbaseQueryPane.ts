@@ -4,7 +4,7 @@
  */
 import { computed, onMounted, onUnmounted, ref, shallowRef, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
-import { useRsToast, type RsContextMenuItem, type RsTableColumn } from '@niuma/ui'
+import { useRsToast, type RsContextMenuItem, type RsTableColumn } from 'ensis-ui'
 import { kingbaseApi } from '@/api/kingbase'
 import type { KingbaseQueryColumn, KingbaseQueryExecResult } from '@/api/types/kingbase'
 import {
@@ -115,7 +115,7 @@ export function useKingbaseQueryPane(props: KingbaseQueryPaneProps) {
 
   const { historyOpen, historyEntries, rememberSql, onHistoryPick } = useSqlQueryHistory({
     profileId: () => props.profileId,
-    storagePrefix: 'niuma.kingbase.sqlHistory.',
+    storagePrefix: 'ensis-ops.kingbase.sqlHistory.',
     sqlText,
   })
 
@@ -406,7 +406,7 @@ export function useKingbaseQueryPane(props: KingbaseQueryPaneProps) {
 
   /**
    * 显式批跑：同连接顺序执行（临时表 / SET 可见）。
-   * 由 `-- niuma:exec=batch` 触发；不保留跨语句游标。
+   * 由 `-- ensis-ops:exec=batch` 触发；不保留跨语句游标。
    */
   async function runBatchStatements(
     stmtSqls: string[],
@@ -442,7 +442,7 @@ export function useKingbaseQueryPane(props: KingbaseQueryPaneProps) {
       }
       if (/unknown method|not found|execBatch/i.test(msg)) {
         throw new Error(
-          '需要重启 NiuMa 以加载 kingbase.query.execBatch（含 -- niuma:exec=batch 的脚本须同连接执行）',
+          '需要重启 ensis-ops 以加载 kingbase.query.execBatch（含 -- ensis-ops:exec=batch 的脚本须同连接执行）',
         )
       }
       throw batchErr
@@ -474,7 +474,7 @@ export function useKingbaseQueryPane(props: KingbaseQueryPaneProps) {
     try {
       const stmtSqls = statements.map((s) => s.sql)
       const db = props.database?.trim() || undefined
-      // 默认分页；入口 queryExecMode=batch 或脚本带 `-- niuma:exec=batch` 时同连接批跑
+      // 默认分页；入口 queryExecMode=batch 或脚本带 `-- ensis-ops:exec=batch` 时同连接批跑
       if (resolveQueryExecMode(props.queryExecMode, sql) === 'batch') {
         await runBatchStatements(stmtSqls, requestId, db)
       } else {

@@ -4,7 +4,7 @@ import { buildSqlDocumentUri, parseSqlDocumentUri } from './types'
 describe('sql-editor lsp uri', () => {
   it('roundtrips document uri', () => {
     const uri = buildSqlDocumentUri('mysql', 'sess/1', 'editor-a')
-    expect(uri).toContain('niuma-sql://mysql/')
+    expect(uri).toContain('ensis-sql://mysql/')
     const parsed = parseSqlDocumentUri(uri)
     expect(parsed).toEqual({
       namespace: 'mysql',
@@ -49,8 +49,8 @@ describe('sql-editor lsp attach order contract', () => {
     client.onNotification((method) => {
       if (method === 'textDocument/publishDiagnostics') sawDiag = true
     })
-    await client.setSuggestDatabase('SYSDBA', 'niuma-sql://dameng/s/e')
-    await client.didOpen('niuma-sql://dameng/s/e', 'SELECT 1', 1)
+    await client.setSuggestDatabase('SYSDBA', 'ensis-sql://dameng/s/e')
+    await client.didOpen('ensis-sql://dameng/s/e', 'SELECT 1', 1)
 
     expect(steps).toEqual(['onNotification', 'setSuggestDatabase', 'didOpen'])
     expect(sawDiag).toBe(true)

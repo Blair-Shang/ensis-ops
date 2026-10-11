@@ -1,4 +1,4 @@
-import type { MonacoCompletionContext, MonacoCompletionSnippet } from '@niuma/ui'
+import type { MonacoCompletionContext, MonacoCompletionSnippet } from 'ensis-ui'
 import { ref } from 'vue'
 import { mongodbApi } from '@/api'
 import type { MongoPipelineSuggestion } from '@/api/types/mongodb'

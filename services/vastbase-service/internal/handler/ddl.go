@@ -6,7 +6,7 @@ import (
 	"fmt"
 	"strings"
 
-	"niuma/services/vastbase-service/internal/ddl"
+	"ensis-ops/services/vastbase-service/internal/ddl"
 )
 
 type ddlScriptParams struct {

@@ -6,7 +6,7 @@ import (
 	"fmt"
 	"strings"
 
-	"niuma/services/mongodb-service/internal/session"
+	"ensis-ops/services/mongodb-service/internal/session"
 )
 
 type monitorStatsParams struct {

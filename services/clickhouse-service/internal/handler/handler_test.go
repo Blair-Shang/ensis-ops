@@ -5,7 +5,7 @@ import (
 	"encoding/json"
 	"testing"
 
-	"niuma/services/clickhouse-service/internal/idgen"
+	"ensis-ops/services/clickhouse-service/internal/idgen"
 )
 
 func TestHandleFrameUnknownMethod(t *testing.T) {

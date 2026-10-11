@@ -1,5 +1,5 @@
 /**
- * NiuMa 图表简表（nm:1）→ ECharts option。
+ * ensis-ops 图表简表（nm:1）→ ECharts option。
  */
 import type { EChartsOption } from 'echarts'
 

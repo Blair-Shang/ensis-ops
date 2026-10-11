@@ -54,7 +54,7 @@ export const DEFAULT_VAST_OPTIONS: VastConnectionOptions = {
   ssl_key: '',
   search_path: '',
   client_encoding: 'UTF8',
-  application_name: 'niuma-vastbase',
+  application_name: 'ensis-vastbase',
   connect_timeout_seconds: 10,
   statement_timeout_ms: 0,
   exclude_system_schemas: true,

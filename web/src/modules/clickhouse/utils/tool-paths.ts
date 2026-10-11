@@ -1,5 +1,5 @@
 /** ClickHouse 官方客户端工具组件包 ID。 */
-export const CLICKHOUSE_TOOLS_BUNDLE_ID = 'com.niuma.components.clickhouse-tools'
+export const CLICKHOUSE_TOOLS_BUNDLE_ID = 'com.ensisops.components.clickhouse-tools'
 
 import { componentsApi } from '@/api/components'
 

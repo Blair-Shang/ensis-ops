@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { computed } from 'vue'
-import { RsLoading, RsMonacoEditor } from '@niuma/ui'
+import { RsLoading, RsMonacoEditor } from 'ensis-ui'
 import { ObjectScriptShell, type ObjectScriptShellLabels } from '@/modules/database'
 import { useDamengObjectScript } from '@/modules/dameng/composables/useDamengObjectScript'
 import type { DamengObjectKind, DamengObjectScriptMode } from '@/modules/dameng/types/object-script'

@@ -5,7 +5,7 @@
  */
 import { computed, nextTick, onUnmounted, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
-import { useRsToast, type RsContextMenuItem } from '@niuma/ui'
+import { useRsToast, type RsContextMenuItem } from 'ensis-ui'
 import { sqlserverApi } from '@/api/sqlserver'
 import { buildObjectScriptContextMenuItems } from '@/modules/database'
 import type { ConnItem } from '@/modules/ops/types'

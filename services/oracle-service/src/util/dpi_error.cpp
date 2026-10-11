@@ -2,7 +2,7 @@
 
 #include "util/utf8.hpp"
 
-namespace niuma::oracle::util {
+namespace ensisops::oracle::util {
 
 std::string FormatDpiErrorInfo(const dpiErrorInfo& info, const char* fallback) {
   if (info.message == nullptr || info.messageLength == 0) {
@@ -28,4 +28,4 @@ std::string FormatDpiError(dpiContext* ctx, const char* fallback) {
   return FormatDpiErrorInfo(info, fallback);
 }
 
-}  // namespace niuma::oracle::util
+}  // namespace ensisops::oracle::util

@@ -12,7 +12,7 @@ import (
 
 	"github.com/jackc/pgx/v5/pgxpool"
 
-	"niuma/services/kingbase-service/internal/dialect"
+	"ensis-ops/services/kingbase-service/internal/dialect"
 )
 
 const (

@@ -1,4 +1,4 @@
-import type { RsTreeNode } from '@niuma/ui'
+import type { RsTreeNode } from 'ensis-ui'
 import { shallowRef } from 'vue'
 import type { ConnResourceDescriptor, ConnResourcePath } from '@/modules/ops/conn-tree/types'
 import { connMetadataCache } from '@/modules/ops/conn-tree/metadata-cache'

@@ -1,6 +1,6 @@
 import type { ApiHttpCookie } from '@/api/types/api-http'
 
-const STORAGE_KEY = 'niuma.api.cookies'
+const STORAGE_KEY = 'ensis-ops.api.cookies'
 
 let memory: ApiHttpCookie[] = []
 

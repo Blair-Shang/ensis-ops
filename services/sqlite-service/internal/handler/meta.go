@@ -6,7 +6,7 @@ import (
 	"fmt"
 	"strings"
 
-	"niuma/services/sqlite-service/internal/meta"
+	"ensis-ops/services/sqlite-service/internal/meta"
 )
 
 type metaRelationParams struct {

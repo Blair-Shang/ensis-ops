@@ -148,7 +148,7 @@ describe('buildCallPlaceholders / buildRoutineCallSql', () => {
         'in_organizationid varchar, in_warehouseid varchar, out_return_code INOUT varchar',
       qualify,
     })
-    expect(sql).toContain('-- niuma:exec=batch')
+    expect(sql).toContain('-- ensis-ops:exec=batch')
     expect(sql).toContain('DO $$')
     expect(sql).toContain('CALL "public"."flux_kes_spapp_dock_alloc"(')
     expect(sql).toContain('CREATE TEMP TABLE nm_call_out')
@@ -176,7 +176,7 @@ describe('buildCallPlaceholders / buildRoutineCallSql', () => {
       args: 'in_id varchar',
       qualify,
     })
-    expect(fn).not.toContain('niuma:exec=batch')
-    expect(proc).not.toContain('niuma:exec=batch')
+    expect(fn).not.toContain('ensis-ops:exec=batch')
+    expect(proc).not.toContain('ensis-ops:exec=batch')
   })
 })

@@ -5,7 +5,7 @@ import (
 	"database/sql"
 	"sync"
 
-	"niuma/services/sqlite-service/internal/dialect"
+	"ensis-ops/services/sqlite-service/internal/dialect"
 )
 
 type queryCancel struct {

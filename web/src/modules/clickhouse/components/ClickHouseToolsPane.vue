@@ -12,8 +12,8 @@ import {
   RsTooltip,
   RsVirtualList,
   useRsToast,
-} from '@niuma/ui'
-import type { RsSelectOptions, RsTabItem } from '@niuma/ui'
+} from 'ensis-ui'
+import type { RsSelectOptions, RsTabItem } from 'ensis-ui'
 import { computed, onMounted, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { dialogApi } from '@/api'

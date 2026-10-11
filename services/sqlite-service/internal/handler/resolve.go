@@ -7,7 +7,7 @@ import (
 	"fmt"
 	"strings"
 
-	"niuma/services/sqlite-service/internal/session"
+	"ensis-ops/services/sqlite-service/internal/session"
 )
 
 // resolveDB 从 sessionId 或 platform 注入的 ConnectParams 解析 *sql.DB。

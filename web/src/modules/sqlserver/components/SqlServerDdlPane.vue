@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { RsLoading, RsMonacoEditor, useRsToast } from '@niuma/ui'
+import { RsLoading, RsMonacoEditor, useRsToast } from 'ensis-ui'
 import { computed, onMounted, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { sqlserverApi } from '@/api/sqlserver'

@@ -15,12 +15,12 @@ import (
 	"sync"
 	"time"
 
-	"niuma/pkg/serviceipc/envelope"
-	"niuma/pkg/serviceipc/event"
-	"niuma/pkg/tunnel"
-	"niuma/services/ftp-service/internal/eventpub"
-	"niuma/services/ftp-service/internal/idgen"
-	"niuma/services/ftp-service/internal/transfer"
+	"ensis-ops/pkg/serviceipc/envelope"
+	"ensis-ops/pkg/serviceipc/event"
+	"ensis-ops/pkg/tunnel"
+	"ensis-ops/services/ftp-service/internal/eventpub"
+	"ensis-ops/services/ftp-service/internal/idgen"
+	"ensis-ops/services/ftp-service/internal/transfer"
 
 	"github.com/jlaffaye/ftp"
 )

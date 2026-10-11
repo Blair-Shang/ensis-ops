@@ -7,7 +7,7 @@ import (
 	"fmt"
 	"strings"
 
-	"niuma/services/sqlite-service/internal/tree"
+	"ensis-ops/services/sqlite-service/internal/tree"
 )
 
 // ColumnInfo 是列元数据。

@@ -1,4 +1,4 @@
-// Command postgres-service 是 NiuMa 原生 PostgreSQL 能力服务（Layer 1）的独立进程入口。
+// Command postgres-service 是 ensis-ops 原生 PostgreSQL 能力服务（Layer 1）的独立进程入口。
 //
 // 源码位于 services/postgres-service/，与 platform-core 分离；契约见
 // docs/34-postgresql-module.md。本服务仅覆盖官方 PostgreSQL，禁止与
@@ -14,16 +14,16 @@ import (
 	"runtime"
 	"syscall"
 
-	"niuma/pkg/logutil"
-	"niuma/pkg/serviceipc/server"
-	"niuma/services/postgres-service/internal/eventpub"
-	"niuma/services/postgres-service/internal/handler"
-	"niuma/services/postgres-service/internal/idgen"
+	"ensis-ops/pkg/logutil"
+	"ensis-ops/pkg/serviceipc/server"
+	"ensis-ops/services/postgres-service/internal/eventpub"
+	"ensis-ops/services/postgres-service/internal/handler"
+	"ensis-ops/services/postgres-service/internal/idgen"
 )
 
 const (
-	windowsPipeAddr = `\\.\pipe\niuma.postgres`
-	unixSocketName  = "niuma.postgres.sock"
+	windowsPipeAddr = `\\.\pipe\ensis-ops.postgres`
+	unixSocketName  = "ensis-ops.postgres.sock"
 )
 
 func main() {

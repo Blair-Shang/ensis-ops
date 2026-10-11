@@ -1,10 +1,10 @@
 package ai
 
 import (
-	"niuma/platform/internal/ai/loop"
-	"niuma/platform/internal/ai/mcp"
-	"niuma/platform/internal/ai/skill"
-	"niuma/platform/internal/store"
+	"ensis-ops/platform/internal/ai/loop"
+	"ensis-ops/platform/internal/ai/mcp"
+	"ensis-ops/platform/internal/ai/skill"
+	"ensis-ops/platform/internal/store"
 )
 
 // 根包保留 handler 使用的类型名，实现落在子目录。

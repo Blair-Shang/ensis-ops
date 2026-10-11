@@ -1,10 +1,10 @@
-#include <niuma/serviceipc/message.hpp>
+#include <ensisops/serviceipc/message.hpp>
 
 #include <cctype>
 #include <cstdio>
 #include <string>
 
-namespace niuma::serviceipc {
+namespace ensisops::serviceipc {
 
 std::string EscapeJsonString(std::string_view s) {
   std::string out;
@@ -114,4 +114,4 @@ std::string MakeFailResponse(std::string_view id, std::string_view error,
   return out;
 }
 
-}  // namespace niuma::serviceipc
+}  // namespace ensisops::serviceipc

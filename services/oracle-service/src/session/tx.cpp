@@ -2,7 +2,7 @@
 
 #include "util/dpi_error.hpp"
 
-namespace niuma::oracle::session {
+namespace ensisops::oracle::session {
 namespace {
 
 std::string DpiError(dpiContext* ctx) {
@@ -91,4 +91,4 @@ bool AfterDml(Session& session, std::string& error) {
   return true;
 }
 
-}  // namespace niuma::oracle::session
+}  // namespace ensisops::oracle::session

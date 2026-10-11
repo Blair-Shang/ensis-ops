@@ -2,7 +2,7 @@
  * Kingbase 连接树 Provider：database → schema → 分类 → 对象。
  * 右键菜单对齐 Navicat / DBeaver / Vastbase（PG 系专业密度）。
  */
-import type { RsContextMenuItem } from '@niuma/ui'
+import type { RsContextMenuItem } from 'ensis-ui'
 import type { ConnTreeChildProvider } from '@/modules/ops/conn-tree/registry'
 import type { ConnResourcePath } from '@/modules/ops/conn-tree/types'
 import { kingbaseApi } from '@/api'

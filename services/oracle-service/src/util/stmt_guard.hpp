@@ -2,7 +2,7 @@
 
 #include <dpi.h>
 
-namespace niuma::oracle::util {
+namespace ensisops::oracle::util {
 
 // ODPI dpiStmt* RAII：析构时 dpiStmt_release，避免异常/早退泄漏。
 class StmtGuard {
@@ -46,4 +46,4 @@ class StmtGuard {
   dpiStmt* stmt_ = nullptr;
 };
 
-}  // namespace niuma::oracle::util
+}  // namespace ensisops::oracle::util

@@ -1,7 +1,7 @@
 /**
  * Postgres 树动作：对齐 Navicat / DBeaver / Vastbase 专业密度。
  */
-import { useRsToast } from '@niuma/ui'
+import { useRsToast } from 'ensis-ui'
 import type { PostgresDdlAction } from '@/api/types/postgres'
 import type { ConnResourcePath } from '@/modules/ops/conn-tree/types'
 import type { ConnItem } from '@/modules/ops/types'

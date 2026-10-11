@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { RsTerminal, type RsTerminalExpose } from '@niuma/ui'
+import { RsTerminal, type RsTerminalExpose } from 'ensis-ui'
 import { computed, nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { mongodbApi } from '@/api'

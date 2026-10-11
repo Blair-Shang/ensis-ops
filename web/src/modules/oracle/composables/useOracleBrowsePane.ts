@@ -4,7 +4,7 @@
 import {
   copyTextToClipboard, readClipboardText, useRsToast,
   type RsCodeEditorSqlConfig, type RsContextMenuItem, type RsTableColumn,
-} from '@niuma/ui'
+} from 'ensis-ui'
 import { computed, nextTick, ref, shallowRef, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { connectionApi, dialogApi, fsApi } from '@/api'

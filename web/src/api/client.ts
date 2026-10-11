@@ -73,7 +73,7 @@ export function isBridgeTimeout(err: unknown): boolean {
 /**
  * 检测 CEF Bridge 是否可用。
  *
- * @returns 运行于 `niuma.exe` 等 CEF 壳内时为 `true`
+ * @returns 运行于 `ensis-ops.exe` 等 CEF 壳内时为 `true`
  */
 export function isBridgeAvailable(): boolean {
   return typeof globalThis.cefQuery === 'function'
@@ -117,7 +117,7 @@ export async function bridgeInvoke<T>(method: string, params?: unknown): Promise
 }
 
 /**
- * 订阅 Shell 推送的自定义事件（`niuma:event`）。
+ * 订阅 Shell 推送的自定义事件（`ensis-ops:event`）。
  *
  * @param handler - 事件 detail 回调
  * @returns 调用后移除监听的取消函数
@@ -126,6 +126,6 @@ export function bridgeOnEvent(handler: (detail: unknown) => void): () => void {
   const listener = (e: Event) => {
     handler((e as CustomEvent).detail)
   }
-  globalThis.addEventListener('niuma:event', listener)
-  return () => globalThis.removeEventListener('niuma:event', listener)
+  globalThis.addEventListener('ensis-ops:event', listener)
+  return () => globalThis.removeEventListener('ensis-ops:event', listener)
 }

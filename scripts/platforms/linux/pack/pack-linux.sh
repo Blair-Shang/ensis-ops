@@ -10,9 +10,9 @@ ARCH="$(nm_detect_arch)"
 CONFIGURATION="Release"
 FORMAT="deb"
 OUTPUT_DIR=""
-PACKAGE_ID="niuma"
-VENDOR="NiuMa"
-INSTALL_ROOT="/opt/niuma"
+PACKAGE_ID="ensis-ops"
+VENDOR="ensis-ops"
+INSTALL_ROOT="/opt/ensis-ops"
 SKIP_WEB_BUILD="false"
 SKIP_SHELL_BUILD="false"
 
@@ -106,8 +106,8 @@ if [[ -f "$SHELL_BIN" ]]; then
     --dest "$PAYLOAD_ROOT" \
     --source "$SHELL_INSTALL" \
     --configuration "$CONFIGURATION"
-  cp "$SHELL_BIN" "$PAYLOAD_ROOT/niuma"
-  chmod 0755 "$PAYLOAD_ROOT/niuma"
+  cp "$SHELL_BIN" "$PAYLOAD_ROOT/ensis-ops"
+  chmod 0755 "$PAYLOAD_ROOT/ensis-ops"
   if [[ -f "$PAYLOAD_ROOT/chrome-sandbox" ]]; then
     chmod 4755 "$PAYLOAD_ROOT/chrome-sandbox"
   fi
@@ -121,18 +121,18 @@ else
   nm_die "shell binary missing at $SHELL_BIN"
 fi
 
-cp "$SCRIPT_DIR/templates/niuma.desktop" "$APP_DIR/niuma.desktop"
-cp "$REPO_ROOT/assets/brand/app-icon.svg" "$ICON_DIR/niuma.svg"
+cp "$SCRIPT_DIR/templates/ensis-ops.desktop" "$APP_DIR/ensis-ops.desktop"
+cp "$REPO_ROOT/assets/brand/app-icon.svg" "$ICON_DIR/ensis-ops.svg"
 
-cat > "$BIN_DIR/niuma" <<EOF
+cat > "$BIN_DIR/ensis-ops" <<EOF
 #!/usr/bin/env bash
 set -euo pipefail
 
 APP_ROOT="$INSTALL_ROOT"
-APP_BIN="\$APP_ROOT/niuma"
+APP_BIN="\$APP_ROOT/ensis-ops"
 
 if [[ ! -x "\$APP_BIN" ]]; then
-  echo "NiuMa binary not found: \$APP_BIN" >&2
+  echo "ensis-ops binary not found: \$APP_BIN" >&2
   echo "Please rebuild shell runtime and reinstall the package." >&2
   exit 1
 fi
@@ -142,7 +142,7 @@ export LD_LIBRARY_PATH="\$APP_ROOT\${LD_LIBRARY_PATH:+:\$LD_LIBRARY_PATH}"
 exec "\$APP_BIN" "\$@"
 EOF
 
-chmod 0755 "$BIN_DIR/niuma"
+chmod 0755 "$BIN_DIR/ensis-ops"
 
 bash "$REPO_ROOT/scripts/shared/package/stage-compliance.sh" "$PAYLOAD_ROOT"
 

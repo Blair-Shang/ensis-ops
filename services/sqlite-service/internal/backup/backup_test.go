@@ -5,7 +5,7 @@ import (
 	"path/filepath"
 	"testing"
 
-	"niuma/services/sqlite-service/internal/session"
+	"ensis-ops/services/sqlite-service/internal/session"
 )
 
 func TestCopyFile(t *testing.T) {

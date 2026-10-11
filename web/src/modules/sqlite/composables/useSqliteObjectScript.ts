@@ -3,7 +3,7 @@
  */
 import { computed, onUnmounted, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
-import { useRsToast, type RsContextMenuItem } from '@niuma/ui'
+import { useRsToast, type RsContextMenuItem } from 'ensis-ui'
 import { sqliteApi } from '@/api/sqlite'
 import { buildObjectScriptContextMenuItems } from '@/modules/database'
 import { useSqliteSqlEditor } from '@/modules/sqlite/composables/useSqliteSqlEditor'

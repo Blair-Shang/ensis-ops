@@ -2,7 +2,7 @@
  * 浏览结果列工厂：统一 LOB 摘要、禁编二进制、大字段 dialog 呈现。
  * 方言只补 headerTip / canEdit / 元数据长度等差异。
  */
-import type { RsTableColumn } from '@niuma/ui'
+import type { RsTableColumn } from 'ensis-ui'
 import type { BrowseDataRow } from '../types/browse-data'
 import {
   formatBrowseCellValue,

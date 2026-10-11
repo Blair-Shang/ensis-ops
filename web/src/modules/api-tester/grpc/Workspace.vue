@@ -2,7 +2,7 @@
 /**
  * gRPC unary。地址和服务方法在本页，发送走集合里的同一条请求。
  */
-import { RsButton, RsInput, RsLabel } from '@niuma/ui'
+import { RsButton, RsInput, RsLabel } from 'ensis-ui'
 import { computed } from 'vue'
 import { useI18n } from 'vue-i18n'
 import type { ApiRequest } from '../types'

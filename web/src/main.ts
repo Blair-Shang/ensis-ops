@@ -1,11 +1,11 @@
-import { setupMonacoWorkers } from '@niuma/ui'
+import { setupMonacoWorkers } from 'ensis-ui'
 // Monaco Worker 环境必须在任何编辑器实例创建前初始化
 setupMonacoWorkers()
 
 import { createApp, nextTick } from 'vue'
 import { createPinia, setActivePinia } from 'pinia'
-import '@niuma/ui/styles.css'
-import '@niuma/ui/brand-icons.css'
+import 'ensis-ui/styles.css'
+import 'ensis-ui/brand-icons.css'
 import '@/styles/tokens.css'
 import '@/styles/brand.css'
 
@@ -33,15 +33,15 @@ function isFileWorkbenchEntry(): boolean {
 if (import.meta.env.DEV) {
   globalThis.addEventListener('vite:preloadError', (event) => {
     event.preventDefault()
-    const g = globalThis as typeof globalThis & { __niumaVitePreloadReload?: boolean }
-    if (g.__niumaVitePreloadReload) {
+    const g = globalThis as typeof globalThis & { __ensisVitePreloadReload?: boolean }
+    if (g.__ensisVitePreloadReload) {
       // 依赖重优化连续失败时仍 reveal，避免 CEF 热重载后窗口一直 Conceal
       if (isBridgeAvailable()) {
         void windowApi.reveal()
       }
       return
     }
-    g.__niumaVitePreloadReload = true
+    g.__ensisVitePreloadReload = true
     globalThis.location.reload()
   })
 }

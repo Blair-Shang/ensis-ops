@@ -2,7 +2,7 @@
 /**
  * 按变量类型编辑值。日期、随机数、每次发送的 UUID 存成标记，发送时再展开。
  */
-import { RsButton, RsInput, RsSelect, type RsSelectOption } from '@niuma/ui'
+import { RsButton, RsInput, RsSelect, type RsSelectOption } from 'ensis-ui'
 import { computed, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import type { ApiVariableKind } from '../../types'

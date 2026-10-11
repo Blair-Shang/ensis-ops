@@ -5,8 +5,8 @@ import (
 	"strings"
 	"time"
 
-	"niuma/pkg/common/id"
-	"niuma/services/dameng-service/internal/session"
+	"ensis-ops/pkg/common/id"
+	"ensis-ops/services/dameng-service/internal/session"
 )
 
 type queryExplainParams struct {

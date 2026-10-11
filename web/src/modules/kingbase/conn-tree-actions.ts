@@ -1,7 +1,7 @@
 /**
  * Kingbase 树动作：对齐 Navicat / DBeaver / Vastbase 专业密度。
  */
-import { useRsToast } from '@niuma/ui'
+import { useRsToast } from 'ensis-ui'
 import type { KingbaseDdlAction } from '@/api/types/kingbase'
 import type { ConnResourcePath } from '@/modules/ops/conn-tree/types'
 import type { ConnItem } from '@/modules/ops/types'

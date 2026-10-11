@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { RsCodeEditor, RsEmpty, RsLoading } from '@niuma/ui'
+import { RsCodeEditor, RsEmpty, RsLoading } from 'ensis-ui'
 import { computed } from 'vue'
 import { useI18n } from 'vue-i18n'
 import type { FileDocument } from '@/modules/file-editor/types'

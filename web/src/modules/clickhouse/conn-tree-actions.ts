@@ -1,4 +1,4 @@
-import { useRsToast } from '@niuma/ui'
+import { useRsToast } from 'ensis-ui'
 import { useConnectionNavigation } from '@/modules/ops/composables/useConnectionNavigation'
 import { i18n } from '@/locale'
 import type { ConnOpenContext, ConnResourcePath } from '@/modules/ops/conn-tree/types'

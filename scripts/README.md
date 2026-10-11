@@ -54,7 +54,7 @@ Windows 使用 PowerShell（`.ps1`），Unix-like 使用 Bash（`.sh`）。`pack
 | `shared/package/stage-services.ps1` / `.sh` | 服务产物 stage 到壳层目录 |
 | `shared/package/stage-cef-runtime.sh` | Unix 打包时捆绑 CEF 运行时 |
 | `shared/package/stage-compliance.ps1` / `.sh` | 商用合规文件（CEF 许可、NOTICES、`version.json`） |
-| `shared/package/ci-prune-build-cache.sh` | 仅 `CI=true`：打包前删 niuma-ui/node_modules、Rust `target`、已 stage 的 CEF 发行包 |
+| `shared/package/ci-prune-build-cache.sh` | 仅 `CI=true`：打包前删 ensis-ui/node_modules、Rust `target`、已 stage 的 CEF 发行包 |
 | `shared/package/make-self-extracting-run.sh` | Linux/麒麟自解压 `.run` |
 | `shared/sign/sign-windows.ps1` | Authenticode（`CODESIGN_CERT`）；`REQUIRE_CODESIGN` 可强制） |
 | `shared/sign/codesign-macos.sh` | 从内到外 codesign + Hardened Runtime（不用 `--deep`） |
@@ -86,7 +86,7 @@ Windows 使用 PowerShell（`.ps1`），Unix-like 使用 Bash（`.sh`）。`pack
 
 ### 麒麟（`platforms/kylin/`）
 
-复用 Linux 构建与打包脚本，通过 `--platform kylin` 与包名 `niuma-kylin` 区分。
+复用 Linux 构建与打包脚本，通过 `--platform kylin` 与包名 `ensis-kylin` 区分。
 
 ### macOS（`platforms/macos/`）
 
@@ -116,11 +116,11 @@ pnpm version:sync          # 单独同步版本（build:web 已自动执行）
 
 | 平台 | 命令 | 主要产物 |
 |------|------|----------|
-| Windows x64 | `pnpm release:win` | `output/windows-x64/dir/` + `setup/NiuMa-*-windows-x64-Setup.exe` |
+| Windows x64 | `pnpm release:win` | `output/windows-x64/dir/` + `setup/ensis-ops-*-windows-x64-Setup.exe` |
 | Windows arm64 | `pnpm release:win:arm64` | 同上（arm64）；CEF 用 `windowsarm64` |
 | Linux x64 | `pnpm release:linux` | `.deb` + `Setup.run` + `Uninstall.run` |
 | Linux arm64 | `pnpm release:linux:arm64` | 同上 |
-| 麒麟 x64 | `pnpm release:kylin` | `niuma-kylin` 包 + 向导安装 |
+| 麒麟 x64 | `pnpm release:kylin` | `ensis-ops-kylin` 包 + 向导安装 |
 | 麒麟 arm64 | `pnpm release:kylin:arm64` | 同上 |
 | macOS x64 | `pnpm release:macos` | `.app` / `.dmg` + `Setup.pkg` |
 | macOS arm64 | `pnpm release:macos:arm64` | 同上 |
@@ -151,14 +151,14 @@ Unix 上 `build:services:linux` 等走 `bash scripts/entry/build.sh`，不再从
 ### 签名与静默安装
 
 ```powershell
-# Windows：签名 niuma.exe + Setup.exe；正式发版强制签名
+# Windows：签名 ensis-ops.exe + Setup.exe；正式发版强制签名
 $env:CODESIGN_CERT = "<thumbprint 或证书主题名>"
 $env:REQUIRE_CODESIGN = "1"
 pnpm pack:win
 pnpm pack:win:setup
 # 企业静默 / 仅当前用户：
-#   NiuMa-1.0.0-windows-x64-Setup.exe /VERYSILENT /SUPPRESSMSGBOXES /NORESTART /SP-
-#   NiuMa-1.0.0-windows-x64-Setup.exe /CURRENTUSER
+#   ensis-ops-2.0.0-windows-x64-Setup.exe /VERYSILENT /SUPPRESSMSGBOXES /NORESTART /SP-
+#   ensis-ops-2.0.0-windows-x64-Setup.exe /CURRENTUSER
 ```
 
 ```bash
@@ -176,7 +176,7 @@ pnpm release:macos
 # Linux：.deb 为主；可选 GPG。Setup.run 仅为向导外壳。
 export GPG_KEY_ID="..."
 pnpm pack:linux
-sudo dpkg -i output/linux-x64/deb/niuma_*_amd64.deb
+sudo dpkg -i output/linux-x64/deb/ensis-ops_*_amd64.deb
 sudo apt-get install -f   # 补依赖
 ```
 
@@ -190,13 +190,13 @@ sudo apt-get install -f   # 补依赖
 
 ## GitHub Actions 自动打包
 
-工作流：[.github/workflows/release.yml](../.github/workflows/release.yml)。推送到 `main` 且 changelog 有未发布条目时，或推送 `v*` tag 时，在对应 OS 的 GitHub 托管 runner 上跑 `release:*`，打包后校验 CEF 运行时（`resources.pak` 等），产物上传 Artifact。发版时只把用户安装包挂到 GitHub Release（`Setup.exe` / `.deb` / `Setup.run` / `.dmg` / `Setup.pkg`）。绿色目录里的 `niuma.exe`、服务进程、`Uninstall.run` 已打进安装包，不单独上架。
+工作流：[.github/workflows/release.yml](../.github/workflows/release.yml)。推送到 `main` 且 changelog 有未发布条目时，或推送 `v*` tag 时，在对应 OS 的 GitHub 托管 runner 上跑 `release:*`，打包后校验 CEF 运行时（`resources.pak` 等），产物上传 Artifact。发版时只把用户安装包挂到 GitHub Release（`Setup.exe` / `.deb` / `Setup.run` / `.dmg` / `Setup.pkg`）。绿色目录里的 `ensis-ops.exe`、服务进程、`Uninstall.run` 已打进安装包，不单独上架。
 
 | Runner | 命令 | 产物 |
 |--------|------|------|
-| `windows-2022` | `pnpm release:win` | `NiuMa-*-windows-x64-Setup.exe` |
-| `ubuntu-22.04` | `pnpm release:linux` | `niuma_*_amd64.deb` + `NiuMa-*-linux-x64-Setup.run` |
-| `macos-14`（arm64） | `pnpm release:macos:arm64` | `NiuMa-*-macos-arm64.dmg` + `NiuMa-*-macos-arm64-Setup.pkg` |
+| `windows-2022` | `pnpm release:win` | `ensis-ops-*-windows-x64-Setup.exe` |
+| `ubuntu-22.04` | `pnpm release:linux` | `ensis-ops_*_amd64.deb` + `ensis-ops-*-linux-x64-Setup.run` |
+| `macos-14`（arm64） | `pnpm release:macos:arm64` | `ensis-ops-*-macos-arm64.dmg` + `ensis-ops-*-macos-arm64-Setup.pkg` |
 
 Windows arm64 / Linux arm64 / 麒麟没有官方托管 runner，需自建后再扩矩阵。Linux / macOS 桌面运行链路仍未闭环，对应 job 可能失败；`fail-fast: false`，成功的平台仍会出包。
 
@@ -213,11 +213,11 @@ git push origin v1.1.7
 
 Actions → **Pack and Release** → Run workflow 只上传 Artifact，不创建 Release。`v*` 构建会校验 tag 与 `package.json` 版本一致。
 
-`@niuma/ui` 是同级私有仓（`link:../../niuma-ui`）。工作流会再 checkout `{owner}/niuma-ui`。请在本仓 Settings → Secrets 配置：
+`ensis-ui` 是同级私有仓（`link:../../ensis-ui`）。工作流会再 checkout `{owner}/ensis-ui`。请在本仓 Settings → Secrets 配置：
 
 | Secret | 用途 |
 |--------|------|
-| `NIUMA_UI_TOKEN` | 能读 `niuma-ui` 的 PAT（私有仓必填；同账号公开仓可省略） |
+| `ENSIS_UI_TOKEN` | 能读 `ensis-ui` 的 PAT（私有仓必填；同账号公开仓可省略） |
 | `WINDOWS_PFX_BASE64` / `WINDOWS_PFX_PASSWORD` | 可选，Windows Authenticode |
 | `MACOS_P12_BASE64` / `MACOS_P12_PASSWORD` | 可选，导入 Developer ID |
 | `CODESIGN_IDENTITY` | 可选，macOS `codesign` / `productsign` 证书名 |
@@ -225,7 +225,7 @@ Actions → **Pack and Release** → Run workflow 只上传 Artifact，不创建
 | `NOTARY_APPLE_ID` / `NOTARY_APP_PASSWORD` / `NOTARY_TEAM_ID` | 可选，公证 |
 | `GPG_KEY_ID` | 可选，Linux `.deb` 签名 |
 
-手动跑时可填 `niuma_ui_ref`（默认 `v1.1.11`，须与已发布的 niuma-ui tag 对齐）。
+手动跑时可填 `ensis_ui_ref`（默认 `v1.1.11`，须与已发布的 ensis-ui tag 对齐）。
 
 CEF 体积大：工作流在下载后立刻 `cache/save`（不等打包结束），缓存键只跟 `scripts/shared/setup/cef-pin.txt` 走。版本钉在该文件的 `cef_version`（不拉 Spotify 整份 index.json）；换官方构建时改 `cef_version` 并加 `cache_id`。入口脚本对整次下载做 3 次指数退避重试。
 

@@ -7,7 +7,7 @@
 #include "util/sql_literal.hpp"
 #include "util/stmt_guard.hpp"
 
-namespace niuma::oracle::meta {
+namespace ensisops::oracle::meta {
 namespace {
 
 void TrimTrailingWhitespace(std::string& s) {
@@ -145,4 +145,4 @@ bool FetchDbmsMetadataDdl(session::Session& session, const std::string& object_t
   return true;
 }
 
-}  // namespace niuma::oracle::meta
+}  // namespace ensisops::oracle::meta

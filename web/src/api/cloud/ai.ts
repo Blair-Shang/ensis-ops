@@ -1,6 +1,6 @@
 import { cloudFetch } from './client'
 
-/** 云端系统模型目录（登录后拉取，供本机写入 niuma-system）。 */
+/** 云端系统模型目录（登录后拉取，供本机写入 ensis-system）。 */
 export interface CloudAiCatalogModel {
   code: string
   label: string

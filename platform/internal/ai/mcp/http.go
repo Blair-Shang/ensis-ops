@@ -102,7 +102,7 @@ func (c *mcpHTTPClient) ensureSession(ctx context.Context) error {
 		"protocolVersion": "2024-11-05",
 		"capabilities":    map[string]any{},
 		"clientInfo": map[string]string{
-			"name":    "niuma-platform",
+			"name":    "ensis-platform",
 			"version": "0.1",
 		},
 	})

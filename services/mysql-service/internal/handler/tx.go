@@ -5,7 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 
-	"niuma/services/mysql-service/internal/session"
+	"ensis-ops/services/mysql-service/internal/session"
 )
 
 type txSessionParams struct {

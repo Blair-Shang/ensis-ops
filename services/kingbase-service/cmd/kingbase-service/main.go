@@ -1,4 +1,4 @@
-// Command kingbase-service 是 NiuMa 人大金仓能力服务（Layer 1）的独立进程入口。
+// Command kingbase-service 是 ensis-ops 人大金仓能力服务（Layer 1）的独立进程入口。
 //
 // 源码位于 services/kingbase-service/，与 platform-core 分离；契约见
 // docs/31-kingbase-module.md。本服务仅覆盖 KingbaseES，禁止与 vastbase-service 混用。
@@ -13,16 +13,16 @@ import (
 	"runtime"
 	"syscall"
 
-	"niuma/pkg/logutil"
-	"niuma/pkg/serviceipc/server"
-	"niuma/services/kingbase-service/internal/eventpub"
-	"niuma/services/kingbase-service/internal/handler"
-	"niuma/services/kingbase-service/internal/idgen"
+	"ensis-ops/pkg/logutil"
+	"ensis-ops/pkg/serviceipc/server"
+	"ensis-ops/services/kingbase-service/internal/eventpub"
+	"ensis-ops/services/kingbase-service/internal/handler"
+	"ensis-ops/services/kingbase-service/internal/idgen"
 )
 
 const (
-	windowsPipeAddr = `\\.\pipe\niuma.kingbase`
-	unixSocketName  = "niuma.kingbase.sock"
+	windowsPipeAddr = `\\.\pipe\ensis-ops.kingbase`
+	unixSocketName  = "ensis-ops.kingbase.sock"
 )
 
 func main() {

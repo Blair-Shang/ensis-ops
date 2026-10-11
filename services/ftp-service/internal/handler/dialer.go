@@ -5,7 +5,7 @@ import (
 	"net"
 	"time"
 
-	"niuma/pkg/netproxy"
+	"ensis-ops/pkg/netproxy"
 )
 
 // ProxyOptions 与 Web connection_options.proxy JSON 对齐。

@@ -1,13 +1,13 @@
 #include "lsp/oracle_parser.hpp"
 
-#include "niuma/sqllsp/heuristic.hpp"
+#include "ensisops/sqllsp/heuristic.hpp"
 #include "util/ident.hpp"
 
 #include <algorithm>
 #include <cctype>
 #include <string>
 
-namespace niuma::oracle::lsp {
+namespace ensisops::oracle::lsp {
 namespace {
 
 struct BuiltinFn {
@@ -230,9 +230,9 @@ const BuiltinFn* BuiltinFns(size_t& count) {
   return k;
 }
 
-std::vector<niuma::sqllsp::CompletionItem> CreateSnippets() {
-  using niuma::sqllsp::CompletionItem;
-  using niuma::sqllsp::kLspSnippet;
+std::vector<ensisops::sqllsp::CompletionItem> CreateSnippets() {
+  using ensisops::sqllsp::CompletionItem;
+  using ensisops::sqllsp::kLspSnippet;
   return {
       { "CREATE TABLE",
         kLspSnippet,
@@ -285,13 +285,13 @@ std::vector<niuma::sqllsp::CompletionItem> CreateSnippets() {
   };
 }
 
-bool ContainsKind(const std::vector<niuma::sqllsp::CompletionKind>& expect,
-                  niuma::sqllsp::CompletionKind kind) {
+bool ContainsKind(const std::vector<ensisops::sqllsp::CompletionKind>& expect,
+                  ensisops::sqllsp::CompletionKind kind) {
   return std::find(expect.begin(), expect.end(), kind) != expect.end();
 }
 
-void EnsureKinds(std::vector<niuma::sqllsp::CompletionKind>& expect,
-                 std::initializer_list<niuma::sqllsp::CompletionKind> kinds) {
+void EnsureKinds(std::vector<ensisops::sqllsp::CompletionKind>& expect,
+                 std::initializer_list<ensisops::sqllsp::CompletionKind> kinds) {
   for (auto k : kinds) {
     if (!ContainsKind(expect, k)) expect.push_back(k);
   }
@@ -310,9 +310,9 @@ std::vector<std::string> OracleParser::Functions() const {
   return out;
 }
 
-niuma::sqllsp::CompletionContext OracleParser::CompletionContext(
-    const std::string& text, niuma::sqllsp::Position pos) const {
-  auto cc = niuma::sqllsp::HeuristicCompletionContext(text, pos, KeywordList());
+ensisops::sqllsp::CompletionContext OracleParser::CompletionContext(
+    const std::string& text, ensisops::sqllsp::Position pos) const {
+  auto cc = ensisops::sqllsp::HeuristicCompletionContext(text, pos, KeywordList());
   cc.snippets = CreateSnippets();
 
   size_t n = 0;
@@ -320,9 +320,9 @@ niuma::sqllsp::CompletionContext OracleParser::CompletionContext(
   cc.functions.clear();
   cc.functions.reserve(n);
   for (size_t i = 0; i < n; ++i) {
-    niuma::sqllsp::CompletionItem item;
+    ensisops::sqllsp::CompletionItem item;
     item.label = fns[i].name;
-    item.kind = niuma::sqllsp::kLspFunction;
+    item.kind = ensisops::sqllsp::kLspFunction;
     item.detail = fns[i].detail ? fns[i].detail : "function";
     item.documentation = fns[i].doc ? fns[i].doc : "";
     if (fns[i].insert && fns[i].insert[0] != '\0') {
@@ -335,31 +335,31 @@ niuma::sqllsp::CompletionContext OracleParser::CompletionContext(
   }
 
   // Oracle 专用槽位：层次查询 / 窗口 / MERGE / MERGE
-  const int offset = niuma::sqllsp::OffsetFromPosition(text, pos);
+  const int offset = ensisops::sqllsp::OffsetFromPosition(text, pos);
   const int from = offset > 4096 ? offset - 4096 : 0;
   const std::string before =
       ToLowerAscii(text.substr(static_cast<size_t>(from), static_cast<size_t>(offset - from)));
 
   if (TrailingClause(before, {" connect by ", " start with ", " prior "})) {
-    cc.expect = {niuma::sqllsp::CompletionKind::Column, niuma::sqllsp::CompletionKind::Function,
-                 niuma::sqllsp::CompletionKind::Routine, niuma::sqllsp::CompletionKind::Keyword,
-                 niuma::sqllsp::CompletionKind::Schema};
+    cc.expect = {ensisops::sqllsp::CompletionKind::Column, ensisops::sqllsp::CompletionKind::Function,
+                 ensisops::sqllsp::CompletionKind::Routine, ensisops::sqllsp::CompletionKind::Keyword,
+                 ensisops::sqllsp::CompletionKind::Schema};
     cc.routine_filter = "function";
   } else if (TrailingClause(before, {" over ", " over(", " partition by ", " order by ", " group by "})) {
-    EnsureKinds(cc.expect, {niuma::sqllsp::CompletionKind::Column,
-                            niuma::sqllsp::CompletionKind::Function,
-                            niuma::sqllsp::CompletionKind::Keyword});
+    EnsureKinds(cc.expect, {ensisops::sqllsp::CompletionKind::Column,
+                            ensisops::sqllsp::CompletionKind::Function,
+                            ensisops::sqllsp::CompletionKind::Keyword});
     cc.routine_filter = "function";
   } else if (TrailingClause(before, {" returning "})) {
-    EnsureKinds(cc.expect, {niuma::sqllsp::CompletionKind::Column,
-                            niuma::sqllsp::CompletionKind::Keyword,
-                            niuma::sqllsp::CompletionKind::Function});
+    EnsureKinds(cc.expect, {ensisops::sqllsp::CompletionKind::Column,
+                            ensisops::sqllsp::CompletionKind::Keyword,
+                            ensisops::sqllsp::CompletionKind::Function});
   } else if (TrailingClause(before, {" using ", " merge "})) {
-    EnsureKinds(cc.expect, {niuma::sqllsp::CompletionKind::Table,
-                            niuma::sqllsp::CompletionKind::Schema,
-                            niuma::sqllsp::CompletionKind::Keyword});
+    EnsureKinds(cc.expect, {ensisops::sqllsp::CompletionKind::Table,
+                            ensisops::sqllsp::CompletionKind::Schema,
+                            ensisops::sqllsp::CompletionKind::Keyword});
   } else if (TrailingClause(before, {" fetch ", " fetch first ", " fetch next ", " offset "})) {
-    EnsureKinds(cc.expect, {niuma::sqllsp::CompletionKind::Keyword});
+    EnsureKinds(cc.expect, {ensisops::sqllsp::CompletionKind::Keyword});
   }
 
   return cc;
@@ -388,4 +388,4 @@ std::string OracleParser::QuoteIdent(const std::string& name) const {
   return util::QuoteIdent(name);
 }
 
-}  // namespace niuma::oracle::lsp
+}  // namespace ensisops::oracle::lsp

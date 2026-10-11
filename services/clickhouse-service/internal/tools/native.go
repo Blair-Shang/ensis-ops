@@ -5,7 +5,7 @@ import (
 	"regexp"
 	"strings"
 
-	"niuma/services/clickhouse-service/internal/session"
+	"ensis-ops/services/clickhouse-service/internal/session"
 )
 
 // prepareNativeConnect 校验会话是否可供本机 clickhouse-client 使用。

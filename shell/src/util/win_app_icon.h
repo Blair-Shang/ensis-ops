@@ -4,7 +4,7 @@
 #include <windows.h>
 #endif
 
-namespace niuma {
+namespace ensisops {
 
 /**
  * 将嵌入 exe 的应用图标设置到 Win32 窗口（标题栏 + 任务栏分组）。
@@ -23,4 +23,4 @@ void ApplyAppIconToWindow(void* hwnd);
 HICON LoadAppIcon(bool large);
 #endif
 
-}  // namespace niuma
+}  // namespace ensisops

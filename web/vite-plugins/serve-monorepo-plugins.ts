@@ -4,7 +4,7 @@ import type { Plugin } from 'vite'
 
 /**
  * 开发模式下将 monorepo `plugins/` 目录映射到 `/plugins/*`。
- * 与 CEF `app://niuma/plugins/` 路径对齐，供 dev:web 调试。
+ * 与 CEF `app://ensis-ops/plugins/` 路径对齐，供 dev:web 调试。
  *
  * @param pluginsRoot - 仓库根下 plugins 绝对路径
  */
@@ -12,7 +12,7 @@ export function serveMonorepoPlugins(pluginsRoot: string): Plugin {
   const root = path.normalize(pluginsRoot)
 
   return {
-    name: 'niuma-serve-plugins',
+    name: 'ensis-serve-plugins',
     configureServer(server) {
       server.middlewares.use('/plugins', (req, res, next) => {
         if (!req.url) {

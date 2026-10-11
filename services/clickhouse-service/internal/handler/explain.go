@@ -6,10 +6,10 @@ import (
 	"fmt"
 	"strings"
 
-	"niuma/pkg/common/id"
-	"niuma/services/clickhouse-service/internal/dialect"
-	"niuma/services/clickhouse-service/internal/explainbuild"
-	"niuma/services/clickhouse-service/internal/session"
+	"ensis-ops/pkg/common/id"
+	"ensis-ops/services/clickhouse-service/internal/dialect"
+	"ensis-ops/services/clickhouse-service/internal/explainbuild"
+	"ensis-ops/services/clickhouse-service/internal/session"
 )
 
 type queryExplainParams struct {

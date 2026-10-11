@@ -2,7 +2,7 @@
 /**
  * 环境 / 全局变量表：类型列写入 nm_api_variable.variable_kind。
  */
-import { RsButton, RsCheckbox, RsInput, RsSelect, type RsSelectOption } from '@niuma/ui'
+import { RsButton, RsCheckbox, RsInput, RsSelect, type RsSelectOption } from 'ensis-ui'
 import { computed } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { createId } from '@/utils/id'

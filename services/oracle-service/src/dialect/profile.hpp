@@ -4,7 +4,7 @@
 #include <string>
 #include <vector>
 
-namespace niuma::oracle::dialect {
+namespace ensisops::oracle::dialect {
 
 inline constexpr const char* kFamily = "oracle";
 
@@ -42,4 +42,4 @@ ServerProfile DefaultProfile();
 bool LooksLikeOracle(const std::string& banner);
 bool LooksLikeForeignEngine(const std::string& banner);
 
-}  // namespace niuma::oracle::dialect
+}  // namespace ensisops::oracle::dialect

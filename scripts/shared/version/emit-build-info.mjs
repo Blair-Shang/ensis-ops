@@ -2,7 +2,7 @@
 /**
  * 单一版本源：读取根 package.json，生成 build/version.json，
  * 同步 web 与 ssh-service / sftp-service Cargo.toml 版本字段。
- * niuma-ui 为独立仓与独立 SemVer，禁止改写其 package.json。
+ * ensis-ui 为独立仓与独立 SemVer，禁止改写其 package.json。
  */
 import { execSync } from 'node:child_process'
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs'
@@ -67,7 +67,7 @@ function publisherOf(pkg) {
   const author = pkg.author
   if (typeof author === 'string' && author.trim()) return author.trim()
   if (author && typeof author === 'object' && author.name) return String(author.name)
-  return 'NiuMa'
+  return 'ensis-ops'
 }
 
 function syncPackageVersion(relPath, version) {
@@ -99,10 +99,10 @@ assertReleaseTag(version)
 const buildId = getGitSha()
 const buildNumber = getCommitCount()
 const buildDate = new Date().toISOString()
-const channel = String(process.env.NIUMA_CHANNEL || 'stable').trim() || 'stable'
+const channel = String(process.env.ENSIS_CHANNEL || 'stable').trim() || 'stable'
 
 const info = {
-  name: rootPkg.name || 'niuma',
+  name: rootPkg.name || 'ensis-ops',
   version,
   channel,
   buildId,

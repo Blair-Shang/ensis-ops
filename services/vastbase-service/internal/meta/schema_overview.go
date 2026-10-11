@@ -9,7 +9,7 @@ import (
 
 	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgxpool"
-	"niuma/services/vastbase-service/internal/tree"
+	"ensis-ops/services/vastbase-service/internal/tree"
 )
 
 // SchemaOverviewResult 是 schema 概览（属性 + 分类对象数量）。

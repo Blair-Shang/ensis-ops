@@ -4,7 +4,7 @@ import (
 	"database/sql"
 	"testing"
 
-	"niuma/platform/internal/store"
+	"ensis-ops/platform/internal/store"
 
 	_ "modernc.org/sqlite"
 )
@@ -50,7 +50,7 @@ func TestVaultStore_SetGetDelete(t *testing.T) {
 	v := store.NewVaultStore(db, keyring)
 
 	const credID = "abc123"
-	svc := "NiuMa/credential/" + credID
+	svc := "ensis-ops/credential/" + credID
 
 	// 不存在时应返回 not found
 	got, ok, err := v.GetSecret(svc, "secret")
@@ -90,7 +90,7 @@ func TestVaultStore_MasterKeyPersisted(t *testing.T) {
 	keyring := newMemSecretStore()
 
 	const credID = "persist1"
-	svc := "NiuMa/credential/" + credID
+	svc := "ensis-ops/credential/" + credID
 	seedCredentialRow(t, db, credID)
 
 	v1 := store.NewVaultStore(db, keyring)
@@ -128,4 +128,27 @@ func (m *memSecretStore) GetSecret(service, account string) (string, bool, error
 func (m *memSecretStore) DeleteSecret(service, account string) error {
 	delete(m.data, service+":"+account)
 	return nil
+}
+
+func TestAdoptLegacyMasterKey(t *testing.T) {
+	ring := newMemSecretStore()
+	if err := ring.SetSecret("NiuMa/master-vault", "key", "b64key"); err != nil {
+		t.Fatal(err)
+	}
+	adopted, err := store.AdoptLegacyMasterKey(ring)
+	if err != nil || !adopted {
+		t.Fatalf("adopt = (%v, %v)", adopted, err)
+	}
+	got, ok, err := ring.GetSecret("ensis-ops/master-vault", "key")
+	if err != nil || !ok || got != "b64key" {
+		t.Fatalf("new key = (%q, %v, %v)", got, ok, err)
+	}
+	old, ok, err := ring.GetSecret("NiuMa/master-vault", "key")
+	if err != nil || !ok || old != "b64key" {
+		t.Fatalf("legacy key should remain, got (%q, %v, %v)", old, ok, err)
+	}
+	again, err := store.AdoptLegacyMasterKey(ring)
+	if err != nil || again {
+		t.Fatalf("second adopt = (%v, %v)", again, err)
+	}
 }

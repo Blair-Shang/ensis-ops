@@ -13,7 +13,7 @@
 
 ## 1. 设计目标
 
-NiuMa 是 **CEF 桌面运维工具**，Shell 布局需满足：
+ensis-ops 是 **CEF 桌面运维工具**，Shell 布局需满足：
 
 - 多模块（SSH、数据库、API、AI…）统一入口
 - 多 Tab 并行（多个 SSH 会话、多个 SQL 窗口）
@@ -36,7 +36,7 @@ NiuMa 是 **CEF 桌面运维工具**，Shell 布局需满足：
 
 ### VS Code 对照
 
-| VS Code | NiuMa | 组件 |
+| VS Code | ensis-ops | 组件 |
 |---------|-------|------|
 | Activity Bar | 领域切换（运维/数据/开发/AI/媒体/扩展） | `ActivityBar.vue` |
 | Primary Side Bar | 当前领域下的模块列表 | `SideNav.vue` |
@@ -141,7 +141,7 @@ SideNav 项来自 **模块 registry**（Pinia `useModuleStore`），不由各模
 
 ```ts
 interface ModuleNavItem {
-  moduleId: string           // com.niuma.ssh
+  moduleId: string           // com.ensisops.ssh
   labelKey: string           // i18n key
   icon: string               // lucide 图标名
   routePath: string

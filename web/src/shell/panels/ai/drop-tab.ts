@@ -4,7 +4,7 @@
  */
 import { useAiStore } from '@/stores/ai'
 import { useTabStore } from '@/stores/tab'
-import { draggingTabId, endTabDrag, isNiumaTabDrag, NIUMA_TAB_MIME } from '@/shell/workspace/tab-dnd'
+import { draggingTabId, endTabDrag, isNiumaTabDrag, ENSIS_TAB_MIME } from '@/shell/workspace/tab-dnd'
 import { attachmentFromTab } from './context-pack'
 
 /** 把拖入的工作区页签变成 Composer @ 引用；成功则结束页签拖拽。 */
@@ -12,7 +12,7 @@ export function acceptDroppedTab(event: DragEvent): boolean {
   if (!isNiumaTabDrag(event)) {
     return false
   }
-  const fromMime = event.dataTransfer?.getData(NIUMA_TAB_MIME)?.trim()
+  const fromMime = event.dataTransfer?.getData(ENSIS_TAB_MIME)?.trim()
   const tabId = draggingTabId.value || fromMime || ''
   if (!tabId) {
     return false

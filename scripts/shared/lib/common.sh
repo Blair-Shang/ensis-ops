@@ -106,16 +106,16 @@ nm_shell_exe_path() {
   local build_dir config_lower
   build_dir="$(nm_shell_build_dir "$repo_root" "$platform" "$arch")"
   if [[ "$platform" == "windows" ]]; then
-    printf '%s/%s/niuma.exe\n' "$build_dir" "$configuration"
+    printf '%s/%s/ensis-ops.exe\n' "$build_dir" "$configuration"
     return
   fi
   config_lower="$(printf '%s' "$configuration" | tr '[:upper:]' '[:lower:]')"
-  if [[ -f "$build_dir/niuma" ]]; then
-    printf '%s/niuma\n' "$build_dir"
-  elif [[ -f "$build_dir/$config_lower/niuma" ]]; then
-    printf '%s/%s/niuma\n' "$build_dir" "$config_lower"
+  if [[ -f "$build_dir/ensis-ops" ]]; then
+    printf '%s/ensis-ops\n' "$build_dir"
+  elif [[ -f "$build_dir/$config_lower/ensis-ops" ]]; then
+    printf '%s/%s/ensis-ops\n' "$build_dir" "$config_lower"
   else
-    printf '%s/niuma\n' "$build_dir"
+    printf '%s/ensis-ops\n' "$build_dir"
   fi
 }
 
@@ -214,7 +214,7 @@ nm_go_ldflags() {
   if [[ "$configuration" == "Release" ]]; then
     strip="-s -w"
   fi
-  inject="-X niuma/pkg/buildinfo.Version=$version -X niuma/pkg/buildinfo.BuildID=$build_id -X niuma/pkg/buildinfo.BuildDate=$build_date"
+  inject="-X ensis-ops/pkg/buildinfo.Version=$version -X ensis-ops/pkg/buildinfo.BuildID=$build_id -X ensis-ops/pkg/buildinfo.BuildDate=$build_date"
   if [[ -n "$strip" ]]; then
     printf '%s %s\n' "$strip" "$inject"
   else
@@ -228,5 +228,5 @@ nm_cmake_version_args() {
   local version build_id
   version="$(nm_build_info_value "$repo_root" ".version")"
   build_id="$(nm_build_info_value "$repo_root" ".buildId")"
-  printf -- '-DNIUMMA_APP_VERSION=%s -DNIUMMA_BUILD_ID=%s\n' "$version" "$build_id"
+  printf -- '-DENSIS_APP_VERSION=%s -DENSIS_BUILD_ID=%s\n' "$version" "$build_id"
 }

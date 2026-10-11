@@ -1,0 +1,11 @@
+[package]
+name = "ensis-netproxy"
+description = "ensis-ops 能力服务共用 HTTP CONNECT / SOCKS5 代理拨号"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+
+[dependencies]
+serde = { workspace = true }
+thiserror = { workspace = true }
+tokio = { workspace = true }

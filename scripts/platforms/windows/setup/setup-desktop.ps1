@@ -49,7 +49,7 @@ function Install-RustToolchain {
     if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
 }
 
-Write-Host 'NiuMa desktop setup' -ForegroundColor Cyan
+Write-Host 'ensis-ops desktop setup' -ForegroundColor Cyan
 
 if (-not (Test-CMake)) {
     Write-Host 'Installing CMake (winget)...' -ForegroundColor Yellow

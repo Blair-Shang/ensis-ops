@@ -18,7 +18,7 @@ const extensionUiEntryById = new Map<string, string>()
  * 由模块 id 生成 Vue Router 路由 name。
  *
  * @param moduleId - 插件或内置模块 id
- * @returns 形如 `module:com.niuma.example.hello` 的路由名
+ * @returns 形如 `module:com.ensisops.example.hello` 的路由名
  */
 export function routeNameFromModuleId(moduleId: string): string {
   return `module:${moduleId}`

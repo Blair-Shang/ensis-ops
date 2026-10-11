@@ -1,12 +1,12 @@
 #include "browser/handlers/permission_handler.h"
 
-#if NIUMMA_WITH_CEF
+#if ENSIS_WITH_CEF
 #include "include/internal/cef_types.h"
 #endif
 
-namespace niuma {
+namespace ensisops {
 
-#if NIUMMA_WITH_CEF
+#if ENSIS_WITH_CEF
 
 namespace {
 
@@ -18,7 +18,7 @@ bool ShouldAutoGrant(uint32_t requested_permissions) {
 
 }  // namespace
 
-bool NiuMaPermissionHandler::OnShowPermissionPrompt(
+bool EnsisPermissionHandler::OnShowPermissionPrompt(
     CefRefPtr<CefBrowser> browser,
     uint64_t prompt_id,
     const CefString& requesting_origin,
@@ -36,4 +36,4 @@ bool NiuMaPermissionHandler::OnShowPermissionPrompt(
 
 #endif
 
-}  // namespace niuma
+}  // namespace ensisops

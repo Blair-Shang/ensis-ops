@@ -11,7 +11,7 @@ import {
   RsInput,
   RsLoading,
   RsPopover,
-} from '@niuma/ui'
+} from 'ensis-ui'
 import type { ObjectCatalogCategoryTab, ObjectCatalogShellLabels } from '../types/object-catalog'
 
 const props = withDefaults(

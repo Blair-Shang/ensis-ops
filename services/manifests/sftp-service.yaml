@@ -1,4 +1,4 @@
-id: com.niuma.sftp
+id: com.ensisops.sftp
 name: SFTP Service
 version: 0.1.0
 bridge:
@@ -10,17 +10,17 @@ session:
     - session.open
     - session.test
 runtime:
-  executable: bin/niuma-sftp-service.exe
-  executable_windows: bin/niuma-sftp-service.exe
-  executable_unix: bin/niuma-sftp-service
+  executable: bin/ensis-sftp-service.exe
+  executable_windows: bin/ensis-sftp-service.exe
+  executable_unix: bin/ensis-sftp-service
   lang: rust
 ipc:
   transport: named_pipe
   transport_windows: named_pipe
   transport_unix: unix_socket
-  address: '\\.\pipe\niuma.sftp'
-  address_windows: '\\.\pipe\niuma.sftp'
-  address_unix: '/tmp/niuma.sftp.sock'
+  address: '\\.\pipe\ensis-ops.sftp'
+  address_windows: '\\.\pipe\ensis-ops.sftp'
+  address_unix: '/tmp/ensis-ops.sftp.sock'
   protocol: length_prefixed_json
 lifecycle:
   startup: lazy

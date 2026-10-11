@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"strings"
 
-	"niuma/services/sqlite-service/internal/session"
+	"ensis-ops/services/sqlite-service/internal/session"
 )
 
 // applyHostAddressFallback：platform 注入的内联参数用 hostAddress 承载文件路径，

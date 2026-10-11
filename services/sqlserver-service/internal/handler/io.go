@@ -6,8 +6,8 @@ import (
 	"fmt"
 	"strings"
 
-	"niuma/services/sqlserver-service/internal/dataio"
-	"niuma/services/sqlserver-service/internal/session"
+	"ensis-ops/services/sqlserver-service/internal/dataio"
+	"ensis-ops/services/sqlserver-service/internal/session"
 )
 
 func (d *Dispatcher) resolveTaskConnect(raw json.RawMessage, sessionID, database string) (session.ConnectParams, string, error) {

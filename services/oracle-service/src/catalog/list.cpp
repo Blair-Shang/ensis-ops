@@ -7,7 +7,7 @@
 
 #include <cctype>
 
-namespace niuma::oracle::catalog {
+namespace ensisops::oracle::catalog {
 
 ListParams ListParams::FromJson(const nlohmann::json& j) {
   ListParams p;
@@ -154,4 +154,4 @@ nlohmann::json ListColumns(session::Session& session, const ListParams& params, 
   return out;
 }
 
-}  // namespace niuma::oracle::catalog
+}  // namespace ensisops::oracle::catalog

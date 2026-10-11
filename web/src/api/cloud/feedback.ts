@@ -54,7 +54,7 @@ export async function submitFeedback(
       title: input.title,
       body: input.body,
       contact: input.contact || '',
-      product: input.product || 'niuma',
+      product: input.product || 'ensis-ops',
       clientVersion: input.clientVersion || '',
       images: input.images || [],
     }),

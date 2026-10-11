@@ -21,7 +21,7 @@
 
 | 层 | 必须独立 | 允许共用（仅框架，无引擎业务） |
 |----|----------|--------------------------------|
-| 进程 / 二进制 | `niuma-dameng-service` 独享 | — |
+| 进程 / 二进制 | `ensis-dameng-service` 独享 | — |
 | manifest / namespace / kind | `dameng` 独享 | — |
 | Go 模块 | `services/dameng-service/` 自有 `go.mod` + `internal/*` | `packages/go/serviceipc`、`tunnel`、`logutil` 等**无引擎语义**包 |
 | Web 业务模块 | `web/src/modules/dameng/`、`api/dameng.ts` | `modules/database/*` 壳、`sql-editor` 编排（只认 family/Cap） |
@@ -61,12 +61,12 @@
 
 ### 1.1 架构对齐
 
-| 能力层 | 参考 | NiuMa 做法 |
+| 能力层 | 参考 | ensis-ops 做法 |
 |--------|------|-----------|
 | GUI / 对象树 / SQL | 达梦管理工具 / DBeaver / Navicat | Vue + Monaco + Go 能力服务 |
 | 连接与查询 | DM 协议（常用端口 **5236**） | **Go + 选定驱动（见 §1.3）** |
 | 方言差异 | 客户端能力探测 | **DialectFamily + CapabilitySet** |
-| 安装包 | 厂商 JDBC IDE | 仅 `niuma-dameng-service`（+ 按需随包厂商运行时） |
+| 安装包 | 厂商 JDBC IDE | 仅 `ensis-dameng-service`（+ 按需随包厂商运行时） |
 
 ### 1.2 关键决策
 
@@ -205,7 +205,7 @@ flowchart TD
 ┌ Layer 4 ─ Web ────────────────────────────────────────────┐
 │ web/src/modules/dameng/                                    │
 │   连接表单 · 树 Provider · Query · 对象面板                 │
-│   ↑ bridgeInvoke(dameng.*)    ↑ bridgeOnEvent(niuma:event) │
+│   ↑ bridgeInvoke(dameng.*)    ↑ bridgeOnEvent(ensis-ops:event) │
 └───┼───────────────────────────┼────────────────────────────┘
     │ cefQuery                  │ PostMessage
 ┌ Layer 3 ─ C++ Shell ──────────┴────────────────────────────┐
@@ -288,7 +288,7 @@ web/src/api/
 | host / port | `5236` | 直连或隧道对端 |
 | user / password | — | Vault 注入；用户常对应 schema |
 | schema / database | 空 | 默认 schema（登录用户）；空则连上后用当前用户 |
-| appName | `NiuMa` | 会话应用名（若驱动支持） |
+| appName | `ensis-ops` | 会话应用名（若驱动支持） |
 | ssl_mode | `disable` | 按驱动能力：`disable` / `require` / …；独立 SSL Tab |
 | ssl_ca / ssl_cert / ssl_key | 空 | PEM；能力不足时 UI 隐藏并文档说明 |
 | tunnel | SSH 跳板 | 复用 platform 公共 tunnel |
@@ -442,7 +442,7 @@ res:{profileId}:schema:{schema}:procedure:{name}
 ## 8. manifest 草案
 
 ```yaml
-id: com.niuma.dameng
+id: com.ensisops.dameng
 name: Dameng Service
 version: 0.1.0
 bridge:
@@ -454,15 +454,15 @@ session:
     - session.open
     - session.test
 runtime:
-  executable: bin/niuma-dameng-service.exe
-  executable_windows: bin/niuma-dameng-service.exe
-  executable_unix: bin/niuma-dameng-service
+  executable: bin/ensis-dameng-service.exe
+  executable_windows: bin/ensis-dameng-service.exe
+  executable_unix: bin/ensis-dameng-service
   lang: go
 ipc:
   transport_windows: named_pipe
   transport_unix: unix_socket
-  address_windows: '\\.\pipe\niuma.dameng'
-  address_unix: '/tmp/niuma.dameng.sock'
+  address_windows: '\\.\pipe\ensis-ops.dameng'
+  address_unix: '/tmp/ensis-ops.dameng.sock'
   protocol: length_prefixed_json
 lifecycle:
   startup: lazy

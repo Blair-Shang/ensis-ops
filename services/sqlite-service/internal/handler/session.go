@@ -6,8 +6,8 @@ import (
 	"fmt"
 	"strings"
 
-	"niuma/services/sqlite-service/internal/dialect"
-	"niuma/services/sqlite-service/internal/session"
+	"ensis-ops/services/sqlite-service/internal/dialect"
+	"ensis-ops/services/sqlite-service/internal/session"
 )
 
 func (d *Dispatcher) sessionOpen(ctx context.Context, req Request) Response {

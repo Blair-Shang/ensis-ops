@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { RsInput, RsLabel, RsSelect, RsTooltip } from '@niuma/ui'
-import type { RsSelectOptions } from '@niuma/ui'
+import { RsInput, RsLabel, RsSelect, RsTooltip } from 'ensis-ui'
+import type { RsSelectOptions } from 'ensis-ui'
 import { computed } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { DEFAULT_KINGBASE_OPTIONS } from '@/api/types/kingbase'

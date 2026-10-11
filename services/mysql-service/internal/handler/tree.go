@@ -5,8 +5,8 @@ import (
 	"encoding/json"
 	"fmt"
 
-	"niuma/services/mysql-service/internal/session"
-	"niuma/services/mysql-service/internal/tree"
+	"ensis-ops/services/mysql-service/internal/session"
+	"ensis-ops/services/mysql-service/internal/tree"
 )
 
 type treeListParams struct {

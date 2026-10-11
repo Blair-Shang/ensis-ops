@@ -1,9 +1,9 @@
-#include <niuma/serviceipc/event.hpp>
-#include <niuma/serviceipc/frame.hpp>
+#include <ensisops/serviceipc/event.hpp>
+#include <ensisops/serviceipc/frame.hpp>
 
 #include <string>
 
-#if defined(NIUMA_SERVICEIPC_WIN)
+#if defined(ENSIS_SERVICEIPC_WIN)
 #ifndef WIN32_LEAN_AND_MEAN
 #define WIN32_LEAN_AND_MEAN
 #endif
@@ -16,17 +16,17 @@
 #include <cstdlib>
 #endif
 
-namespace niuma::serviceipc {
+namespace ensisops::serviceipc {
 
 std::string EventIngestAddress() {
-#if defined(NIUMA_SERVICEIPC_WIN)
-  return R"(\\.\pipe\niuma.platform.eventin)";
+#if defined(ENSIS_SERVICEIPC_WIN)
+  return R"(\\.\pipe\ensis-ops.platform.eventin)";
 #else
   const char* tmp = std::getenv("TMPDIR");
   if (tmp == nullptr || tmp[0] == '\0') {
     tmp = "/tmp";
   }
-  return std::string(tmp) + "/niuma.platform.eventin.sock";
+  return std::string(tmp) + "/ensis-ops.platform.eventin.sock";
 #endif
 }
 
@@ -39,7 +39,7 @@ bool PublishEvent(std::string_view json_payload) {
     return false;
   }
 
-#if defined(NIUMA_SERVICEIPC_WIN)
+#if defined(ENSIS_SERVICEIPC_WIN)
   const std::string addr = EventIngestAddress();
   HANDLE pipe = CreateFileA(addr.c_str(), GENERIC_WRITE, 0, nullptr, OPEN_EXISTING, 0, nullptr);
   if (pipe == INVALID_HANDLE_VALUE) {
@@ -88,4 +88,4 @@ bool PublishEvent(std::string_view json_payload) {
 #endif
 }
 
-}  // namespace niuma::serviceipc
+}  // namespace ensisops::serviceipc

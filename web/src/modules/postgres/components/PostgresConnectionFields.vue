@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { RsInput, RsLabel, RsTooltip } from '@niuma/ui'
+import { RsInput, RsLabel, RsTooltip } from 'ensis-ui'
 import { useI18n } from 'vue-i18n'
 import { DEFAULT_POSTGRES_OPTIONS } from '@/api/types/postgres'
 import type { ConnectionFormState } from '@/modules/ops/composables/useConnectionProfiles'

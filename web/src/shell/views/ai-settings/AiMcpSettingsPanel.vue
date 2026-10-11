@@ -12,8 +12,8 @@ import {
   RsInput,
   RsSelect,
   RsTooltip,
-} from '@niuma/ui'
-import type { RsSelectOption } from '@niuma/ui'
+} from 'ensis-ui'
+import type { RsSelectOption } from 'ensis-ui'
 import { computed, onMounted, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { aiApi } from '@/api/ai'

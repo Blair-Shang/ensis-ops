@@ -7,11 +7,11 @@ import (
 	"fmt"
 	"strings"
 
-	"niuma/pkg/sqllsp"
-	"niuma/services/sqlserver-service/internal/meta"
-	"niuma/services/sqlserver-service/internal/session"
-	"niuma/services/sqlserver-service/internal/sqlserverparser"
-	"niuma/services/sqlserver-service/internal/tree"
+	"ensis-ops/pkg/sqllsp"
+	"ensis-ops/services/sqlserver-service/internal/meta"
+	"ensis-ops/services/sqlserver-service/internal/session"
+	"ensis-ops/services/sqlserver-service/internal/sqlserverparser"
+	"ensis-ops/services/sqlserver-service/internal/tree"
 )
 
 const (

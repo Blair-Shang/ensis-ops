@@ -3,7 +3,7 @@
  * 结构化查询/诊断结果卡（围栏 ```result / ```query-result）。
  */
 import { computed } from 'vue'
-import { RsIcon } from '@niuma/ui'
+import { RsIcon } from 'ensis-ui'
 import { useI18n } from 'vue-i18n'
 
 const props = defineProps<{

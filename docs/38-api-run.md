@@ -8,7 +8,7 @@
 
 ## 1. 目标
 
-为 NiuMa API 模块预留**批量执行 / 压测**扩展口，对齐 Postman Collection Runner 与 Apifox 自动化测试的**执行面**；不引入脚本沙箱或云端调度（本地 Mock 见 [39](./39-api-mock.md)）。
+为 ensis-ops API 模块预留**批量执行 / 压测**扩展口，对齐 Postman Collection Runner 与 Apifox 自动化测试的**执行面**；不引入脚本沙箱或云端调度（本地 Mock 见 [39](./39-api-mock.md)）。
 
 **P1 只做：**
 
@@ -26,7 +26,7 @@
 
 ## 2. 与 Postman / Apifox 对照
 
-| 能力 | Postman | Apifox | NiuMa |
+| 能力 | Postman | Apifox | ensis-ops |
 |------|---------|--------|-------|
 | Collection Runner | 顺序 / 迭代 | 测试场景 / 步骤 | P4：`runProfiles` |
 | 并发用户数 | Newman CLI | 性能测试 | P4：`concurrency` |

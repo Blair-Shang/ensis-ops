@@ -7,8 +7,8 @@ import (
 	"strings"
 	"time"
 
-	"niuma/pkg/common/id"
-	"niuma/services/sqlserver-service/internal/session"
+	"ensis-ops/pkg/common/id"
+	"ensis-ops/services/sqlserver-service/internal/session"
 )
 
 type queryExplainParams struct {

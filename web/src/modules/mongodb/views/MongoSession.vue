@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { RsIcon, RsLoading, useRsToast } from '@niuma/ui'
+import { RsIcon, RsLoading, useRsToast } from 'ensis-ui'
 import { computed, defineAsyncComponent, onMounted, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { connectionApi } from '@/api'
@@ -91,9 +91,9 @@ function isChunkLoadError(error: unknown): boolean {
 }
 
 function reloadOnStaleChunk(): void {
-  const g = globalThis as typeof globalThis & { __niumaVitePreloadReload?: boolean }
-  if (g.__niumaVitePreloadReload) return
-  g.__niumaVitePreloadReload = true
+  const g = globalThis as typeof globalThis & { __ensisVitePreloadReload?: boolean }
+  if (g.__ensisVitePreloadReload) return
+  g.__ensisVitePreloadReload = true
   globalThis.location.reload()
 }
 

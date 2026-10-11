@@ -6,8 +6,8 @@ import (
 	"fmt"
 	"strings"
 
-	"niuma/services/clickhouse-service/internal/ddl"
-	"niuma/services/clickhouse-service/internal/dialect"
+	"ensis-ops/services/clickhouse-service/internal/ddl"
+	"ensis-ops/services/clickhouse-service/internal/dialect"
 )
 
 func (d *Dispatcher) ddlDesignPreview(_ context.Context, req Request) Response {

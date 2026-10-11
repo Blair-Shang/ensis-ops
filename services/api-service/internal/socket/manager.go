@@ -8,8 +8,8 @@ import (
 	"sync"
 	"time"
 
-	"niuma/pkg/common/id"
-	"niuma/services/api-service/internal/codec"
+	"ensis-ops/pkg/common/id"
+	"ensis-ops/services/api-service/internal/codec"
 )
 
 // Emitter 把套接字事件交给 Platform 事件入口。

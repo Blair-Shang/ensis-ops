@@ -2,7 +2,7 @@
 
 #include <string>
 
-namespace niuma {
+namespace ensisops {
 
 /** Web 侧 shell.window.open 与主窗口启动共用的创建参数 */
 struct WindowCreateOptions {
@@ -28,7 +28,7 @@ struct WindowCreateOptions {
   int min_height = 300;
 };
 
-#if NIUMMA_WITH_CEF
+#if ENSIS_WITH_CEF
 
 /**
  * Shell 管理的顶层 CEF 窗口角色。
@@ -51,4 +51,4 @@ enum class WindowKind {
 
 #endif
 
-}  // namespace niuma
+}  // namespace ensisops

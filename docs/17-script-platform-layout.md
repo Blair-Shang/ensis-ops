@@ -228,7 +228,7 @@ package.json -> scripts/entry/* -> scripts/platforms/windows/* 或 scripts/share
 - `scripts/shared/build/build-services.ps1` / `scripts/shared/build/build-services.sh` 是**真实实现**
 - 服务构建已统一接受 `platform + arch + configuration`
 - 服务矩阵产物目录统一为 `services/bin/<platform>-<arch>/`
-- 壳层矩阵产物目录统一为 `build/shell-<platform>-<arch>/`（Windows 为 `<Configuration>/niuma.exe`）
+- 壳层矩阵产物目录统一为 `build/shell-<platform>-<arch>/`（Windows 为 `<Configuration>/ensis-ops.exe`）
 - 打包默认输出目录统一为 `output/<platform>-<arch>/<format>/`
 - 当前 Windows 主机为兼容现有 `dev/build-shell` 链路，会额外同步一份到平铺的 `services/bin/*.exe` 与 `build/shell/<Configuration>/`
 - `scripts/shared/tasks/stop-services.ps1` 是**真实实现**
@@ -311,7 +311,7 @@ output/
 - 接入真实 CEF / Chromium 运行时下载
 - 接入真实 shell 构建命令
 - 已支持 `.deb` 目录组装，并在存在 `dpkg-deb` 时输出 `.deb`
-- 已支持 Unix 版 `services/bin/niuma-*` 构建与 stage
+- 已支持 Unix 版 `services/bin/ensis-*` 构建与 stage
 - 继续补 `rpm` / `AppImage`
 
 ### 9.2 麒麟
@@ -372,7 +372,7 @@ output/
 优先从这些脚本中抽：
 
 - `build-services.ps1`
-- `stop-niuma-services.ps1`
+- `stop-ensis-services.ps1`
 - `stage-services.ps1`
 - 壳层构建中的通用辅助函数（若未来 Linux/macOS 复用）
 - 开发运行中的平台无关辅助逻辑（如日志、Vite 就绪探测）
@@ -401,7 +401,7 @@ scripts/shared/lib/
 
 ## 11. 对当前仓库的建议结论
 
-NiuMa 最合理的脚本体系是：
+ensis-ops 最合理的脚本体系是：
 
 - `scripts/entry/`：统一入口
 - `scripts/shared/`：通用逻辑

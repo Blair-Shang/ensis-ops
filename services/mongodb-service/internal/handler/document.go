@@ -5,7 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 
-	"niuma/services/mongodb-service/internal/session"
+	"ensis-ops/services/mongodb-service/internal/session"
 )
 
 type documentScopeParams struct {

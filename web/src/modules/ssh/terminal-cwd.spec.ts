@@ -19,7 +19,7 @@ describe('terminal-cwd', () => {
 
   it('parses OSC 7 file URLs', () => {
     expect(parseOsc7Payload('file://host/var/www')).toBe('/var/www')
-    expect(parseOsc7Payload('file:///home/niuma')).toBe('/home/niuma')
+    expect(parseOsc7Payload('file:///home/ensis-ops')).toBe('/home/ensis-ops')
     expect(parseOsc7Payload('file://localhost/tmp/a%20b')).toBe('/tmp/a b')
     expect(parseOsc7Payload('https://example.com')).toBeNull()
   })
@@ -31,17 +31,17 @@ describe('terminal-cwd', () => {
   })
 
   it('extracts paths from common prompts', () => {
-    expect(extractPromptPath('niuma@box:/var/www$')).toBe('/var/www')
+    expect(extractPromptPath('ensis-ops@box:/var/www$')).toBe('/var/www')
     expect(extractPromptPath('root@box:~/src# ls')).toBe('~/src')
     expect(extractPromptPath('[root@localhost /etc]#')).toBe('/etc')
-    expect(extractPromptPath('[niuma@box ~/code]$ make')).toBe('~/code')
-    expect(extractPromptPath('(base) niuma@box:/opt$')).toBe('/opt')
-    expect(extractPromptPath('[niuma@box src]$')).toBeNull()
+    expect(extractPromptPath('[ensis-ops@box ~/code]$ make')).toBe('~/code')
+    expect(extractPromptPath('(base) ensis-ops@box:/opt$')).toBe('/opt')
+    expect(extractPromptPath('[ensis-ops@box src]$')).toBeNull()
   })
 
   it('joins tilde against SFTP home', () => {
-    expect(joinHomeRelative('/home/niuma', '~')).toBe('/home/niuma')
-    expect(joinHomeRelative('/home/niuma', '~/src')).toBe('/home/niuma/src')
-    expect(joinHomeRelative('/home/niuma/', '~/a/b')).toBe('/home/niuma/a/b')
+    expect(joinHomeRelative('/home/ensis-ops', '~')).toBe('/home/ensis-ops')
+    expect(joinHomeRelative('/home/ensis-ops', '~/src')).toBe('/home/ensis-ops/src')
+    expect(joinHomeRelative('/home/ensis-ops/', '~/a/b')).toBe('/home/ensis-ops/a/b')
   })
 })

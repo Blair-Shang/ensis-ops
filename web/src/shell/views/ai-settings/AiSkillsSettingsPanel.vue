@@ -5,8 +5,8 @@
  * 布局对齐 MCP：顶栏 + 左列表 + 右详情分区。
  * Skill = 提示词模板 + 参数 schema；无执行逻辑，由编排层装配进 system。
  */
-import { RsBadge, RsButton, RsEmpty, RsIcon, RsInput, RsSelect, RsTooltip } from '@niuma/ui'
-import type { RsSelectOption } from '@niuma/ui'
+import { RsBadge, RsButton, RsEmpty, RsIcon, RsInput, RsSelect, RsTooltip } from 'ensis-ui'
+import type { RsSelectOption } from 'ensis-ui'
 import { useI18n } from 'vue-i18n'
 import { computed, onMounted, ref } from 'vue'
 import { aiApi } from '@/api/ai'

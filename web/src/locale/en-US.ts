@@ -8,7 +8,7 @@ export default {
     sessionLost: '{name} connection lost. Reopen the connection.',
   },
   app: {
-    title: 'NiuMa',
+    title: 'ensis-ops',
     subtitle: 'All-in-one AI Ops Platform',
   },
   nav: {
@@ -57,7 +57,7 @@ export default {
     thinkingLive: 'Thinking…',
     noProvider: 'No model provider configured',
     loginToUse: 'Sign in to use the system assistant',
-    loginToUseDesc: 'Use the NiuMa-hosted model without an API key, or add your own provider in Settings.',
+    loginToUseDesc: 'Use the ensis-ops-hosted model without an API key, or add your own provider in Settings.',
     openLogin: 'Sign in',
     openSettings: 'Open model settings',
     openMcpSettings: 'Open MCP settings',
@@ -179,23 +179,23 @@ export default {
     askAiSelection: 'Ask AI about selection',
     openModule: 'Open',
     openAccount: 'Open Account Settings',
-    login: 'Sign in to NiuMa',
+    login: 'Sign in to ensis-ops',
     openFeedback: 'Send Feedback',
   },
   account: {
     section: 'Account',
-    sectionDesc: 'NiuMa cloud account and feedback',
+    sectionDesc: 'ensis-ops cloud account and feedback',
     loginTitle: 'Sign in',
     registerTitle: 'Create account',
     otpLoginTitle: 'Sign in with code',
     resetTitle: 'Reset password',
-    authBrand: 'NiuMa Cloud',
+    authBrand: 'ensis-cloud',
     authSubtitleLogin: 'Sign in to sync your account and feedback',
     authSubtitleRegister: 'Create an account to send feedback and get replies',
     authSubtitleOtp: 'Sign in with an email code. New emails create an account.',
     authSubtitleReset: 'Verify your email, then set a new password',
-    authLegal: 'By continuing, you agree to the NiuMa Terms and Privacy Policy',
-    authLegalOtp: 'A new account is created if this email is not registered. By continuing, you agree to the NiuMa Terms and Privacy Policy',
+    authLegal: 'By continuing, you agree to the ensis-ops Terms and Privacy Policy',
+    authLegalOtp: 'A new account is created if this email is not registered. By continuing, you agree to the ensis-ops Terms and Privacy Policy',
     tabPassword: 'Password',
     tabOtp: 'Email code',
     tabRegister: 'Register',
@@ -375,8 +375,8 @@ export default {
     help: {
       menuAria: 'Help',
       changelog: 'Release notes',
-      about: 'About NiuMa',
-      aboutTitle: 'About NiuMa',
+      about: 'About ensis-ops',
+      aboutTitle: 'About ensis-ops',
       aboutTagline: 'All-in-one AI ops platform',
       platform: 'Platform',
       checkUpdate: 'Check for updates',
@@ -423,7 +423,7 @@ export default {
     applyingLinux: 'Updating. If asked, approve the administrator prompt. The app will reopen when finished.',
     applyingLinuxHint: 'This window will close shortly.',
     applyingMacos: 'Opening the installer…',
-    applyingMacosHint: 'When it finishes, open NiuMa from Launchpad.',
+    applyingMacosHint: 'When it finishes, open ensis-ops from Launchpad.',
     statusApplying: 'Updating…',
     cancelDownload: 'Cancel download',
     snooze: 'Later',
@@ -568,7 +568,7 @@ export default {
     aiProvidersHasKey: 'API key set',
     aiProvidersNoKey: 'No API key',
     aiProvidersSystem: 'System',
-    aiProvidersSystemHint: 'Hosted by NiuMa Cloud with your signed-in account. No API key needed. Synced after login and cannot be deleted.',
+    aiProvidersSystemHint: 'Hosted by ensis-cloud with your signed-in account. No API key needed. Synced after login and cannot be deleted.',
     aiProvidersModelCount: '{n} models',
     aiMcp: 'MCP Servers',
     aiMcpDesc:
@@ -667,7 +667,7 @@ export default {
     aiMcpRiskRead: 'Read',
     aiMcpRiskWrite: 'Write',
     aiMcpRiskDangerous: 'Dangerous',
-    componentsHint: 'Unlike Extensions: this page manages OS executables, not NiuMa plugins.',
+    componentsHint: 'Unlike Extensions: this page manages OS executables, not ensis-ops plugins.',
     componentsRefresh: 'Refresh',
     componentsLoading: 'Detecting tools…',
     componentsEmpty: 'No tool component bundles registered.',
@@ -704,7 +704,7 @@ export default {
     componentsExecutablePath: 'Executable path',
     componentsModuleLabel: 'Module',
     componentsSelectBundle: 'Select a bundle on the left',
-    componentsTooltip: 'Detect and configure local CLI tools (e.g. MongoDB Shell, mongo-tools). Unlike Extensions: this page manages OS executables, not NiuMa plugins.',
+    componentsTooltip: 'Detect and configure local CLI tools (e.g. MongoDB Shell, mongo-tools). Unlike Extensions: this page manages OS executables, not ensis-ops plugins.',
     componentsDownloadTooltip: 'Opens in your system default browser.',
     componentsStatus: {
       missing: 'Missing',
@@ -713,7 +713,7 @@ export default {
       bundled: 'Bundled',
     },
     componentBundles: {
-      com_niuma_components_mongodb_tools: {
+      com_ensis_components_mongodb_tools: {
         name: 'MongoDB Official Tools',
         tools: {
           mongosh: 'MongoDB Shell',
@@ -723,7 +723,7 @@ export default {
           mongoimport: 'mongoimport',
         },
       },
-      com_niuma_components_vastbase_tools: {
+      com_ensis_components_vastbase_tools: {
         name: 'Vastbase Official Client Tools',
         tools: {
           vb_dump: 'vb_dump',
@@ -731,7 +731,7 @@ export default {
           vsql: 'vsql',
         },
       },
-      com_niuma_components_postgresql_client: {
+      com_ensis_components_postgresql_client: {
         name: 'PostgreSQL Client Tools (fallback)',
         tools: {
           pg_dump: 'pg_dump',
@@ -739,7 +739,7 @@ export default {
           psql: 'psql',
         },
       },
-      com_niuma_components_oracle_native: {
+      com_ensis_components_oracle_native: {
         name: 'Oracle Instant Client',
         tip: 'Choose the extracted Instant Client folder that contains oci.dll. Prefer Basic or Basic Light for Windows x64; use a release compatible with your database (commonly 19c / 21c).',
         downloadTip:

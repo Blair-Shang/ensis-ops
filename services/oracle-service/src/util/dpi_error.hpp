@@ -3,7 +3,7 @@
 #include <dpi.h>
 #include <string>
 
-namespace niuma::oracle::util {
+namespace ensisops::oracle::util {
 
 /**
  * 读取 ODPI 最近错误并整理为 UTF-8 前缀消息（"oracle: ..."）。
@@ -14,4 +14,4 @@ std::string FormatDpiError(dpiContext* ctx, const char* fallback = "oracle: ODPI
 /** 将已取出的 dpiErrorInfo 格式化为 "oracle: ..."。 */
 std::string FormatDpiErrorInfo(const dpiErrorInfo& info, const char* fallback = "oracle: ODPI error");
 
-}  // namespace niuma::oracle::util
+}  // namespace ensisops::oracle::util

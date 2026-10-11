@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { RsButton, RsInput, RsLabel, RsSelect, type RsSelectOption } from '@niuma/ui'
+import { RsButton, RsInput, RsLabel, RsSelect, type RsSelectOption } from 'ensis-ui'
 import { computed, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { shellApi } from '@/api'

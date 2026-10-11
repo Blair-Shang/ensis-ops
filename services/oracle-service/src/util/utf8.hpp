@@ -3,7 +3,7 @@
 #include <string>
 #include <string_view>
 
-namespace niuma::oracle::util {
+namespace ensisops::oracle::util {
 
 /** 是否为合法 UTF-8（允许空串）。 */
 bool IsValidUtf8(std::string_view s);
@@ -16,4 +16,4 @@ bool IsValidUtf8(std::string_view s);
  */
 std::string EnsureUtf8(std::string_view s);
 
-}  // namespace niuma::oracle::util
+}  // namespace ensisops::oracle::util

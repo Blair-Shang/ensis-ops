@@ -3,7 +3,7 @@ package postgresparser
 import (
 	"strings"
 
-	"niuma/pkg/sqllsp"
+	"ensis-ops/pkg/sqllsp"
 )
 
 // CompatMode 保留解析器内部模式开关（产品路径仅 PostgreSQL）。

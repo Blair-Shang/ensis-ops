@@ -3,7 +3,7 @@
 #include <string>
 #include <vector>
 
-namespace niuma {
+namespace ensisops {
 
 /**
  * 本地 manifest 扫描结果（Shell 层，不含业务权限裁决）。
@@ -34,4 +34,4 @@ std::vector<LocalPluginRecord> ScanLocalPluginManifests();
 std::string LocalPluginListJson(const std::vector<LocalPluginRecord>& records,
                                 bool enabled_only);
 
-}  // namespace niuma
+}  // namespace ensisops

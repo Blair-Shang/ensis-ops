@@ -10,8 +10,8 @@ ARCH="$(nm_detect_arch)"
 CONFIGURATION="Release"
 FORMAT="dmg"
 OUTPUT_DIR=""
-APP_NAME="NiuMa"
-BUNDLE_ID="com.niuma.desktop"
+APP_NAME="ensis-ops"
+BUNDLE_ID="com.ensis-ops.desktop"
 SKIP_WEB_BUILD="false"
 SKIP_SHELL_BUILD="false"
 
@@ -75,7 +75,7 @@ cat > "$CONTENTS_DIR/Info.plist" <<EOF
   <key>CFBundleDisplayName</key>
   <string>$APP_NAME</string>
   <key>CFBundleExecutable</key>
-  <string>niuma</string>
+  <string>ensis-ops</string>
   <key>CFBundleIdentifier</key>
   <string>$BUNDLE_ID</string>
   <key>CFBundleInfoDictionaryVersion</key>
@@ -105,7 +105,7 @@ cat > "$CONTENTS_DIR/Info.plist" <<EOF
       <string>$BUNDLE_ID</string>
       <key>CFBundleURLSchemes</key>
       <array>
-        <string>niuma</string>
+        <string>ensis-ops</string>
       </array>
     </dict>
   </array>
@@ -121,7 +121,7 @@ cp -R "$REPO_ROOT/web/dist/." "$RESOURCES_DIR/web/" 2>/dev/null || true
 find "$RESOURCES_DIR/web" -type f -name '*.map' -delete 2>/dev/null || true
 cp "$REPO_ROOT"/scripts/sql/sqlite/*.sql "$RESOURCES_DIR/platform/migrations/sqlite/" 2>/dev/null || true
 cp -R "$REPO_ROOT/services/manifests/." "$RESOURCES_DIR/services/manifests/" 2>/dev/null || true
-cp "$REPO_ROOT/assets/brand/app-icon.svg" "$RESOURCES_DIR/niuma.svg"
+cp "$REPO_ROOT/assets/brand/app-icon.svg" "$RESOURCES_DIR/ensis-ops.svg"
 
 if [[ -d "$REPO_ROOT/plugins" ]]; then
   mkdir -p "$RESOURCES_DIR/plugins"
@@ -142,8 +142,8 @@ if [[ -f "$SHELL_BIN" ]]; then
     --dest "$MACOS_DIR" \
     --source "$SHELL_INSTALL" \
     --configuration "$CONFIGURATION"
-  cp "$SHELL_BIN" "$MACOS_DIR/niuma"
-  chmod 0755 "$MACOS_DIR/niuma"
+  cp "$SHELL_BIN" "$MACOS_DIR/ensis-ops"
+  chmod 0755 "$MACOS_DIR/ensis-ops"
   if [[ ! -f "$RESOURCES_DIR/web/index.html" && -d "$SHELL_INSTALL/resources/web" ]]; then
     cp -R "$SHELL_INSTALL/resources/web/." "$RESOURCES_DIR/web/" 2>/dev/null || true
     find "$RESOURCES_DIR/web" -type f -name '*.map' -delete 2>/dev/null || true
@@ -190,22 +190,22 @@ PLIST
 }
 
 HELPER_SPECS=(
-  "NiuMa Helper|$BUNDLE_ID.helper"
-  "NiuMa Helper (GPU)|$BUNDLE_ID.helper.gpu"
-  "NiuMa Helper (Plugin)|$BUNDLE_ID.helper.plugin"
-  "NiuMa Helper (Renderer)|$BUNDLE_ID.helper.renderer"
-  "NiuMa Helper (Alerts)|$BUNDLE_ID.helper.alerts"
+  "ensis-ops Helper|$BUNDLE_ID.helper"
+  "ensis-ops Helper (GPU)|$BUNDLE_ID.helper.gpu"
+  "ensis-ops Helper (Plugin)|$BUNDLE_ID.helper.plugin"
+  "ensis-ops Helper (Renderer)|$BUNDLE_ID.helper.renderer"
+  "ensis-ops Helper (Alerts)|$BUNDLE_ID.helper.alerts"
 )
 for spec in "${HELPER_SPECS[@]}"; do
   helper_name="${spec%%|*}"
   helper_id="${spec#*|}"
   helper_app="$FRAMEWORKS_DIR/${helper_name}.app"
   mkdir -p "$helper_app/Contents/MacOS"
-  cp "$MACOS_DIR/niuma" "$helper_app/Contents/MacOS/${helper_name}"
+  cp "$MACOS_DIR/ensis-ops" "$helper_app/Contents/MacOS/${helper_name}"
   chmod 0755 "$helper_app/Contents/MacOS/${helper_name}"
   write_helper_plist "$helper_name" "$helper_id" "$helper_app/Contents/Info.plist"
 done
-[[ -d "$FRAMEWORKS_DIR/NiuMa Helper.app" ]] || nm_die "macOS CEF helper apps were not staged"
+[[ -d "$FRAMEWORKS_DIR/ensis-ops Helper.app" ]] || nm_die "macOS CEF helper apps were not staged"
 [[ -d "$FRAMEWORKS_DIR/Chromium Embedded Framework.framework" ]] || nm_die "macOS CEF framework missing under Frameworks"
 
 bash "$REPO_ROOT/scripts/shared/package/stage-compliance.sh" "$RESOURCES_DIR"
@@ -213,7 +213,7 @@ bash "$REPO_ROOT/scripts/shared/package/stage-compliance.sh" "$RESOURCES_DIR"
 nm_log "macOS app bundle assembled -> $APP_BUNDLE ($VERSION channel=$CHANNEL build=$BUILD_NUMBER $HOMEPAGE)"
 
 bash "$REPO_ROOT/scripts/shared/sign/codesign-macos.sh" "$APP_BUNDLE" \
-  "$SCRIPT_DIR/niuma.entitlements"
+  "$SCRIPT_DIR/ensis-ops.entitlements"
 
 APP_OUT="$(nm_default_output_dir "$REPO_ROOT" "$PLATFORM" "$ARCH" "app")"
 mkdir -p "$APP_OUT"

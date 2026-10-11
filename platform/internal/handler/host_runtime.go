@@ -7,7 +7,7 @@ import (
 	"fmt"
 	"strings"
 
-	"niuma/platform/internal/ai/host"
+	"ensis-ops/platform/internal/ai/host"
 )
 
 // HostRuntime 返回官方 host 所需的 Capability 适配（与 Web 同 Dispatch）。

@@ -78,16 +78,16 @@ func ListMCPToolsStdio(ctx context.Context, commandPath, launchOptionsJSON strin
 	return client.listTools(runCtx)
 }
 
-const envPlatformIPC = "NIUMA_PLATFORM_IPC"
+const envPlatformIPC = "ENSIS_PLATFORM_IPC"
 
 func platformIPCAddr() string {
 	if v := strings.TrimSpace(os.Getenv(envPlatformIPC)); v != "" {
 		return v
 	}
 	if runtime.GOOS == "windows" {
-		return `\\.\pipe\niuma.platform`
+		return `\\.\pipe\ensis-ops.platform`
 	}
-	return filepath.Join(os.TempDir(), "niuma.platform.sock")
+	return filepath.Join(os.TempDir(), "ensis-ops.platform.sock")
 }
 
 // applyMCPProcessEnv 合并用户 env，并注入 Platform IPC 地址供外部 MCP 回调。
@@ -218,7 +218,7 @@ func (c *mcpStdioClient) initialize(ctx context.Context) error {
 		"protocolVersion": "2024-11-05",
 		"capabilities":    map[string]any{},
 		"clientInfo": map[string]string{
-			"name":    "niuma-platform",
+			"name":    "ensis-platform",
 			"version": "0.1",
 		},
 	})

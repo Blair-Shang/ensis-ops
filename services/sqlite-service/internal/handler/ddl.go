@@ -6,8 +6,8 @@ import (
 	"fmt"
 	"strings"
 
-	"niuma/services/sqlite-service/internal/ddl"
-	"niuma/services/sqlite-service/internal/dialect"
+	"ensis-ops/services/sqlite-service/internal/ddl"
+	"ensis-ops/services/sqlite-service/internal/dialect"
 )
 
 type ddlDesignPreviewParams struct {

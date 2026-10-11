@@ -119,7 +119,7 @@ func clampRedisCount(n, fallback, max int64) int64 {
 // RedisToolSpecs 返回官方 Redis 工具列表（与 UI 同 Bridge：redis.* → redis-service）。
 func RedisToolSpecs() []ToolSpec {
 	scope := map[string]any{
-		"profileId": map[string]any{"type": "string", "description": "NiuMa Redis connection profile id"},
+		"profileId": map[string]any{"type": "string", "description": "ensis-ops Redis connection profile id"},
 		"sessionId": map[string]any{"type": "string", "description": "Active Redis session id from the open tab"},
 	}
 	schemaProps := func(extra map[string]any) map[string]any {

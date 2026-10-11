@@ -251,7 +251,7 @@ function serverUrl(doc: Record<string, unknown>): string {
   return url.replace(/\/+$/, '').replace(/\{([^{}]+)\}/g, '{{$1}}')
 }
 
-function toNiuMaPath(path: string): string {
+function toEnsisPath(path: string): string {
   const normalized = path.startsWith('/') ? path : `/${path}`
   return `{{baseUrl}}${normalized.replace(/\{([^{}]+)\}/g, '{{$1}}')}`
 }
@@ -300,7 +300,7 @@ export function importOpenApi(root: Record<string, unknown>): ApiFolder[] | null
       const req = importedRequest({
         name: operationName(method, path, op),
         method,
-        url: toNiuMaPath(path),
+        url: toEnsisPath(path),
         params: query,
         headers,
         auth,

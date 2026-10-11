@@ -33,7 +33,7 @@
 |------|--------|
 | 业务表（`nm_ai_provider` / `nm_mcp_server`） | 仅 `credential_id` 引用，**无明文、无密文列** |
 | `nm_credential_ref` + VaultStore | API Key / MCP Token 的 **AES-256-GCM 密文**（与 SSH/DB 密码同路径） |
-| OS Keychain | **仅一条主密钥** `NiuMa/master-vault`（用于加解密 vault） |
+| OS Keychain | **仅一条主密钥** `ensis-ops/master-vault`（用于加解密 vault） |
 
 生产装配见 `platform-core`：`Secrets: store.NewVaultStore(db, keychain)`。与连接密码共用同一套凭据链路。
 
@@ -60,7 +60,7 @@
 │  · 对话 / 流式 / Tool 调用卡片 / Approve·Reject                   │
 │  · @连接 / @SQL / @报错 / @Explain（对齐 Cursor @）               │
 └────────────────────────────┬────────────────────────────────────┘
-                             │ platform.ai.* + niuma:event
+                             │ platform.ai.* + ensis-ops:event
 ┌────────────────────────────▼────────────────────────────────────┐
 │  Platform · Orchestrator（薄）                                   │
 │  · Agent Loop · LLM Gateway · host/{sql,…} · MCP Client          │
@@ -196,7 +196,7 @@
 | `platform.ai.policy.confirm` | `{ invocationId, decision: approve\|reject, scope?: once\|run\|conversation }` |
 | `platform.ai.policy.listPending` | 当前 run 待确认工具 |
 
-### 6.5 事件（`niuma:event`）
+### 6.5 事件（`ensis-ops:event`）
 
 复用现有 eventhub 批量帧。建议类型：
 

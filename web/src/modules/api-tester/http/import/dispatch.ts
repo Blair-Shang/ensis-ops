@@ -1,5 +1,5 @@
 /**
- * 导入入口：NiuMa 集合、Postman v2、OpenAPI 3。读完再交给 mergeImported。
+ * 导入入口：ensis-ops 集合、Postman v2、OpenAPI 3。读完再交给 mergeImported。
  */
 import type { ApiFolder } from '../../types'
 import { COLLECTION_KIND, parseCollection } from '../../utils/collection-io'
@@ -8,7 +8,7 @@ import { importPostman, isPostmanCollection } from './postman'
 
 export type ImportedCollection = {
   folders: ApiFolder[]
-  source: 'niuma' | 'postman' | 'openapi'
+  source: 'ensis-ops' | 'postman' | 'openapi'
 }
 
 export function parseImportedCollection(text: string): ImportedCollection | { error: 'invalid' | 'unsupported' } {
@@ -25,7 +25,7 @@ export function parseImportedCollection(text: string): ImportedCollection | { er
   if (root.kind === COLLECTION_KIND) {
     const result = parseCollection(trimmed)
     if ('error' in result) return { error: 'invalid' }
-    return { folders: result.folders, source: 'niuma' }
+    return { folders: result.folders, source: 'ensis-ops' }
   }
   if (isOpenApiDocument(root)) {
     const folders = importOpenApi(root)

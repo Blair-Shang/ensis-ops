@@ -19,11 +19,11 @@ $LogRoot = Join-Path $Root 'logs'
 $sessionDir = Join-Path $LogRoot ("platform-dev-{0:yyyyMMdd-HHmmss}" -f (Get-Date))
 
 New-Item -ItemType Directory -Force -Path $sessionDir | Out-Null
-$env:NIUMMA_LOG_ROOT = $LogRoot
-$env:NIUMMA_LOG_DIR = $sessionDir
+$env:ENSIS_LOG_ROOT = $LogRoot
+$env:ENSIS_LOG_DIR = $sessionDir
 
 Write-Host '==> platform-core (foreground)' -ForegroundColor Cyan
-Write-Host "    pipe:    \\.\pipe\niuma.platform" -ForegroundColor Gray
+Write-Host "    pipe:    \\.\pipe\ensis-ops.platform" -ForegroundColor Gray
 Write-Host "    logs:    $sessionDir" -ForegroundColor Gray
 Write-Host '    shell:   pnpm dev:hot -SkipServices  (another terminal)' -ForegroundColor Gray
 if ($Delve) {
@@ -39,9 +39,9 @@ try {
         }
         & dlv debug ./cmd/platform-core --headless=false --api-version=2 --listen=127.0.0.1:2345
     } elseif ($SkipBuild) {
-        $exe = Join-Path $Root 'services/bin/niuma-platform-core.exe'
+        $exe = Join-Path $Root 'services/bin/ensis-platform-core.exe'
         if (-not (Test-Path $exe)) {
-            throw "niuma-platform-core.exe not found at $exe - run: pnpm build:services"
+            throw "ensis-platform-core.exe not found at $exe - run: pnpm build:services"
         }
         & $exe
     } else {

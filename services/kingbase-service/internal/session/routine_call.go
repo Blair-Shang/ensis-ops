@@ -9,10 +9,10 @@ import (
 
 	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgxpool"
-	"niuma/pkg/common/id"
+	"ensis-ops/pkg/common/id"
 )
 
-const nmDebugGUC = "niuma.debug"
+const nmDebugGUC = "ensis-ops.debug"
 
 // RoutineCallArg 是 routine.call 的单个参数。
 type RoutineCallArg struct {

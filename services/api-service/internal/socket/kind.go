@@ -3,7 +3,7 @@ package socket
 import (
 	"time"
 
-	"niuma/services/api-service/internal/codec"
+	"ensis-ops/services/api-service/internal/codec"
 )
 
 // Kind 是套接字角色，对齐 Packet Sender / Hercules：客户端、监听端、数据报。

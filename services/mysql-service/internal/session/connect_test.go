@@ -35,14 +35,14 @@ func TestBuildDriverConfigAttributesAndCharset(t *testing.T) {
 		Options: ConnectOptions{
 			Charset:         "utf8mb4",
 			Collation:       "utf8mb4_unicode_ci",
-			ApplicationName: "niuma-test",
+			ApplicationName: "ensis-test",
 			SSLMode:         "preferred",
 		},
 	})
 	if err != nil {
 		t.Fatal(err)
 	}
-	if cfg.ConnectionAttributes != "program_name:niuma-test" {
+	if cfg.ConnectionAttributes != "program_name:ensis-test" {
 		t.Fatalf("ConnectionAttributes=%q", cfg.ConnectionAttributes)
 	}
 	if cfg.Collation != "utf8mb4_unicode_ci" {

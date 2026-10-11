@@ -7,8 +7,8 @@ import (
 	"fmt"
 	"strings"
 
-	"niuma/services/sqlite-service/internal/session"
-	"niuma/services/sqlite-service/internal/tree"
+	"ensis-ops/services/sqlite-service/internal/session"
+	"ensis-ops/services/sqlite-service/internal/tree"
 )
 
 type treeListParams struct {

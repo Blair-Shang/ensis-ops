@@ -1,4 +1,6 @@
-# NiuMa — 全能 AI 运维平台
+# ensis-ops — 全能 AI 运维平台
+
+从 **2.0.0** 起，仓库与安装包名称是 ensis-ops。壳层进程是 `ensis-ops.exe`，用户数据目录是 `%LOCALAPPDATA%\ensis-ops`。官网仍是 [niuma007.com](https://www.niuma007.com)。
 
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](./LICENSE)
 
@@ -9,19 +11,19 @@
 ```powershell
 pnpm install
 pnpm setup:desktop    # 首次：准备 C++ / CEF 环境（见下文）
-pnpm dev              # 构建并启动 niuma.exe（真实 CEF 桌面窗口）
+pnpm dev              # 构建并启动 ensis-ops.exe（真实 CEF 桌面窗口）
 ```
 
 | 场景 | 命令 | 说明 |
 |------|------|------|
-| 桌面应用（推荐） | `pnpm dev` | 构建 Web + Shell，启动 `niuma.exe` |
+| 桌面应用（推荐） | `pnpm dev` | 构建 Web + Shell，启动 `ensis-ops.exe` |
 | Web 热更新 + CEF | `pnpm dev:hot` | CEF 加载 `http://localhost:5173` |
 | UI 组件 Playground | `pnpm dev:ui` | `packages/ui`，端口 5180 |
 | 仅 Web（非桌面） | `pnpm dev:web` | Vite 开发服，端口 5173 |
 | UI 单元测试 | `pnpm test:ui` | Vitest，500+ 用例 |
-| 仅构建壳 | `pnpm build:shell` | 不启动，产出 `niuma.exe` |
+| 仅构建壳 | `pnpm build:shell` | 不启动，产出 `ensis-ops.exe` |
 | Windows 打包（绿色目录） | `pnpm pack:win` | 输出 `output/windows-x64/dir/` |
-| Windows 安装程序 | `pnpm pack:win:setup` | 输出 `output/windows-x64/setup/NiuMa-*-Setup.exe` |
+| Windows 安装程序 | `pnpm pack:win:setup` | 输出 `output/windows-x64/setup/ensis-ops-*-windows-x64-Setup.exe` |
 | Windows 一键发布 | `pnpm release:win` | 构建 + 绿色目录 + Setup 安装程序 |
 | 跨平台矩阵 | 见 [scripts/README.md](./scripts/README.md) | `release:<platform>` 含向导式安装程序 |
 | GitHub 自动打包 | Actions：**Pack and Release** | 推送 `main` 且 changelog 有未发布条目时自动发版；也可推送 `v*` tag 或手动运行。详见 scripts/README.md |
@@ -78,8 +80,8 @@ pnpm dev              # 构建并启动 niuma.exe（真实 CEF 桌面窗口）
 说明：
 
 - 仓库根存在 `rust-toolchain.toml`，进入仓库后会强制使用 `stable` toolchain。
-- Rust 公共能力放在 `packages/rust/`，当前包含 `niuma-logutil` 与 `niuma-serviceipc` 两个 crate。
-- `scripts/shared/build/build-services.ps1` 会同时构建 Go 服务与 Rust 的 `niuma-ssh-service`、`niuma-sftp-service`；日常使用仍建议通过 `pnpm build:services` 或 `scripts/entry/build.ps1 -Target services` 进入。
+- Rust 公共能力放在 `packages/rust/`，当前包含 `ensis-logutil` 与 `ensis-serviceipc` 两个 crate。
+- `scripts/shared/build/build-services.ps1` 会同时构建 Go 服务与 Rust 的 `ensis-ssh-service`、`ensis-sftp-service`；日常使用仍建议通过 `pnpm build:services` 或 `scripts/entry/build.ps1 -Target services` 进入。
 - 升级校对：以本表「版本」列为仓库基线，对照各官网下载页 / Releases 确认是否有安全补丁或破坏性变更，再改版本约束与脚本。
 
 ## 环境准备（首次）
@@ -127,7 +129,7 @@ pnpm setup:desktop         # 检查工具链 + 下载 CEF
 pnpm dev
 ```
 
-成功时应出现 CEF 窗口，加载 `app://niuma/`，状态栏显示 **CEF Shell**。
+成功时应出现 CEF 窗口，加载 `app://ensis-ops/`，状态栏显示 **CEF Shell**。
 
 `pnpm dev` 在缺少 CEF 时会自动调用 `setup:desktop`；已准备好环境时可用 `pnpm dev -- -SkipSetup` 跳过检查（PowerShell 透传参数）。
 
@@ -172,7 +174,7 @@ bash scripts/entry/build.sh --target services --platform linux --arch x64
 pnpm dev:hot
 ```
 
-后台启动 Vite（5173），并设置环境变量 `NIUMMA_DEV_URL=http://localhost:5173`，CEF 窗口直接加载开发服（**跳过 web 生产构建**，改 `web/` 保存即热更新）。
+后台启动 Vite（5173），并设置环境变量 `ENSIS_DEV_URL=http://localhost:5173`，CEF 窗口直接加载开发服（**跳过 web 生产构建**，改 `web/` 保存即热更新）。
 
 ## 本地路径约定
 
@@ -181,15 +183,15 @@ pnpm dev:hot
 | CEF 二进制 | `third_party/cef/` |
 | CEF 下载缓存 | `third_party/.cache/` |
 | Web 构建产物 | `web/dist/` |
-| Shell 构建产物（矩阵） | `build/shell-windows-x64/Release/niuma.exe` |
-| Shell 构建产物（兼容） | `build/shell/Release/niuma.exe`（本机 windows/x64 自动同步） |
+| Shell 构建产物（矩阵） | `build/shell-windows-x64/Release/ensis-ops.exe` |
+| Shell 构建产物（兼容） | `build/shell/Release/ensis-ops.exe`（本机 windows/x64 自动同步） |
 | 运行时 Web 资源 | `build/shell-windows-x64/Release/resources/web/`（由构建脚本从 `web/dist` 复制） |
-| 用户 SQLite 库 | `%LOCALAPPDATA%\NiuMa\data\niuma.db` |
+| 用户 SQLite 库 | `%LOCALAPPDATA%\ensis-ops\data\ensis-ops.db` |
 | Go / Rust 服务产物（矩阵） | `services/bin/<platform>-<arch>/` |
 | Go / Rust 服务产物（兼容） | `services/bin/*.exe`（本机 windows/x64 自动同步） |
 | Rust 公共 workspace | `packages/rust/` |
 | 打包输出 | `output/windows-x64/dir/`（绿色目录） |
-| 安装程序 | `output/windows-x64/setup/NiuMa-<version>-x64-Setup.exe` |
+| 安装程序 | `output/windows-x64/setup/ensis-ops-<version>-windows-x64-Setup.exe` |
 
 ## 常见问题
 
@@ -229,7 +231,7 @@ cargo --version
 
 ## 变更记录
 
-功能变更见 [CHANGELOG.md](./CHANGELOG.md)，当前版本 **1.0.0**。只记功能，不记技术栈。
+功能变更见 [CHANGELOG.md](./CHANGELOG.md)，当前版本 **2.0.0**。只记功能，不记技术栈。
 
 ## 文档
 
@@ -244,12 +246,12 @@ cargo --version
 ## 仓库结构
 
 ```
-NiuMa/
+ensis-ops/
 ├── docs/                      # 架构与设计文档
 ├── scripts/
 │   ├── setup-desktop.ps1      # 首次环境：CMake / MSVC / CEF
 │   ├── build-shell.ps1        # 构建 CEF 壳 + 复制 web/dist
-│   ├── dev.ps1                # 启动 niuma.exe
+│   ├── dev.ps1                # 启动 ensis-ops.exe
 │   ├── download-cef.ps1
 │   └── pack/                  # 打包脚本
 ├── scripts/sql/sqlite/        # SQL 迁移源脚本
@@ -260,7 +262,7 @@ NiuMa/
 ├── shell/                     # C++ CEF 壳层（Layer 3）
 ├── web/                       # Vue 3 主 Web 应用（Layer 4）
 ├── packages/rust/             # Rust 公共 crate（日志 / IPC 等）
-├── packages/ui/               # @niuma/ui 组件库 + playground
+├── packages/ui/               # ensis-ui 组件库 + playground
 ├── platform/                  # Platform Core（Go）
 ├── services/ssh-service/      # SSH（终端 / exec / 会话内 SFTP）
 ├── services/sftp-service/     # 独立 SFTP（仅子系统，无 shell）
@@ -273,13 +275,13 @@ NiuMa/
 
 ```
 Vue 3 Web  ──① CEF IPC──>  C++ Shell  ──② Named Pipe/UDS + JSON──>  Platform / Services
- app://niuma/              niuma.exe
+ app://ensis-ops/              ensis-ops.exe
 ```
 
 ## 许可证
 
-本仓库源码以及发行包中由 NiuMa 编写的部分，按 [Apache License 2.0](./LICENSE) 授权。版权与署名见 [NOTICE](./NOTICE)。
+本仓库源码以及发行包中由 ensis-ops 编写的部分，按 [Apache License 2.0](./LICENSE) 授权。版权与署名见 [NOTICE](./NOTICE)。
 
-第三方组件（含捆绑的 Chromium Embedded Framework 等）按其自身许可证分发，清单见 [docs/compliance/NOTICES.txt](./docs/compliance/NOTICES.txt)。「NiuMa」名称与图标为商标，Apache 2.0 **不授予**商标权。
+第三方组件（含捆绑的 Chromium Embedded Framework 等）按其自身许可证分发，清单见 [docs/compliance/NOTICES.txt](./docs/compliance/NOTICES.txt)。名称与图标为商标，Apache 2.0 **不授予**商标权。
 
 官方免责见 [docs/legal/DISCLAIMER.zh-CN.txt](./docs/legal/DISCLAIMER.zh-CN.txt)：在法律允许范围内，开发者对使用后果不承担责任；免费获得时责任上限为零。安装向导附加声明不得缩小该范围，也不削减 Apache 2.0 已授予的复制、修改与再分发权利。

@@ -1,4 +1,4 @@
-# NiuMa CEF Shell（Layer 3）
+# ensis-ops CEF Shell（Layer 3）
 
 C++17 CEF 宿主：**只做桌面运行时基础设施，不承担任何业务逻辑**。
 
@@ -9,8 +9,8 @@ C++17 CEF 宿主：**只做桌面运行时基础设施，不承担任何业务�
 
 ```powershell
 pnpm setup:desktop   # 首次：CEF + CMake + MSVC
-pnpm dev             # 构建并启动 niuma.exe
-pnpm dev:hot         # CEF + Vite 热更新（NIUMMA_DEV_URL）
+pnpm dev             # 构建并启动 ensis-ops.exe
+pnpm dev:hot         # CEF + Vite 热更新（ENSIS_DEV_URL）
 pnpm dev:debug       # 同上 + Debug 构建（壳层/Go 保留符号）
 pnpm build:shell     # 仅构建壳
 ```
@@ -64,7 +64,7 @@ shell/src/
 
 | 层级 | 目录 | 协议 | 壳层做什么 | 壳层**不做** |
 |------|------|------|------------|--------------|
-| **① Web ↔ Shell** | `browser/handlers/` | `cefQuery` / `niuma:event` | 收发包、JSON 解析、`shell.window.*` 多窗口 | 权限、业务语义 |
+| **① Web ↔ Shell** | `browser/handlers/` | `cefQuery` / `ensis-ops:event` | 收发包、JSON 解析、`shell.window.*` 多窗口 | 权限、业务语义 |
 | **② Shell ↔ 后端** | `ipc/` + `core/runtime/` | Named Pipe / UDS + JSON | 起进程、原样转发 | 鉴权、SQLite、凭据 |
 
 ## 多窗口 API（`shell.window.*`）
@@ -99,11 +99,11 @@ Shell 只管理 CEF 窗口，不解析文件/路由业务。Web 通过 `cefQuery
 
 ## 文件拖放
 
-- 外部文件拖入窗口：Shell 注入 `dragover/drop` 钩子，派发 `niuma:file-drop` 事件（`detail.paths` 为本地绝对路径）
+- 外部文件拖入窗口：Shell 注入 `dragover/drop` 钩子，派发 `ensis-ops:file-drop` 事件（`detail.paths` 为本地绝对路径）
 - `-webkit-app-region: drag` 区域：通过 `CefDragHandler::OnDraggableRegionsChanged` 同步到原生窗口
 
 ```ts
-window.addEventListener('niuma:file-drop', (e) => {
+window.addEventListener('ensis-ops:file-drop', (e) => {
   const paths = (e as CustomEvent).detail.paths as string[]
 })
 ```
@@ -122,7 +122,7 @@ window.addEventListener('niuma:file-drop', (e) => {
 
 ## 刻意不放在壳层的模块
 
-参考其他桌面项目常见的 `core/security`、`core/plugin` 等，在 NiuMa 中**明确不属于 shell**：
+参考其他桌面项目常见的 `core/security`、`core/plugin` 等，在 ensis-ops 中**明确不属于 shell**：
 
 | 能力 | 归属 |
 |------|------|
@@ -133,6 +133,6 @@ window.addEventListener('niuma:file-drop', (e) => {
 
 ## 构建产物
 
-`build/shell/Release/niuma.exe` + CEF 运行时 dll + `resources/web/`
+`build/shell/Release/ensis-ops.exe` + CEF 运行时 dll + `resources/web/`
 
 详见 [docs/02-shell-cpp-cef.md](../docs/02-shell-cpp-cef.md)。

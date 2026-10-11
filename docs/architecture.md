@@ -1,14 +1,14 @@
-# NiuMa 全能 AI 运维平台 — 分层架构设计（初版）
+# ensis-ops 全能 AI 运维平台 — 分层架构设计（初版）
 
 > 版本：v0.2.5  
 > 日期：2026-07-03  
-> 壳层语言：**C++ + CEF Official SDK** · 前端：**Vue 3 + @niuma/ui**
+> 壳层语言：**C++ + CEF Official SDK** · 前端：**Vue 3 + ensis-ui**
 
 ---
 
 ## 1. 项目定位
 
-NiuMa 是一个全能型 AI 运维桌面平台，涵盖：
+ensis-ops 是一个全能型 AI 运维桌面平台，涵盖：
 
 - **主机运维**：SSH、SFTP、FTP
 - **数据库运维**：MySQL、PostgreSQL、Oracle 等
@@ -36,7 +36,7 @@ flowchart TB
         direction LR
         l4a[Vue 3 App Shell]
         l4b[模块 UI：SSH / DB / API / AI]
-        l4c["@niuma/ui Rs*"]
+        l4c["ensis-ui Rs*"]
         l4a --- l4b --- l4c
     end
 
@@ -93,7 +93,7 @@ flowchart LR
 
     subgraph B["Browser 主进程 ★ 宿主"]
         direction TB
-        bnote["niuma.exe 启动的第一个业务进程"]
+        bnote["ensis-ops.exe 启动的第一个业务进程"]
         L3p["Layer 3<br/>C++ Shell"]
         bnote --- L3p
     end
@@ -133,7 +133,7 @@ CEF 在 Browser 主进程之外，还会拉起 GPU / Utility 等**辅助子进�
 
 ```mermaid
 flowchart TB
-    LAUNCH([用户双击 niuma.exe]) --> BP
+    LAUNCH([用户双击 ensis-ops.exe]) --> BP
 
     BP["Browser 主进程<br/>Layer 3 · C++ Shell"]
 
@@ -143,7 +143,7 @@ flowchart TB
 
     BP <-->|"Message Pipe · ① CEF IPC"| RP
 
-    BP --> APP["托管 app://niuma<br/>→ resources/web/"]
+    BP --> APP["托管 app://ensis-ops<br/>→ resources/web/"]
 ```
 
 | 进程 | 主/子 | 是否写业务代码 | 职责 |
@@ -197,7 +197,7 @@ sequenceDiagram
         SSH-->>Plat: output chunk
         Plat-->>Shell: IPC 长流
         Shell-->>CEF: PostMessage 分片
-        CEF-->>Web: niuma:event
+        CEF-->>Web: ensis-ops:event
     end
     Shell-->>CEF: callback Success
     CEF-->>Web: onSuccess
@@ -240,7 +240,7 @@ flowchart TB
 flowchart LR
     subgraph Dev["开发构建"]
         WEB_B["pnpm build:web<br/>web/dist/"]
-        SH_B["cmake shell<br/>niuma.exe"]
+        SH_B["cmake shell<br/>ensis-ops.exe"]
         CEF_D["third_party/cef/"]
     end
 
@@ -249,7 +249,7 @@ flowchart LR
     end
 
     subgraph Out["pack/win-x64/"]
-        EXE[niuma.exe + CEF dll]
+        EXE[ensis-ops.exe + CEF dll]
         RES[resources/web/]
         MIG[platform/migrations/sqlite/]
         SVC[services/manifests/]
@@ -267,15 +267,15 @@ flowchart LR
 ```mermaid
 flowchart TB
     subgraph Install["发布目录（只读）<br/>pack/win-x64/"]
-        I1[niuma.exe]
+        I1[ensis-ops.exe]
         I2[resources/web/]
         I3[platform/migrations/]
         I4[services/bin/]
     end
 
     subgraph UserData["用户数据（可写）"]
-        D1["%LOCALAPPDATA%\\NiuMa\\data\\niuma.db"]
-        D2["%LOCALAPPDATA%\\NiuMa\\run\\*.pipe"]
+        D1["%LOCALAPPDATA%\\ensis-ops\\data\\ensis-ops.db"]
+        D2["%LOCALAPPDATA%\\ensis-ops\\run\\*.pipe"]
         D3[日志 / 缓存]
     end
 
@@ -369,7 +369,7 @@ flowchart LR
 | Shell `BridgeRouter` 只做 | Shell **禁止**做 |
 |---------------------------|------------------|
 | 把 `cefQuery` JSON **原样**送到 Platform 的 IPC 方法 | 判断用户能否访问某模块 |
-| 按 manifest **启停**后端进程（`ServiceManager`） | 读 `niuma.db` 或做 SQL |
+| 按 manifest **启停**后端进程（`ServiceManager`） | 读 `ensis-ops.db` 或做 SQL |
 | 把 IPC 长流 **分片**推回 Web（`StreamProxy`） | 解析/缓存凭据、连接密码 |
 | 维护 Pipe 连接、背压、超时 | 替代 Platform 调用 ssh-service |
 
@@ -409,7 +409,7 @@ sequenceDiagram
 ```
 ┌─────────────────────────────────────────────────────────────┐
 │  Layer 4 — Web UI（Vue 3 + TypeScript）                      │
-│  @niuma/ui · App Shell · Pinia · 插件模块 UI                 │
+│  ensis-ui · App Shell · Pinia · 插件模块 UI                 │
 └──────────────────────────┬──────────────────────────────────┘
                            │ ① CEF IPC
                            │    cefQuery（请求）/ PostMessage（事件）
@@ -492,8 +492,8 @@ shell/
 
 | 模块 | 职责 | 不做 |
 |------|------|------|
-| `NiuMaApp` | CEF 初始化、多进程入口 | 业务、权限 |
-| `NiuMaClient` / `main_browser` | 主 Browser 实例、弹窗、下载 | 业务 |
+| `EnsisApp` | CEF 初始化、多进程入口 | 业务、权限 |
+| `EnsisClient` / `main_browser` | 主 Browser 实例、弹窗、下载 | 业务 |
 | `MessageRouterHandler` | ① 接收 `cefQuery`，解析 JSON | 权限、业务语义 |
 | `BridgeRouter` | 按 service 选目标，**透传** | 数据权限、模块访问裁决 |
 | `AppSchemeHandler` | `app://` 加载 `resources/web/` | — |
@@ -525,7 +525,7 @@ shell/
 | 迁移 | 自研或 `golang-migrate`，执行 `scripts/sql/sqlite/` |
 | Vault / 主密钥 | `VaultStore`（密文 SQLite）+ `go-keyring`（仅主密钥） |
 | ID 生成 | 进程内 Snowflake（见 database-schema.md） |
-| 配置 | 环境变量 + `%LOCALAPPDATA%\NiuMa\` |
+| 配置 | 环境变量 + `%LOCALAPPDATA%\ensis-ops\` |
 
 源码布局见 [platform/README.md](../platform/README.md)。
 
@@ -544,7 +544,7 @@ shell/
 每个服务提供 `service.yaml`：
 
 ```yaml
-id: com.niuma.ssh
+id: com.ensisops.ssh
 runtime:
   executable: services/ssh-service/ssh-service.exe
   lang: rust
@@ -585,7 +585,7 @@ plugins/<name>/
 
 ```json
 {
-  "method": "com.niuma.ssh.exec",
+  "method": "com.ensisops.ssh.exec",
   "params": { "sessionId": "xxx", "command": "ls -la" },
   "id": "req-001"
 }
@@ -629,11 +629,11 @@ plugins/<name>/
 
 | 平台 | `${RUNTIME_DIR}` |
 |------|------------------|
-| Windows | `%LOCALAPPDATA%\NiuMa\run\` |
-| macOS | `~/Library/Application Support/NiuMa/run/` |
-| Linux | `$XDG_RUNTIME_DIR/niuma/` 或 `~/.local/share/niuma/run/` |
+| Windows | `%LOCALAPPDATA%\ensis-ops\run\` |
+| macOS | `~/Library/Application Support/ensis-ops/run/` |
+| Linux | `$XDG_RUNTIME_DIR/ensis-ops/` 或 `~/.local/share/ensis-ops/run/` |
 
-Named Pipe 示例（Windows）：`\\.\pipe\niuma.ssh`
+Named Pipe 示例（Windows）：`\\.\pipe\ensis-ops.ssh`
 
 ---
 
@@ -642,7 +642,7 @@ Named Pipe 示例（Windows）：`\\.\pipe\niuma.ssh`
 ### 11.1 源码仓库
 
 ```
-NiuMa/
+ensis-ops/
 ├── docs/                      # 设计文档
 ├── scripts/
 │   ├── pack/                  # 打包脚本
@@ -650,7 +650,7 @@ NiuMa/
 ├── pack/                      # ★ 打包输出（pack/win-x64/）
 ├── shell/                     # C++ CEF 壳层
 ├── web/                       # Vue 3 主应用
-├── packages/ui/               # @niuma/ui 组件库
+├── packages/ui/               # ensis-ui 组件库
 ├── platform/                  # Platform Core（Go）
 ├── services/manifests/        # service.yaml
 ├── plugins/                   # 可插拔插件包
@@ -662,7 +662,7 @@ NiuMa/
 
 ```
 pack/win-x64/
-├── niuma.exe                  # + CEF 运行时 dll
+├── ensis-ops.exe                  # + CEF 运行时 dll
 ├── resources/web/             # ← web/dist
 ├── platform/migrations/sqlite/  # ← scripts/sql/sqlite
 ├── services/manifests/ + bin/

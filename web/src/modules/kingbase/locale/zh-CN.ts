@@ -180,7 +180,7 @@ export default {
         loadSourceFailed: '加载例程源码失败',
         noSource: '无源码可编辑',
         logPointInserted:
-          "已在编辑器插入日志点（不会改服务器；set_config('niuma.debug','1')）",
+          "已在编辑器插入日志点（不会改服务器；set_config('ensis-ops.debug','1')）",
         statusAssist: '辅助模式 · {name}',
         statusPoints: '编辑器日志点 {n}',
         stateAssist: 'ASSIST',
@@ -200,13 +200,13 @@ export default {
         resultOutValue: '值',
         runOk: '调用已执行',
         runOkNoResult: '调用已执行（无结果集，请查看消息）',
-        enableSessionVar: '运行调用时开启 NOTICE / niuma.debug 调试开关',
+        enableSessionVar: '运行调用时开启 NOTICE / ensis-ops.debug 调试开关',
         tipRun: '「运行调用」走专用 routine.call（函数 SELECT / 过程 CALL / OUT 同连接读回）；参数在左侧网格填写。',
         tipSafe: '左侧源码与日志点只在本面板编辑器里，不会写入或覆盖数据库对象。',
         tipLog:
-          '「插入日志点」仅改编辑器草稿（RAISE NOTICE + niuma.debug 门控）；不会改变线上逻辑。',
+          '「插入日志点」仅改编辑器草稿（RAISE NOTICE + ensis-ops.debug 门控）；不会改变线上逻辑。',
         tipOut:
-          '「运行调用」一律走 routine.call，不经过查询页。「复制调用脚本」可粘贴到查询面板；含 OUT 的过程脚本带 -- niuma:exec=batch，需同连接批跑。',
+          '「运行调用」一律走 routine.call，不经过查询页。「复制调用脚本」可粘贴到查询面板；含 OUT 的过程脚本带 -- ensis-ops:exec=batch，需同连接批跑。',
       },
       browse: {
         toolbarLabel: '数据浏览',

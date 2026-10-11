@@ -6,7 +6,7 @@ import (
 	"path/filepath"
 	"testing"
 
-	"niuma/platform/internal/components"
+	"ensis-ops/platform/internal/components"
 )
 
 type memSettings struct {
@@ -32,7 +32,7 @@ func writeMongoManifest(t *testing.T, root string) {
 	if err := os.MkdirAll(dir, 0o755); err != nil {
 		t.Fatal(err)
 	}
-	manifest := `id: com.niuma.components.mongodb-tools
+	manifest := `id: com.ensisops.components.mongodb-tools
 name: MongoDB Tools
 module: mongodb
 tools:
@@ -66,7 +66,7 @@ func TestSetPathAndList(t *testing.T) {
 	}
 
 	ctx := context.Background()
-	if err := reg.SetPath(ctx, "com.niuma.components.mongodb-tools", "mongosh", fakeExe); err != nil {
+	if err := reg.SetPath(ctx, "com.ensisops.components.mongodb-tools", "mongosh", fakeExe); err != nil {
 		t.Fatalf("SetPath: %v", err)
 	}
 
@@ -85,7 +85,7 @@ func TestSetPathAndList(t *testing.T) {
 		t.Fatalf("path = %q", tool.Path)
 	}
 
-	path, err := reg.EffectivePath(ctx, "com.niuma.components.mongodb-tools", "mongosh")
+	path, err := reg.EffectivePath(ctx, "com.ensisops.components.mongodb-tools", "mongosh")
 	if err != nil {
 		t.Fatalf("EffectivePath: %v", err)
 	}
@@ -101,7 +101,7 @@ func TestGetDownloadURL(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	url, err := reg.GetDownloadURL("com.niuma.components.mongodb-tools", "mongosh")
+	url, err := reg.GetDownloadURL("com.ensisops.components.mongodb-tools", "mongosh")
 	if err != nil {
 		t.Fatal(err)
 	}

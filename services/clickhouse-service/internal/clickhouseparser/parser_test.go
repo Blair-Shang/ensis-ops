@@ -4,7 +4,7 @@ import (
 	"strings"
 	"testing"
 
-	"niuma/pkg/sqllsp"
+	"ensis-ops/pkg/sqllsp"
 )
 
 func TestKeywordsNonEmpty(t *testing.T) {

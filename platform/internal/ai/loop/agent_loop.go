@@ -9,10 +9,10 @@ import (
 	"strings"
 	"time"
 
-	"niuma/platform/internal/ai/host"
-	"niuma/platform/internal/ai/mcp"
-	"niuma/platform/internal/ai/tool"
-	"niuma/platform/internal/store"
+	"ensis-ops/platform/internal/ai/host"
+	"ensis-ops/platform/internal/ai/mcp"
+	"ensis-ops/platform/internal/ai/tool"
+	"ensis-ops/platform/internal/store"
 )
 
 const (
@@ -169,8 +169,9 @@ func (s *Service) runChatStream(
 
 	var lastContent string
 	handoffNudges := 0
-	// 不限制工具轮次：模型持续 tool_calls 直到无调用或用户取消（ctx）。
-	// 说了要接着做却没调用时，补一次，让确认卡片而不是对话里的「回执行」来停。
+	// 不限制工具轮次：模型持续 tool_calls 直到自己结束（无调用）或用户取消（ctx）。
+	// 无调用时不解析正文用词。只有输出被截断，或只留下思考、没有给用户的正文，才续写一次。
+	// 会改环境的调用仍由确认卡片拦住。
 	for {
 		if err := ctx.Err(); err != nil {
 			s.publishRunStatus(runID, conversationID, "cancelled", err.Error())
@@ -208,7 +209,7 @@ func (s *Service) runChatStream(
 		lastContent = result.Content
 
 		if len(result.ToolCalls) == 0 {
-			if handoffNudges < maxHandoffNudges && len(toolDefs) > 0 && defersWork(lastContent) {
+			if handoffNudges < maxHandoffNudges && len(toolDefs) > 0 && owesAction(lastContent, result.FinishReason) {
 				handoffNudges++
 				if err := s.keepHandoff(runID, conversationID, lastContent, &messages); err != nil {
 					s.publishRunError(runID, conversationID, err)

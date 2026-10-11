@@ -3,7 +3,7 @@ package kingbaseparser
 import (
 	"strings"
 
-	"niuma/pkg/sqllsp"
+	"ensis-ops/pkg/sqllsp"
 )
 
 // stmtSpan 文档内一条语句的切片。

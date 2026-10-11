@@ -16,8 +16,8 @@ import (
 
 	"github.com/ClickHouse/clickhouse-go/v2"
 
-	"niuma/pkg/netproxy"
-	"niuma/pkg/tunnel"
+	"ensis-ops/pkg/netproxy"
+	"ensis-ops/pkg/tunnel"
 )
 
 // 传输协议（字符串枚举，禁止 iota）。
@@ -40,7 +40,7 @@ const (
 
 	defaultTimeoutSeconds = 10
 	defaultDatabase       = "default"
-	defaultAppName        = "niuma-clickhouse"
+	defaultAppName        = "ensis-clickhouse"
 
 	maxOpenConns = 8
 	maxIdleConns = 2

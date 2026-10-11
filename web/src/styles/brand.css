@@ -1,11 +1,11 @@
 /*
- * NiuMa 品牌覆盖 — 在 niuma-ui/styles.css 之后加载，只覆盖同名 --rs-*。
+ * ensis-ops 品牌覆盖 — 在 ensis-ui/styles.css 之后加载，只覆盖同名 --rs-*。
  *
  * 默认跟随组件库 macOS system 色板（--rs-primary / --rs-bg / --rs-text …）。
  * 若产品品牌需偏离 systemBlue，在 [data-rs-theme] 下覆盖：
  *   --rs-primary / --rs-primary-hover / --rs-*-container
  *   --rs-text-primary / --rs-text-secondary / --rs-font-sans|mono
- * 示例见 niuma-ui `src/theme/brand.example.css`。禁止新开 --el-* / --niuma-* 色板。
+ * 示例见 ensis-ui `src/theme/brand.example.css`。禁止新开 --el-* / --ensis-* 色板。
  *
  * 下面是业务里沿用的旧名，只做别名，值仍是组件库令牌。
  * 不定义时，var() 的回退色是写死的亮色蓝/灰，暗色切不过去。

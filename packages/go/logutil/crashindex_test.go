@@ -32,8 +32,8 @@ main.main()
 
 func TestListCrashGroups_ClustersSameStack(t *testing.T) {
 	dir := t.TempDir()
-	t.Setenv("NIUMMA_LOG_DIR", dir)
-	t.Setenv("NIUMMA_LOG_ROOT", "")
+	t.Setenv("ENSIS_LOG_DIR", dir)
+	t.Setenv("ENSIS_LOG_ROOT", "")
 	crashDir := filepath.Join(dir, "crashes")
 	if err := os.MkdirAll(crashDir, 0o755); err != nil {
 		t.Fatal(err)

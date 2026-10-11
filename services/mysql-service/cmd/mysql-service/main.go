@@ -1,4 +1,4 @@
-// Command mysql-service 是 NiuMa MySQL 能力服务（Layer 1）的独立进程入口。
+// Command mysql-service 是 ensis-ops MySQL 能力服务（Layer 1）的独立进程入口。
 //
 // 源码位于 services/mysql-service/，与 platform-core 分离；契约见
 // docs/25-mysql-module.md。本服务仅覆盖 Oracle MySQL（含内部版本差异），
@@ -14,16 +14,16 @@ import (
 	"runtime"
 	"syscall"
 
-	"niuma/pkg/logutil"
-	"niuma/pkg/serviceipc/server"
-	"niuma/services/mysql-service/internal/eventpub"
-	"niuma/services/mysql-service/internal/handler"
-	"niuma/services/mysql-service/internal/idgen"
+	"ensis-ops/pkg/logutil"
+	"ensis-ops/pkg/serviceipc/server"
+	"ensis-ops/services/mysql-service/internal/eventpub"
+	"ensis-ops/services/mysql-service/internal/handler"
+	"ensis-ops/services/mysql-service/internal/idgen"
 )
 
 const (
-	windowsPipeAddr = `\\.\pipe\niuma.mysql`
-	unixSocketName  = "niuma.mysql.sock"
+	windowsPipeAddr = `\\.\pipe\ensis-ops.mysql`
+	unixSocketName  = "ensis-ops.mysql.sock"
 )
 
 func main() {

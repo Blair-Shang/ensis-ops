@@ -8,8 +8,8 @@ import (
 	"strings"
 	"sync"
 
-	"niuma/services/clickhouse-service/internal/idgen"
-	"niuma/services/clickhouse-service/internal/session"
+	"ensis-ops/services/clickhouse-service/internal/idgen"
+	"ensis-ops/services/clickhouse-service/internal/session"
 )
 
 // Emitter 上报 IO 任务事件的回调函数。

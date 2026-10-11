@@ -1,8 +1,8 @@
 {
-  "id": "com.niuma.example.hello",
+  "id": "com.ensisops.example.hello",
   "name": "Hello Module",
   "version": "0.0.1",
-  "engine": { "niuma": "^0.1.0" },
+  "engine": { "ensis-ops": "^0.1.0" },
   "source": "extension",
   "level": "L1",
   "permissions": [],

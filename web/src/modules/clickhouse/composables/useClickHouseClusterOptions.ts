@@ -2,7 +2,7 @@
  * ON CLUSTER 选项加载：Keeper 可用性 + meta.clusters + 连接默认集群预填。
  * 供建库 / 危险 DDL / 重命名 / 表设计器复用。
  */
-import type { RsSelectOptions } from '@niuma/ui'
+import type { RsSelectOptions } from 'ensis-ui'
 import { computed, ref, type Ref } from 'vue'
 import { clickhouseApi } from '@/api/clickhouse'
 import { uniqueClusterNames } from '@/modules/clickhouse/utils/cluster'

@@ -7,7 +7,7 @@ import (
 	"strings"
 
 	"github.com/jackc/pgx/v5/pgxpool"
-	"niuma/services/postgres-service/internal/meta"
+	"ensis-ops/services/postgres-service/internal/meta"
 )
 
 type metaRelationParams struct {

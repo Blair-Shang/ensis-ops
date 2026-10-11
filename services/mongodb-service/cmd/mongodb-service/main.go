@@ -1,4 +1,4 @@
-// Command mongodb-service 是 NiuMa MongoDB 能力服务（Layer 1）的独立进程入口。
+// Command mongodb-service 是 ensis-ops MongoDB 能力服务（Layer 1）的独立进程入口。
 package main
 
 import (
@@ -10,16 +10,16 @@ import (
 	"runtime"
 	"syscall"
 
-	"niuma/pkg/logutil"
-	"niuma/pkg/serviceipc/server"
-	"niuma/services/mongodb-service/internal/eventpub"
-	"niuma/services/mongodb-service/internal/handler"
-	"niuma/services/mongodb-service/internal/idgen"
+	"ensis-ops/pkg/logutil"
+	"ensis-ops/pkg/serviceipc/server"
+	"ensis-ops/services/mongodb-service/internal/eventpub"
+	"ensis-ops/services/mongodb-service/internal/handler"
+	"ensis-ops/services/mongodb-service/internal/idgen"
 )
 
 const (
-	windowsPipeAddr = `\\.\pipe\niuma.mongodb`
-	unixSocketName  = "niuma.mongodb.sock"
+	windowsPipeAddr = `\\.\pipe\ensis-ops.mongodb`
+	unixSocketName  = "ensis-ops.mongodb.sock"
 )
 
 func main() {

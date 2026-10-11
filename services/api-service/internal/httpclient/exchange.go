@@ -18,7 +18,7 @@ import (
 	"time"
 	"unicode/utf8"
 
-	"niuma/services/api-service/internal/http11"
+	"ensis-ops/services/api-service/internal/http11"
 )
 
 const (

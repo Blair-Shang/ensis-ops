@@ -8,9 +8,9 @@
 
 #include <vector>
 
-namespace niuma {
+namespace ensisops {
 
-#if NIUMMA_WITH_CEF
+#if ENSIS_WITH_CEF
 
 AuxiliaryWindowManager& AuxiliaryWindowManager::Instance() {
   static AuxiliaryWindowManager instance;
@@ -105,4 +105,4 @@ void AuxiliaryWindowManager::OnDetached(int window_id) {
 
 #endif
 
-}  // namespace niuma
+}  // namespace ensisops

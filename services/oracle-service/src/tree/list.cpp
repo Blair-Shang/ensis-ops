@@ -9,7 +9,7 @@
 #include <cstring>
 #include <sstream>
 
-namespace niuma::oracle::tree {
+namespace ensisops::oracle::tree {
 namespace {
 
 std::string Lower(std::string s) {
@@ -361,4 +361,4 @@ nlohmann::json CategoryCounts(session::Session& session, const ListParams& param
   };
 }
 
-}  // namespace niuma::oracle::tree
+}  // namespace ensisops::oracle::tree

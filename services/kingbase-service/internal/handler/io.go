@@ -6,8 +6,8 @@ import (
 	"fmt"
 	"strings"
 
-	"niuma/services/kingbase-service/internal/dataio"
-	"niuma/services/kingbase-service/internal/session"
+	"ensis-ops/services/kingbase-service/internal/dataio"
+	"ensis-ops/services/kingbase-service/internal/session"
 )
 
 type ioCsvParams struct {

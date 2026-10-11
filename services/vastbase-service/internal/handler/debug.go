@@ -5,7 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 
-	"niuma/services/vastbase-service/internal/debug"
+	"ensis-ops/services/vastbase-service/internal/debug"
 )
 
 type debugSessionParams struct {

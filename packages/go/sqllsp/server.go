@@ -116,7 +116,7 @@ func (s *Server) dispatch(ctx context.Context, conn *Connection, method string, 
 		return s.formatting(conn, params)
 	case "textDocument/signatureHelp":
 		return s.signatureHelp(ctx, conn, params)
-	case "niuma/setSuggestDatabase":
+	case "ensis-ops/setSuggestDatabase":
 		return nil, s.setSuggestDatabase(conn, params)
 	default:
 		return nil, fmt.Errorf("method not found: %s", method)

@@ -1,6 +1,6 @@
 import { shallowRef, watch, watchEffect } from 'vue'
 import type { Ref } from 'vue'
-import type { RsTreeDropPosition, RsTreeNode } from '@niuma/ui'
+import type { RsTreeDropPosition, RsTreeNode } from 'ensis-ui'
 import { connectionKindsForCategory } from '@/extensions/shell/activity-bar-config'
 import type { ModuleCategory } from '@/extensions/types/module'
 import {

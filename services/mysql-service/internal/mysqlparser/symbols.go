@@ -3,7 +3,7 @@ package mysqlparser
 import (
 	"strings"
 
-	"niuma/pkg/sqllsp"
+	"ensis-ops/pkg/sqllsp"
 )
 
 // DocumentSymbols 提取文档符号（例程 / 表 / 视图 / 顶层 DML）。

@@ -24,7 +24,7 @@ MariaDB 与 Oracle MySQL 虽同属「类 MySQL 协议」家族，但在认证、
 
 | 维度 | 决策 |
 |------|------|
-| 能力服务 | Layer-1 **`mariadb-service`**（二进制建议 `niuma-mariadb-service`） |
+| 能力服务 | Layer-1 **`mariadb-service`**（二进制建议 `ensis-mariadb-service`） |
 | 协议 kind | **`mariadb`** |
 | Bridge namespace | **`mariadb`**（`mariadb.session.open` 等） |
 | Dialect `family` | **`"mariadb"`** |

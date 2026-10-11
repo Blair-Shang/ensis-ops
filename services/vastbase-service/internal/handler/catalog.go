@@ -6,9 +6,9 @@ import (
 	"fmt"
 	"strings"
 
-	"niuma/services/vastbase-service/internal/meta"
-	"niuma/services/vastbase-service/internal/session"
-	"niuma/services/vastbase-service/internal/tree"
+	"ensis-ops/services/vastbase-service/internal/meta"
+	"ensis-ops/services/vastbase-service/internal/session"
+	"ensis-ops/services/vastbase-service/internal/tree"
 )
 
 const (

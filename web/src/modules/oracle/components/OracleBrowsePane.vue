@@ -6,7 +6,7 @@ import {
   RsEmpty,
   RsLoading,
   RsPopover,
-} from '@niuma/ui'
+} from 'ensis-ui'
 import { computed, proxyRefs } from 'vue'
 import {
   BrowseDataGrid,

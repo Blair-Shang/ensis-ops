@@ -6,7 +6,7 @@
 import type { ApiKvRow } from '../../types'
 import type { ResolvedRequest } from './request-resolve'
 
-const USER_AGENT = 'NiuMa'
+const USER_AGENT = 'ensis-ops'
 const ACCEPT_ENCODING = 'gzip, deflate'
 const HEADER_TOKEN = /^[-!#$%&'*+.^_`|~0-9A-Za-z]+$/
 

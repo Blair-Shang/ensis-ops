@@ -1,6 +1,6 @@
 import { defineHostTheme } from '../types'
 
-export const wuxiaThemeId = 'niuma.wuxia' as const
+export const wuxiaThemeId = 'ensis-ops.wuxia' as const
 
 /** 武侠风：墨底、朱砂、泥金。终端色与界面同一套。 */
 export const wuxiaTheme = defineHostTheme({

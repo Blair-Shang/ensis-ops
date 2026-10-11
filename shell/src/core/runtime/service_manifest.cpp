@@ -1,18 +1,18 @@
 #include "core/runtime/service_manifest.h"
 #include "util/runtime_paths.h"
 
-namespace niuma {
+namespace ensisops {
 
 bool ServiceManifestLoader::LoadFromDirectory(const std::string& manifests_dir) {
   (void)manifests_dir;
   ServiceManifest platform;
-  platform.id = "com.niuma.platform";
+  platform.id = "com.ensisops.platform";
   platform.name = "Platform Core";
 #if defined(_WIN32)
-  platform.executable = "services/bin/niuma-platform-core.exe";
+  platform.executable = "services/bin/ensis-platform-core.exe";
   platform.transport = "named_pipe";
 #else
-  platform.executable = "services/bin/niuma-platform-core";
+  platform.executable = "services/bin/ensis-platform-core";
   platform.transport = "unix_socket";
 #endif
   // 命名管道 + 4 字节小端长度前缀 + UTF-8 JSON（见 docs/11-platform-core.md）。
@@ -30,4 +30,4 @@ const ServiceManifest* ServiceManifestLoader::Find(
   return it != manifests_.end() ? &it->second : nullptr;
 }
 
-}  // namespace niuma
+}  // namespace ensisops

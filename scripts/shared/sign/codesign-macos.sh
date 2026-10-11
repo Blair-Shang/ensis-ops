@@ -9,7 +9,7 @@ source "$SCRIPT_DIR/../lib/common.sh"
 
 APP_BUNDLE="${1:-}"
 ENTITLEMENTS="${2:-}"
-[[ -n "$APP_BUNDLE" && -d "$APP_BUNDLE" ]] || nm_die "usage: codesign-macos.sh <NiuMa.app> [entitlements.plist]"
+[[ -n "$APP_BUNDLE" && -d "$APP_BUNDLE" ]] || nm_die "usage: codesign-macos.sh <ensis-ops.app> [entitlements.plist]"
 
 require_sign() {
   [[ "${REQUIRE_CODESIGN:-}" == "1" || "${REQUIRE_CODESIGN:-}" == "true" ]]
@@ -24,7 +24,7 @@ if [[ -z "${CODESIGN_IDENTITY:-}" ]]; then
 fi
 
 if [[ -z "$ENTITLEMENTS" ]]; then
-  ENTITLEMENTS="$SCRIPT_DIR/../../platforms/macos/pack/niuma.entitlements"
+  ENTITLEMENTS="$SCRIPT_DIR/../../platforms/macos/pack/ensis-ops.entitlements"
 fi
 [[ -f "$ENTITLEMENTS" ]] || nm_die "entitlements not found: $ENTITLEMENTS"
 
@@ -57,7 +57,7 @@ if [[ -d "$FRAMEWORK" ]]; then
   sign_bin "$FRAMEWORK"
 fi
 
-sign_bin "$APP_BUNDLE/Contents/MacOS/niuma" 1
+sign_bin "$APP_BUNDLE/Contents/MacOS/ensis-ops" 1
 sign_bin "$APP_BUNDLE" 1
 
 codesign --verify --deep --strict --verbose=2 "$APP_BUNDLE"

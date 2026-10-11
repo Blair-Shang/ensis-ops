@@ -3,7 +3,7 @@ package mysqlparser
 import (
 	"strings"
 
-	"niuma/pkg/sqllsp"
+	"ensis-ops/pkg/sqllsp"
 )
 
 // DefinitionAt 解析光标处跳转目标（local / routine / table / column）。

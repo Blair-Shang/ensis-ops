@@ -10,7 +10,7 @@ import (
 	"strings"
 	"time"
 
-	"niuma/services/dameng-service/internal/meta"
+	"ensis-ops/services/dameng-service/internal/meta"
 )
 
 type dumpObject struct {
@@ -48,7 +48,7 @@ func dumpSql(
 	}}
 
 	header := fmt.Sprintf(
-		"-- NiuMa Dameng dump\n-- format: niuma-dameng-dump/3\n-- schema: %s\n-- generated: %s\n-- mode: %s\n-- dropIfExists: %v\n-- truncateBeforeData: %v\n-- note: object names are unqualified so restore can target another schema via CURRENT_SCHEMA\n-- note: PL/SQL units (procedure/function/package/trigger) are terminated with a lone /\n\n",
+		"-- ensis-ops Dameng dump\n-- format: ensis-dameng-dump/3\n-- schema: %s\n-- generated: %s\n-- mode: %s\n-- dropIfExists: %v\n-- truncateBeforeData: %v\n-- note: object names are unqualified so restore can target another schema via CURRENT_SCHEMA\n-- note: PL/SQL units (procedure/function/package/trigger) are terminated with a lone /\n\n",
 		schema,
 		time.Now().UTC().Format(time.RFC3339),
 		params.Mode,

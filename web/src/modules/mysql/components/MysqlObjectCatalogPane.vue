@@ -3,7 +3,7 @@
  * MySQL 库对象一览：挂载公共 ObjectCatalogShell。
  * 双击库 / 分类节点打开；同一连接复用一个 Tab。
  */
-import { RsButton, RsTable } from '@niuma/ui'
+import { RsButton, RsTable } from 'ensis-ui'
 import { ObjectCatalogShell } from '@/modules/database'
 import { useMysqlObjectCatalog } from '@/modules/mysql/composables/useMysqlObjectCatalog'
 import { isCategoryId, type CategoryId } from '@/modules/mysql/conn-tree-shared'

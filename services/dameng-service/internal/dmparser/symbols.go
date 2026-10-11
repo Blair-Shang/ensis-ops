@@ -3,7 +3,7 @@ package dmparser
 import (
 	"strings"
 
-	"niuma/pkg/sqllsp"
+	"ensis-ops/pkg/sqllsp"
 )
 
 // DocumentSymbols 提取文档符号（例程名、顶层语句标签）。

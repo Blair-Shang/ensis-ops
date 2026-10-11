@@ -5,7 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 
-	"niuma/services/kingbase-service/internal/session"
+	"ensis-ops/services/kingbase-service/internal/session"
 )
 
 type txSessionParams struct {

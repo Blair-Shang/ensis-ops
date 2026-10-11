@@ -10,7 +10,7 @@ import (
 // SecretStore 抽象密钥存取，便于在测试中注入替身。
 //
 // 生产实现为 VaultStore（见 vault.go）：凭据密文用 AES-256-GCM 写入
-// nm_credential_ref.cipher_text，OS Keychain 仅保留一条主密钥（NiuMa/master-vault）。
+// nm_credential_ref.cipher_text，OS Keychain 仅保留一条主密钥（ensis-ops/master-vault）。
 // KeychainStore 保留用于：① 单元测试替身；② VaultStore 内部存取主密钥；
 // ③ 向后兼容迁移（自动读取旧版单条目并写入 vault）。
 // 严禁把明文密码直接写入业务表（见 .cursor/rules/database-schema.mdc）。

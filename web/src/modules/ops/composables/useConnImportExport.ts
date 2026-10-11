@@ -14,7 +14,7 @@ import {
 import type { ConnItem } from '@/modules/ops/types'
 
 const FILE_ACCEPT = ['.json']
-const DEFAULT_EXPORT_NAME = 'niuma-connections.json'
+const DEFAULT_EXPORT_NAME = 'ensis-connections.json'
 
 export type ConnImportExportResult =
   | { ok: true; imported?: number; exported?: number }
@@ -50,8 +50,8 @@ function resolveExportParentId(
 }
 
 function defaultExportFileName(scope: ConnExportScope): string {
-  if (scope.type === 'connection') return `niuma-connection-${scope.profileId}.json`
-  if (scope.type === 'folder') return `niuma-folder-${scope.folderId}.json`
+  if (scope.type === 'connection') return `ensis-connection-${scope.profileId}.json`
+  if (scope.type === 'folder') return `ensis-folder-${scope.folderId}.json`
   return DEFAULT_EXPORT_NAME
 }
 

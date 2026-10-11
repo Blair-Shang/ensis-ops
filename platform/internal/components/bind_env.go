@@ -4,7 +4,7 @@ import (
 	"context"
 	"strings"
 
-	"niuma/platform/internal/supervisor"
+	"ensis-ops/platform/internal/supervisor"
 )
 
 // PathResolver 解析工具组件有效路径（Registry 实现）。

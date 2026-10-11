@@ -11,7 +11,7 @@ import (
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 
-	"niuma/services/mongodb-service/internal/idgen"
+	"ensis-ops/services/mongodb-service/internal/idgen"
 )
 
 // StreamEmitter 上报 Change Stream 事件。

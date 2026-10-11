@@ -2,11 +2,11 @@
  * Kingbase 调试辅助：日志点草稿（只生成文本，不执行 DDL）。
  * 对齐 Navicat 级「调用 + 观测」，不是断点调试器。
  *
- * 会话门控：set_config('niuma.debug','1',false)
+ * 会话门控：set_config('ensis-ops.debug','1',false)
  * 草稿门控：形参 p_nm_debug
  */
 
-export const NM_DEBUG_GUC = 'niuma.debug'
+export const NM_DEBUG_GUC = 'ensis-ops.debug'
 export const NM_DEBUG_PARAM = 'p_nm_debug'
 export const NM_DEBUG_POINT_MARKER = '/* nm-debug-point */'
 

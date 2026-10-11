@@ -1,4 +1,4 @@
-// Command api-service 是 NiuMa API 管理能力服务（Layer 1）的独立进程入口。
+// Command api-service 是 ensis-ops API 管理能力服务（Layer 1）的独立进程入口。
 //
 // 本期只做原始 TCP / UDP 套接字（监听接收 + 发送）。HTTP / WebSocket 等应用层协议后续再加。
 // 契约见 docs/36-api-module.md。
@@ -13,15 +13,15 @@ import (
 	"runtime"
 	"syscall"
 
-	"niuma/pkg/logutil"
-	"niuma/pkg/serviceipc/server"
-	"niuma/services/api-service/internal/eventpub"
-	"niuma/services/api-service/internal/handler"
+	"ensis-ops/pkg/logutil"
+	"ensis-ops/pkg/serviceipc/server"
+	"ensis-ops/services/api-service/internal/eventpub"
+	"ensis-ops/services/api-service/internal/handler"
 )
 
 const (
-	windowsPipeAddr = `\\.\pipe\niuma.api`
-	unixSocketName  = "niuma.api.sock"
+	windowsPipeAddr = `\\.\pipe\ensis-ops.api`
+	unixSocketName  = "ensis-ops.api.sock"
 )
 
 func main() {

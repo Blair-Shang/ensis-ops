@@ -252,21 +252,21 @@ function Build-RustService {
     }
 }
 
-$platformOut = Join-Path $TargetBinDir (Get-BinaryName -BaseName 'niuma-platform-core' -PlatformName $Platform)
-$apiOut = Join-Path $TargetBinDir (Get-BinaryName -BaseName 'niuma-api-service' -PlatformName $Platform)
-$ftpOut = Join-Path $TargetBinDir (Get-BinaryName -BaseName 'niuma-ftp-service' -PlatformName $Platform)
-$sshOut = Join-Path $TargetBinDir (Get-BinaryName -BaseName 'niuma-ssh-service' -PlatformName $Platform)
-$sftpOut = Join-Path $TargetBinDir (Get-BinaryName -BaseName 'niuma-sftp-service' -PlatformName $Platform)
-$redisOut = Join-Path $TargetBinDir (Get-BinaryName -BaseName 'niuma-redis-service' -PlatformName $Platform)
-$mongoOut = Join-Path $TargetBinDir (Get-BinaryName -BaseName 'niuma-mongodb-service' -PlatformName $Platform)
-$vastbaseOut = Join-Path $TargetBinDir (Get-BinaryName -BaseName 'niuma-vastbase-service' -PlatformName $Platform)
-$mysqlOut = Join-Path $TargetBinDir (Get-BinaryName -BaseName 'niuma-mysql-service' -PlatformName $Platform)
-$sqliteOut = Join-Path $TargetBinDir (Get-BinaryName -BaseName 'niuma-sqlite-service' -PlatformName $Platform)
-$damengOut = Join-Path $TargetBinDir (Get-BinaryName -BaseName 'niuma-dameng-service' -PlatformName $Platform)
-$clickhouseOut = Join-Path $TargetBinDir (Get-BinaryName -BaseName 'niuma-clickhouse-service' -PlatformName $Platform)
-$kingbaseOut = Join-Path $TargetBinDir (Get-BinaryName -BaseName 'niuma-kingbase-service' -PlatformName $Platform)
-$postgresOut = Join-Path $TargetBinDir (Get-BinaryName -BaseName 'niuma-postgres-service' -PlatformName $Platform)
-$sqlserverOut = Join-Path $TargetBinDir (Get-BinaryName -BaseName 'niuma-sqlserver-service' -PlatformName $Platform)
+$platformOut = Join-Path $TargetBinDir (Get-BinaryName -BaseName 'ensis-platform-core' -PlatformName $Platform)
+$apiOut = Join-Path $TargetBinDir (Get-BinaryName -BaseName 'ensis-api-service' -PlatformName $Platform)
+$ftpOut = Join-Path $TargetBinDir (Get-BinaryName -BaseName 'ensis-ftp-service' -PlatformName $Platform)
+$sshOut = Join-Path $TargetBinDir (Get-BinaryName -BaseName 'ensis-ssh-service' -PlatformName $Platform)
+$sftpOut = Join-Path $TargetBinDir (Get-BinaryName -BaseName 'ensis-sftp-service' -PlatformName $Platform)
+$redisOut = Join-Path $TargetBinDir (Get-BinaryName -BaseName 'ensis-redis-service' -PlatformName $Platform)
+$mongoOut = Join-Path $TargetBinDir (Get-BinaryName -BaseName 'ensis-mongodb-service' -PlatformName $Platform)
+$vastbaseOut = Join-Path $TargetBinDir (Get-BinaryName -BaseName 'ensis-vastbase-service' -PlatformName $Platform)
+$mysqlOut = Join-Path $TargetBinDir (Get-BinaryName -BaseName 'ensis-mysql-service' -PlatformName $Platform)
+$sqliteOut = Join-Path $TargetBinDir (Get-BinaryName -BaseName 'ensis-sqlite-service' -PlatformName $Platform)
+$damengOut = Join-Path $TargetBinDir (Get-BinaryName -BaseName 'ensis-dameng-service' -PlatformName $Platform)
+$clickhouseOut = Join-Path $TargetBinDir (Get-BinaryName -BaseName 'ensis-clickhouse-service' -PlatformName $Platform)
+$kingbaseOut = Join-Path $TargetBinDir (Get-BinaryName -BaseName 'ensis-kingbase-service' -PlatformName $Platform)
+$postgresOut = Join-Path $TargetBinDir (Get-BinaryName -BaseName 'ensis-postgres-service' -PlatformName $Platform)
+$sqlserverOut = Join-Path $TargetBinDir (Get-BinaryName -BaseName 'ensis-sqlserver-service' -PlatformName $Platform)
 $mcpVastOut = Join-Path $TargetBinDir (Get-BinaryName -BaseName 'mcp-vastbase-readonly' -PlatformName $Platform)
 
 $MigrateDir = Join-Path $Root 'platform/internal/migrate'
@@ -342,18 +342,18 @@ Build-GoService -ModuleDir (Join-Path $Root 'services/mcp-vastbase-readonly') `
     -Output $mcpVastOut
 
 $sshBuilt = Build-RustService -CrateDir (Join-Path $Root 'services/ssh-service') `
-    -BinName 'niuma-ssh-service' `
+    -BinName 'ensis-ssh-service' `
     -Output $sshOut
 
 $sftpBuilt = Build-RustService -CrateDir (Join-Path $Root 'services/sftp-service') `
-    -BinName 'niuma-sftp-service' `
+    -BinName 'ensis-sftp-service' `
     -Output $sftpOut
 
 $redisBuilt = Build-RustService -CrateDir (Join-Path $Root 'services/redis-service') `
-    -BinName 'niuma-redis-service' `
+    -BinName 'ensis-redis-service' `
     -Output $redisOut
 
-$oracleOut = Join-Path $TargetBinDir (Get-BinaryName -BaseName 'niuma-oracle-service' -PlatformName $Platform)
+$oracleOut = Join-Path $TargetBinDir (Get-BinaryName -BaseName 'ensis-oracle-service' -PlatformName $Platform)
 $oracleBuilt = $false
 if (-not $SkipOracle) {
     $OracleBuildScript = Join-Path $PSScriptRoot 'build-oracle-service.ps1'

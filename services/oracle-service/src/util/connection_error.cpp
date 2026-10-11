@@ -3,7 +3,7 @@
 #include <cctype>
 #include <string>
 
-namespace niuma::oracle::util {
+namespace ensisops::oracle::util {
 namespace {
 
 std::string ToLowerAscii(std::string_view s) {
@@ -44,4 +44,4 @@ bool IsConnectionLost(std::string_view err) {
   return false;
 }
 
-}  // namespace niuma::oracle::util
+}  // namespace ensisops::oracle::util

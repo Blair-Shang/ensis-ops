@@ -1,14 +1,14 @@
-// Command dameng-service is NiuMa's independent Dameng Layer-1 service.
+// Command dameng-service is ensis-ops's independent Dameng Layer-1 service.
 package main
 
 import (
 	"context"
 	"log/slog"
-	"niuma/pkg/logutil"
-	"niuma/pkg/serviceipc/server"
-	"niuma/services/dameng-service/internal/eventpub"
-	"niuma/services/dameng-service/internal/handler"
-	"niuma/services/dameng-service/internal/idgen"
+	"ensis-ops/pkg/logutil"
+	"ensis-ops/pkg/serviceipc/server"
+	"ensis-ops/services/dameng-service/internal/eventpub"
+	"ensis-ops/services/dameng-service/internal/handler"
+	"ensis-ops/services/dameng-service/internal/idgen"
 	"os"
 	"os/signal"
 	"path/filepath"
@@ -17,8 +17,8 @@ import (
 )
 
 const (
-	windowsPipeAddr = `\\.\pipe\niuma.dameng`
-	unixSocketName  = "niuma.dameng.sock"
+	windowsPipeAddr = `\\.\pipe\ensis-ops.dameng`
+	unixSocketName  = "ensis-ops.dameng.sock"
 )
 
 func main() {

@@ -1,8 +1,8 @@
 /**
  * @file main.cpp
- * @brief NiuMa CEF 壳入口：多进程分发与 Browser 主循环。
+ * @brief ensis-ops CEF 壳入口：多进程分发与 Browser 主循环。
  */
-#include "core/cef/niuma_app.h"
+#include "core/cef/ensis_app.h"
 #include "core/cef/cef_settings.h"
 #include "core/runtime/service_manager.h"
 #include "util/runtime_paths.h"
@@ -11,7 +11,7 @@
 #include <iostream>
 #include <string>
 
-#if NIUMMA_WITH_CEF
+#if ENSIS_WITH_CEF
 #include "include/cef_app.h"
 #if defined(OS_WIN)
 #include <windows.h>
@@ -23,7 +23,7 @@
 
 namespace {
 
-#if NIUMMA_WITH_CEF
+#if ENSIS_WITH_CEF
 #if defined(OS_WIN)
 int RunBrowserProcess(HINSTANCE instance) {
   CefMainArgs main_args(instance);
@@ -31,23 +31,23 @@ int RunBrowserProcess(HINSTANCE instance) {
 int RunBrowserProcess(int argc, char* argv[]) {
   CefMainArgs main_args(argc, argv);
 #endif
-  CefRefPtr<niuma::NiuMaApp> app(new niuma::NiuMaApp());
+  CefRefPtr<ensisops::EnsisApp> app(new ensisops::EnsisApp());
 
-  niuma::InitSessionLog();
+  ensisops::InitSessionLog();
 
   CefSettings settings;
-  niuma::ConfigureCefSettings(settings);
+  ensisops::ConfigureCefSettings(settings);
 
   if (!CefInitialize(main_args, settings, app.get(), nullptr)) {
     std::cerr << "CefInitialize failed\n";
     return 1;
   }
 
-  niuma::ServiceManager::Instance().Init(niuma::GetInstallDir());
+  ensisops::ServiceManager::Instance().Init(ensisops::GetInstallDir());
 
   CefRunMessageLoop();
 
-  niuma::ServiceManager::Instance().ShutdownAll();
+  ensisops::ServiceManager::Instance().ShutdownAll();
   CefShutdown();
   return 0;
 }
@@ -55,7 +55,7 @@ int RunBrowserProcess(int argc, char* argv[]) {
 
 }  // namespace
 
-#if defined(__APPLE__) && NIUMMA_WITH_CEF
+#if defined(__APPLE__) && ENSIS_WITH_CEF
 static bool LoadMacCefFramework(int argc, char* argv[]) {
   static CefScopedLibraryLoader library_loader;
   bool helper = false;
@@ -74,9 +74,9 @@ static bool LoadMacCefFramework(int argc, char* argv[]) {
 
 #if defined(OS_WIN)
 int APIENTRY wWinMain(HINSTANCE instance, HINSTANCE, PWSTR, int) {
-#if NIUMMA_WITH_CEF
+#if ENSIS_WITH_CEF
   CefMainArgs main_args(instance);
-  CefRefPtr<niuma::NiuMaApp> app(new niuma::NiuMaApp());
+  CefRefPtr<ensisops::EnsisApp> app(new ensisops::EnsisApp());
   const int exit_code = CefExecuteProcess(main_args, app.get(), nullptr);
   if (exit_code >= 0) {
     return exit_code;
@@ -84,21 +84,21 @@ int APIENTRY wWinMain(HINSTANCE instance, HINSTANCE, PWSTR, int) {
   return RunBrowserProcess(instance);
 #else
   (void)instance;
-  std::cerr << "NiuMa: CEF not linked. Run: pnpm setup:desktop && pnpm dev\n";
+  std::cerr << "ensis-ops: CEF not linked. Run: pnpm setup:desktop && pnpm dev\n";
   return 1;
 #endif
 }
 #else
 int main(int argc, char* argv[]) {
-#if NIUMMA_WITH_CEF
+#if ENSIS_WITH_CEF
 #if defined(__APPLE__)
   if (!LoadMacCefFramework(argc, argv)) {
-    std::cerr << "NiuMa: failed to load Chromium Embedded Framework\n";
+    std::cerr << "ensis-ops: failed to load Chromium Embedded Framework\n";
     return 1;
   }
 #endif
   CefMainArgs main_args(argc, argv);
-  CefRefPtr<niuma::NiuMaApp> app(new niuma::NiuMaApp());
+  CefRefPtr<ensisops::EnsisApp> app(new ensisops::EnsisApp());
   const int exit_code = CefExecuteProcess(main_args, app.get(), nullptr);
   if (exit_code >= 0) {
     return exit_code;
@@ -107,7 +107,7 @@ int main(int argc, char* argv[]) {
 #else
   (void)argc;
   (void)argv;
-  std::cerr << "NiuMa: CEF not linked. Run: pnpm setup:desktop && pnpm dev\n";
+  std::cerr << "ensis-ops: CEF not linked. Run: pnpm setup:desktop && pnpm dev\n";
   return 1;
 #endif
 }

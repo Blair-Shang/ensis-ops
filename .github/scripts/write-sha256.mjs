@@ -13,11 +13,11 @@ if (!root) {
   process.exit(1)
 }
 
-// 只校验用户安装包。绿色目录里的 niuma.exe / 服务 exe 不进清单。
+// 只校验用户安装包。绿色目录里的 ensis-ops.exe / 服务 exe 不进清单。
 function isReleaseInstaller(file) {
   const name = basename(file)
-  if (/^NiuMa-.+-Setup\.(exe|run|pkg)$/i.test(name)) return true
-  if (/^NiuMa-.+\.dmg$/i.test(name)) return true
+  if (/^ensis-ops-.+-Setup\.(exe|run|pkg)$/i.test(name)) return true
+  if (/^ensis-ops-.+\.dmg$/i.test(name)) return true
   if (/\.(deb|rpm)$/i.test(name)) return true
   return false
 }

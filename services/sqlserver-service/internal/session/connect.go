@@ -19,8 +19,8 @@ import (
 	mssql "github.com/microsoft/go-mssqldb"
 	"github.com/microsoft/go-mssqldb/azuread"
 
-	"niuma/pkg/netproxy"
-	"niuma/pkg/tunnel"
+	"ensis-ops/pkg/netproxy"
+	"ensis-ops/pkg/tunnel"
 )
 
 const (
@@ -28,7 +28,7 @@ const (
 	DefaultPort = 1433
 
 	defaultTimeoutSeconds = 10
-	defaultAppName        = "NiuMa"
+	defaultAppName        = "ensis-ops"
 	defaultEncrypt        = "optional"
 	defaultAuthType       = "sql"
 

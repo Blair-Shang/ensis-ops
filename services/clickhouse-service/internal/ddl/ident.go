@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"strings"
 
-	"niuma/services/clickhouse-service/internal/session"
+	"ensis-ops/services/clickhouse-service/internal/session"
 )
 
 func quoteIdent(name string) (string, error) {

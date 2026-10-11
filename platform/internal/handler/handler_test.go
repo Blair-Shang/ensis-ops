@@ -8,10 +8,10 @@ import (
 	"path/filepath"
 	"testing"
 
-	"niuma/platform/internal/handler"
-	"niuma/platform/internal/migrate"
-	"niuma/platform/internal/protocol"
-	"niuma/platform/internal/store"
+	"ensis-ops/platform/internal/handler"
+	"ensis-ops/platform/internal/migrate"
+	"ensis-ops/platform/internal/protocol"
+	"ensis-ops/platform/internal/store"
 
 	_ "modernc.org/sqlite"
 )

@@ -1,4 +1,4 @@
-NiuMa Additional Notices for Installation and Use
+ensis-ops Additional Notices for Installation and Use
 Version: 2.1.0    Applies to: desktop client installation and use
 
 [Official position]
@@ -7,14 +7,14 @@ To the maximum extent permitted by law: the Developer is not responsible for any
 
 The controlling official disclaimer is docs/legal/DISCLAIMER.en-US.txt (after install: licenses/DISCLAIMER.en-US.txt). Nothing below narrows that disclaimer.
 
-IMPORTANT: Read the official disclaimer, these notices, and Apache License 2.0 before installing, copying, or using NiuMa (the "Software"). Installing or using means you accept them. If you do not agree, cancel installation and delete all copies.
+IMPORTANT: Read the official disclaimer, these notices, and Apache License 2.0 before installing, copying, or using ensis-ops (the "Software"). Installing or using means you accept them. If you do not agree, cancel installation and delete all copies.
 
-Portions written by the NiuMa Authors are licensed under Apache License 2.0 (licenses/LICENSE or LICENSE at the repository root). These notices do not reduce the rights Apache 2.0 already grants.
+Portions written by the ensis-ops Authors are licensed under Apache License 2.0 (licenses/LICENSE or LICENSE at the repository root). These notices do not reduce the rights Apache 2.0 already grants.
 
 The Software is provided by an individual developer (the "Developer"), not a registered company. These notices are not a paid service, outsourcing engagement, or SLA.
 
 1. Copyright license and trademarks
-The copyright license is Apache License 2.0. The NiuMa name and logos are trademarks; Apache 2.0 does not grant trademark rights. You may not label a modified build as "official NiuMa" without written permission. The Developer is not responsible for modified, redistributed, or spoofed builds the Developer did not publish.
+The copyright license is Apache License 2.0. The ensis-ops name and logos are trademarks; Apache 2.0 does not grant trademark rights. You may not label a modified build as "official ensis-ops" without written permission. The Developer is not responsible for modified, redistributed, or spoofed builds the Developer did not publish.
 
 2. Operations, connections, and data risk
 The Software is an operations and data tool. Targets, accounts, keys, commands, and SQL are chosen and executed by you. The Developer does not control your servers, does not review your actions, and is not responsible for outcomes. Back up first and confirm you are authorized. Credentials stay in your local profile; leaks are your risk. Third-party and OS licenses still apply. Optional components such as Oracle Instant Client are not bundled. Do not use the Software for illegal or harmful network activity.

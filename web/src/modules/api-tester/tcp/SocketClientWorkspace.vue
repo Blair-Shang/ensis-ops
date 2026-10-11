@@ -2,7 +2,7 @@
 /**
  * TCP / UDP 客户端：拨号对端、收发。tcp/udp register 按 listen 挂上。
  */
-import { RsButton, RsInput, RsSplitPane, type RsSplitPaneItem } from '@niuma/ui'
+import { RsButton, RsInput, RsSplitPane, type RsSplitPaneItem } from 'ensis-ui'
 import type { ApiRequest } from '../types'
 import { useApiSocketSession } from './composables/useApiSocketSession'
 import ApiSocketCompose from './components/ApiSocketCompose.vue'

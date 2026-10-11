@@ -3,7 +3,7 @@
  */
 import { computed, onMounted, onUnmounted, ref, shallowRef, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
-import { useRsToast, type RsContextMenuItem, type RsTableColumn } from '@niuma/ui'
+import { useRsToast, type RsContextMenuItem, type RsTableColumn } from 'ensis-ui'
 import { damengApi } from '@/api/dameng'
 import type { DamengQueryColumn, DamengQueryExecResult } from '@/api/types/dameng'
 import {
@@ -122,7 +122,7 @@ export function useDamengQueryPane(props: DamengQueryPaneProps) {
 
   const { historyOpen, historyEntries, rememberSql, onHistoryPick } = useSqlQueryHistory({
     profileId: () => props.profileId,
-    storagePrefix: 'niuma.dameng.sqlHistory.',
+    storagePrefix: 'ensis-ops.dameng.sqlHistory.',
     sqlText,
   })
 

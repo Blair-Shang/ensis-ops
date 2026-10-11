@@ -1,6 +1,6 @@
 // Package logutil 为桌面子进程提供落盘日志（100 MiB 滚动，含 slog 级别字段）。
 //
-// 目录优先级：NIUMMA_LOG_DIR（壳层会话子目录）> NIUMMA_LOG_ROOT > 仓库根 logs/。
+// 目录优先级：ENSIS_LOG_DIR（壳层会话子目录）> ENSIS_LOG_ROOT > 仓库根 logs/。
 // 本机可观测（无 APM）：同目录 observe.jsonl 记录 IPC 耗时与错误码，可用 traceId 检索。
 package logutil
 

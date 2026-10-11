@@ -1,4 +1,4 @@
-import type { RsButtonTone } from '@niuma/ui'
+import type { RsButtonTone } from 'ensis-ui'
 
 /** IDE 顶栏只读身份段（库、集合、schema 等）。 */
 export interface SqlIdeToolbarIdentityPart {

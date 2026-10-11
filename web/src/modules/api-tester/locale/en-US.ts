@@ -396,7 +396,7 @@ export default {
       captureEmpty: 'No requests yet. Point a client at the proxy address.',
       captureHint: 'Listens on 127.0.0.1 only. HTTP is recorded in full. HTTPS records the target host and is not decrypted.',
       importError: 'Could not parse the collection file',
-      importKindError: 'JSON must be a NiuMa collection, Postman v2, or OpenAPI 3',
+      importKindError: 'JSON must be a ensis-ops collection, Postman v2, or OpenAPI 3',
       exportSuccess: 'Collection exported',
       history: 'History',
       searchHistory: 'Search history',

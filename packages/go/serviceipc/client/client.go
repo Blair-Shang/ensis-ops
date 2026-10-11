@@ -12,8 +12,8 @@ import (
 	"sync"
 	"time"
 
-	"niuma/pkg/serviceipc/envelope"
-	"niuma/pkg/serviceipc/protocol"
+	"ensis-ops/pkg/serviceipc/envelope"
+	"ensis-ops/pkg/serviceipc/protocol"
 )
 
 // Request 与 Platform/Shell 帧协议一致。

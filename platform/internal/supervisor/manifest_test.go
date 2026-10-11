@@ -19,13 +19,13 @@ func TestLoadManifests_FtpPipeAddress(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	m := manifests["com.niuma.ftp"]
+	m := manifests["com.ensisops.ftp"]
 	if m == nil {
-		t.Fatal("com.niuma.ftp manifest missing")
+		t.Fatal("com.ensisops.ftp manifest missing")
 	}
-	want := `\\.\pipe\niuma.ftp`
+	want := `\\.\pipe\ensis-ops.ftp`
 	if runtime.GOOS != "windows" {
-		want = `/tmp/niuma.ftp.sock`
+		want = `/tmp/ensis-ops.ftp.sock`
 	}
 	if got := m.IPCAddress(); got != want {
 		t.Fatalf("IPCAddress() = %q, want %q", got, want)

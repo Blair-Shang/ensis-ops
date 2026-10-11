@@ -32,7 +32,7 @@ export async function registerComplete(input: {
   return cloudFetch('/api/v1/auth/register/complete', {
     method: 'POST',
     body: JSON.stringify(input),
-    headers: { 'X-Device-Label': 'NiuMa Desktop' },
+    headers: { 'X-Device-Label': 'ensis-ops Desktop' },
   })
 }
 
@@ -40,7 +40,7 @@ export async function loginPassword(email: string, password: string): Promise<Au
   return cloudFetch('/api/v1/auth/login', {
     method: 'POST',
     body: JSON.stringify({ email, password }),
-    headers: { 'X-Device-Label': 'NiuMa Desktop' },
+    headers: { 'X-Device-Label': 'ensis-ops Desktop' },
   })
 }
 
@@ -55,7 +55,7 @@ export async function loginOtpComplete(email: string, code: string): Promise<Aut
   return cloudFetch('/api/v1/auth/login/otp/complete', {
     method: 'POST',
     body: JSON.stringify({ email, code }),
-    headers: { 'X-Device-Label': 'NiuMa Desktop' },
+    headers: { 'X-Device-Label': 'ensis-ops Desktop' },
   })
 }
 

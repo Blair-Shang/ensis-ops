@@ -6,7 +6,7 @@ import (
 )
 
 func TestSplitSQLStatementsSkipsSemicolonInLineComment(t *testing.T) {
-	script := "-- NiuMa PostgreSQL dump\n" +
+	script := "-- ensis-ops PostgreSQL dump\n" +
 		"-- note: no CREATE DATABASE; restore into a prepared target DB\n" +
 		"-- note: includes sequences / functions / procedures / triggers when selected\n\n" +
 		"SET client_encoding = 'UTF8';\n\n" +

@@ -9,7 +9,7 @@ import (
 	"strings"
 	"time"
 
-	"niuma/services/dameng-service/internal/session"
+	"ensis-ops/services/dameng-service/internal/session"
 )
 
 func requirePath(path string) error {

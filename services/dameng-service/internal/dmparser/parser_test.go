@@ -4,8 +4,8 @@ import (
 	"strings"
 	"testing"
 
-	"niuma/pkg/sqllsp"
-	"niuma/services/dameng-service/internal/dmparser"
+	"ensis-ops/pkg/sqllsp"
+	"ensis-ops/services/dameng-service/internal/dmparser"
 )
 
 func TestKeywordsNonEmpty(t *testing.T) {

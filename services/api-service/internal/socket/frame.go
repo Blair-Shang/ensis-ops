@@ -4,7 +4,7 @@ import (
 	"bytes"
 	"fmt"
 
-	"niuma/services/api-service/internal/http11"
+	"ensis-ops/services/api-service/internal/http11"
 )
 
 // FrameMode 是 TCP 字节流的切帧方式。UDP 数据报本身就是一帧，不使用这里。

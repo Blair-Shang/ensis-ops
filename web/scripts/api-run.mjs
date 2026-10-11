@@ -3,7 +3,7 @@
  * 本机集合运行，不连云端。
  * node web/scripts/api-run.mjs <集合.json> [--env 环境.json] [--data 数据.csv|json] [--iteration 1] [--delay 0]
  *
- * 集合可以是牛马导出（kind: niuma.api-collection）或 Postman Collection v2。
+ * 集合可以是ensis-ops导出（kind: ensis-ops.api-collection）或 Postman Collection v2。
  * Digest / AWS / NTLM / gRPC 仍走桌面里的发送，这里只跑 HTTP。
  */
 import { readFileSync } from 'node:fs'
@@ -121,11 +121,11 @@ function stringifyRow(row) {
 }
 
 function flatten(root) {
-  if (root?.kind === 'niuma.api-collection' && Array.isArray(root.folders)) {
+  if (root?.kind === 'ensis-ops.api-collection' && Array.isArray(root.folders)) {
     return root.folders.flatMap((folder) => (folder.requests ?? []).map((req) => fromNiuma(req)).filter(Boolean))
   }
   if (Array.isArray(root?.item)) return walkPostman(root.item)
-  throw new Error('无法识别集合：需要牛马集合或 Postman Collection v2')
+  throw new Error('无法识别集合：需要ensis-ops集合或 Postman Collection v2')
 }
 
 function fromNiuma(req) {

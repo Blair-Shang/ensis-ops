@@ -4,7 +4,7 @@ package eventpub
 import (
 	"context"
 
-	"niuma/pkg/serviceipc/event"
+	"ensis-ops/pkg/serviceipc/event"
 )
 
 type Async struct {

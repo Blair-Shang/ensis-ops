@@ -6,14 +6,14 @@ set -euo pipefail
 
 PAYLOAD_DIR="${1:-}"
 OUTPUT_RUN="${2:-}"
-APP_NAME="${3:-NiuMa}"
+APP_NAME="${3:-ensis-ops}"
 APP_VERSION="${4:-0.0.0}"
 ENTRY_SCRIPT="${5:-install.sh}"
 
 [[ -d "$PAYLOAD_DIR" ]] || { echo "payload dir required" >&2; exit 1; }
 [[ -n "$OUTPUT_RUN" ]] || { echo "output .run path required" >&2; exit 1; }
 
-MARKER='__NIUMMA_ARCHIVE_BELOW__'
+MARKER='__ENSIS_ARCHIVE_BELOW__'
 WORK_DIR="$(mktemp -d)"
 trap 'rm -rf "$WORK_DIR"' EXIT
 
@@ -30,8 +30,8 @@ cleanup() { rm -rf "\$TMPDIR"; }
 trap cleanup EXIT
 ARCHIVE_LINE=\$(awk '/^\$MARKER\$/ {print NR + 1; exit 0; }' "\$0")
 tail -n +\$ARCHIVE_LINE "\$0" | tar -xz -C "\$TMPDIR"
-export NIUMMA_APP_NAME='$APP_NAME'
-export NIUMMA_APP_VERSION='$APP_VERSION'
+export ENSIS_APP_NAME='$APP_NAME'
+export ENSIS_APP_VERSION='$APP_VERSION'
 chmod +x "\$TMPDIR/$ENTRY_SCRIPT"
 exec "\$TMPDIR/$ENTRY_SCRIPT" "\$@"
 EOF

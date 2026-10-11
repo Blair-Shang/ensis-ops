@@ -2,7 +2,7 @@
 /**
  * 设置 · 关于 · 本机诊断（observe.jsonl / crashes，无外部 APM）。
  */
-import { RsButton, RsInput } from '@niuma/ui'
+import { RsButton, RsInput } from 'ensis-ui'
 import { useI18n } from 'vue-i18n'
 import { onMounted, ref } from 'vue'
 import { diagApi } from '@/api/diag'

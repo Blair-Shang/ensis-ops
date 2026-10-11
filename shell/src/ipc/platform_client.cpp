@@ -4,7 +4,7 @@
 #include "util/runtime_paths.h"
 #include "util/session_log.h"
 
-#include <niuma/logutil/logutil.hpp>
+#include <ensisops/logutil/logutil.hpp>
 
 #include <functional>
 #include <cstdint>
@@ -34,13 +34,13 @@
 #include <unistd.h>
 #endif
 
-#if NIUMMA_WITH_CEF
+#if ENSIS_WITH_CEF
 #include "include/base/cef_callback.h"
 #include "include/cef_task.h"
 #include "include/wrapper/cef_closure_task.h"
 #endif
 
-namespace niuma {
+namespace ensisops {
 namespace {
 
 void PostToUi(std::function<void()> task);
@@ -88,10 +88,10 @@ void RemoveStreamSession(const std::string& stream_id,
 #if defined(_WIN32)
 
 /// 命名管道地址；必须与 Go platform-core 及 service manifest 保持一致。
-constexpr wchar_t kPipeName[] = L"\\\\.\\pipe\\niuma.platform";
+constexpr wchar_t kPipeName[] = L"\\\\.\\pipe\\ensis-ops.platform";
 /// Shell 订阅 Platform 推送事件的命名管道（与 platform eventhub 一致）。
-constexpr wchar_t kEventPipeName[] = L"\\\\.\\pipe\\niuma.platform.events";
-constexpr wchar_t kStreamPipeName[] = L"\\\\.\\pipe\\niuma.platform.stream";
+constexpr wchar_t kEventPipeName[] = L"\\\\.\\pipe\\ensis-ops.platform.events";
+constexpr wchar_t kStreamPipeName[] = L"\\\\.\\pipe\\ensis-ops.platform.stream";
 /// 连接尝试次数（覆盖「刚 spawn、监听器尚未就绪」的窗口期）。
 constexpr DWORD kConnectAttempts = 10;
 /// 所有管道实例繁忙时等待空闲的超时（毫秒）。
@@ -682,7 +682,7 @@ void EventListenerLoop(PlatformEventCallback callback) {
 
 /// @brief 在 CEF UI 线程执行 task；已在 UI 线程或无 CEF 时直接执行。
 void PostToUi(std::function<void()> task) {
-#if NIUMMA_WITH_CEF
+#if ENSIS_WITH_CEF
   if (!CefCurrentlyOn(TID_UI)) {
     CefPostTask(TID_UI, base::BindOnce([](std::function<void()> fn) { fn(); },
                                        std::move(task)));
@@ -712,9 +712,9 @@ void PlatformClient::Invoke(const std::string& service_id,
                                  std::chrono::steady_clock::now() - t0)
                                  .count();
     if (io_ok) {
-      niuma::logutil::ObserveIPC("niuma-shell", request, response, duration_ms);
+      ensisops::logutil::ObserveIPC("ensis-shell", request, response, duration_ms);
     } else {
-      niuma::logutil::ObserveRPC("niuma-shell", JsonGetString(request, "method"),
+      ensisops::logutil::ObserveRPC("ensis-shell", JsonGetString(request, "method"),
                                  JsonGetString(request, "id"), JsonGetString(request, "traceId"),
                                  false, "unavailable", duration_ms);
     }
@@ -814,4 +814,4 @@ void PlatformClient::StopEventListener() {
   g_event_listener_stop.store(true);
 }
 
-}  // namespace niuma
+}  // namespace ensisops

@@ -7,7 +7,7 @@
 
 ## 1. 定位
 
-Web 层是 NiuMa 桌面 App 的 **UI 渲染进程**，运行在 CEF Chromium 内，通过 **CEF IPC**（cefQuery / PostMessage）与 C++ 壳通信，**不直连**后端服务。
+Web 层是 ensis-ops 桌面 App 的 **UI 渲染进程**，运行在 CEF Chromium 内，通过 **CEF IPC**（cefQuery / PostMessage）与 C++ 壳通信，**不直连**后端服务。
 
 职责划分：
 
@@ -23,8 +23,8 @@ Web 层是 NiuMa 桌面 App 的 **UI 渲染进程**，运行在 CEF Chromium 内
 | 使用 | 禁止 |
 |------|------|
 | **Vue 3** + **TypeScript** + **Vite** | Element Plus、Ant Design Vue |
-| **`@niuma/ui` `--rs-*` token**、`web/src/styles/tokens.css` | Tailwind、内联混乱 class、硬编码色值 |
-| **Reka UI**（`reka-ui`，仅 niuma-ui 内） | 业务层自建 Dialog/Menu 焦点陷阱 |
+| **`ensis-ui` `--rs-*` token**、`web/src/styles/tokens.css` | Tailwind、内联混乱 class、硬编码色值 |
+| **Reka UI**（`reka-ui`，仅 ensis-ui 内） | 业务层自建 Dialog/Menu 焦点陷阱 |
 | **lucide-vue-next**、**vue-sonner** | `ElMessage`、Ant `message` |
 | **Pinia** | 无规范的全局 `ref` 散落 |
 | **vue-i18n** | 组件内硬编码中英文 |
@@ -33,7 +33,7 @@ Web 层是 NiuMa 桌面 App 的 **UI 渲染进程**，运行在 CEF Chromium 内
 
 ```
 web/（业务）
-  ├── import @niuma/ui          ✅
+  ├── import ensis-ui          ✅
   ├── import pinia / vue-i18n   ✅
   └── import reka-ui            ❌ 禁止
 
@@ -47,9 +47,9 @@ packages/ui/（组件库）
 ## 3. 目录结构（规划）
 
 ```
-NiuMa/
+ensis-ops/
 ├── packages/
-│   └── ui/                      # @niuma/ui — 公共组件库（见 §4）
+│   └── ui/                      # ensis-ui — 公共组件库（见 §4）
 ├── web/                         # CEF 内主 Web 应用
 │   ├── index.html
 │   ├── vite.config.ts
@@ -75,7 +75,7 @@ NiuMa/
 
 ---
 
-## 4. 公共组件库 `@niuma/ui`
+## 4. 公共组件库 `ensis-ui`
 
 ### 4.1 来源与迁入
 
@@ -83,18 +83,18 @@ NiuMa/
 
 ```
 源：E:\shangijan\AI\RuoShui\packages\ui
-目标：NiuMa/packages/ui
+目标：ensis-ops/packages/ui
 ```
 
 迁入后修改：
 
 | 项 | 原值 | 改为 |
 |----|------|------|
-| `package.json` name | `@ruoshui/ui` | `@niuma/ui` |
-| 文档/README | 原项目名 | NiuMa |
+| `package.json` name | `@ruoshui/ui` | `ensis-ui` |
+| 文档/README | 原项目名 | ensis-ops |
 | 其余实现 | — | **暂保留** `Rs*` 组件名与 `--rs-*` token（减少迁移成本） |
 
-> 组件前缀 `Rs*` 与 CSS 变量 `--rs-*` 为组件库内部命名，与 NiuMa 产品名不冲突；业务文档与 UI 对外称 **NiuMa 设计系统**。
+> 组件前缀 `Rs*` 与 CSS 变量 `--rs-*` 为组件库内部命名，与 ensis-ops 产品名不冲突；业务文档与 UI 对外称 **ensis-ops 设计系统**。
 
 ### 4.2 组件清单（迁入后可用）
 
@@ -116,8 +116,8 @@ NiuMa/
 ```vue
 <!-- web/src/App.vue -->
 <script setup lang="ts">
-import { RsConfigProvider } from '@niuma/ui'
-import '@niuma/ui/styles.css'
+import { RsConfigProvider } from 'ensis-ui'
+import 'ensis-ui/styles.css'
 import '@/styles/brand.css'
 </script>
 
@@ -129,7 +129,7 @@ import '@/styles/brand.css'
 ```
 
 ```css
-/* web/src/styles/brand.css — 在 niuma-ui/styles.css 之后，只覆盖同名 --rs-* */
+/* web/src/styles/brand.css — 在 ensis-ui/styles.css 之后，只覆盖同名 --rs-* */
 [data-rs-theme='light'] {
   --rs-primary: #007aff;
   --rs-primary-hover: #0071eb;
@@ -143,8 +143,8 @@ import '@/styles/brand.css'
 ### 4.4 Playground 与测试
 
 ```bash
-pnpm --filter @niuma/ui dev      # Playground，默认 :5180
-pnpm --filter @niuma/ui test     # Vitest 组件测试
+pnpm --filter ensis-ui dev      # Playground，默认 :5180
+pnpm --filter ensis-ui test     # Vitest 组件测试
 ```
 
 ---
@@ -196,7 +196,7 @@ export function useNiumaBridge() {
   }
 
   function onEvent(handler: (detail: unknown) => void) {
-    window.addEventListener('niuma:event', (e) => handler((e as CustomEvent).detail))
+    window.addEventListener('ensis-ops:event', (e) => handler((e as CustomEvent).detail))
   }
 
   return { invoke, onEvent }
@@ -211,11 +211,11 @@ export function useNiumaBridge() {
 
 ```bash
 pnpm install
-pnpm --filter @niuma/ui dev     # 组件 Playground
+pnpm --filter ensis-ui dev     # 组件 Playground
 pnpm --filter web dev           # Web 应用，:5173
 ```
 
-CEF 联调：壳加载 `app://niuma/index.html`，指向 Vite build 产物或 dev server（开发期配置）。
+CEF 联调：壳加载 `app://ensis-ops/index.html`，指向 Vite build 产物或 dev server（开发期配置）。
 
 ---
 

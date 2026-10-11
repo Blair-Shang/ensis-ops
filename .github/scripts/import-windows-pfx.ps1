@@ -17,7 +17,7 @@ if (-not $env:WINDOWS_PFX_BASE64) {
     exit 0
 }
 
-$tempPfx = Join-Path $env:RUNNER_TEMP 'niuma-codesign.pfx'
+$tempPfx = Join-Path $env:RUNNER_TEMP 'ensis-codesign.pfx'
 $bytes = [Convert]::FromBase64String($env:WINDOWS_PFX_BASE64)
 [System.IO.File]::WriteAllBytes($tempPfx, $bytes)
 

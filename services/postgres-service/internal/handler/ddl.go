@@ -8,8 +8,8 @@ import (
 
 	"github.com/jackc/pgx/v5/pgxpool"
 
-	"niuma/services/postgres-service/internal/ddl"
-	"niuma/services/postgres-service/internal/session"
+	"ensis-ops/services/postgres-service/internal/ddl"
+	"ensis-ops/services/postgres-service/internal/session"
 )
 
 type ddlScriptParams struct {

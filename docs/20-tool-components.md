@@ -9,7 +9,7 @@
 
 在 **设置 → 工具组件** 中统一管理本机第三方 CLI（mongosh、mongodump 等），对标 Navicat **Environment → Executables**。
 
-与 **设置 → 插件**（NiuMa Web 扩展）严格分离：
+与 **设置 → 插件**（ensis-ops Web 扩展）严格分离：
 
 | 分区 | 管理对象 | 典型操作 |
 |------|----------|----------|
@@ -56,7 +56,7 @@ components/
 字段约定：
 
 ```yaml
-id: com.niuma.components.mongodb-tools   # 组件包唯一 id
+id: com.ensisops.components.mongodb-tools   # 组件包唯一 id
 name: MongoDB 官方工具                    # 设置页展示名
 module: mongodb                          # 关联内置模块（分组用）
 tools:
@@ -99,7 +99,7 @@ tools:
 
 ```json
 {
-  "bundleId": "com.niuma.components.mongodb-tools",
+  "bundleId": "com.ensisops.components.mongodb-tools",
   "name": "MongoDB 官方工具",
   "module": "mongodb",
   "tools": [
@@ -130,7 +130,7 @@ tools:
 
 ```json
 {
-  "com.niuma.components.mongodb-tools": {
+  "com.ensisops.components.mongodb-tools": {
     "mongosh": "D:\\tools\\mongosh.exe",
     "mongodump": ""
   }

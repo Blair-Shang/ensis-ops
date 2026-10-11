@@ -7,16 +7,16 @@ import (
 	"errors"
 	"fmt"
 
-	"niuma/pkg/serviceipc/envelope"
-	"niuma/pkg/serviceipc/event"
-	"niuma/pkg/sqllsp"
+	"ensis-ops/pkg/serviceipc/envelope"
+	"ensis-ops/pkg/serviceipc/event"
+	"ensis-ops/pkg/sqllsp"
 
-	"niuma/services/clickhouse-service/internal/clickhouseparser"
-	"niuma/services/clickhouse-service/internal/dataio"
-	"niuma/services/clickhouse-service/internal/eventpub"
-	"niuma/services/clickhouse-service/internal/idgen"
-	"niuma/services/clickhouse-service/internal/session"
-	"niuma/services/clickhouse-service/internal/tools"
+	"ensis-ops/services/clickhouse-service/internal/clickhouseparser"
+	"ensis-ops/services/clickhouse-service/internal/dataio"
+	"ensis-ops/services/clickhouse-service/internal/eventpub"
+	"ensis-ops/services/clickhouse-service/internal/idgen"
+	"ensis-ops/services/clickhouse-service/internal/session"
+	"ensis-ops/services/clickhouse-service/internal/tools"
 )
 
 const (

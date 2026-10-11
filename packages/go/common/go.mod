@@ -1,3 +1,3 @@
-module niuma/pkg/common
+module ensis-ops/pkg/common
 
 go 1.22

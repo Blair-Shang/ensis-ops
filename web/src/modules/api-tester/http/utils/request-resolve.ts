@@ -140,7 +140,7 @@ export function resolveRequestBody(
     return { body, contentType: 'application/x-www-form-urlencoded' }
   }
   if (req.bodyMode === 'form') {
-    const boundary = `----NiuMaForm${createId('part')}`
+    const boundary = `----EnsisForm${createId('part')}`
     const parts = enabledKv(req.bodyForm ?? []).map(
       (row) =>
         `--${boundary}\r\nContent-Disposition: form-data; name="${row.key}"\r\n\r\n${interpolate(row.value)}\r\n`,

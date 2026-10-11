@@ -9,7 +9,7 @@ import {
   RsDialog,
   RsInput,
   RsLabel,
-} from '@niuma/ui'
+} from 'ensis-ui'
 import { useI18n } from 'vue-i18n'
 import { useApiCollectionPanel } from './useApiCollectionPanel'
 import ApiCollectionTree from './ApiCollectionTree.vue'

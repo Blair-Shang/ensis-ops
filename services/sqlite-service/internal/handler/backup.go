@@ -6,8 +6,8 @@ import (
 	"fmt"
 	"strings"
 
-	"niuma/services/sqlite-service/internal/backup"
-	"niuma/services/sqlite-service/internal/session"
+	"ensis-ops/services/sqlite-service/internal/backup"
+	"ensis-ops/services/sqlite-service/internal/session"
 )
 
 type backupCopyParams struct {

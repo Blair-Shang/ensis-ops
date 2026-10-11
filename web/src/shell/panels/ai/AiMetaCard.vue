@@ -3,7 +3,7 @@
  * 引用卡 / 工具调用块：轻量结构化展示，失败时回退纯文本。
  */
 import { computed } from 'vue'
-import { RsIcon } from '@niuma/ui'
+import { RsIcon } from 'ensis-ui'
 import { useI18n } from 'vue-i18n'
 
 const props = defineProps<{

@@ -4,7 +4,7 @@
  * 正文用 RsCodeEditor（与 HTTP Body 同一套），Ctrl+Enter 发送。
  */
 import { computed } from 'vue'
-import { RsButton, RsCodeEditor, RsInput } from '@niuma/ui'
+import { RsButton, RsCodeEditor, RsInput } from 'ensis-ui'
 import { useAppStore } from '@/stores/app'
 import type { SocketEncode, SocketLineEnd } from '../utils/socket-payload'
 

@@ -201,7 +201,7 @@ func (r *Registry) installPackage(
 	if url == "" {
 		return fmt.Errorf("empty download url")
 	}
-	tmpFile, err := os.CreateTemp("", "niuma-component-*")
+	tmpFile, err := os.CreateTemp("", "ensis-component-*")
 	if err != nil {
 		return err
 	}
@@ -239,7 +239,7 @@ func (r *Registry) installPackage(
 		Percent:   92,
 	})
 
-	extractRoot, err := os.MkdirTemp("", "niuma-component-extract-*")
+	extractRoot, err := os.MkdirTemp("", "ensis-component-extract-*")
 	if err != nil {
 		return err
 	}

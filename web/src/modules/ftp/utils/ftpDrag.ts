@@ -1,4 +1,4 @@
-export const FTP_DRAG_MIME = 'application/x-niuma-ftp-drag'
+export const FTP_DRAG_MIME = 'application/x-ensis-ftp-drag'
 
 export interface FtpDragEntry {
   name: string

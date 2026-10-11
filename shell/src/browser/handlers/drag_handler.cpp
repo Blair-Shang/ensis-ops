@@ -1,21 +1,21 @@
 #include "browser/handlers/drag_handler.h"
 
-#if NIUMMA_WITH_CEF
+#if ENSIS_WITH_CEF
 #include "include/views/cef_browser_view.h"
 #include "include/views/cef_window.h"
 #include "include/wrapper/cef_helpers.h"
 #endif
 
-namespace niuma {
+namespace ensisops {
 
-#if NIUMMA_WITH_CEF
+#if ENSIS_WITH_CEF
 
 namespace {
 
 constexpr char kFileDropHookJs[] = R"JS(
 (function() {
-  if (window.__niumaFileDropInstalled) return;
-  window.__niumaFileDropInstalled = true;
+  if (window.__ensisFileDropInstalled) return;
+  window.__ensisFileDropInstalled = true;
   const prevent = function(e) {
     e.preventDefault();
     e.stopPropagation();
@@ -32,7 +32,7 @@ constexpr char kFileDropHookJs[] = R"JS(
       }
     }
     if (paths.length) {
-      window.dispatchEvent(new CustomEvent('niuma:file-drop', {
+      window.dispatchEvent(new CustomEvent('ensis-ops:file-drop', {
         detail: { paths: paths }
       }));
     }
@@ -42,7 +42,7 @@ constexpr char kFileDropHookJs[] = R"JS(
 
 }  // namespace
 
-bool NiuMaDragHandler::OnDragEnter(CefRefPtr<CefBrowser> browser,
+bool EnsisDragHandler::OnDragEnter(CefRefPtr<CefBrowser> browser,
                                    CefRefPtr<CefDragData> drag_data,
                                    DragOperationsMask mask) {
   CEF_REQUIRE_UI_THREAD();
@@ -54,7 +54,7 @@ bool NiuMaDragHandler::OnDragEnter(CefRefPtr<CefBrowser> browser,
   return false;
 }
 
-void NiuMaDragHandler::OnDraggableRegionsChanged(
+void EnsisDragHandler::OnDraggableRegionsChanged(
     CefRefPtr<CefBrowser> browser,
     CefRefPtr<CefFrame> frame,
     const std::vector<CefDraggableRegion>& regions) {
@@ -67,7 +67,7 @@ void NiuMaDragHandler::OnDraggableRegionsChanged(
   }
 }
 
-void NiuMaDragHandler::InstallFileDropHooks(CefRefPtr<CefFrame> frame) {
+void EnsisDragHandler::InstallFileDropHooks(CefRefPtr<CefFrame> frame) {
   if (!frame || !frame->IsMain()) {
     return;
   }
@@ -76,4 +76,4 @@ void NiuMaDragHandler::InstallFileDropHooks(CefRefPtr<CefFrame> frame) {
 
 #endif
 
-}  // namespace niuma
+}  // namespace ensisops

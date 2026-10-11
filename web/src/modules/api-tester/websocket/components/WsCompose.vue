@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { RsButton } from '@niuma/ui'
+import { RsButton } from 'ensis-ui'
 
 defineProps<{
   canSend: boolean

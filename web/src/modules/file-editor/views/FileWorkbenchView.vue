@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { useRsToast, RsLoading } from '@niuma/ui'
+import { useRsToast, RsLoading } from 'ensis-ui'
 import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { fileEditorApi, windowApi } from '@/api'

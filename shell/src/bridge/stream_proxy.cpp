@@ -1,7 +1,7 @@
 #include "bridge/stream_proxy.h"
 #include "ipc/platform_client.h"
 
-namespace niuma {
+namespace ensisops {
 
 StreamProxy& StreamProxy::Instance() {
   static StreamProxy instance;
@@ -16,4 +16,4 @@ void StreamProxy::CancelAll() {
   PlatformClient::CloseAllStreams();
 }
 
-}  // namespace niuma
+}  // namespace ensisops

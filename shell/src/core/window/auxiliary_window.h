@@ -5,13 +5,13 @@
 #include <string>
 #include <unordered_map>
 
-#if NIUMMA_WITH_CEF
+#if ENSIS_WITH_CEF
 #include "include/cef_client.h"
 #endif
 
-namespace niuma {
+namespace ensisops {
 
-#if NIUMMA_WITH_CEF
+#if ENSIS_WITH_CEF
 
 /**
  * 辅助顶层窗口管理：文件工作台、未来独立工具窗等。
@@ -50,4 +50,4 @@ class AuxiliaryWindowManager {
 
 #endif
 
-}  // namespace niuma
+}  // namespace ensisops

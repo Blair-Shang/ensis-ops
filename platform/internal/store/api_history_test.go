@@ -10,7 +10,7 @@ import (
 	"testing"
 	"unicode/utf8"
 
-	"niuma/platform/internal/migrate"
+	"ensis-ops/platform/internal/migrate"
 
 	_ "modernc.org/sqlite"
 )

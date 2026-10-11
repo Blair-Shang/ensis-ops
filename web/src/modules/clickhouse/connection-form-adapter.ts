@@ -43,7 +43,7 @@ export const clickhouseConnectionFormAdapter: ConnectionFormAdapter = {
     form.chSslCert = options?.ssl_cert ?? ''
     form.chSslKey = options?.ssl_key ?? ''
     form.chCompress = String(options?.compress ?? true)
-    form.chAppName = options?.application_name ?? 'NiuMa'
+    form.chAppName = options?.application_name ?? 'ensis-ops'
     form.chExcludeSystemDatabases = String(options?.exclude_system_databases ?? true)
     form.chCluster = options?.cluster ?? ''
     form.chAltHosts = options?.alt_hosts ?? ''
@@ -68,7 +68,7 @@ export const clickhouseConnectionFormAdapter: ConnectionFormAdapter = {
       ssl_cert: formStr(form, 'chSslCert').trim(),
       ssl_key: formStr(form, 'chSslKey').trim(),
       compress: formStr(form, 'chCompress') !== 'false',
-      application_name: formStr(form, 'chAppName').trim() || 'NiuMa',
+      application_name: formStr(form, 'chAppName').trim() || 'ensis-ops',
       exclude_system_databases: formStr(form, 'chExcludeSystemDatabases') !== 'false',
       cluster: formStr(form, 'chCluster').trim(),
       alt_hosts: formStr(form, 'chAltHosts').trim(),

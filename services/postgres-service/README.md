@@ -9,10 +9,10 @@ Layer-1 官方 PostgreSQL 能力服务。设计见 [docs/34-postgresql-module.md
 | 组件 | 位置 | 说明 |
 |------|------|------|
 | **jackc/pgx/v5** | `go.mod` | PG 线协议事实标准；池化 / 取消 / COPY |
-| **niuma/pkg/serviceipc** | `packages/go/serviceipc` | length-prefixed JSON IPC（Pipe / UDS） |
-| **niuma/pkg/sqllsp** | `packages/go/sqllsp` | Bridge 隧道 LSP 框架 |
-| **niuma/pkg/tunnel** / **netproxy** | `packages/go/*` | SSH 隧道 / 代理（无引擎语义） |
-| **niuma/pkg/logutil** / **common** | `packages/go/*` | 日志与公共工具 |
+| **ensis-ops/pkg/serviceipc** | `packages/go/serviceipc` | length-prefixed JSON IPC（Pipe / UDS） |
+| **ensis-ops/pkg/sqllsp** | `packages/go/sqllsp` | Bridge 隧道 LSP 框架 |
+| **ensis-ops/pkg/tunnel** / **netproxy** | `packages/go/*` | SSH 隧道 / 代理（无引擎语义） |
+| **ensis-ops/pkg/logutil** / **common** | `packages/go/*` | 日志与公共工具 |
 
 构建约定：`CGO_ENABLED=0`。驱动**仅**出现在本服务 `go.mod`，不进入 platform-core。
 
@@ -44,19 +44,19 @@ docker compose -f services/postgres-service/docker-compose.yml logs -f
 # 或仅本模块
 Push-Location services/postgres-service
 $env:CGO_ENABLED = '0'
-go build -o ..\bin\niuma-postgres-service.exe ./cmd/postgres-service
+go build -o ..\bin\ensis-postgres-service.exe ./cmd/postgres-service
 Pop-Location
 ```
 
 产物：
 
-- 矩阵目录：`services/bin/windows-x64/niuma-postgres-service.exe`（供 `stage-services` / `dev:hot` 拷贝）
-- 兼容平铺：`services/bin/niuma-postgres-service.exe`（本机 Windows）
+- 矩阵目录：`services/bin/windows-x64/ensis-postgres-service.exe`（供 `stage-services` / `dev:hot` 拷贝）
+- 兼容平铺：`services/bin/ensis-postgres-service.exe`（本机 Windows）
 
 ## IPC
 
-- Windows：`\\.\pipe\niuma.postgres`
-- Unix：`/tmp/niuma.postgres.sock`
+- Windows：`\\.\pipe\ensis-ops.postgres`
+- Unix：`/tmp/ensis-ops.postgres.sock`
 - 帧：4 字节小端长度 + UTF-8 JSON
 - manifest：`services/manifests/postgres-service.yaml`
 - Bridge 命名空间：`postgres`（platform 剥前缀后 method 为 `session.open` 等）

@@ -9,8 +9,8 @@ if [[ -z "${MACOS_P12_BASE64:-}" ]]; then
 fi
 
 : "${RUNNER_TEMP:?RUNNER_TEMP is required}"
-P12="$RUNNER_TEMP/niuma-codesign.p12"
-KEYCHAIN="$RUNNER_TEMP/niuma-signing.keychain-db"
+P12="$RUNNER_TEMP/ensis-codesign.p12"
+KEYCHAIN="$RUNNER_TEMP/ensis-signing.keychain-db"
 PASS="${MACOS_KEYCHAIN_PASSWORD:-$(openssl rand -base64 24)}"
 
 echo "$MACOS_P12_BASE64" | base64 --decode > "$P12"

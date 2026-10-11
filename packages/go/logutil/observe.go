@@ -34,7 +34,7 @@ type Event struct {
 	TS string `json:"ts"`
 	// Kind 固定为 rpc。
 	Kind string `json:"kind"`
-	// Service 为进程名，如 platform-core、mysql-service、niuma-shell。
+	// Service 为进程名，如 platform-core、mysql-service、ensis-shell。
 	Service string `json:"service"`
 	// Method 为 IPC 方法名。
 	Method string `json:"method"`

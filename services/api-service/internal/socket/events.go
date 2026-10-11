@@ -3,7 +3,7 @@ package socket
 import (
 	"time"
 
-	"niuma/services/api-service/internal/codec"
+	"ensis-ops/services/api-service/internal/codec"
 )
 
 const (

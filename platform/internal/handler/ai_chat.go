@@ -6,8 +6,8 @@ import (
 	"encoding/json"
 	"fmt"
 
-	"niuma/platform/internal/ai"
-	"niuma/platform/internal/store"
+	"ensis-ops/platform/internal/ai"
+	"ensis-ops/platform/internal/store"
 )
 
 // aiConversationView 是回传 Web 的会话视图。

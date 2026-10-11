@@ -2,7 +2,7 @@
 /**
  * AI Markdown：分块渲染 + 高亮/复制/公式注水；图表等重块仅在非流式挂载。
  */
-import { copyTextToClipboard } from '@niuma/ui'
+import { copyTextToClipboard } from 'ensis-ui'
 import { computed, defineAsyncComponent, nextTick, onBeforeUnmount, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { isBridgeAvailable } from '@/api/client'

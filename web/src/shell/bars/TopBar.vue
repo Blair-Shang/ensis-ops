@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { RsIcon, RsInput, RsPopover } from '@niuma/ui'
+import { RsIcon, RsInput, RsPopover } from 'ensis-ui'
 import AppBrandIcon from '@/shell/widgets/AppBrandIcon.vue'
 import WindowControls from '@/shell/widgets/WindowControls.vue'
 import CommandPalettePanel from '@/shell/panels/CommandPalettePanel.vue'

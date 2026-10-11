@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { RsIcon } from '@niuma/ui'
+import { RsIcon } from 'ensis-ui'
 import type { FileDocument } from '@/modules/file-editor/types'
 
 defineProps<{

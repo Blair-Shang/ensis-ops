@@ -6,7 +6,7 @@ import {
   RsLoading,
   RsMonacoEditor,
   useRsToast,
-} from '@niuma/ui'
+} from 'ensis-ui'
 import { computed, inject, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { vastbaseApi } from '@/api'

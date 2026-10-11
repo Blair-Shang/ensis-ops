@@ -8,12 +8,12 @@ import (
 
 	"github.com/jackc/pgx/v5/pgxpool"
 
-	"niuma/pkg/sqllsp"
+	"ensis-ops/pkg/sqllsp"
 
-	"niuma/services/postgres-service/internal/postgresparser"
-	"niuma/services/postgres-service/internal/meta"
-	"niuma/services/postgres-service/internal/session"
-	"niuma/services/postgres-service/internal/tree"
+	"ensis-ops/services/postgres-service/internal/postgresparser"
+	"ensis-ops/services/postgres-service/internal/meta"
+	"ensis-ops/services/postgres-service/internal/session"
+	"ensis-ops/services/postgres-service/internal/tree"
 )
 
 func lspOK(id string, value any) Response { return okResponse(id, value) }

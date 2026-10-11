@@ -4,8 +4,8 @@ import (
 	"strings"
 	"testing"
 
-	"niuma/pkg/sqllsp"
-	"niuma/services/sqlite-service/internal/sqliteparser"
+	"ensis-ops/pkg/sqllsp"
+	"ensis-ops/services/sqlite-service/internal/sqliteparser"
 )
 
 func TestKeywordsIncludeCurrentTimestamp(t *testing.T) {

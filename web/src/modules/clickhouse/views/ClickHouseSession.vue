@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { RsEmpty, RsLoading, useRsToast } from '@niuma/ui'
+import { RsEmpty, RsLoading, useRsToast } from 'ensis-ui'
 import {
   computed,
   defineAsyncComponent,

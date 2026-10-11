@@ -9,11 +9,11 @@ import (
 
 	"go.mongodb.org/mongo-driver/mongo"
 
-	"niuma/pkg/serviceipc/envelope"
-	"niuma/pkg/serviceipc/event"
-	"niuma/services/mongodb-service/internal/eventpub"
-	"niuma/services/mongodb-service/internal/idgen"
-	"niuma/services/mongodb-service/internal/session"
+	"ensis-ops/pkg/serviceipc/envelope"
+	"ensis-ops/pkg/serviceipc/event"
+	"ensis-ops/services/mongodb-service/internal/eventpub"
+	"ensis-ops/services/mongodb-service/internal/idgen"
+	"ensis-ops/services/mongodb-service/internal/session"
 )
 
 const (

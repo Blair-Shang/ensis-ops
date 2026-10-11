@@ -6,7 +6,7 @@
  * 连接「新建数据库」；库节点编辑注释 / 重命名 / 删除；「新建」子菜单建表与对象。
  * 视图/MV/字典统一走对象脚本（不再并列 DDL）。
  */
-import type { RsContextMenuItem } from '@niuma/ui'
+import type { RsContextMenuItem } from 'ensis-ui'
 import { clickhouseApi } from '@/api/clickhouse'
 import { i18n } from '@/locale'
 import {

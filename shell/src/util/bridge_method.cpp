@@ -1,6 +1,6 @@
-#include "niuma/types.h"
+#include "ensisops/types.h"
 
-namespace niuma {
+namespace ensisops {
 
 std::optional<std::pair<std::string, std::string>> ParseMethod(
     const std::string& method) {
@@ -11,4 +11,4 @@ std::optional<std::pair<std::string, std::string>> ParseMethod(
   return std::make_pair(method.substr(0, pos), method.substr(pos + 1));
 }
 
-}  // namespace niuma
+}  // namespace ensisops

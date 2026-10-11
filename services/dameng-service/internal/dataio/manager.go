@@ -9,8 +9,8 @@ import (
 	"sync"
 	"time"
 
-	"niuma/services/dameng-service/internal/idgen"
-	"niuma/services/dameng-service/internal/session"
+	"ensis-ops/services/dameng-service/internal/idgen"
+	"ensis-ops/services/dameng-service/internal/session"
 )
 
 // Emitter 上报 IO 任务事件。

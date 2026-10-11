@@ -3,7 +3,7 @@
  * 集合树薄壳。对齐运维 RsTree：virtual / show-line / 拖拽 / 受控展开。
  * 节点与拖放规则在 collection-tree.ts，这里只渲染行。
  */
-import { RsIcon, RsTree, type RsTreeDropPosition, type RsTreeNode } from '@niuma/ui'
+import { RsIcon, RsTree, type RsTreeDropPosition, type RsTreeNode } from 'ensis-ui'
 import { computed } from 'vue'
 import {
   allowApiTreeDrop,

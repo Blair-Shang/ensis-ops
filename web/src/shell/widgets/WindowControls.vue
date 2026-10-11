@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { RsIcon } from '@niuma/ui'
+import { RsIcon } from 'ensis-ui'
 import { useWindowChromeStore } from '@/stores/window-chrome'
 import { useI18n } from 'vue-i18n'
 

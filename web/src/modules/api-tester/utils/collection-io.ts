@@ -25,8 +25,8 @@ import type {
   ApiVariableKind,
 } from '../types'
 
-export const COLLECTION_KIND = 'niuma.api-collection'
-export const WORKSPACE_KIND = 'niuma.api-workspace'
+export const COLLECTION_KIND = 'ensis-ops.api-collection'
+export const WORKSPACE_KIND = 'ensis-ops.api-workspace'
 
 const METHODS = new Set<ApiMethod>(['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'HEAD', 'WS', 'TCP', 'UDP', 'GRPC'])
 const AUTH_TYPES = new Set<ApiAuthType>(['none', 'bearer', 'basic', 'apikey', 'oauth2', 'digest', 'awsv4', 'ntlm'])

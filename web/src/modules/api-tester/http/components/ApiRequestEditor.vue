@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { RsTabs, type RsTabItem } from '@niuma/ui'
+import { RsTabs, type RsTabItem } from 'ensis-ui'
 import { computed, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import type { ApiKvRow, ApiRequest } from '../../types'

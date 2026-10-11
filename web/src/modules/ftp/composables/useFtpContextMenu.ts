@@ -1,4 +1,4 @@
-import type { RsContextMenuItem } from '@niuma/ui'
+import type { RsContextMenuItem } from 'ensis-ui'
 import type { ComposerTranslation } from 'vue-i18n'
 import type { FtpPaneEntry, FtpPaneSide } from '@/modules/ftp/composables/useFtpPaneList'
 

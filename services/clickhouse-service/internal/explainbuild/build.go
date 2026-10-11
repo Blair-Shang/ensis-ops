@@ -9,7 +9,7 @@ import (
 	"strings"
 	"unicode"
 
-	"niuma/services/clickhouse-service/internal/dialect"
+	"ensis-ops/services/clickhouse-service/internal/dialect"
 )
 
 // Mode 为 EXPLAIN 类型（不含前缀关键字）。

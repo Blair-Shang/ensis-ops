@@ -5,8 +5,8 @@ import (
 	"strings"
 	"testing"
 
-	"niuma/pkg/tunnel"
-	"niuma/services/clickhouse-service/internal/session"
+	"ensis-ops/pkg/tunnel"
+	"ensis-ops/services/clickhouse-service/internal/session"
 )
 
 func TestPrepareNativeConnectRejectsHTTP(t *testing.T) {

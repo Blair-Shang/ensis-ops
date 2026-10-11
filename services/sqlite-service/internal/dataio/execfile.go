@@ -6,7 +6,7 @@ import (
 	"fmt"
 	"os"
 
-	"niuma/services/sqlite-service/internal/sqliteparser"
+	"ensis-ops/services/sqlite-service/internal/sqliteparser"
 )
 
 // execSqlFile 按分号拆分并执行 SQL 文件（支持引号、注释；CREATE TRIGGER BEGIN…END 体内不分句）。

@@ -1,4 +1,4 @@
-#include "niuma/sqllsp/heuristic.hpp"
+#include "ensisops/sqllsp/heuristic.hpp"
 
 #include <algorithm>
 #include <cctype>
@@ -6,7 +6,7 @@
 #include <unordered_map>
 #include <unordered_set>
 
-namespace niuma::sqllsp {
+namespace ensisops::sqllsp {
 namespace {
 
 bool IsAsciiSpace(unsigned char c) {
@@ -543,4 +543,4 @@ CompletionContext HeuristicCompletionContext(const std::string& text, Position p
   return cc;
 }
 
-}  // namespace niuma::sqllsp
+}  // namespace ensisops::sqllsp

@@ -6,7 +6,7 @@ import (
 	"strings"
 	"testing"
 
-	"niuma/services/sqlite-service/internal/session"
+	"ensis-ops/services/sqlite-service/internal/session"
 )
 
 func TestBuildCreateTableSQL_CheckAndGenerated(t *testing.T) {

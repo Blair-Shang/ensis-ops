@@ -22,7 +22,7 @@
 #include <sstream>
 #include <unordered_map>
 
-namespace niuma::oracle::dataio {
+namespace ensisops::oracle::dataio {
 namespace {
 
 bool Canceled(const CancelFlag& cancel) { return cancel && cancel->load(); }
@@ -590,4 +590,4 @@ bool RunImportCsv(const session::ConnectParams& connect, const std::string& sche
   return true;
 }
 
-}  // namespace niuma::oracle::dataio
+}  // namespace ensisops::oracle::dataio

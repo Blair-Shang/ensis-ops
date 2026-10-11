@@ -88,7 +88,7 @@ async function api(method, path) {
       Accept: 'application/vnd.github+json',
       Authorization: `Bearer ${token}`,
       'X-GitHub-Api-Version': '2022-11-28',
-      'User-Agent': 'niuma-prune-github-release-assets',
+      'User-Agent': 'ensis-prune-github-release-assets',
     },
   })
   if (res.status === 204) return null

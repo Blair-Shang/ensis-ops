@@ -5,8 +5,8 @@ import (
 	"encoding/json"
 	"fmt"
 
-	"niuma/services/vastbase-service/internal/session"
-	"niuma/services/vastbase-service/internal/tree"
+	"ensis-ops/services/vastbase-service/internal/session"
+	"ensis-ops/services/vastbase-service/internal/tree"
 )
 
 type treeListParams struct {

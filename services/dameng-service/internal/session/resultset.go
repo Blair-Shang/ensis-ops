@@ -7,7 +7,7 @@ import (
 	"strings"
 	"time"
 
-	"niuma/pkg/common/id"
+	"ensis-ops/pkg/common/id"
 )
 
 const (

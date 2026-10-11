@@ -119,5 +119,5 @@ Web 成功路径仍只收到内层 `result`（壳取出后 `callback->Success`�
 |------|------|
 | Go | `packages/go/serviceipc/envelope` |
 | C++ | `packages/cpp/serviceipc` `MakeOkResponse` / `MakeFailResponse` |
-| Rust | `packages/rust/niuma-serviceipc` `Response` |
+| Rust | `packages/rust/ensis-serviceipc` `Response` |
 | Web | `web/src/api/client.ts` `BridgeError` |

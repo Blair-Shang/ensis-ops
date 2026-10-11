@@ -27,7 +27,7 @@ func main() {
 	flag.Parse()
 	dir := strings.TrimSpace(*skillDir)
 	if dir == "" {
-		dir = strings.TrimSpace(os.Getenv("NIUMA_SKILL_DIR"))
+		dir = strings.TrimSpace(os.Getenv("ENSIS_SKILL_DIR"))
 	}
 	if dir == "" {
 		fmt.Fprintln(os.Stderr, "mcp-skill-runner: --skill-dir required")
@@ -227,7 +227,7 @@ func (s *mcpServer) runScript(script string, argv []string) map[string]any {
 	}
 	cmd.Dir = s.skillDir
 	cmd.Env = append(os.Environ(),
-		"NIUMA_SKILL_DIR="+s.skillDir,
+		"ENSIS_SKILL_DIR="+s.skillDir,
 		"SKILL_DIR="+s.skillDir,
 	)
 	var stdout, stderr bytes.Buffer

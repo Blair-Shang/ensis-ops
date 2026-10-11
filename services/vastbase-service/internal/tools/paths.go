@@ -10,8 +10,8 @@ import (
 )
 
 const (
-	vastbaseToolsBundleID      = "com.niuma.components.vastbase-tools"
-	postgresqlClientBundleID   = "com.niuma.components.postgresql-client"
+	vastbaseToolsBundleID      = "com.ensisops.components.vastbase-tools"
+	postgresqlClientBundleID   = "com.ensisops.components.postgresql-client"
 )
 
 // PathOverrides 是请求级工具路径覆盖。
@@ -99,11 +99,11 @@ func resolveBundled(toolID string) (string, bool) {
 func userDataDir() string {
 	if runtime.GOOS == "windows" {
 		if local := os.Getenv("LOCALAPPDATA"); local != "" {
-			return filepath.Join(local, "NiuMa", "data")
+			return filepath.Join(local, "ensis-ops", "data")
 		}
 	}
 	if home, err := os.UserHomeDir(); err == nil && home != "" {
-		return filepath.Join(home, ".niuma", "data")
+		return filepath.Join(home, ".ensis-ops", "data")
 	}
 	return ""
 }

@@ -14,7 +14,7 @@ import (
 	"time"
 
 	"golang.org/x/crypto/ssh"
-	"niuma/pkg/netproxy"
+	"ensis-ops/pkg/netproxy"
 )
 
 // Options 与 Web / Rust connection_options.tunnel JSON 对齐（平台注入后的完整结构）。
@@ -43,7 +43,7 @@ type sshConnectOptions struct {
 // StartSSHTunnel 建立 SSH 跳板隧道，返回本地监听地址（host:port）和关闭函数。
 //
 // defaultTargetHost/Port 在 Options.TargetHost/Port 未指定时使用（即以最终服务
-// 主机/端口为目标），这与 Rust niuma_tunnel::start_ssh_tunnel 语义一致。
+// 主机/端口为目标），这与 Rust ensis_tunnel::start_ssh_tunnel 语义一致。
 //
 // 若目标主机与跳板同一地址，会改道 dial 127.0.0.1，避免 hairpin NAT / 本机防火墙
 // 导致经跳板访问「自己的局域网 IP」失败；建立后先探测一次 remote Dial，失败则返回明确错误

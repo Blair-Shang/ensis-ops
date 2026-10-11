@@ -8,8 +8,8 @@ import (
 	"fmt"
 	"strings"
 
-	"niuma/platform/internal/ai"
-	"niuma/platform/internal/store"
+	"ensis-ops/platform/internal/ai"
+	"ensis-ops/platform/internal/store"
 )
 
 const (

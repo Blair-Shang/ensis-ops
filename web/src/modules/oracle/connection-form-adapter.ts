@@ -56,7 +56,7 @@ export const oracleConnectionFormAdapter: ConnectionFormAdapter = {
     form.oracleSslMode = sslMode(options?.ssl_mode ?? 'disable')
     form.oracleWalletPath = options?.wallet_path ?? ''
     form.oracleWalletPassword = options?.wallet_password ?? ''
-    form.oracleAppName = options?.application_name ?? options?.appName ?? 'NiuMa'
+    form.oracleAppName = options?.application_name ?? options?.appName ?? 'ensis-ops'
     form.oracleExcludeSystemSchemas = String(options?.exclude_system_schemas ?? true)
     form.connectTimeoutSeconds = formatTimeoutFormValue(
       readStoredTimeoutSeconds(options as Record<string, unknown> | undefined, 30), 30,
@@ -75,8 +75,8 @@ export const oracleConnectionFormAdapter: ConnectionFormAdapter = {
       ssl_mode: mode,
       wallet_path: mode === 'disable' ? '' : formStr(form, 'oracleWalletPath').trim(),
       wallet_password: mode === 'disable' ? '' : formStr(form, 'oracleWalletPassword'),
-      application_name: formStr(form, 'oracleAppName').trim() || 'NiuMa',
-      appName: formStr(form, 'oracleAppName').trim() || 'NiuMa',
+      application_name: formStr(form, 'oracleAppName').trim() || 'ensis-ops',
+      appName: formStr(form, 'oracleAppName').trim() || 'ensis-ops',
       exclude_system_schemas: formStr(form, 'oracleExcludeSystemSchemas') !== 'false',
       connect_timeout_seconds: timeout, timeout_seconds: timeout, proxy, tunnel,
     }

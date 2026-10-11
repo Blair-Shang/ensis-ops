@@ -4,7 +4,7 @@ import (
 	"regexp"
 	"strings"
 
-	"niuma/pkg/sqllsp"
+	"ensis-ops/pkg/sqllsp"
 )
 
 type builtinFn struct {

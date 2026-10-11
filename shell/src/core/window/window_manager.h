@@ -4,16 +4,16 @@
 
 #include <string>
 
-#if NIUMMA_WITH_CEF
+#if ENSIS_WITH_CEF
 #include "include/cef_browser.h"
 #include "include/cef_client.h"
 #include "include/views/cef_browser_view.h"
 #include "include/views/cef_window.h"
 #endif
 
-namespace niuma {
+namespace ensisops {
 
-#if NIUMMA_WITH_CEF
+#if ENSIS_WITH_CEF
 
 /**
  * 窗口门面：对外保持统一 API（Bridge / main_browser 无需感知 Main / Auxiliary 拆分）。
@@ -72,4 +72,4 @@ class WindowManager {
 
 #endif
 
-}  // namespace niuma
+}  // namespace ensisops

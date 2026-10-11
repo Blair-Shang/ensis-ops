@@ -4,7 +4,7 @@ import (
 	"strings"
 	"unicode"
 
-	"niuma/pkg/sqllsp"
+	"ensis-ops/pkg/sqllsp"
 )
 
 func skipLeadingNoise(s string) int {

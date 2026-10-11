@@ -15,7 +15,7 @@ import type {
 /**
  * 工具组件管理（platform-core 本机 CLI 探测与路径配置）。
  *
- * 对标 Navicat Environment → Executables；与 NiuMa 扩展「插件」无关。
+ * 对标 Navicat Environment → Executables；与 ensis-ops 扩展「插件」无关。
  */
 export const componentsApi = {
   list(params: ComponentsListParams = {}): Promise<ComponentsListResult> {

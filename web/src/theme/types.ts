@@ -1,7 +1,7 @@
-import type { RsColorTheme, RsColorThemeToken } from '@niuma/ui'
+import type { RsColorTheme, RsColorThemeToken } from 'ensis-ui'
 
 /**
- * 宿主主题额外令牌。语义色走 `colors`（niuma-ui 允许表）。
+ * 宿主主题额外令牌。语义色走 `colors`（ensis-ui 允许表）。
  * 壳、极光、终端写在这里，由同一个安装函数落到根节点。
  * 新增键时每套主题都要填，缺一项过不了类型检查。
  */

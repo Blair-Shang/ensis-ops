@@ -3,7 +3,7 @@
  * 数据传输任务外壳：浮动窗 + 底部 Dock 内联两种呈现。
  * 方言只提供表单 slot 与确认逻辑，样式与 chrome 统一。
  */
-import { RsButton, RsDialog } from '@niuma/ui'
+import { RsButton, RsDialog } from 'ensis-ui'
 import { computed } from 'vue'
 import { dataTaskDockMountSelector } from '@/shell/data-tasks/mount'
 import type { DataTransferShellLabels } from '../types/data-transfer'

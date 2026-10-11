@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { RsButton, codeEditorLanguageLabel } from '@niuma/ui'
+import { RsButton, codeEditorLanguageLabel } from 'ensis-ui'
 import { computed } from 'vue'
 import { useI18n } from 'vue-i18n'
 import type { FileDocument } from '@/modules/file-editor/types'

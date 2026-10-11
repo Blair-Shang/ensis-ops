@@ -7,7 +7,7 @@
 ```
 services/
 ├── manifests/              # 服务注册（platform-core supervisor 读取）
-│   ├── platform-core.yaml  # Layer 2 注册契约（com.niuma.platform）
+│   ├── platform-core.yaml  # Layer 2 注册契约（com.ensisops.platform）
 │   ├── ftp-service.yaml
 │   ├── ssh-service.yaml
 │   └── sftp-service.yaml
@@ -59,16 +59,16 @@ services/
 
 packages/
 ├── go/serviceipc/          # Go 能力服务 IPC
-├── rust/niuma-serviceipc/  # Rust 能力服务 IPC
-└── cpp/serviceipc/         # C++ 能力服务 IPC（静态库 niuma::serviceipc）
+├── rust/ensis-serviceipc/  # Rust 能力服务 IPC
+└── cpp/serviceipc/         # C++ 能力服务 IPC（静态库 ensisops::serviceipc）
 ```
 
-> Oracle 等 L3 Native 服务**不**进入 `go.work`；C++ 服务通过 `add_subdirectory(packages/cpp/serviceipc)` 链接 `niuma::serviceipc`，**不要**在各服务内复制 frame/server。Instant Client 旁载于 `bin/runtime/oracle/`。
+> Oracle 等 L3 Native 服务**不**进入 `go.work`；C++ 服务通过 `add_subdirectory(packages/cpp/serviceipc)` 链接 `ensisops::serviceipc`，**不要**在各服务内复制 frame/server。Instant Client 旁载于 `bin/runtime/oracle/`。
 
-- **`runtime.executable`**：相对 `services/` 根目录，如 `bin/ftp-service.exe` / `bin/niuma-sqlite-service.exe`。
+- **`runtime.executable`**：相对 `services/` 根目录，如 `bin/ftp-service.exe` / `bin/ensis-sqlite-service.exe`。
 - **platform-core 位置**：同样位于 `services/bin/platform-core.exe`；`ResolveServicesDir()` 从可执行文件路径推断 services 根（`bin` 的父目录）。
 - **manifest 消费方**：
-  - `platform-core.yaml`（`id: com.niuma.platform`）— **保留**为 Layer 2 注册契约；壳层 `ServiceManifestLoader` 当前硬编码同内容，与 Go 管道地址三处对齐；未来可改为直接读此文件。
+  - `platform-core.yaml`（`id: com.ensisops.platform`）— **保留**为 Layer 2 注册契约；壳层 `ServiceManifestLoader` 当前硬编码同内容，与 Go 管道地址三处对齐；未来可改为直接读此文件。
   - 其余 `*.yaml`（如 `ftp-service.yaml`、`sqlite-service.yaml`）— 由 platform-core `supervisor` 加载并懒拉起。
 - **本机 IPC 不用 TCP 端口**：均为命名管道 / UDS 固定地址，无动态端口分配。
 

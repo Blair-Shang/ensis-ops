@@ -1,4 +1,4 @@
-use niuma_serviceipc::Response;
+use ensis_serviceipc::Response;
 use serde::Deserialize;
 use serde_json::Value;
 

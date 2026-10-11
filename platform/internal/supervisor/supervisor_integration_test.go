@@ -8,19 +8,19 @@ import (
 	"testing"
 	"time"
 
-	"niuma/platform/internal/supervisor"
+	"ensis-ops/platform/internal/supervisor"
 )
 
 func TestEnsure_FtpService(t *testing.T) {
-	if os.Getenv("NIUMMA_INTEGRATION") == "" {
-		t.Skip("set NIUMMA_INTEGRATION=1 to run")
+	if os.Getenv("ENSIS_INTEGRATION") == "" {
+		t.Skip("set ENSIS_INTEGRATION=1 to run")
 	}
 
 	dir := filepath.Join("..", "..", "..", "build", "shell", "Release", "services")
-	binName := "niuma-ftp-service.exe"
+	binName := "ensis-ftp-service.exe"
 	if runtime.GOOS != "windows" {
 		dir = filepath.Join("..", "..", "..", "build", "shell-x64", "services")
-		binName = "niuma-ftp-service"
+		binName = "ensis-ftp-service"
 	}
 	if _, err := os.Stat(filepath.Join(dir, "bin", binName)); err != nil {
 		t.Skipf("staged %s not found", binName)
@@ -32,7 +32,7 @@ func TestEnsure_FtpService(t *testing.T) {
 	}
 	ctx, cancel := context.WithTimeout(context.Background(), 15*time.Second)
 	defer cancel()
-	if err := sup.Ensure(ctx, "com.niuma.ftp"); err != nil {
+	if err := sup.Ensure(ctx, "com.ensisops.ftp"); err != nil {
 		t.Fatal(err)
 	}
 }

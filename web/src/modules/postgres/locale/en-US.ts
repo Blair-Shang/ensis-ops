@@ -192,7 +192,7 @@ export default {
         loadSourceFailed: 'Failed to load routine source',
         noSource: 'No source to edit',
         logPointInserted:
-          "Inserted editor log point (server unchanged; set_config('niuma.debug','1'))",
+          "Inserted editor log point (server unchanged; set_config('ensis-ops.debug','1'))",
         statusAssist: 'Assist mode · {name}',
         statusPoints: 'Editor log points {n}',
         stateAssist: 'ASSIST',
@@ -213,14 +213,14 @@ export default {
         resultOutValue: 'Value',
         runOk: 'Call executed',
         runOkNoResult: 'Call executed (no result set — see Messages)',
-        enableSessionVar: 'Enable NOTICE / niuma.debug switch when running',
+        enableSessionVar: 'Enable NOTICE / ensis-ops.debug switch when running',
         tipRun:
           'Run call always uses routine.call (function SELECT / procedure CALL / OUT on one connection); fill args in the left grid.',
         tipSafe: 'Source and log points stay in this editor only — they never overwrite the database object.',
         tipLog:
-          'Insert log point only edits the draft (RAISE NOTICE + niuma.debug gate); live logic is unchanged.',
+          'Insert log point only edits the draft (RAISE NOTICE + ensis-ops.debug gate); live logic is unchanged.',
         tipOut:
-          'Run call always uses routine.call, not the query pane. “Copy call script” pastes into the query editor; OUT procedures include -- niuma:exec=batch so the query pane runs on one connection.',
+          'Run call always uses routine.call, not the query pane. “Copy call script” pastes into the query editor; OUT procedures include -- ensis-ops:exec=batch so the query pane runs on one connection.',
       },
       browse: {
         toolbarLabel: 'Browse data',

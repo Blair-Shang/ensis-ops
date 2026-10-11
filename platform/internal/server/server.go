@@ -13,8 +13,8 @@ import (
 	"net"
 	"time"
 
-	"niuma/pkg/logutil"
-	"niuma/platform/internal/protocol"
+	"ensis-ops/pkg/logutil"
+	"ensis-ops/platform/internal/protocol"
 )
 
 // FrameDispatcher 处理一帧请求 JSON 并返回响应 JSON 字节。
@@ -30,7 +30,7 @@ type Server struct {
 
 // New 创建监听 addr 的 Server。
 //
-// addr 的含义随平台而定：Windows 为命名管道路径（如 \\.\pipe\niuma.platform），
+// addr 的含义随平台而定：Windows 为命名管道路径（如 \\.\pipe\ensis-ops.platform），
 // 其他平台为 Unix Domain Socket 文件路径。dispatcher 负责方法分发。
 func New(addr string, dispatcher FrameDispatcher) *Server {
 	return &Server{addr: addr, dispatcher: dispatcher}

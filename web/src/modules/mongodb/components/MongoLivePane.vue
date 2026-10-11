@@ -8,7 +8,7 @@ import {
   RsTooltipProvider,
   RsVirtualList,
   useRsToast,
-} from '@niuma/ui'
+} from 'ensis-ui'
 import { computed, nextTick, onUnmounted, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import type { MongoMonitorEvent } from '@/api/types/mongodb'

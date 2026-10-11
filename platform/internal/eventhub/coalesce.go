@@ -6,7 +6,7 @@ import (
 	"sync"
 	"time"
 
-	"niuma/pkg/serviceipc/event"
+	"ensis-ops/pkg/serviceipc/event"
 )
 
 const progressCoalesceInterval = 100 * time.Millisecond // 10 Hz，对齐 docs/12 §7.3

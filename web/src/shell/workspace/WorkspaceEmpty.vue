@@ -5,7 +5,7 @@
  */
 import { computed } from 'vue'
 import { useI18n } from 'vue-i18n'
-import { RsButton, RsIcon } from '@niuma/ui'
+import { RsButton, RsIcon } from 'ensis-ui'
 import { useConnectionNavigation } from '@/modules/ops/composables/useConnectionNavigation'
 import { kindIcon, profileAccentColor, type ConnItem } from '@/modules/ops/types'
 import { useCommandPaletteStore } from '@/stores/command-palette'

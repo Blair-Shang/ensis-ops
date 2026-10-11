@@ -1,26 +1,26 @@
 #include "lsp/bridge.hpp"
 
-#include "niuma/serviceipc/event.hpp"
+#include "ensisops/serviceipc/event.hpp"
 
 #include <nlohmann/json.hpp>
 
-namespace niuma::oracle::lsp {
+namespace ensisops::oracle::lsp {
 
 Bridge::Bridge(session::Manager& sessions) : sessions_(sessions) {}
 
 void Bridge::EnsureServer() {
   if (server_) return;
   catalog_ = std::make_unique<OracleCatalog>(sessions_);
-  conns_ = std::make_unique<niuma::sqllsp::Manager>();
+  conns_ = std::make_unique<ensisops::sqllsp::Manager>();
   auto notify = [](const std::string& connection_id, const nlohmann::json& message) {
     nlohmann::json ev{
         {"type", "oracle.lsp"},
         {"connectionId", connection_id},
         {"message", message},
     };
-    niuma::serviceipc::PublishEvent(ev.dump());
+    ensisops::serviceipc::PublishEvent(ev.dump());
   };
-  server_ = std::make_unique<niuma::sqllsp::Server>(&parser_, catalog_.get(), conns_.get(),
+  server_ = std::make_unique<ensisops::sqllsp::Server>(&parser_, catalog_.get(), conns_.get(),
                                                     std::move(notify));
   server_->source_name = "oracle-lsp";
   server_->trigger_characters = {".", " ", "\""};
@@ -99,4 +99,4 @@ nlohmann::json Bridge::Lexicon(const nlohmann::json& /*params*/, std::string& /*
   };
 }
 
-}  // namespace niuma::oracle::lsp
+}  // namespace ensisops::oracle::lsp

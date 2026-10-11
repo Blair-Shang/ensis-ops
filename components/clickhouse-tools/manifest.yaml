@@ -1,4 +1,4 @@
-id: com.niuma.components.clickhouse-tools
+id: com.ensisops.components.clickhouse-tools
 name: ClickHouse 官方客户端
 module: clickhouse
 # 外部化组件：clickhouse-client 不编进 platform / clickhouse-service。

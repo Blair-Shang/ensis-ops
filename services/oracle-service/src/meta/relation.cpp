@@ -11,7 +11,7 @@
 #include <cctype>
 #include <sstream>
 
-namespace niuma::oracle::meta {
+namespace ensisops::oracle::meta {
 namespace {
 
 std::string DpiError(dpiContext* ctx) {
@@ -383,4 +383,4 @@ nlohmann::json GetDDL(session::Session& session, const RelationRef& ref, std::st
   return RebuildTableDDL(session, ref, error);
 }
 
-}  // namespace niuma::oracle::meta
+}  // namespace ensisops::oracle::meta

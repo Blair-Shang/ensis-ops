@@ -22,7 +22,7 @@ import (
 	"github.com/pingcap/tidb/pkg/parser"
 	_ "github.com/pingcap/tidb/pkg/parser/test_driver" // 注册默认驱动
 
-	"niuma/pkg/sqllsp"
+	"ensis-ops/pkg/sqllsp"
 )
 
 var lineColRe = regexp.MustCompile(`(?i)line\s+(\d+)\s+column\s+(\d+)`)

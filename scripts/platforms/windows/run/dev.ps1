@@ -9,7 +9,7 @@
 .PARAMETER SkipServices
   跳过 Go 服务构建与 stage；platform 已用 pnpm dev:platform 前台运行时配合使用。
 .PARAMETER SkipShellBuild
-  不编译壳层，直接启动已有 niuma.exe。
+  不编译壳层，直接启动已有 ensis-ops.exe。
 #>
 param(
     [switch]$SkipSetup,
@@ -42,7 +42,7 @@ $isDebug = $Configuration -eq 'Debug'
 $BuildShellScript = Join-Path $Root 'scripts\platforms\windows\build\build-shell.ps1'
 $SetupScript = Join-Path $Root 'scripts\platforms\windows\setup\setup-desktop.ps1'
 
-$env:NIUMMA_LOG_ROOT = Join-Path $Root 'logs'
+$env:ENSIS_LOG_ROOT = Join-Path $Root 'logs'
 
 function Write-DevBanner {
     param([string]$Title)
@@ -64,9 +64,9 @@ function Write-DevDebugHints {
     if ($Hot) {
         Write-Host '  Web:     F12 in CEF, or Chrome -> http://localhost:9222' -ForegroundColor Gray
     }
-    Write-Host '  Logs:    logs/<session>/{shell,niuma-platform-core,niuma-ftp-service}.log' -ForegroundColor Gray
+    Write-Host '  Logs:    logs/<session>/{shell,ensis-platform-core,ensis-ftp-service}.log' -ForegroundColor Gray
     if ($DebugMode) {
-        Write-Host "  Shell:   attach VS to PID or open build/shell-$DevPlatform-$DevArch/$Configuration/niuma.vcxproj" -ForegroundColor Gray
+        Write-Host "  Shell:   attach VS to PID or open build/shell-$DevPlatform-$DevArch/$Configuration/ensis_ops.vcxproj" -ForegroundColor Gray
         Write-Host '  Go:      pnpm dev:platform / dev:platform:delve (then -SkipServices)' -ForegroundColor Gray
     }
     if ($ExtPlatform) {
@@ -144,15 +144,15 @@ if ($HotReload) {
         }
     }
 
-    $env:NIUMMA_DEV_URL = $url
-    $env:NIUMMA_PLUGINS_DIR = Join-Path $Root 'plugins'
+    $env:ENSIS_DEV_URL = $url
+    $env:ENSIS_PLUGINS_DIR = Join-Path $Root 'plugins'
     Write-Host "    Vite ready: $url" -ForegroundColor Gray
 }
 
 if (-not $SkipShellBuild) {
-    $runningNiuma = Get-Process -Name 'niuma' -ErrorAction SilentlyContinue
+    $runningNiuma = Get-Process -Name 'ensis-ops' -ErrorAction SilentlyContinue
     if ($runningNiuma) {
-        Write-Host '==> stopping running niuma.exe (shell rebuild)' -ForegroundColor Yellow
+        Write-Host '==> stopping running ensis-ops.exe (shell rebuild)' -ForegroundColor Yellow
         $runningNiuma | Stop-Process -Force -ErrorAction SilentlyContinue
         Start-Sleep -Milliseconds 600
     }
@@ -179,20 +179,20 @@ if (-not $SkipShellBuild) {
 }
 
 if (-not (Test-Path $Exe)) {
-    throw "niuma.exe not found at $Exe"
+    throw "ensis-ops.exe not found at $Exe"
 }
 
-$env:NIUMMA_PLUGINS_DIR = Join-Path $Root 'plugins'
+$env:ENSIS_PLUGINS_DIR = Join-Path $Root 'plugins'
 
 Write-DevBanner "Launch $Exe"
 Write-Host "    Configuration: $Configuration" -ForegroundColor Gray
 
 $launchArgs = @()
-if ($env:NIUMMA_DEV_URL) {
-    Write-Host "    NIUMMA_DEV_URL=$($env:NIUMMA_DEV_URL)" -ForegroundColor Gray
-    $launchArgs += "--url=$($env:NIUMMA_DEV_URL)"
+if ($env:ENSIS_DEV_URL) {
+    Write-Host "    ENSIS_DEV_URL=$($env:ENSIS_DEV_URL)" -ForegroundColor Gray
+    $launchArgs += "--url=$($env:ENSIS_DEV_URL)"
 }
-Write-Host "    NIUMMA_LOG_ROOT=$($env:NIUMMA_LOG_ROOT)" -ForegroundColor Gray
+Write-Host "    ENSIS_LOG_ROOT=$($env:ENSIS_LOG_ROOT)" -ForegroundColor Gray
 if ($SkipServices) {
     Write-Host '    SkipServices: on (use with pnpm dev:platform)' -ForegroundColor Gray
 }
@@ -210,29 +210,29 @@ if ($proc.HasExited) {
         Write-Host '--- debug.log (tail) ---' -ForegroundColor Yellow
         $hint | ForEach-Object { Write-Host $_ }
     }
-    throw "niuma.exe exited immediately (code $($proc.ExitCode))"
+    throw "ensis-ops.exe exited immediately (code $($proc.ExitCode))"
 }
 
 if ($HotReload) {
     Write-Host 'Hot reload active - edit web/ and save to refresh CEF window' -ForegroundColor Gray
-    Write-Host 'Close the NiuMa window to stop' -ForegroundColor Gray
+    Write-Host 'Close the ensis-ops window to stop' -ForegroundColor Gray
     try {
         Wait-Process -Id $proc.Id
     } finally {
         if ($viteProcStartedByUs -and $viteProc -and -not $viteProc.HasExited) {
             Stop-Process -Id $viteProc.Id -Force -ErrorAction SilentlyContinue
         }
-        Remove-Item Env:NIUMMA_DEV_URL -ErrorAction SilentlyContinue
-        Remove-Item Env:NIUMMA_PLUGINS_DIR -ErrorAction SilentlyContinue
-        Remove-Item Env:NIUMMA_LOG_ROOT -ErrorAction SilentlyContinue
+        Remove-Item Env:ENSIS_DEV_URL -ErrorAction SilentlyContinue
+        Remove-Item Env:ENSIS_PLUGINS_DIR -ErrorAction SilentlyContinue
+        Remove-Item Env:ENSIS_LOG_ROOT -ErrorAction SilentlyContinue
     }
 } else {
-    Write-Host 'Desktop app running - close the NiuMa window to exit' -ForegroundColor Gray
+    Write-Host 'Desktop app running - close the ensis-ops window to exit' -ForegroundColor Gray
     try {
         Wait-Process -Id $proc.Id
     } finally {
-        Remove-Item Env:NIUMMA_DEV_URL -ErrorAction SilentlyContinue
-        Remove-Item Env:NIUMMA_PLUGINS_DIR -ErrorAction SilentlyContinue
-        Remove-Item Env:NIUMMA_LOG_ROOT -ErrorAction SilentlyContinue
+        Remove-Item Env:ENSIS_DEV_URL -ErrorAction SilentlyContinue
+        Remove-Item Env:ENSIS_PLUGINS_DIR -ErrorAction SilentlyContinue
+        Remove-Item Env:ENSIS_LOG_ROOT -ErrorAction SilentlyContinue
     }
 }

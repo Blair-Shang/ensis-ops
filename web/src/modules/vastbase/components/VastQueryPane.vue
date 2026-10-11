@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { RsLoading, RsMonacoEditor, type RsSplitPaneItem } from '@niuma/ui'
+import { RsLoading, RsMonacoEditor, type RsSplitPaneItem } from 'ensis-ui'
 import { QueryResultPanel, SqlQueryIdentity, SqlQueryShell } from '@/modules/database'
 import { useVastQueryPane } from '@/modules/vastbase/composables/useVastQueryPane'
 import type { VastSessionTab } from '@/modules/vastbase/sql-seed'

@@ -3,7 +3,7 @@
 #include <functional>
 #include <string>
 
-namespace niuma {
+namespace ensisops {
 
 /// 一次应用 IPC 往返结果（壳层不解析业务 JSON，只搬运信封字段）。
 struct PlatformInvokeResult {
@@ -23,7 +23,7 @@ using PlatformEventCallback = std::function<void(const std::string& event_json)>
 /**
  * @brief ② 应用 IPC：Shell → Platform Core 的透传客户端（不解析业务、不持凭据）。
  *
- * 传输为 Windows 命名管道 `\\.\pipe\niuma.platform`（其他平台 UDS），分帧为
+ * 传输为 Windows 命名管道 `\\.\pipe\ensis-ops.platform`（其他平台 UDS），分帧为
  * 「4 字节小端长度前缀 + UTF-8 JSON」。壳层只做字节搬运：
  * 把 Web 的原始请求 JSON 原样发给 Platform，再把响应回传，不落盘、不鉴权。
  *
@@ -74,7 +74,7 @@ class PlatformClient {
   /**
    * @brief 打开一条 Platform 长流：发送开流帧后持续读取并回调。
    *
-   * @param open_request_json 开流请求 JSON（method/params/id），与 niuma.platform 同帧格式。
+   * @param open_request_json 开流请求 JSON（method/params/id），与 ensis-ops.platform 同帧格式。
    * @param stream_id         Shell 侧会话标识，供 `CloseStream` 取消。
    */
   static void OpenStream(const std::string& open_request_json,
@@ -87,4 +87,4 @@ class PlatformClient {
   static void CloseAllStreams();
 };
 
-}  // namespace niuma
+}  // namespace ensisops

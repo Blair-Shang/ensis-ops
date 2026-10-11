@@ -4,8 +4,8 @@ package handler
 import (
 	"strings"
 
-	"niuma/platform/internal/serviceclient"
-	"niuma/platform/internal/supervisor"
+	"ensis-ops/platform/internal/serviceclient"
+	"ensis-ops/platform/internal/supervisor"
 )
 
 // capabilityRoute 描述一个已注册能力命名空间及其到 Layer-1 服务的转发配置。
@@ -48,7 +48,7 @@ func NewCapabilityRegistry(sup *supervisor.Supervisor) (*CapabilityRegistry, err
 //
 // 例：ftp.session.open → namespace=ftp, action=session.open
 //
-//	com.niuma.db-pg.query.exec → namespace=com.niuma.db-pg, action=query.exec
+//	com.ensis-ops.db-pg.query.exec → namespace=com.ensis-ops.db-pg, action=query.exec
 func (r *CapabilityRegistry) resolve(method string) (*capabilityRoute, string, bool) {
 	if r == nil || len(r.routes) == 0 {
 		return nil, "", false

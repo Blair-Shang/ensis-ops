@@ -9,10 +9,10 @@ Layer-1 Microsoft SQL Server / Azure SQL 能力服务。设计见 [docs/32-sqlse
 | 组件 | 位置 | 说明 |
 |------|------|------|
 | **microsoft/go-mssqldb** | `go.mod` | 微软维护的纯 Go TDS 驱动；`database/sql` |
-| **niuma/pkg/serviceipc** | `packages/go/serviceipc` | length-prefixed JSON IPC（Pipe / UDS） |
-| **niuma/pkg/sqllsp** | `packages/go/sqllsp` | Bridge 隧道 LSP 框架 |
-| **niuma/pkg/tunnel** / **netproxy** | `packages/go/*` | SSH 隧道 / 代理（无引擎语义） |
-| **niuma/pkg/logutil** / **common** | `packages/go/*` | 日志与公共工具 |
+| **ensis-ops/pkg/serviceipc** | `packages/go/serviceipc` | length-prefixed JSON IPC（Pipe / UDS） |
+| **ensis-ops/pkg/sqllsp** | `packages/go/sqllsp` | Bridge 隧道 LSP 框架 |
+| **ensis-ops/pkg/tunnel** / **netproxy** | `packages/go/*` | SSH 隧道 / 代理（无引擎语义） |
+| **ensis-ops/pkg/logutil** / **common** | `packages/go/*` | 日志与公共工具 |
 
 构建约定：`CGO_ENABLED=0`。驱动**仅**出现在本服务 `go.mod`，不进入 platform-core。
 
@@ -44,7 +44,7 @@ P0 仅保证 **SQL 认证**；Windows / AAD 认证见文档分期（P2+）。
 容器内快速自检（若镜像含 sqlcmd）：
 
 ```bash
-docker exec -it niuma-sqlserver /opt/mssql-tools18/bin/sqlcmd \
+docker exec -it ensis-sqlserver /opt/mssql-tools18/bin/sqlcmd \
   -S localhost -U sa -P 'Your_strong_Passw0rd' -C \
   -Q "SELECT @@VERSION"
 ```
@@ -60,7 +60,7 @@ uname -m && free -h
 docker compose -f services/sqlserver-service/docker-compose.yml down -v
 docker compose -f services/sqlserver-service/docker-compose.yml pull
 docker compose -f services/sqlserver-service/docker-compose.yml up -d
-docker logs niuma-sqlserver 2>&1 | head -n 80
+docker logs ensis-sqlserver 2>&1 | head -n 80
 ```
 
 `arm64` 主机不要用本镜像（需换 Azure SQL Edge 等，本仓库联调路径未覆盖）。
@@ -74,21 +74,21 @@ docker logs niuma-sqlserver 2>&1 | head -n 80
 # 或仅本模块
 Push-Location services/sqlserver-service
 $env:CGO_ENABLED = '0'
-go build -o ..\bin\niuma-sqlserver-service.exe ./cmd/sqlserver-service
+go build -o ..\bin\ensis-sqlserver-service.exe ./cmd/sqlserver-service
 Pop-Location
 ```
 
 产物：
 
-- 矩阵目录：`services/bin/windows-x64/niuma-sqlserver-service.exe`（供 `stage-services` / `dev:hot` 拷贝）
-- 兼容平铺：`services/bin/niuma-sqlserver-service.exe`（本机 Windows）
+- 矩阵目录：`services/bin/windows-x64/ensis-sqlserver-service.exe`（供 `stage-services` / `dev:hot` 拷贝）
+- 兼容平铺：`services/bin/ensis-sqlserver-service.exe`（本机 Windows）
 
 `build-services.ps1` / `pnpm dev:hot` 默认编入本服务（Go，无额外本机 SDK）。
 
 ## IPC
 
-- Windows：`\\.\pipe\niuma.sqlserver`
-- Unix：`/tmp/niuma.sqlserver.sock`
+- Windows：`\\.\pipe\ensis-ops.sqlserver`
+- Unix：`/tmp/ensis-ops.sqlserver.sock`
 - 帧：4 字节小端长度 + UTF-8 JSON（与其它 Go / C++ 能力服务一致）
 - manifest：`services/manifests/sqlserver-service.yaml`
 - Bridge 命名空间：`sqlserver`（platform 剥前缀后 method 为 `session.open` 等）
@@ -118,7 +118,7 @@ Pop-Location
 | auth_type | P0：`sql` |
 | encrypt | `optional` / `disable` / `mandatory` |
 | trust_server_certificate | 本地开发常为 `true` |
-| application_name | `NiuMa` |
+| application_name | `ensis-ops` |
 | tunnel / proxy | 与其它能力服务同形 |
 
 ## 工程布局

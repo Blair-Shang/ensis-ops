@@ -3,7 +3,7 @@
 #include "session/connect.hpp"
 #include "util/idgen.hpp"
 
-namespace niuma::oracle::session {
+namespace ensisops::oracle::session {
 
 ResolvedSession ResolveSession(Manager& sessions, const nlohmann::json& params) {
   ResolvedSession out;
@@ -47,4 +47,4 @@ ResolvedSession ResolveSession(Manager& sessions, const nlohmann::json& params) 
   return out;
 }
 
-}  // namespace niuma::oracle::session
+}  // namespace ensisops::oracle::session

@@ -8,7 +8,7 @@
 #include <utility>
 #include <vector>
 
-namespace niuma::oracle::dataio {
+namespace ensisops::oracle::dataio {
 namespace {
 
 bool IsSpaceByte(unsigned char c) {
@@ -494,4 +494,4 @@ std::vector<std::string> SplitSqlScript(const std::string& text) {
   return out;
 }
 
-}  // namespace niuma::oracle::dataio
+}  // namespace ensisops::oracle::dataio

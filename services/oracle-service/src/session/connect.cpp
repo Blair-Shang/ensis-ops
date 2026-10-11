@@ -10,7 +10,7 @@
 #include <mutex>
 #include <sstream>
 
-namespace niuma::oracle::session {
+namespace ensisops::oracle::session {
 namespace {
 
 std::mutex g_ctx_mu;
@@ -117,7 +117,7 @@ ConnectParams ConnectParams::FromJson(const nlohmann::json& j) {
   p.options.role = JsonString(opts, {"role"});
   p.options.app_name = JsonString(opts, {"application_name", "appName"});
   if (p.options.app_name.empty()) {
-    p.options.app_name = "NiuMa";
+    p.options.app_name = "ensis-ops";
   }
   p.options.connect_timeout_seconds = JsonInt(opts, {"connect_timeout_seconds"}, 30);
   if (opts.contains("exclude_system_schemas") && opts["exclude_system_schemas"].is_boolean()) {
@@ -371,7 +371,7 @@ OpenedConnection ConnectAndProbe(const ConnectParams& params, std::string& error
   if (params.options.tunnel.Enabled()) {
     std::string local_host;
     uint16_t local_port = 0;
-    auto tunnel = niuma::sshtunnel::StartSSHTunnel(params.options.tunnel, params.host_address, target_port,
+    auto tunnel = ensisops::sshtunnel::StartSSHTunnel(params.options.tunnel, params.host_address, target_port,
                                                    local_host, local_port, error);
     if (!tunnel) {
       if (error.empty()) {
@@ -387,7 +387,7 @@ OpenedConnection ConnectAndProbe(const ConnectParams& params, std::string& error
   } else if (params.options.proxy.Enabled()) {
     std::string local_host;
     uint16_t local_port = 0;
-    auto relay = niuma::netproxy::StartRelay(params.options.proxy, params.host_address, target_port, local_host,
+    auto relay = ensisops::netproxy::StartRelay(params.options.proxy, params.host_address, target_port, local_host,
                                              local_port, error);
     if (!relay) {
       if (error.empty()) {
@@ -466,4 +466,4 @@ OpenedConnection ConnectAndProbe(const ConnectParams& params, std::string& error
   return out;
 }
 
-}  // namespace niuma::oracle::session
+}  // namespace ensisops::oracle::session

@@ -2,7 +2,7 @@
 
 #include <string>
 
-namespace niuma::oracle::util {
+namespace ensisops::oracle::util {
 
 // 可执行文件所在目录。
 std::string ExecutableDir();
@@ -13,4 +13,4 @@ std::string OracleClientLibDir();
 
 std::string DefaultIpcAddress();
 
-}  // namespace niuma::oracle::util
+}  // namespace ensisops::oracle::util

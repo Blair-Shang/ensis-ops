@@ -7,8 +7,8 @@ import (
 	"strconv"
 	"strings"
 
-	"niuma/pkg/tunnel"
-	"niuma/services/mysql-service/internal/session"
+	"ensis-ops/pkg/tunnel"
+	"ensis-ops/services/mysql-service/internal/session"
 )
 
 // CLIEndpoint 是原生工具可用的本机可达连接端点。

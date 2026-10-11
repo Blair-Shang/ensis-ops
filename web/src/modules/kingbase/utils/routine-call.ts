@@ -234,7 +234,7 @@ const NM_CALL_OUT_TABLE = 'nm_call_out'
  * 「运行调用」走 kingbase.routine.call，不依赖本脚本。
  * - 函数：SELECT * FROM schema.fn(…)（SETOF / TABLE / 标量均可；查询页走 query.exec）
  * - 无 OUT 过程：CALL schema.proc(…)
- * - 有 OUT/INOUT：DO + 临时表 + SELECT（脚本带 `-- niuma:exec=batch`）
+ * - 有 OUT/INOUT：DO + 临时表 + SELECT（脚本带 `-- ensis-ops:exec=batch`）
  */
 export function buildRoutineCallSql(options: {
   schema: string

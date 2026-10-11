@@ -2,16 +2,16 @@
 
 #include "core/window/window_types.h"
 
-#if NIUMMA_WITH_CEF
+#if ENSIS_WITH_CEF
 #include "include/cef_browser.h"
 #include "include/cef_client.h"
 #include "include/views/cef_browser_view.h"
 #include "include/views/cef_window.h"
 #endif
 
-namespace niuma {
+namespace ensisops {
 
-#if NIUMMA_WITH_CEF
+#if ENSIS_WITH_CEF
 
 /**
  * CEF 顶层窗口创建（Delegate + BrowserView / 原生窗口）。
@@ -35,7 +35,7 @@ class WindowFactory {
    * 由 ResolveStartupUrl() 派生静态启动页 URL（不进 Vue）：
    * - .../index.html → .../splash.html
    * - http://host:port/ → http://host:port/splash.html
-   * Dev（NIUMMA_DEV_URL）与打包（app://niuma/）共用此规则。
+   * Dev（ENSIS_DEV_URL）与打包（app://ensis-ops/）共用此规则。
    */
   std::string ResolveSplashUrl() const;
   std::string BuildWindowUrl(const WindowCreateOptions& opts) const;
@@ -55,4 +55,4 @@ class WindowFactory {
 
 #endif
 
-}  // namespace niuma
+}  // namespace ensisops

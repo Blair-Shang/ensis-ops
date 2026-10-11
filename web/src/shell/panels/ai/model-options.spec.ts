@@ -4,7 +4,7 @@ import { buildModelSelectOptions, modelsForProvider } from './model-options'
 
 function provider(partial: Partial<AiProvider> & Pick<AiProvider, 'providerId'>): AiProvider {
   return {
-    providerName: partial.providerName ?? 'NiuMa',
+    providerName: partial.providerName ?? 'ensis-ops',
     providerKind: 'openai',
     baseUrl: '',
     hasApiKey: true,
@@ -23,12 +23,12 @@ function provider(partial: Partial<AiProvider> & Pick<AiProvider, 'providerId'>)
 describe('modelsForProvider', () => {
   it('skips disabled leftover models after cloud catalog update', () => {
     const p = provider({
-      providerId: 'niuma-system',
+      providerId: 'ensis-system',
       defaultModelCode: 'new-a',
       models: [
         {
           modelId: '1',
-          providerId: 'niuma-system',
+          providerId: 'ensis-system',
           modelCode: 'old-a',
           modelLabel: 'Old A',
           contextWindow: null,
@@ -42,7 +42,7 @@ describe('modelsForProvider', () => {
         },
         {
           modelId: '2',
-          providerId: 'niuma-system',
+          providerId: 'ensis-system',
           modelCode: 'new-a',
           modelLabel: 'New A',
           contextWindow: null,
@@ -62,12 +62,12 @@ describe('modelsForProvider', () => {
   it('does not append a stale selected model into the picker', () => {
     const options = buildModelSelectOptions([
       provider({
-        providerId: 'niuma-system',
+        providerId: 'ensis-system',
         defaultModelCode: 'new-a',
         models: [
           {
             modelId: '2',
-            providerId: 'niuma-system',
+            providerId: 'ensis-system',
             modelCode: 'new-a',
             modelLabel: 'New A',
             contextWindow: null,
@@ -82,6 +82,6 @@ describe('modelsForProvider', () => {
         ],
       }),
     ])
-    expect(options).toEqual([{ value: 'niuma-system::new-a', label: 'NiuMa · new-a' }])
+    expect(options).toEqual([{ value: 'ensis-system::new-a', label: 'ensis-ops · new-a' }])
   })
 })

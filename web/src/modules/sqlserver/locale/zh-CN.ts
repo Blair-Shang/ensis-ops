@@ -40,7 +40,7 @@ export default {
         azureEncryptHint: '检测到 Azure SQL 主机：建议使用「强制」或「严格」，并按需配置证书主机名。',
         azureEncryptRequired: 'Azure SQL 要求加密连接：请将 Encrypt 设为「强制」或「严格」。',
         appName: '应用名称',
-        appNameHint: '写入会话的 Application Name，便于在服务器侧识别 NiuMa 连接。',
+        appNameHint: '写入会话的 Application Name，便于在服务器侧识别 ensis-ops 连接。',
         trustServerCertificate: '信任服务器证书',
         trustServerCertificateHint: '开发/自签证书环境可开启；生产环境建议关闭并正确配置证书。',
         hostNameInCertificate: '证书主机名',

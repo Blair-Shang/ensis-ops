@@ -3,7 +3,7 @@
 #include "util/runtime_paths.h"
 #include "util/utf8_path.h"
 
-#include <niuma/logutil/logutil.hpp>
+#include <ensisops/logutil/logutil.hpp>
 
 #include <algorithm>
 #include <chrono>
@@ -28,7 +28,7 @@
 
 namespace fs = std::filesystem;
 
-namespace niuma {
+namespace ensisops {
 
 namespace {
 
@@ -103,7 +103,7 @@ std::string FindRepositoryRoot(const fs::path& start) {
 }
 
 std::string BaseLogRoot() {
-  const char* override_root = std::getenv("NIUMMA_LOG_ROOT");
+  const char* override_root = std::getenv("ENSIS_LOG_ROOT");
   if (override_root != nullptr && override_root[0] != '\0') {
     return std::string(override_root);
   }
@@ -193,11 +193,11 @@ void InitSessionLog() {
   PruneOldSessionLogs(Utf8Path(date_dir), Utf8Path(g_session_log_dir));
   PruneOldDateDirs(Utf8Path(log_root));
 #if defined(_WIN32)
-  SetEnvironmentVariableA("NIUMMA_LOG_DIR", g_session_log_dir.c_str());
+  SetEnvironmentVariableA("ENSIS_LOG_DIR", g_session_log_dir.c_str());
 #else
-  setenv("NIUMMA_LOG_DIR", g_session_log_dir.c_str(), 1);
+  setenv("ENSIS_LOG_DIR", g_session_log_dir.c_str(), 1);
 #endif
-  niuma::logutil::InstallCrashDump("niuma-shell");
+  ensisops::logutil::InstallCrashDump("ensis-shell");
   AppendShellLog("session log initialized");
 }
 
@@ -226,4 +226,4 @@ void AppendShellLog(const std::string& line) {
   out << std::put_time(&tm_buf, "%Y-%m-%d %H:%M:%S") << ' ' << line << '\n';
 }
 
-}  // namespace niuma
+}  // namespace ensisops

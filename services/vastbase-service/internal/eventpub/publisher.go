@@ -5,7 +5,7 @@ import (
 	"context"
 	"strings"
 
-	"niuma/pkg/serviceipc/event"
+	"ensis-ops/pkg/serviceipc/event"
 )
 
 const queueSize = 128

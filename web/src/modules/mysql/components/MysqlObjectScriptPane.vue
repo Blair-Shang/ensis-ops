@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { computed } from 'vue'
-import { RsLoading, RsMonacoEditor } from '@niuma/ui'
+import { RsLoading, RsMonacoEditor } from 'ensis-ui'
 import { ObjectScriptShell, type ObjectScriptShellLabels } from '@/modules/database'
 import { useMysqlObjectScript } from '@/modules/mysql/composables/useMysqlObjectScript'
 import type { MysqlObjectKind, MysqlObjectScriptMode } from '@/modules/mysql/types/object-script'

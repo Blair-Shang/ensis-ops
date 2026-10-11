@@ -2,7 +2,7 @@
 /**
  * 按声明列表渲染 IDE 工具条按钮 / 分隔线。
  */
-import { RsButton } from '@niuma/ui'
+import { RsButton } from 'ensis-ui'
 import {
   isSqlIdeToolbarSep,
   sqlIdeToolbarIconButton,

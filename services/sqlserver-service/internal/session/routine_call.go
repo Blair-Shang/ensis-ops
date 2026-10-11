@@ -9,7 +9,7 @@ import (
 
 	mssql "github.com/microsoft/go-mssqldb"
 
-	"niuma/pkg/common/id"
+	"ensis-ops/pkg/common/id"
 )
 
 // CallRoutine 执行存储过程（TDS RPC + 命名参数 / OUTPUT / ReturnStatus）或函数（绑定参数的 SELECT）。

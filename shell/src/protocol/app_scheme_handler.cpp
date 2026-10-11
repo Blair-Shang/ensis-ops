@@ -5,7 +5,7 @@
 #include <cctype>
 #include <filesystem>
 
-#if NIUMMA_WITH_CEF
+#if ENSIS_WITH_CEF
 #include "include/wrapper/cef_stream_resource_handler.h"
 #include "include/cef_response.h"
 #include "include/cef_stream.h"
@@ -13,7 +13,7 @@
 
 namespace fs = std::filesystem;
 
-namespace niuma {
+namespace ensisops {
 
 namespace {
 
@@ -45,21 +45,21 @@ std::string MimeTypeForPath(const std::string& path) {
 }
 
 void RegisterAppScheme() {
-#if NIUMMA_WITH_CEF
-  CefRegisterSchemeHandlerFactory(NIUMMA_APP_SCHEME, NIUMMA_APP_HOST,
-                                new NiuMaAppSchemeHandlerFactory());
+#if ENSIS_WITH_CEF
+  CefRegisterSchemeHandlerFactory(ENSIS_APP_SCHEME, ENSIS_APP_HOST,
+                                new EnsisAppSchemeHandlerFactory());
 #endif
 }
 
-}  // namespace niuma
+}  // namespace ensisops
 
-#if NIUMMA_WITH_CEF
+#if ENSIS_WITH_CEF
 
 namespace {
 
 std::string ParseAppUrlPath(const std::string& url) {
   const std::string prefix =
-      std::string(NIUMMA_APP_SCHEME) + "://" + NIUMMA_APP_HOST;
+      std::string(ENSIS_APP_SCHEME) + "://" + ENSIS_APP_HOST;
   if (url.rfind(prefix, 0) != 0) {
     return {};
   }
@@ -83,7 +83,7 @@ std::string ParseAppUrlPath(const std::string& url) {
 
 }  // namespace
 
-CefRefPtr<CefResourceHandler> NiuMaAppSchemeHandlerFactory::Create(
+CefRefPtr<CefResourceHandler> EnsisAppSchemeHandlerFactory::Create(
     CefRefPtr<CefBrowser> browser,
     CefRefPtr<CefFrame> frame,
     const CefString& scheme_name,
@@ -97,7 +97,7 @@ CefRefPtr<CefResourceHandler> NiuMaAppSchemeHandlerFactory::Create(
     return nullptr;
   }
 
-  const std::string file_path = niuma::ResolveAppResourcePath(url_path);
+  const std::string file_path = ensisops::ResolveAppResourcePath(url_path);
   if (!fs::exists(file_path) || !fs::is_regular_file(file_path)) {
     return nullptr;
   }
@@ -114,7 +114,7 @@ CefRefPtr<CefResourceHandler> NiuMaAppSchemeHandlerFactory::Create(
   headers.insert(std::make_pair("Pragma", "no-cache"));
 
   return new CefStreamResourceHandler(
-      200, "OK", niuma::MimeTypeForPath(file_path), headers, stream);
+      200, "OK", ensisops::MimeTypeForPath(file_path), headers, stream);
 }
 
 #endif

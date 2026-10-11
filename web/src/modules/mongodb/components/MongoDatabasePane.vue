@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { RsEmpty, RsIcon, RsTable, useRsToast } from '@niuma/ui'
-import type { RsContextMenuItem, RsTableColumn } from '@niuma/ui'
+import { RsEmpty, RsIcon, RsTable, useRsToast } from 'ensis-ui'
+import type { RsContextMenuItem, RsTableColumn } from 'ensis-ui'
 import { computed, ref, shallowRef, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { mongodbApi } from '@/api'

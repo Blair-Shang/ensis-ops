@@ -1,7 +1,7 @@
 /**
  * 方言无关的本地 SQL 执行历史（按 profile 隔离）。
  *
- * Key：`{storagePrefix}{profileId}`（例：`niuma.mysql.sqlHistory.`）
+ * Key：`{storagePrefix}{profileId}`（例：`ensis-ops.mysql.sqlHistory.`）
  * 上限：40 条；同 SQL 去重后置顶。
  * 后续可迁 nm_sql_history；先提供企业级「最近执行」体验。
  */
@@ -17,10 +17,10 @@ export interface SqlHistoryEntry {
 }
 
 export type SqlHistoryStoragePrefix =
-  | 'niuma.mysql.sqlHistory.'
-  | 'niuma.vastbase.sqlHistory.'
-  | 'niuma.postgresql.sqlHistory.'
-  | 'niuma.oracle.sqlHistory.'
+  | 'ensis-ops.mysql.sqlHistory.'
+  | 'ensis-ops.vastbase.sqlHistory.'
+  | 'ensis-ops.postgresql.sqlHistory.'
+  | 'ensis-ops.oracle.sqlHistory.'
   | (string & {})
 
 function storageKey(prefix: string, profileId: string): string {

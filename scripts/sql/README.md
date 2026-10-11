@@ -24,4 +24,4 @@ scripts/sql/
 pack/win-x64/platform/migrations/sqlite/
 ```
 
-Platform Core 启动时对用户库 `%LOCALAPPDATA%\NiuMa\data\niuma.db` 执行 migrate。
+Platform Core 启动时对用户库 `%LOCALAPPDATA%\ensis-ops\data\ensis-ops.db` 执行 migrate。

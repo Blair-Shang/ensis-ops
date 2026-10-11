@@ -1,6 +1,6 @@
 #pragma once
 
-#if NIUMMA_WITH_CEF
+#if ENSIS_WITH_CEF
 #include "browser/handlers/message_router_handler.h"
 #include "browser/handlers/context_menu_handler.h"
 #include "browser/handlers/drag_handler.h"
@@ -24,11 +24,11 @@
 #include <set>
 #endif
 
-namespace niuma {
+namespace ensisops {
 
-#if NIUMMA_WITH_CEF
+#if ENSIS_WITH_CEF
 /** 主工作台 Browser 实例：CEF 回调与 ① cefQuery 绑定，不含业务逻辑。 */
-class NiuMaClient : public CefClient,
+class EnsisClient : public CefClient,
                     public CefDisplayHandler,
                     public CefDialogHandler,
                     public CefDragHandler,
@@ -37,7 +37,7 @@ class NiuMaClient : public CefClient,
                     public CefLifeSpanHandler,
                     public CefLoadHandler {
  public:
-  NiuMaClient();
+  EnsisClient();
 
   CefRefPtr<CefDisplayHandler> GetDisplayHandler() override { return this; }
   CefRefPtr<CefDialogHandler> GetDialogHandler() override { return this; }
@@ -93,16 +93,16 @@ class NiuMaClient : public CefClient,
   BrowserList browsers_;
   bool is_closing_ = false;
   CefRefPtr<CefMessageRouterBrowserSide> browser_router_;
-  std::unique_ptr<NiuMaMessageRouterHandler> message_router_handler_;
-  CefRefPtr<NiuMaContextMenuHandler> context_menu_handler_;
-  CefRefPtr<NiuMaDragHandler> drag_handler_;
-  CefRefPtr<NiuMaPermissionHandler> permission_handler_;
-  CefRefPtr<NiuMaDownloadHandler> download_handler_;
+  std::unique_ptr<EnsisMessageRouterHandler> message_router_handler_;
+  CefRefPtr<EnsisContextMenuHandler> context_menu_handler_;
+  CefRefPtr<EnsisDragHandler> drag_handler_;
+  CefRefPtr<EnsisPermissionHandler> permission_handler_;
+  CefRefPtr<EnsisDownloadHandler> download_handler_;
   std::set<int> revealed_browsers_;
   bool event_listener_started_ = false;
 
-  IMPLEMENT_REFCOUNTING(NiuMaClient);
+  IMPLEMENT_REFCOUNTING(EnsisClient);
 };
 #endif
 
-}  // namespace niuma
+}  // namespace ensisops

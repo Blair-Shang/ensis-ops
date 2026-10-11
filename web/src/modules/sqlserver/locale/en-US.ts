@@ -40,7 +40,7 @@ export default {
         azureEncryptHint: 'Azure SQL host detected: prefer Mandatory or Strict, and set certificate host name if needed.',
         azureEncryptRequired: 'Azure SQL requires encryption: set Encrypt to Mandatory or Strict.',
         appName: 'Application name',
-        appNameHint: 'Application Name shown on the server for NiuMa sessions.',
+        appNameHint: 'Application Name shown on the server for ensis-ops sessions.',
         trustServerCertificate: 'Trust server certificate',
         trustServerCertificateHint: 'Enable for self-signed / lab certs; keep off in production and configure certificates properly.',
         hostNameInCertificate: 'Host name in certificate',

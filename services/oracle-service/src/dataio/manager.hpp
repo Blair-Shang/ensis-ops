@@ -14,7 +14,7 @@
 #include <unordered_map>
 #include <vector>
 
-namespace niuma::oracle::dataio {
+namespace ensisops::oracle::dataio {
 
 struct CsvOptions {
   bool header = true;
@@ -123,4 +123,4 @@ class Manager {
   std::unordered_map<std::string, int64_t> progress_last_ms_;
 };
 
-}  // namespace niuma::oracle::dataio
+}  // namespace ensisops::oracle::dataio

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { RsIcon } from '@niuma/ui'
+import { RsIcon } from 'ensis-ui'
 import { visibleActivityBarItems } from '@/extensions/shell/activity-bar-config'
 import { useModuleStore } from '@/stores/module'
 import { useShellStore } from '@/stores/shell'

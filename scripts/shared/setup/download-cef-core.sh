@@ -39,7 +39,7 @@ fi
 REPO_ROOT="${REPO_ROOT:-$(nm_repo_root "$SCRIPT_DIR")}"
 DEST="$(nm_cef_root "$REPO_ROOT")"
 CACHE_DIR="$REPO_ROOT/third_party/cef-cache"
-STAGE_DIR="${RUNNER_TEMP:-${TMPDIR:-/tmp}}/niuma-cef-dl"
+STAGE_DIR="${RUNNER_TEMP:-${TMPDIR:-/tmp}}/ensis-cef-dl"
 PIN_FILE="$SCRIPT_DIR/cef-pin.txt"
 
 if [[ -f "$DEST/CMakeLists.txt" && "$FORCE" != "true" ]]; then

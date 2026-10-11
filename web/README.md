@@ -1,6 +1,6 @@
-# @niuma/web
+# @ensis/web
 
-CEF Renderer 内主 Web 应用：Vue 3 + Pinia + vue-i18n + `@niuma/ui`。
+CEF Renderer 内主 Web 应用：Vue 3 + Pinia + vue-i18n + `ensis-ui`。
 
 ## 开发
 

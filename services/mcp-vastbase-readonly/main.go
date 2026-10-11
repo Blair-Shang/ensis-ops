@@ -14,7 +14,7 @@ import (
  * mcp-vastbase-readonly — 可选对外 MCP（stdio JSON-RPC）。
  *
  * 官方查库走 platform/internal/ai/host/sql；本进程仅供 Claude Desktop 等
- * 外部客户端。经 NIUMA_PLATFORM_IPC 调 vastbase.*，不持有 DB 密码。
+ * 外部客户端。经 ENSIS_PLATFORM_IPC 调 vastbase.*，不持有 DB 密码。
  */
 
 func main() {
@@ -75,7 +75,7 @@ func (s *mcpServer) handle(req rpcReq) {
 
 func toolDefs() []map[string]any {
 	obj := map[string]any{"type": "object", "properties": map[string]any{
-		"profileId": map[string]any{"type": "string", "description": "NiuMa connection profile id"},
+		"profileId": map[string]any{"type": "string", "description": "ensis-ops connection profile id"},
 		"sessionId": map[string]any{"type": "string", "description": "Optional active session id"},
 		"database":  map[string]any{"type": "string", "description": "Optional database name"},
 	}}

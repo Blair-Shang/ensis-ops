@@ -6,7 +6,7 @@ import (
 	"strings"
 	"testing"
 
-	"niuma/pkg/serviceipc/envelope"
+	"ensis-ops/pkg/serviceipc/envelope"
 )
 
 type nopEmit struct{}

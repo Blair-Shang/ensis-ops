@@ -7,8 +7,8 @@ import (
 	"strings"
 	"sync"
 
-	"niuma/services/mysql-service/internal/idgen"
-	"niuma/services/mysql-service/internal/session"
+	"ensis-ops/services/mysql-service/internal/idgen"
+	"ensis-ops/services/mysql-service/internal/session"
 )
 
 // Emitter 上报 IO 任务事件的回调函数。

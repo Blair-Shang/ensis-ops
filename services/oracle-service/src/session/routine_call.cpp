@@ -18,7 +18,7 @@
 #include <string>
 #include <vector>
 
-namespace niuma::oracle::session {
+namespace ensisops::oracle::session {
 namespace {
 
 class VarGuard {
@@ -1160,4 +1160,4 @@ nlohmann::json CallRoutine(Session& session, const RoutineCallParams& params, st
   return result;
 }
 
-}  // namespace niuma::oracle::session
+}  // namespace ensisops::oracle::session

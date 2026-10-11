@@ -13,7 +13,7 @@ import (
 	"strings"
 	"time"
 
-	"niuma/services/clickhouse-service/internal/session"
+	"ensis-ops/services/clickhouse-service/internal/session"
 )
 
 // ImportFormat 导入数据格式。

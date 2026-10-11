@@ -32,7 +32,7 @@ if ! command -v iconutil >/dev/null 2>&1 || ! command -v sips >/dev/null 2>&1; t
   exit 0
 fi
 
-WORK="$(mktemp -d "${TMPDIR:-/tmp}/niuma-icns.XXXXXX")"
+WORK="$(mktemp -d "${TMPDIR:-/tmp}/ensis-icns.XXXXXX")"
 ICONSET="$WORK/AppIcon.iconset"
 mkdir -p "$ICONSET"
 cleanup() { rm -rf "$WORK"; }

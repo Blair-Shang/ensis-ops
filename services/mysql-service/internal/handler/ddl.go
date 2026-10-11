@@ -5,7 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 
-	"niuma/services/mysql-service/internal/ddl"
+	"ensis-ops/services/mysql-service/internal/ddl"
 )
 
 func (d *Dispatcher) ddlDesignPreview(_ context.Context, req Request) Response {

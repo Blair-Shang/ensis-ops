@@ -7,7 +7,7 @@ import (
 	"fmt"
 	"strings"
 
-	"niuma/platform/internal/ai"
+	"ensis-ops/platform/internal/ai"
 )
 
 // aiSkillList 处理 platform.ai.skill.list。

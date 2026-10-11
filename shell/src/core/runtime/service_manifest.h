@@ -3,7 +3,7 @@
 #include <string>
 #include <unordered_map>
 
-namespace niuma {
+namespace ensisops {
 
 struct ServiceManifest {
   std::string id;
@@ -27,4 +27,4 @@ class ServiceManifestLoader {
   std::unordered_map<std::string, ServiceManifest> manifests_;
 };
 
-}  // namespace niuma
+}  // namespace ensisops

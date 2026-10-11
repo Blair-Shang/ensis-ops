@@ -33,7 +33,7 @@ export const PASSWORD_MAX_LEN = 128
 export const OTP_RESEND_COOLDOWN_SEC = 60
 
 const STORAGE_KEY = 'nm.cloud.session'
-/** 与 CEF localStorage 双写；升级覆盖安装目录时 SQLite 仍在 %LOCALAPPDATA%\NiuMa\data。 */
+/** 与 CEF localStorage 双写；升级覆盖安装目录时 SQLite 仍在 %LOCALAPPDATA%\ensis-ops\data。 */
 const SETTING_KEY = 'account.cloudSession'
 
 type PersistedSession = {

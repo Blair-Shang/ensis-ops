@@ -7,7 +7,7 @@ import (
 	"fmt"
 	"strings"
 
-	"niuma/platform/internal/ai"
+	"ensis-ops/platform/internal/ai"
 )
 
 // aiMCPList 处理 platform.ai.mcp.list。

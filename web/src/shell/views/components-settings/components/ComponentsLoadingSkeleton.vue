@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { RsLoading } from '@niuma/ui'
+import { RsLoading } from 'ensis-ui'
 import { useI18n } from 'vue-i18n'
 
 const { t } = useI18n()

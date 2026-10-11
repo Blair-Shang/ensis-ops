@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { RsButton, RsDialog, RsInput, RsLabel } from '@niuma/ui'
+import { RsButton, RsDialog, RsInput, RsLabel } from 'ensis-ui'
 import { computed } from 'vue'
 import { useI18n } from 'vue-i18n'
 import ConnectionColorPicker from '@/modules/ops/components/ConnectionColorPicker.vue'

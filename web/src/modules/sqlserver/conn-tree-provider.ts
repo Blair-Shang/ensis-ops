@@ -5,8 +5,8 @@
  * 右键密度对齐 docs/32 §5.3（低于 SSMS；清空表 / 删除表为确认后执行，其余变更类为「生成脚本到查询」）。
  * 库节点转储扫全部用户 schema；Triggers / Types / 约束树、重命名、GRANT、sqlcmd/bcp 属 P5。
  */
-import type { RsContextMenuItem } from '@niuma/ui'
-import { useRsToast } from '@niuma/ui'
+import type { RsContextMenuItem } from 'ensis-ui'
+import { useRsToast } from 'ensis-ui'
 import type { ConnTreeChildProvider } from '@/modules/ops/conn-tree/registry'
 import type { ConnResourceDescriptor, ConnResourcePath } from '@/modules/ops/conn-tree/types'
 import { sqlserverApi } from '@/api'

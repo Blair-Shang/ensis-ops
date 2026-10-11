@@ -7,13 +7,13 @@ import (
 	"log/slog"
 	"strings"
 
-	"niuma/platform/internal/ai/tool"
-	"niuma/platform/internal/idgen"
-	"niuma/platform/internal/store"
+	"ensis-ops/platform/internal/ai/tool"
+	"ensis-ops/platform/internal/idgen"
+	"ensis-ops/platform/internal/store"
 )
 
 const (
-	credentialServicePrefix = "NiuMa/credential/"
+	credentialServicePrefix = "ensis-ops/credential/"
 	credentialSecretAccount = "secret"
 )
 

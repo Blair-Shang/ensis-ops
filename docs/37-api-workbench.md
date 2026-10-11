@@ -8,14 +8,14 @@
 
 ## 1. 定位
 
-NiuMa API 模块是**本地桌面 HTTP 调试台**，与 Shell Tab、AI 助手、运维会话共用同一工作区。
+ensis-ops API 模块是**本地桌面 HTTP 调试台**，与 Shell Tab、AI 助手、运维会话共用同一工作区。
 
 **范围：单机桌面。** 数据落在本机 SQLite（`api.workspace` / `nm_api_history`）；集合通过 JSON 文件导入导出在机器间迁移。**团队协作、云端 Workspace、多人实时同步不在当前产品范围**，也不作为 API 模块的预留项。
 
 **产品公式：**
 
 ```
-NiuMa API = Postman 的「集合 + 环境 + 发送 + 本地 Mock」
+ensis-ops API = Postman 的「集合 + 环境 + 发送 + 本地 Mock」
           + Apifox 的「OpenAPI 导入 / 变量体系 / 示例 Mock」
           + Packet Sender 的「TCP / UDP 原始套接字」
           + 桌面一体（不进运维连接树、不走 Vault）
@@ -30,7 +30,7 @@ NiuMa API = Postman 的「集合 + 环境 + 发送 + 本地 Mock」
 
 **保留：本机 HTTP Mock Server**（见 [39 — 本地 HTTP Mock](./39-api-mock.md)）：侧栏启停、路由表、从请求/OpenAPI 生成；仅 `127.0.0.1` / 本机端口。
 
-**单机协作替代：** 导出 `niuma.api-collection` JSON → Git / 网盘 / IM 传文件 → 对方导入。无账号体系、无合并冲突 UI。
+**单机协作替代：** 导出 `ensis-ops.api-collection` JSON → Git / 网盘 / IM 传文件 → 对方导入。无账号体系、无合并冲突 UI。
 
 ---
 
@@ -38,7 +38,7 @@ NiuMa API = Postman 的「集合 + 环境 + 发送 + 本地 Mock」
 
 ### 2.1 能力矩阵
 
-| 能力 | Postman | Apifox | NiuMa 目标 | 阶段 |
+| 能力 | Postman | Apifox | ensis-ops 目标 | 阶段 |
 |------|---------|--------|------------|------|
 | 集合 / 文件夹 | 多级 | 多级 + 项目 | 多级（≤3 层） | **P1** |
 | 环境切换 | 多环境 | 多环境 + 前置 URL | 请求栏下拉；右键按需打开环境面板 | **P1** |
@@ -63,21 +63,21 @@ NiuMa API = Postman 的「集合 + 环境 + 发送 + 本地 Mock」
 
 ### 2.2 吸收 Postman 的优势
 
-| Postman 优势 | NiuMa 落点 |
+| Postman 优势 | ensis-ops 落点 |
 |--------------|------------|
 | Collections 心智模型 | `ApiFolder` + `ApiCollectionPanel` 侧栏树 |
 | Environment 一键切换 | `envId` + `ApiEnvironmentPanel` |
 | Authorization Tab | `ApiRequest.auth` → `http/utils/http-auth.ts` → Header |
 | Body 模式切换 | `ApiRequest.bodyMode` + `ApiBodyEditor` |
 | 变量插值 | `http/utils/request-resolve.ts` 统一链路 |
-| Import / Export JSON | `niuma.api-collection` |
+| Import / Export JSON | `ensis-ops.api-collection` |
 | History | `nm_api_history` + `ApiHistoryPane` |
 | cURL 分享 | `http/utils/curl.ts` `buildCurl` |
 | 本地 Mock Server | `mockServers` + [39](./39-api-mock.md) P2 |
 
 ### 2.3 吸收 Apifox 的优势
 
-| Apifox 优势 | NiuMa 落点 |
+| Apifox 优势 | ensis-ops 落点 |
 |-------------|------------|
 | OpenAPI 一键生成请求 | `http/import/openapi.ts` |
 | OpenAPI 生成 Mock 路由 | P2，随本机 Mock，文件未建 |
@@ -186,8 +186,8 @@ P2 未建（不要占空文件）：`ApiMockPanel.vue`。WebSocket 已占 kind /
 
 | kind | 存储位置 | 用途 |
 |------|----------|------|
-| `niuma.api-workspace` | `nm_app_setting.api.workspace` | 本机工作区。写出不含 environments / globals |
-| `niuma.api-collection` | 导入导出文件 | 分享 / 备份（仍含 folder.vars） |
+| `ensis-ops.api-workspace` | `nm_app_setting.api.workspace` | 本机工作区。写出不含 environments / globals |
+| `ensis-ops.api-collection` | 导入导出文件 | 分享 / 备份（仍含 folder.vars） |
 
 ### 5.3 核心类型
 
@@ -217,7 +217,7 @@ interface ApiFolder extends ApiVariableBag {
 // 插值只用 vars 字符串；kind 随 catalog replaceScope 落盘，供后端按类型处理
 
 interface ApiWorkspaceState {
-  kind: 'niuma.api-workspace'
+  kind: 'ensis-ops.api-workspace'
   folders: ApiFolder[]          // 持久化时 vars 为空；内存态由 catalog 填充
   envId: string
   runProfiles?: ApiRunProfile[]
@@ -238,7 +238,7 @@ globals  →  folder 链（根到叶）  →  environment.vars + baseUrl
 
 ### 5.5 读盘
 
-- **不按 version 拒收**。`kind === niuma.api-workspace` 且文件夹能解析，就把请求载入。旧文件里的 `version` 字段忽略。
+- **不按 version 拒收**。`kind === ensis-ops.api-workspace` 且文件夹能解析，就把请求载入。旧文件里的 `version` 字段忽略。
 - **写出是当前结构**：只有 folders、envId、runProfiles、mockServers。环境与变量在关系表。
 - **旧快照若仍内嵌 environments / globals / folder.vars**：catalog 里还没有对应 scope 时写入 `nm_api_*`，然后把工作区收成当前结构。关系表里已有的 scope 不覆盖。
 - **文件夹一条都解析不出来**（kind 仍是工作区）：留在磁盘，不用空种子覆盖。

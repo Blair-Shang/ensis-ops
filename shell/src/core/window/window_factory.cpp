@@ -14,9 +14,9 @@
 
 #include <cstdlib>
 
-namespace niuma {
+namespace ensisops {
 
-#if NIUMMA_WITH_CEF
+#if ENSIS_WITH_CEF
 
 namespace {
 
@@ -50,9 +50,9 @@ WindowChromeOptions ToChromeOptions(const WindowCreateOptions& opts) {
   return chrome;
 }
 
-class NiuMaWindowDelegate : public CefWindowDelegate {
+class EnsisWindowDelegate : public CefWindowDelegate {
  public:
-  NiuMaWindowDelegate(CefRefPtr<CefBrowserView> browser_view,
+  EnsisWindowDelegate(CefRefPtr<CefBrowserView> browser_view,
                       cef_runtime_style_t runtime_style,
                       const CefSize& size,
                       const std::string& title,
@@ -74,7 +74,7 @@ class NiuMaWindowDelegate : public CefWindowDelegate {
     ApplyAppIconToWindow(window->GetWindowHandle());
 #endif
     // 有意不在此处 Show()：保持窗口隐藏，待网页首帧就绪后由
-    // NiuMaClient 调用 window->Show() 显示，彻底消除启动白/黑屏闪烁。
+    // EnsisClient 调用 window->Show() 显示，彻底消除启动白/黑屏闪烁。
   }
 
   void OnWindowDestroyed(CefRefPtr<CefWindow> window) override {
@@ -141,12 +141,12 @@ class NiuMaWindowDelegate : public CefWindowDelegate {
   const std::string title_;
   const WindowChromeOptions chrome_;
 
-  IMPLEMENT_REFCOUNTING(NiuMaWindowDelegate);
+  IMPLEMENT_REFCOUNTING(EnsisWindowDelegate);
 };
 
-class NiuMaBrowserViewDelegate : public CefBrowserViewDelegate {
+class EnsisBrowserViewDelegate : public CefBrowserViewDelegate {
  public:
-  NiuMaBrowserViewDelegate(cef_runtime_style_t runtime_style, const CefSize& size,
+  EnsisBrowserViewDelegate(cef_runtime_style_t runtime_style, const CefSize& size,
                            const WindowChromeOptions& chrome)
       : runtime_style_(runtime_style), size_(size), chrome_(chrome) {}
 
@@ -168,7 +168,7 @@ class NiuMaBrowserViewDelegate : public CefBrowserViewDelegate {
     (void)client;
     const cef_runtime_style_t style =
         is_devtools ? CEF_RUNTIME_STYLE_CHROME : runtime_style_;
-    return new NiuMaBrowserViewDelegate(style, size_, chrome_);
+    return new EnsisBrowserViewDelegate(style, size_, chrome_);
   }
 
   cef_runtime_style_t GetBrowserRuntimeStyle() override { return runtime_style_; }
@@ -178,7 +178,7 @@ class NiuMaBrowserViewDelegate : public CefBrowserViewDelegate {
   const CefSize size_;
   const WindowChromeOptions chrome_;
 
-  IMPLEMENT_REFCOUNTING(NiuMaBrowserViewDelegate);
+  IMPLEMENT_REFCOUNTING(EnsisBrowserViewDelegate);
 };
 
 }  // namespace
@@ -200,12 +200,12 @@ std::string WindowFactory::ResolveStartupUrl() const {
       return switch_url;
     }
   }
-  if (const char* env = std::getenv("NIUMMA_DEV_URL")) {
+  if (const char* env = std::getenv("ENSIS_DEV_URL")) {
     if (env[0] != '\0') {
       return env;
     }
   }
-  return "app://niuma/index.html";
+  return "app://ensis-ops/index.html";
 }
 
 std::string WindowFactory::ResolveSplashUrl() const {
@@ -297,8 +297,8 @@ void WindowFactory::CreateBrowserWindow(WindowKind kind, const WindowCreateOptio
   if (UseViews()) {
     CefRefPtr<CefBrowserView> browser_view = CefBrowserView::CreateBrowserView(
         client_, url, browser_settings, nullptr, nullptr,
-        new NiuMaBrowserViewDelegate(runtime_style, size, chrome));
-    CefWindow::CreateTopLevelWindow(new NiuMaWindowDelegate(
+        new EnsisBrowserViewDelegate(runtime_style, size, chrome));
+    CefWindow::CreateTopLevelWindow(new EnsisWindowDelegate(
         browser_view, runtime_style, size, opts.title, chrome));
     return;
   }
@@ -306,7 +306,7 @@ void WindowFactory::CreateBrowserWindow(WindowKind kind, const WindowCreateOptio
   CefWindowInfo window_info;
 #if defined(OS_WIN)
   const std::wstring title =
-      opts.title.empty() ? L"NiuMa" : std::wstring(opts.title.begin(), opts.title.end());
+      opts.title.empty() ? L"ensis-ops" : std::wstring(opts.title.begin(), opts.title.end());
   window_info.SetAsPopup(nullptr, title.c_str());
   window_info.bounds = {0, 0, size.width, size.height};
 #endif
@@ -340,10 +340,10 @@ void WindowFactory::CreatePopupShell(CefRefPtr<CefBrowserView> popup_browser_vie
   pending.chrome = WindowCreateOptions{};
   WindowRegistry::Instance().EnqueuePending(std::move(pending));
 
-  CefWindow::CreateTopLevelWindow(new NiuMaWindowDelegate(
+  CefWindow::CreateTopLevelWindow(new EnsisWindowDelegate(
       popup_browser_view, runtime_style, size, is_devtools ? "DevTools" : "", chrome));
 }
 
 #endif
 
-}  // namespace niuma
+}  // namespace ensisops

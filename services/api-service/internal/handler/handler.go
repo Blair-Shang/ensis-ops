@@ -12,13 +12,13 @@ import (
 	"log/slog"
 	"time"
 
-	"niuma/pkg/serviceipc/envelope"
-	"niuma/services/api-service/internal/capture"
-	"niuma/services/api-service/internal/codec"
-	"niuma/services/api-service/internal/httpclient"
-	"niuma/services/api-service/internal/mock"
-	"niuma/services/api-service/internal/socket"
-	"niuma/services/api-service/internal/wsclient"
+	"ensis-ops/pkg/serviceipc/envelope"
+	"ensis-ops/services/api-service/internal/capture"
+	"ensis-ops/services/api-service/internal/codec"
+	"ensis-ops/services/api-service/internal/httpclient"
+	"ensis-ops/services/api-service/internal/mock"
+	"ensis-ops/services/api-service/internal/socket"
+	"ensis-ops/services/api-service/internal/wsclient"
 )
 
 // 能力服务内部方法名（platform-core 代理时映射为 api.*）。

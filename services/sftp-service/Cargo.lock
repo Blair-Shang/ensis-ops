@@ -435,6 +435,74 @@ dependencies = [
 ]
 
 [[package]]
+name = "ensis-logutil"
+version = "0.1.0"
+dependencies = [
+ "chrono",
+ "serde",
+ "serde_json",
+ "thiserror 2.0.18",
+ "tracing",
+ "tracing-subscriber",
+]
+
+[[package]]
+name = "ensis-netproxy"
+version = "0.1.0"
+dependencies = [
+ "serde",
+ "thiserror 2.0.18",
+ "tokio",
+]
+
+[[package]]
+name = "ensis-serviceipc"
+version = "0.1.0"
+dependencies = [
+ "async-trait",
+ "ensis-logutil",
+ "serde",
+ "serde_json",
+ "thiserror 2.0.18",
+ "tokio",
+ "tracing",
+]
+
+[[package]]
+name = "ensis-sftp-service"
+version = "2.0.0"
+dependencies = [
+ "async-trait",
+ "ensis-logutil",
+ "ensis-netproxy",
+ "ensis-serviceipc",
+ "ensis-tunnel",
+ "russh",
+ "russh-keys",
+ "russh-sftp",
+ "serde",
+ "serde_json",
+ "ssh-key",
+ "thiserror 2.0.18",
+ "tokio",
+ "tokio-util",
+ "tracing",
+]
+
+[[package]]
+name = "ensis-tunnel"
+version = "0.1.0"
+dependencies = [
+ "async-trait",
+ "ensis-netproxy",
+ "russh",
+ "russh-keys",
+ "serde",
+ "thiserror 2.0.18",
+ "tokio",
+]
+
+[[package]]
 name = "errno"
 version = "0.3.14"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -785,74 +853,6 @@ dependencies = [
  "libc",
  "wasi",
  "windows-sys 0.61.2",
-]
-
-[[package]]
-name = "niuma-logutil"
-version = "0.1.0"
-dependencies = [
- "chrono",
- "serde",
- "serde_json",
- "thiserror 2.0.18",
- "tracing",
- "tracing-subscriber",
-]
-
-[[package]]
-name = "niuma-netproxy"
-version = "0.1.0"
-dependencies = [
- "serde",
- "thiserror 2.0.18",
- "tokio",
-]
-
-[[package]]
-name = "niuma-serviceipc"
-version = "0.1.0"
-dependencies = [
- "async-trait",
- "niuma-logutil",
- "serde",
- "serde_json",
- "thiserror 2.0.18",
- "tokio",
- "tracing",
-]
-
-[[package]]
-name = "niuma-sftp-service"
-version = "1.1.7"
-dependencies = [
- "async-trait",
- "niuma-logutil",
- "niuma-netproxy",
- "niuma-serviceipc",
- "niuma-tunnel",
- "russh",
- "russh-keys",
- "russh-sftp",
- "serde",
- "serde_json",
- "ssh-key",
- "thiserror 2.0.18",
- "tokio",
- "tokio-util",
- "tracing",
-]
-
-[[package]]
-name = "niuma-tunnel"
-version = "0.1.0"
-dependencies = [
- "async-trait",
- "niuma-netproxy",
- "russh",
- "russh-keys",
- "serde",
- "thiserror 2.0.18",
- "tokio",
 ]
 
 [[package]]

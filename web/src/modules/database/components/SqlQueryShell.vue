@@ -4,7 +4,7 @@ import {
   RsSplitPane,
   type RsContextMenuItem,
   type RsSplitPaneItem,
-} from '@niuma/ui'
+} from 'ensis-ui'
 import QueryCellDialogHost from './QueryCellDialogHost.vue'
 import SqlQueryToolbar from './SqlQueryToolbar.vue'
 import type { SqlQueryHistoryEntry, SqlQueryToolbarLabels } from '../types/sql-query-shell'

@@ -6,7 +6,7 @@
 
 | 层 | 契约 | 扩展方式 |
 |----|------|----------|
-| **A — Bridge 信封** | `{ v, method, params, id, traceId }` / 响应 `{ v, id, ok, error, errorCode, traceId, result }` / `niuma:event` | 固定；详见 [03](./03-ipc-protocol.md)。`error` 必须是字符串，`result` 必须是 JSON 再编码字符串 |
+| **A — Bridge 信封** | `{ v, method, params, id, traceId }` / 响应 `{ v, id, ok, error, errorCode, traceId, result }` / `ensis-ops:event` | 固定；详见 [03](./03-ipc-protocol.md)。`error` 必须是字符串，`result` 必须是 JSON 再编码字符串 |
 | **B — 连接资源** | `platform.connection.*` / `platform.credential.*` | 新模块只注册 `connection_kind` |
 | **C — 能力操作** | `{namespace}.*` | manifest `bridge.namespace` 注册 |
 
@@ -21,7 +21,7 @@ Web cefQuery
   → PlatformClient 透传完整请求 JSON
 ```
 
-插件方法如 `com.niuma.db-pg.session.open` **无需改壳层**。
+插件方法如 `com.ensis-ops.db-pg.session.open` **无需改壳层**。
 
 ## 3. platform 通用代理（已实现）
 
@@ -42,7 +42,7 @@ Web cefQuery
 | `kingbase.session.open` | `kingbase` | `session.open` |
 | `postgres.session.open` | `postgres` | `session.open` |
 | `sqlserver.session.open` | `sqlserver` | `session.open` |
-| `com.niuma.db-pg.query.exec` | `com.niuma.db-pg` | `query.exec` |
+| `com.ensis-ops.db-pg.query.exec` | `com.ensis-ops.db-pg` | `query.exec` |
 
 常见 `connection_kind` / `bridge.namespace`：`ftp` · `ssh` · `sftp` · `mongodb` · `vastbase` · `mysql` · `sqlite` · `dameng` · `oracle` · `clickhouse` · `kingbase` · `postgres` · `sqlserver`（详见各模块文档与 `services/manifests/*.yaml`）。`api` 只有 namespace、没有 `connection_kind`（套接字按请求打开，见 [36](./36-api-module.md)）。`sftp` 是独立能力服务：只开 SFTP 子系统，不申请 shell（账号可以没有 SSH 终端权限）。
 
@@ -51,7 +51,7 @@ Web cefQuery
 ## 4. manifest 字段
 
 ```yaml
-id: com.niuma.ftp
+id: com.ensisops.ftp
 bridge:
   namespace: ftp              # Web Bridge 前缀
   connection_kind: ftp        # 对应 platform.connection 的 kind
@@ -63,7 +63,7 @@ session:
 runtime:
   executable: bin/ftp-service.exe
 ipc:
-  address: "\\.\\pipe\\niuma.ftp"
+  address: "\\.\\pipe\\ensis-ops.ftp"
 ```
 
 新增能力服务 checklist：
@@ -82,7 +82,7 @@ ipc:
 | `{ns}.session.close` | `{ sessionId }` | `{ closed: true }` |
 | `{ns}.session.test` | `{ profileId }` | `{ ok, message }` |
 
-事件（`niuma:event`）：
+事件（`ensis-ops:event`）：
 
 ```ts
 { type: `${namespace}.session.state`, sessionId, state, message? }

@@ -14,8 +14,8 @@ import (
 	"time"
 	"unicode/utf8"
 
-	"niuma/services/mysql-service/internal/idgen"
-	"niuma/services/mysql-service/internal/session"
+	"ensis-ops/services/mysql-service/internal/idgen"
+	"ensis-ops/services/mysql-service/internal/session"
 )
 
 // Emitter 上报工具任务事件。
@@ -401,7 +401,7 @@ func readToolLine(br *bufio.Reader, maxKeep int) (line string, truncated bool, e
 }
 
 func tempOutput(prefix, ext string) (string, error) {
-	f, err := os.CreateTemp("", "niuma-mysql-"+prefix+"-*"+ext)
+	f, err := os.CreateTemp("", "ensis-mysql-"+prefix+"-*"+ext)
 	if err != nil {
 		return "", err
 	}

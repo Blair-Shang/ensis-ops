@@ -11,7 +11,7 @@
 
 ## 1. 落盘
 
-壳启动时创建会话目录并设置 `NIUMMA_LOG_DIR`（见壳 `InitSessionLog`）。各进程日志仍写 `<service>.log`；**RPC 观测**追加到同目录 `observe.jsonl`（100 MiB 滚动为 `.1`）。
+壳启动时创建会话目录并设置 `ENSIS_LOG_DIR`（见壳 `InitSessionLog`）。各进程日志仍写 `<service>.log`；**RPC 观测**追加到同目录 `observe.jsonl`（100 MiB 滚动为 `.1`）。
 
 一行一例（不含 SQL 正文、不含 `result`）：
 
@@ -24,7 +24,7 @@
 | C++ 壳 | `PlatformClient::Invoke`（管道不可达时 `errorCode=unavailable`） |
 | Platform | `platform/internal/server` 每帧 |
 | Go L1 | `packages/go/serviceipc/server` 每帧 |
-| Rust L1（SSH / Redis） | `niuma-serviceipc` 每帧 |
+| Rust L1（SSH / Redis） | `ensis-serviceipc` 每帧 |
 | Oracle（C++） | `oracle-service` `HandleFrame` 外包一层 |
 
 `platform.diag.*` 自身不写入，避免检索递归。

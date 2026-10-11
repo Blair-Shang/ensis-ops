@@ -4,7 +4,7 @@
  * BrowseCellEditorDialog 内 CodeMirror 按表格挂载一次、关闭停放复用。
  * 不可编辑单元格双击走只读查看（截断展示，关闭释放）。
  */
-import { RsTable, type RsContextMenuItem, type RsTableColumn } from '@niuma/ui'
+import { RsTable, type RsContextMenuItem, type RsTableColumn } from 'ensis-ui'
 import { toRef } from 'vue'
 import type { BrowseDataRow } from '../types/browse-data'
 import BrowseCellEditorDialog from './BrowseCellEditorDialog.vue'

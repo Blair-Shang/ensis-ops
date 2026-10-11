@@ -5,7 +5,7 @@ import (
 	"encoding/json"
 	"testing"
 
-	"niuma/platform/internal/ai/host"
+	"ensis-ops/platform/internal/ai/host"
 )
 
 type stubHostRuntime struct{}

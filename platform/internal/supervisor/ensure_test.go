@@ -11,7 +11,7 @@ func TestIsTrackedReady_Empty(t *testing.T) {
 		spawned:             make(map[string]*exec.Cmd),
 		spawnEnvFingerprint: make(map[string]string),
 	}
-	if s.isTrackedReady("com.niuma.sqlite", "") {
+	if s.isTrackedReady("com.ensisops.sqlite", "") {
 		t.Fatal("empty supervisor must not report ready")
 	}
 }
@@ -23,7 +23,7 @@ func TestIsTrackedReady_ShuttingDown(t *testing.T) {
 		spawned:             make(map[string]*exec.Cmd),
 		spawnEnvFingerprint: make(map[string]string),
 	}
-	if s.isTrackedReady("com.niuma.sqlite", "") {
+	if s.isTrackedReady("com.ensisops.sqlite", "") {
 		t.Fatal("shutting down supervisor must not report ready")
 	}
 }

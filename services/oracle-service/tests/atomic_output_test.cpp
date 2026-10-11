@@ -7,9 +7,9 @@
 
 int main() {
   namespace fs = std::filesystem;
-  using niuma::oracle::dataio::AtomicOutput;
+  using ensisops::oracle::dataio::AtomicOutput;
 
-  const fs::path target = fs::temp_directory_path() / "niuma-oracle-atomic-output-test.txt";
+  const fs::path target = fs::temp_directory_path() / "ensis-oracle-atomic-output-test.txt";
   {
     std::ofstream old(target, std::ios::binary | std::ios::trunc);
     old << "old";

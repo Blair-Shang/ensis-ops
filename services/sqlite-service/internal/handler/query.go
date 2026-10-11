@@ -7,7 +7,7 @@ import (
 	"strings"
 	"time"
 
-	"niuma/services/sqlite-service/internal/session"
+	"ensis-ops/services/sqlite-service/internal/session"
 )
 
 func (d *Dispatcher) queryExec(ctx context.Context, req Request) Response {

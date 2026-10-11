@@ -11,12 +11,12 @@ import (
 	"encoding/json"
 	"fmt"
 
-	"niuma/pkg/serviceipc/envelope"
-	"niuma/platform/internal/ai"
-	"niuma/platform/internal/appupdate"
-	"niuma/platform/internal/components"
-	"niuma/platform/internal/idgen"
-	"niuma/platform/internal/store"
+	"ensis-ops/pkg/serviceipc/envelope"
+	"ensis-ops/platform/internal/ai"
+	"ensis-ops/platform/internal/appupdate"
+	"ensis-ops/platform/internal/components"
+	"ensis-ops/platform/internal/idgen"
+	"ensis-ops/platform/internal/store"
 )
 
 // 方法名常量：与 web/src/api/*.ts 中的 Bridge 契约保持一致。

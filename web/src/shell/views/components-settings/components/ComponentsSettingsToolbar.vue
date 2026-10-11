@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { RsButton, RsTooltip } from '@niuma/ui'
+import { RsButton, RsTooltip } from 'ensis-ui'
 import { useI18n } from 'vue-i18n'
 
 defineProps<{

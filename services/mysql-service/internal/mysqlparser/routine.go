@@ -7,7 +7,7 @@ import (
 
 	"github.com/pingcap/tidb/pkg/parser"
 
-	"niuma/pkg/sqllsp"
+	"ensis-ops/pkg/sqllsp"
 )
 
 // isRoutineDDL 判断预处理后的文本是否为 CREATE PROCEDURE/FUNCTION（含 DEFINER）。

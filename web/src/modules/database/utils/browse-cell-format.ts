@@ -1,11 +1,11 @@
 /**
  * 表数据浏览单元格展示：NULL / 日期时间 / JSON / 二进制摘要 / 长文本截断。
- * - date / datetime：带时区 ISO → 本地；其余走 @niuma/ui 规范格式
+ * - date / datetime：带时区 ISO → 本地；其余走 ensis-ui 规范格式
  * - text 等：仅当值形态像带时区 ISO 时才转换（覆盖 SQLite TEXT 存 UTC）
  * - 二进制 `{ $bin }`：网格只显示摘要，避免把 base64 塞进 DOM
  * - 超长字符串：只预览前 N 字，完整内容走弹窗编辑
  */
-import { formatDateTimeValue, formatDateValue } from '@niuma/ui'
+import { formatDateTimeValue, formatDateValue } from 'ensis-ui'
 import type { GridCellValueType } from './column-value-type'
 import { formatIsoUtcToLocal, looksLikeIsoDateTimeWithTz } from './iso-local-datetime'
 

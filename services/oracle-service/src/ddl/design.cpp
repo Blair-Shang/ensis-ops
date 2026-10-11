@@ -12,7 +12,7 @@
 #include <string>
 #include <vector>
 
-namespace niuma::oracle::ddl {
+namespace ensisops::oracle::ddl {
 namespace {
 
 std::string SchemaOf(const nlohmann::json& j) {
@@ -628,4 +628,4 @@ nlohmann::json CreateTable(session::Session& session, const nlohmann::json& para
   return preview;
 }
 
-}  // namespace niuma::oracle::ddl
+}  // namespace ensisops::oracle::ddl

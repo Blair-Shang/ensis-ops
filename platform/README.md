@@ -64,7 +64,7 @@ platform/
 - **SQL 唯一权威源**：[scripts/sql/sqlite/](../scripts/sql/sqlite/)（含 `.down.sql` 与 pg/mysql 方言）——改 SQL 只改这里
 - **迁移内嵌副本**：[internal/migrate/sqlite/](./internal/migrate/sqlite/) 是**构建产物**（`copy_migrations.go` 生成 + `go:embed` 随二进制发布，自包含）；
   改权威源后执行 `go generate ./...` 同步，`sync_test.go` 校验漂移——**勿手工编辑**
-- 用户库：`%LOCALAPPDATA%\NiuMa\data\niuma.db`（其他平台 `~/.niuma/data/niuma.db`）
+- 用户库：`%LOCALAPPDATA%\ensis-ops\data\ensis-ops.db`（其他平台 `~/.ensis-ops/data/ensis-ops.db`）
 - 迁移采用 WAL；已应用版本记录在 `nm_schema_migration`，整个流程幂等
 
 ## 构建 / 运行（Windows）

@@ -3,7 +3,7 @@ package ddl
 import (
 	"testing"
 
-	"niuma/services/sqlite-service/internal/dialect"
+	"ensis-ops/services/sqlite-service/internal/dialect"
 )
 
 func TestPrepareObjectScriptViewDropCreate(t *testing.T) {

@@ -14,7 +14,7 @@ static int failures = 0;
   } while (0)
 
 int main() {
-  using namespace niuma::oracle::dialect;
+  using namespace ensisops::oracle::dialect;
 
   EXPECT(LooksLikeOracle("Oracle Database 19c Enterprise Edition Release 19.0.0.0.0"));
   EXPECT(!LooksLikeOracle("DM Database Server 64 V8"));

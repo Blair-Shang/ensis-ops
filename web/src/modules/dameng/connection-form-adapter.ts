@@ -27,7 +27,7 @@ export const damengConnectionFormAdapter: ConnectionFormAdapter = {
     form.damengSslCa = options?.ssl_ca ?? ''
     form.damengSslCert = options?.ssl_cert ?? ''
     form.damengSslKey = options?.ssl_key ?? ''
-    form.damengAppName = options?.application_name ?? options?.appName ?? 'NiuMa'
+    form.damengAppName = options?.application_name ?? options?.appName ?? 'ensis-ops'
     form.damengExcludeSystemSchemas = String(options?.exclude_system_schemas ?? true)
     form.connectTimeoutSeconds = formatTimeoutFormValue(
       readStoredTimeoutSeconds(options as Record<string, unknown> | undefined, 30),
@@ -44,8 +44,8 @@ export const damengConnectionFormAdapter: ConnectionFormAdapter = {
       ssl_ca: formStr(form, 'damengSslCa').trim(),
       ssl_cert: formStr(form, 'damengSslCert').trim(),
       ssl_key: formStr(form, 'damengSslKey').trim(),
-      application_name: formStr(form, 'damengAppName').trim() || 'NiuMa',
-      appName: formStr(form, 'damengAppName').trim() || 'NiuMa',
+      application_name: formStr(form, 'damengAppName').trim() || 'ensis-ops',
+      appName: formStr(form, 'damengAppName').trim() || 'ensis-ops',
       exclude_system_schemas: formStr(form, 'damengExcludeSystemSchemas') !== 'false',
       connect_timeout_seconds: timeout,
       timeout_seconds: timeout,

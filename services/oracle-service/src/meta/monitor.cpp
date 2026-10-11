@@ -7,7 +7,7 @@
 
 #include <cstdlib>
 
-namespace niuma::oracle::meta {
+namespace ensisops::oracle::meta {
 namespace {
 
 std::string DpiError(dpiContext* ctx) {
@@ -420,4 +420,4 @@ nlohmann::json ListLocks(session::Session& session, int limit, std::string& erro
   return out;
 }
 
-}  // namespace niuma::oracle::meta
+}  // namespace ensisops::oracle::meta

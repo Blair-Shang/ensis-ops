@@ -7,14 +7,14 @@ import (
 	"errors"
 	"fmt"
 
-	"niuma/pkg/serviceipc/envelope"
-	"niuma/pkg/serviceipc/event"
-	"niuma/services/vastbase-service/internal/dataio"
-	"niuma/services/vastbase-service/internal/debug"
-	"niuma/services/vastbase-service/internal/eventpub"
-	"niuma/services/vastbase-service/internal/idgen"
-	"niuma/services/vastbase-service/internal/session"
-	"niuma/services/vastbase-service/internal/tools"
+	"ensis-ops/pkg/serviceipc/envelope"
+	"ensis-ops/pkg/serviceipc/event"
+	"ensis-ops/services/vastbase-service/internal/dataio"
+	"ensis-ops/services/vastbase-service/internal/debug"
+	"ensis-ops/services/vastbase-service/internal/eventpub"
+	"ensis-ops/services/vastbase-service/internal/idgen"
+	"ensis-ops/services/vastbase-service/internal/session"
+	"ensis-ops/services/vastbase-service/internal/tools"
 )
 
 const (

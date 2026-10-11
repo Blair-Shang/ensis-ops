@@ -89,16 +89,16 @@ export type SqlLspBridgeApi = {
   lspClose(params: { connectionId: string; sessionId?: string }): Promise<{ closed: boolean }>
 }
 
-/** Document URI：niuma-sql://{ns}/{sessionId}/{editorId} */
+/** Document URI：ensis-sql://{ns}/{sessionId}/{editorId} */
 export function buildSqlDocumentUri(namespace: string, sessionId: string, editorId: string): string {
-  return `niuma-sql://${namespace}/${encodeURIComponent(sessionId)}/${encodeURIComponent(editorId)}`
+  return `ensis-sql://${namespace}/${encodeURIComponent(sessionId)}/${encodeURIComponent(editorId)}`
 }
 
 export function parseSqlDocumentUri(
   uri: string,
 ): { namespace: string; sessionId: string; editorId: string } | null {
-  if (!uri.startsWith('niuma-sql://')) return null
-  const rest = uri.slice('niuma-sql://'.length)
+  if (!uri.startsWith('ensis-sql://')) return null
+  const rest = uri.slice('ensis-sql://'.length)
   const parts = rest.split('/')
   if (parts.length < 3) return null
   const [namespace, sessionId, ...editorParts] = parts

@@ -12,7 +12,7 @@ import {
   type RsContextMenuItem,
   type RsSelectOptions,
   type RsTableColumn,
-} from '@niuma/ui'
+} from 'ensis-ui'
 import { computed, onActivated, onBeforeUnmount, onDeactivated, onMounted, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { sqlserverApi } from '@/api/sqlserver'

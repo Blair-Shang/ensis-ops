@@ -9,14 +9,14 @@ import (
 	"sync"
 	"time"
 
-	"niuma/pkg/serviceipc/protocol"
+	"ensis-ops/pkg/serviceipc/protocol"
 )
 
 const (
-	windowsIngestAddr = `\\.\pipe\niuma.platform.eventin`
-	windowsShellAddr  = `\\.\pipe\niuma.platform.events`
-	unixIngestName    = "niuma.platform.eventin.sock"
-	unixShellName     = "niuma.platform.events.sock"
+	windowsIngestAddr = `\\.\pipe\ensis-ops.platform.eventin`
+	windowsShellAddr  = `\\.\pipe\ensis-ops.platform.events`
+	unixIngestName    = "ensis-ops.platform.eventin.sock"
+	unixShellName     = "ensis-ops.platform.events.sock"
 )
 
 // IngestAddress 返回能力服务向 Platform 上报事件的监听地址。

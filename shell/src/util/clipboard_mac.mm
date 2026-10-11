@@ -2,7 +2,7 @@
 
 #import <AppKit/AppKit.h>
 
-namespace niuma {
+namespace ensisops {
 
 bool ReadClipboardText(std::string& text, std::string& error) {
   text.clear();
@@ -39,4 +39,4 @@ bool WriteClipboardText(const std::string& text, std::string& error) {
   }
 }
 
-}  // namespace niuma
+}  // namespace ensisops

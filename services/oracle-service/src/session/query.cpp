@@ -14,7 +14,7 @@
 #include <cstdio>
 #include <cstring>
 
-namespace niuma::oracle::session {
+namespace ensisops::oracle::session {
 namespace {
 
 constexpr int kDefaultLimit = 1000;
@@ -561,4 +561,4 @@ bool CancelQuery(Session& session, const std::string& request_id) {
   return dpiConn_breakExecution(session.conn.get()) == 0;
 }
 
-}  // namespace niuma::oracle::session
+}  // namespace ensisops::oracle::session

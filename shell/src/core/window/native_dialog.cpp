@@ -2,7 +2,7 @@
 
 #include "util/json_util.h"
 
-#if NIUMMA_WITH_CEF
+#if ENSIS_WITH_CEF
 #include "include/cef_browser.h"
 #include "include/wrapper/cef_helpers.h"
 
@@ -75,7 +75,7 @@ std::string BuildFilePathsJson(const std::vector<CefString>& file_paths) {
 
 std::vector<CefString> BuildAcceptFilters(const std::string& params) {
   std::vector<CefString> filters;
-  const std::string extensions = niuma::JsonGetString(params, "filters");
+  const std::string extensions = ensisops::JsonGetString(params, "filters");
   if (!extensions.empty()) {
     filters.push_back("Files|" + extensions);
   }
@@ -146,17 +146,17 @@ bool OpenFolderWithNativeDialog(HWND owner, const std::string& params,
   dialog->SetOptions(options | FOS_PICKFOLDERS | FOS_FORCEFILESYSTEM |
                      FOS_PATHMUSTEXIST | FOS_FILEMUSTEXIST);
 
-  const std::wstring title = Utf8ToWide(niuma::JsonGetString(params, "title"));
+  const std::wstring title = Utf8ToWide(ensisops::JsonGetString(params, "title"));
   if (!title.empty()) {
     dialog->SetTitle(title.c_str());
   }
 
-  const std::wstring ok_label = Utf8ToWide(niuma::JsonGetString(params, "okButtonLabel"));
+  const std::wstring ok_label = Utf8ToWide(ensisops::JsonGetString(params, "okButtonLabel"));
   if (!ok_label.empty()) {
     dialog->SetOkButtonLabel(ok_label.c_str());
   }
 
-  const std::wstring default_path = Utf8ToWide(niuma::JsonGetString(params, "defaultPath"));
+  const std::wstring default_path = Utf8ToWide(ensisops::JsonGetString(params, "defaultPath"));
   if (!default_path.empty()) {
     IShellItem* folder = nullptr;
     if (SUCCEEDED(SHCreateItemFromParsingName(default_path.c_str(), nullptr,
@@ -223,7 +223,7 @@ bool OpenFolderWithNativeDialog(HWND owner, const std::string& params,
 
 class FileDialogCallbackImpl : public CefRunFileDialogCallback {
  public:
-  FileDialogCallbackImpl(niuma::NativeDialogCallback callback)
+  FileDialogCallbackImpl(ensisops::NativeDialogCallback callback)
       : callback_(std::move(callback)) {}
 
   void OnFileDialogDismissed(const std::vector<CefString>& file_paths) override {
@@ -234,14 +234,14 @@ class FileDialogCallbackImpl : public CefRunFileDialogCallback {
   }
 
  private:
-  niuma::NativeDialogCallback callback_;
+  ensisops::NativeDialogCallback callback_;
 
   IMPLEMENT_REFCOUNTING(FileDialogCallbackImpl);
 };
 
 }  // namespace
 
-namespace niuma {
+namespace ensisops {
 
 void NativeDialog::OpenFile(CefRefPtr<CefBrowser> browser, const std::string& params,
                             NativeDialogCallback callback) {
@@ -347,6 +347,6 @@ void NativeDialog::Message(CefRefPtr<CefBrowser> browser, const std::string& par
 #endif
 }
 
-#endif  // NIUMMA_WITH_CEF
+#endif  // ENSIS_WITH_CEF
 
-}  // namespace niuma
+}  // namespace ensisops

@@ -41,12 +41,12 @@
 
 ### 1.1 架构对齐（对标 Navicat / DBeaver）
 
-| 能力层 | 参考 | NiuMa 做法 |
+| 能力层 | 参考 | ensis-ops 做法 |
 |--------|------|-----------|
 | GUI / 对象树 / SQL | Navicat / DBeaver | Vue + Monaco + Go 能力服务 |
 | 连接与查询 | MySQL wire | **Go + `go-sql-driver/mysql`** |
 | 方言差异 | 客户端能力探测 | **DialectFamily + CapabilitySet**（契约见 [23](./23-sql-dialect-completion.md) 编排层；本表见 §2） |
-| 安装包 | 独立客户端 | 仅 `niuma-mysql-service` Go 二进制 |
+| 安装包 | 独立客户端 | 仅 `ensis-mysql-service` Go 二进制 |
 
 ### 1.2 关键决策
 
@@ -150,7 +150,7 @@ flowchart TD
 ┌ Layer 4 ─ Web ────────────────────────────────────────────┐
 │ web/src/modules/mysql/                                     │
 │   连接表单 · 树 Provider · Query · 对象面板                  │
-│   ↑ bridgeInvoke(mysql.*)     ↑ bridgeOnEvent(niuma:event) │
+│   ↑ bridgeInvoke(mysql.*)     ↑ bridgeOnEvent(ensis-ops:event) │
 └───┼───────────────────────────┼────────────────────────────┘
     │ cefQuery                  │ PostMessage
 ┌ Layer 3 ─ C++ Shell ──────────┴────────────────────────────┐
@@ -317,7 +317,7 @@ connection → database → {Tables|Views|Procedures|Functions} → object
 - 网格内编辑、列拖拽、索引方法 BTREE/HASH、索引/外键列多选、UNSIGNED / ENUM·SET；预览可复制或在查询中打开。
 - RPC：`ddl.designPreview` / `ddl.designApply` / `ddl.createTable` / `ddl.createTablePreview`。
 
-**导入导出**：表 CSV 导入/导出（可选列映射）、库 SQL 转储 / 执行 SQL 文件（`io.*`，纯 Go；`niuma-mysql-dump/4` 支持过程/函数/触发器/事件与可选 `CREATE DATABASE`；**对象名无库前缀**，可还原到另一库；任务进全局数据任务 Dock）。Browse 页支持当前页 CSV/SQL/Excel XML/JSON；全表 CSV 走 `io.exportCsv`。可选外部组件 `components/mysql-tools`（`tools.detect|dump|restore|cancel`，mysqldump/mysql CLI，不编进 platform）。
+**导入导出**：表 CSV 导入/导出（可选列映射）、库 SQL 转储 / 执行 SQL 文件（`io.*`，纯 Go；`ensis-mysql-dump/4` 支持过程/函数/触发器/事件与可选 `CREATE DATABASE`；**对象名无库前缀**，可还原到另一库；任务进全局数据任务 Dock）。Browse 页支持当前页 CSV/SQL/Excel XML/JSON；全表 CSV 走 `io.exportCsv`。可选外部组件 `components/mysql-tools`（`tools.detect|dump|restore|cancel`，mysqldump/mysql CLI，不编进 platform）。
 
 ResourceId（与 [18](./18-ops-connection-tree.md) 对齐）：
 
@@ -381,7 +381,7 @@ MySQL 映射：
 ## 7. manifest 模板
 
 ```yaml
-id: com.niuma.mysql
+id: com.ensisops.mysql
 name: MySQL Service
 version: 0.1.0
 bridge:
@@ -396,24 +396,24 @@ session:
     # tree.databases / tree.tables / catalog.schemas / catalog.tables / catalog.columns
     # meta.* / ddl.script
 runtime:
-  executable: bin/niuma-mysql-service.exe
-  executable_windows: bin/niuma-mysql-service.exe
-  executable_unix: bin/niuma-mysql-service
+  executable: bin/ensis-mysql-service.exe
+  executable_windows: bin/ensis-mysql-service.exe
+  executable_unix: bin/ensis-mysql-service
   lang: go
 ipc:
   transport: named_pipe
   transport_windows: named_pipe
   transport_unix: unix_socket
-  address: '\\.\pipe\niuma.mysql'
-  address_windows: '\\.\pipe\niuma.mysql'
-  address_unix: '/tmp/niuma.mysql.sock'
+  address: '\\.\pipe\ensis-ops.mysql'
+  address_windows: '\\.\pipe\ensis-ops.mysql'
+  address_unix: '/tmp/ensis-ops.mysql.sock'
   protocol: length_prefixed_json
 lifecycle:
   startup: lazy
 permissions: []
 ```
 
-构建：`scripts/shared/build/build-services.*` 增加 `mysql-service`；`go.work` 纳入模块。二进制名与其它服务统一为 **`niuma-mysql-service`**。
+构建：`scripts/shared/build/build-services.*` 增加 `mysql-service`；`go.work` 纳入模块。二进制名与其它服务统一为 **`ensis-mysql-service`**。
 
 ---
 

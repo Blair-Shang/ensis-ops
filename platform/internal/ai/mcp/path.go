@@ -19,11 +19,11 @@ const BuiltinMCPVastbaseReadonlyName = "vastbase-readonly"
 const BuiltinMCPVastbaseReadonlyCommand = "mcp-vastbase-readonly"
 
 // envServicesBin 可覆盖 MCP / 服务二进制搜索根（如 services/bin）。
-const envServicesBin = "NIUMA_SERVICES_BIN"
+const envServicesBin = "ENSIS_SERVICES_BIN"
 
 // resolveMCPCommandPath 解析 stdio MCP 可执行路径。
 //
-// 搜索顺序：绝对路径 → NIUMA_SERVICES_BIN → platform-core 旁 → 仓库 services/bin
+// 搜索顺序：绝对路径 → ENSIS_SERVICES_BIN → platform-core 旁 → 仓库 services/bin
 // （含 windows-amd64 等平台子目录）→ PATH。
 // 不把 MCP 业务逻辑编进 platform，仅定位外部二进制。
 func resolveMCPCommandPath(commandPath string) (string, error) {

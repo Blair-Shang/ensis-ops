@@ -7,7 +7,7 @@ import {
   RsIcon,
   RsPopover,
   type RsDropdownItems,
-} from '@niuma/ui'
+} from 'ensis-ui'
 import { sqlIdeToolbarIconButton } from '../types/sql-ide-toolbar'
 import type { SqlQueryHistoryEntry, SqlQueryToolbarLabels } from '../types/sql-query-shell'
 

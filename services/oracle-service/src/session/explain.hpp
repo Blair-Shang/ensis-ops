@@ -6,8 +6,8 @@
 #include <nlohmann/json.hpp>
 #include <string>
 
-namespace niuma::oracle::session {
+namespace ensisops::oracle::session {
 
 nlohmann::json ExplainQuery(Session& session, const QueryExecParams& params, std::string& error);
 
-}  // namespace niuma::oracle::session
+}  // namespace ensisops::oracle::session

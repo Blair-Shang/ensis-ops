@@ -7,9 +7,9 @@ import (
 	"sync"
 	"unicode/utf8"
 
-	"niuma/platform/internal/ai/host"
-	"niuma/platform/internal/ai/skill"
-	"niuma/platform/internal/store"
+	"ensis-ops/platform/internal/ai/host"
+	"ensis-ops/platform/internal/ai/skill"
+	"ensis-ops/platform/internal/store"
 )
 
 const (
@@ -20,7 +20,7 @@ const (
 	// MessageRoleSystem 表示系统消息。
 	MessageRoleSystem = "system"
 
-	credentialServicePrefix = "NiuMa/credential/"
+	credentialServicePrefix = "ensis-ops/credential/"
 	credentialSecretAccount = "secret"
 	// chatHistoryLimit 入模时取会话最近 N 条消息（会话上下文窗口，非摘要压缩）。
 	chatHistoryLimit = 40

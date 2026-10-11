@@ -56,7 +56,7 @@ func dumpSql(
 	}}
 
 	header := fmt.Sprintf(
-		"-- NiuMa ClickHouse dump\n-- format: niuma-clickhouse-dump/1\n-- database: %s\n-- generated: %s\n-- mode: %s\n-- dropIfExists: %v\n-- truncateBeforeData: %v\n-- includeCreateDatabase: %v\n-- note: object names are unqualified so restore can target another database\n-- note: no BEGIN/COMMIT (ClickHouse has no traditional multi-statement transactions)\n\n",
+		"-- ensis-ops ClickHouse dump\n-- format: ensis-clickhouse-dump/1\n-- database: %s\n-- generated: %s\n-- mode: %s\n-- dropIfExists: %v\n-- truncateBeforeData: %v\n-- includeCreateDatabase: %v\n-- note: object names are unqualified so restore can target another database\n-- note: no BEGIN/COMMIT (ClickHouse has no traditional multi-statement transactions)\n\n",
 		params.Database,
 		time.Now().UTC().Format(time.RFC3339),
 		params.Mode,

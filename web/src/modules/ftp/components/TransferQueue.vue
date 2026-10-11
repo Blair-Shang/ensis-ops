@@ -6,7 +6,7 @@ import {
   copyTextToClipboard,
   type RsContextMenuItem,
   type RsTableColumn,
-} from '@niuma/ui'
+} from 'ensis-ui'
 import { computed } from 'vue'
 import { useI18n } from 'vue-i18n'
 import type { FtpTransferTask } from '@/api/types/ftp'

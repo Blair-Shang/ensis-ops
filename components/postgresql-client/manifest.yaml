@@ -1,4 +1,4 @@
-id: com.niuma.components.postgresql-client
+id: com.ensisops.components.postgresql-client
 name: PostgreSQL 客户端工具（备选）
 module: vastbase
 install:

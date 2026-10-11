@@ -1,8 +1,8 @@
-#include "niuma/sqllsp/connection.hpp"
+#include "ensisops/sqllsp/connection.hpp"
 
 #include <chrono>
 
-namespace niuma::sqllsp {
+namespace ensisops::sqllsp {
 namespace {
 
 std::string NextConnId(std::uint64_t seq) {
@@ -103,4 +103,4 @@ int Manager::CloseBySession(const std::string& session_id) {
   return n;
 }
 
-}  // namespace niuma::sqllsp
+}  // namespace ensisops::sqllsp

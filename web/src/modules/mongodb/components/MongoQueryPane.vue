@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { RsEmpty, RsIcon, RsLoading, RsMonacoEditor, RsSplitPane, MONACO_MONGODB_SHELL_LANGUAGE } from '@niuma/ui'
-import type { RsMonacoEditorExpose, RsSplitPaneItem } from '@niuma/ui'
+import { RsEmpty, RsIcon, RsLoading, RsMonacoEditor, RsSplitPane, MONACO_MONGODB_SHELL_LANGUAGE } from 'ensis-ui'
+import type { RsMonacoEditorExpose, RsSplitPaneItem } from 'ensis-ui'
 import { computed, nextTick, onMounted, onUnmounted, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { mongodbApi } from '@/api'

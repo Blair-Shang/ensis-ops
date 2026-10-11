@@ -1,10 +1,10 @@
 /**
  * 按 FTP profile 记住上次本地/远程目录（localStorage）。
- * Key：`niuma.ftp.lastLocalPath.{profileId}` / `niuma.ftp.lastRemotePath.{profileId}`
+ * Key：`ensis-ops.ftp.lastLocalPath.{profileId}` / `ensis-ops.ftp.lastRemotePath.{profileId}`
  */
 
-const LOCAL_PREFIX = 'niuma.ftp.lastLocalPath.'
-const REMOTE_PREFIX = 'niuma.ftp.lastRemotePath.'
+const LOCAL_PREFIX = 'ensis-ops.ftp.lastLocalPath.'
+const REMOTE_PREFIX = 'ensis-ops.ftp.lastRemotePath.'
 
 function storageKey(prefix: string, profileId: string): string {
   return prefix + profileId

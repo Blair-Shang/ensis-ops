@@ -1,34 +1,34 @@
 import { defineConfig } from 'vite'
 import vue from '@vitejs/plugin-vue'
-import { monacoZhNlsPlugin } from '@niuma/ui/vite-plugins/monaco-zh-nls'
-import { niumaUiHost } from '@niuma/ui/vite-plugins/niuma-ui-host'
-import { silenceAntlrParseConsole } from '@niuma/ui/vite-plugins/silence-antlr-parse-console'
+import { monacoZhNlsPlugin } from 'ensis-ui/vite-plugins/monaco-zh-nls'
+import { ensisUiHost } from 'ensis-ui/vite-plugins/ensis-ui-host'
+import { silenceAntlrParseConsole } from 'ensis-ui/vite-plugins/silence-antlr-parse-console'
 import { existsSync } from 'node:fs'
 import { createRequire } from 'node:module'
 import { dirname, resolve } from 'node:path'
 import { serveMonorepoPlugins } from './vite-plugins/serve-monorepo-plugins'
 
 /**
- * 仅包含 @niuma/web 可直接 resolve 的依赖。
- * CodeMirror / xterm 由 @niuma/ui/vite-prebundle/* 作为 optimize 入口预构建
- *（它们装在 niuma-ui 下，web 无法直接 resolve，不能写进 include）。
+ * 仅包含 @ensis/web 可直接 resolve 的依赖。
+ * CodeMirror / xterm 由 ensis-ui/vite-prebundle/* 作为 optimize 入口预构建
+ *（它们装在 ensis-ui 下，web 无法直接 resolve，不能写进 include）。
  * Monaco 不放进 include：整包预构建过重，且会拖慢 / 卡住 dev server 启动；
  * Schema 面板已对 Validator（RsMonacoEditor）做按需异步加载，避免首开 Tab 触发重优化。
  */
 const CORE_OPTIMIZE_DEPS = ['vue', 'vue-router', 'pinia', 'vue-i18n', 'echarts', 'vue-echarts'] as const
 
 const require = createRequire(import.meta.url)
-const UI_ROOT = dirname(require.resolve('@niuma/ui/package.json'))
+const UI_ROOT = dirname(require.resolve('ensis-ui/package.json'))
 const UI_SRC = resolve(UI_ROOT, 'src')
 
 /**
- * 解析 niuma-ui 预构建入口：本机有 src 时走源码，否则走包导出。
+ * 解析 ensis-ui 预构建入口：本机有 src 时走源码，否则走包导出。
  */
 function resolveUiPrebundle(kind: 'codemirror' | 'xterm'): string {
   const file = kind === 'codemirror' ? 'vite-codemirror-deps.ts' : 'vite-xterm-deps.ts'
   const src = resolve(UI_SRC, 'dev', file)
   if (existsSync(src)) return src
-  return require.resolve(`@niuma/ui/vite-prebundle/${kind}`)
+  return require.resolve(`ensis-ui/vite-prebundle/${kind}`)
 }
 
 function resolveUiWarmup(relFromSrc: string): string | undefined {
@@ -45,15 +45,15 @@ const prebundleEntries = [
 ].filter((p): p is string => Boolean(p))
 
 /**
- * niumaUiHost：只服务 pnpm dev（源码 HMR）。vite build 走包主入口。
- * 不要把 @niuma/ui 别名到 src/index.ts。
+ * ensisUiHost：只服务 pnpm dev（源码 HMR）。vite build 走包主入口。
+ * 不要把 ensis-ui 别名到 src/index.ts。
  */
 export default defineConfig({
   plugins: [
     vue(),
     serveMonorepoPlugins(resolve(__dirname, '../plugins')),
     monacoZhNlsPlugin(),
-    ...niumaUiHost(),
+    ...ensisUiHost(),
     silenceAntlrParseConsole(),
   ],
   base: './',

@@ -10,12 +10,12 @@ func Dir() string {
 	return resolveLogDir()
 }
 
-// resolveLogDir 返回落盘目录：NIUMMA_LOG_DIR > NIUMMA_LOG_ROOT > 仓库根 logs/。
+// resolveLogDir 返回落盘目录：ENSIS_LOG_DIR > ENSIS_LOG_ROOT > 仓库根 logs/。
 func resolveLogDir() string {
-	if dir := os.Getenv("NIUMMA_LOG_DIR"); dir != "" {
+	if dir := os.Getenv("ENSIS_LOG_DIR"); dir != "" {
 		return dir
 	}
-	if root := os.Getenv("NIUMMA_LOG_ROOT"); root != "" {
+	if root := os.Getenv("ENSIS_LOG_ROOT"); root != "" {
 		return root
 	}
 	return findRepoLogsDir()

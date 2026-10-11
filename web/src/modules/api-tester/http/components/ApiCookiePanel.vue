@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { RsButton } from '@niuma/ui'
+import { RsButton } from 'ensis-ui'
 import { onMounted, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import type { ApiHttpCookie } from '@/api/types/api-http'

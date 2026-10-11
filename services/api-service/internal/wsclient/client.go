@@ -15,8 +15,8 @@ import (
 	"time"
 
 	"github.com/coder/websocket"
-	"niuma/pkg/common/id"
-	"niuma/services/api-service/internal/codec"
+	"ensis-ops/pkg/common/id"
+	"ensis-ops/services/api-service/internal/codec"
 )
 
 const (

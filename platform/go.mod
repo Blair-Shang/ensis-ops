@@ -1,4 +1,4 @@
-module niuma/platform
+module ensis-ops/platform
 
 go 1.25.0
 
@@ -10,19 +10,19 @@ require (
 	golang.org/x/sys v0.47.0
 	gopkg.in/yaml.v3 v3.0.1
 	modernc.org/sqlite v1.29.10
-	niuma/pkg/buildinfo v0.0.0
-	niuma/pkg/logutil v0.0.0
-	niuma/pkg/serviceipc v0.0.0
-	niuma/pkg/tunnel v0.0.0
+	ensis-ops/pkg/buildinfo v0.0.0
+	ensis-ops/pkg/logutil v0.0.0
+	ensis-ops/pkg/serviceipc v0.0.0
+	ensis-ops/pkg/tunnel v0.0.0
 )
 
-replace niuma/pkg/buildinfo => ../packages/go/buildinfo
+replace ensis-ops/pkg/buildinfo => ../packages/go/buildinfo
 
-replace niuma/pkg/logutil => ../packages/go/logutil
+replace ensis-ops/pkg/logutil => ../packages/go/logutil
 
-replace niuma/pkg/serviceipc => ../packages/go/serviceipc
+replace ensis-ops/pkg/serviceipc => ../packages/go/serviceipc
 
-replace niuma/pkg/tunnel => ../packages/go/tunnel
+replace ensis-ops/pkg/tunnel => ../packages/go/tunnel
 
 require (
 	github.com/danieljoos/wincred v1.2.3 // indirect

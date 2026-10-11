@@ -3,7 +3,7 @@
  * 表设计器外壳：header / meta / section tabs / list+editor。
  * SQL 预览由方言侧通过 #preview 槽挂 RsPopover（CodeMirror），不在壳内嵌 pre。
  */
-import { RsButton, RsIcon, RsLoading } from '@niuma/ui'
+import { RsButton, RsIcon, RsLoading } from 'ensis-ui'
 import type {
   TableDesignMode,
   TableDesignSection,

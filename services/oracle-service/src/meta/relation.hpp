@@ -5,7 +5,7 @@
 #include <nlohmann/json.hpp>
 #include <string>
 
-namespace niuma::oracle::meta {
+namespace ensisops::oracle::meta {
 
 struct RelationRef {
   std::string schema;
@@ -22,4 +22,4 @@ nlohmann::json GetPrimaryKey(session::Session& session, const RelationRef& ref, 
 nlohmann::json ListForeignKeys(session::Session& session, const RelationRef& ref, std::string& error);
 nlohmann::json GetDDL(session::Session& session, const RelationRef& ref, std::string& error);
 
-}  // namespace niuma::oracle::meta
+}  // namespace ensisops::oracle::meta

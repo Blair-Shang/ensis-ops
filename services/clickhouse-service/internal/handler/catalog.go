@@ -6,8 +6,8 @@ import (
 	"fmt"
 	"strings"
 
-	"niuma/services/clickhouse-service/internal/catalog"
-	"niuma/services/clickhouse-service/internal/session"
+	"ensis-ops/services/clickhouse-service/internal/catalog"
+	"ensis-ops/services/clickhouse-service/internal/session"
 )
 
 type catalogListParams struct {

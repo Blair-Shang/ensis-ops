@@ -6,7 +6,7 @@ Layer-1 Oracle 能力服务。设计见 [docs/29-oracle-module.md](../../docs/29
 
 | 组件 | 位置 | 说明 |
 |------|------|------|
-| **niuma_serviceipc** | `packages/cpp/serviceipc` | 公共 IPC（帧 + Pipe/UDS）；后续 C++ 服务复用 |
+| **ensis_serviceipc** | `packages/cpp/serviceipc` | 公共 IPC（帧 + Pipe/UDS）；后续 C++ 服务复用 |
 | ODPI-C | `third_party/odpi` | 构建期源码编进二进制 |
 | nlohmann/json | `third_party/nlohmann/json.hpp` | 业务 JSON |
 | Instant Client | `services/bin/runtime/oracle/` | **运行时**旁载；不可静态链进 exe |
@@ -43,7 +43,7 @@ docker compose -f services/oracle-service/docker-compose.yml logs -f
 | Host | `127.0.0.1`（勿用 `localhost`，避免 IPv6） |
 | Port | `61521`（容器内仍为 1521） |
 | Service Name | `FREEPDB1` |
-| 应用用户 | `niuma` / `Niuma123`（可建表） |
+| 应用用户 | `ensis-ops` / `Niuma123`（可建表） |
 | 管理员 | `system` / `Oracle123` |
 
 Docker 建议至少 **2GB** 内存。停止：`docker compose -f services/oracle-service/docker-compose.yml down`（加 `-v` 会清数据卷）。
@@ -55,16 +55,16 @@ Docker 建议至少 **2GB** 内存。停止：`docker compose -f services/oracle
 ```
 
 产物：
-- 矩阵目录：`services/bin/windows-x64/niuma-oracle-service.exe`（供 `stage-services` / `dev:hot` 拷贝）
-- 兼容平铺：`services/bin/niuma-oracle-service.exe`（本机 Windows）
+- 矩阵目录：`services/bin/windows-x64/ensis-oracle-service.exe`（供 `stage-services` / `dev:hot` 拷贝）
+- 兼容平铺：`services/bin/ensis-oracle-service.exe`（本机 Windows）
 
 `build-services.ps1` / `pnpm dev:hot` **默认**会调用本脚本重编 Oracle，并经 `stage-services` 拷到 `build/shell-*/…/services/bin/`。  
 无 VS/CMake 的机器可传 `-SkipOracle`：`.\scripts\shared\build\build-services.ps1 -SkipOracle`。
 
 ## IPC
 
-- Windows：`\\.\pipe\niuma.oracle`
-- Unix：`/tmp/niuma.oracle.sock`
+- Windows：`\\.\pipe\ensis-ops.oracle`
+- Unix：`/tmp/ensis-ops.oracle.sock`
 - 帧：4 字节小端长度 + UTF-8 JSON（与 Go `serviceipc` 一致）
 
 P0 方法：`session.open|close|test`、`query.exec|fetch|close|cancel`。

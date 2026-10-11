@@ -4,7 +4,7 @@
 #include <cstdio>
 #include <regex>
 
-namespace niuma::oracle::dialect {
+namespace ensisops::oracle::dialect {
 namespace {
 
 std::string ToLower(std::string s) {
@@ -98,4 +98,4 @@ bool LooksLikeOracle(const std::string& banner) {
   return lower.find("oracle") != std::string::npos;
 }
 
-}  // namespace niuma::oracle::dialect
+}  // namespace ensisops::oracle::dialect

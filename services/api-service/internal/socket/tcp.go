@@ -8,7 +8,7 @@ import (
 	"strings"
 	"time"
 
-	"niuma/pkg/common/id"
+	"ensis-ops/pkg/common/id"
 )
 
 func (m *Manager) dialTCP(dialCtx, sessCtx context.Context, sess *session) error {

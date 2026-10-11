@@ -1,4 +1,4 @@
-id: com.niuma.components.mysql-tools
+id: com.ensisops.components.mysql-tools
 name: MySQL 官方客户端工具
 module: mysql
 # 外部化组件：mysqldump / mysql CLI 不编进 platform / mysql-service。

@@ -5,7 +5,7 @@
 #include <string>
 #include <vector>
 
-#ifdef NIUMA_OS_WIN
+#ifdef ENSIS_OS_WIN
 #ifndef WIN32_LEAN_AND_MEAN
 #define WIN32_LEAN_AND_MEAN
 #endif
@@ -15,7 +15,7 @@
 #include <limits.h>
 #endif
 
-namespace niuma::oracle::util {
+namespace ensisops::oracle::util {
 namespace fs = std::filesystem;
 
 namespace {
@@ -28,7 +28,7 @@ bool DirHasOracleClient(const fs::path& dir) {
   if (!fs::is_directory(dir, ec)) {
     return false;
   }
-#ifdef NIUMA_OS_WIN
+#ifdef ENSIS_OS_WIN
   return fs::exists(dir / "oci.dll", ec);
 #else
   // Instant Client / ORACLE_HOME 常见布局
@@ -63,7 +63,7 @@ std::string FirstExistingClientDir(std::initializer_list<fs::path> candidates) {
   return {};
 }
 
-#ifdef NIUMA_OS_WIN
+#ifdef ENSIS_OS_WIN
 std::vector<fs::path> PathEnvClientDirs() {
   std::vector<fs::path> out;
   const char* path_env = std::getenv("PATH");
@@ -91,7 +91,7 @@ std::vector<fs::path> PathEnvClientDirs() {
 }  // namespace
 
 std::string ExecutableDir() {
-#ifdef NIUMA_OS_WIN
+#ifdef ENSIS_OS_WIN
   wchar_t buf[MAX_PATH];
   const DWORD n = GetModuleFileNameW(nullptr, buf, MAX_PATH);
   if (n == 0 || n >= MAX_PATH) {
@@ -132,7 +132,7 @@ std::string OracleClientLibDir() {
     return found;
   }
 
-#ifdef NIUMA_OS_WIN
+#ifdef ENSIS_OS_WIN
   // 3) PATH 中含 oci.dll 的目录（Instant Client 常见用法）
   for (const auto& dir : PathEnvClientDirs()) {
     if (DirHasOracleClient(dir)) {
@@ -146,11 +146,11 @@ std::string OracleClientLibDir() {
 }
 
 std::string DefaultIpcAddress() {
-#ifdef NIUMA_OS_WIN
-  return R"(\\.\pipe\niuma.oracle)";
+#ifdef ENSIS_OS_WIN
+  return R"(\\.\pipe\ensis-ops.oracle)";
 #else
-  return "/tmp/niuma.oracle.sock";
+  return "/tmp/ensis-ops.oracle.sock";
 #endif
 }
 
-}  // namespace niuma::oracle::util
+}  // namespace ensisops::oracle::util

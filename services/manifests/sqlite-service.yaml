@@ -1,4 +1,4 @@
-id: com.niuma.sqlite
+id: com.ensisops.sqlite
 name: SQLite Service
 version: 0.1.0
 bridge:
@@ -35,17 +35,17 @@ session:
     - ddl.createTablePreview
     - backup.copy
 runtime:
-  executable: bin/niuma-sqlite-service.exe
-  executable_windows: bin/niuma-sqlite-service.exe
-  executable_unix: bin/niuma-sqlite-service
+  executable: bin/ensis-sqlite-service.exe
+  executable_windows: bin/ensis-sqlite-service.exe
+  executable_unix: bin/ensis-sqlite-service
   lang: go
 ipc:
   transport: named_pipe
   transport_windows: named_pipe
   transport_unix: unix_socket
-  address: '\\.\pipe\niuma.sqlite'
-  address_windows: '\\.\pipe\niuma.sqlite'
-  address_unix: '/tmp/niuma.sqlite.sock'
+  address: '\\.\pipe\ensis-ops.sqlite'
+  address_windows: '\\.\pipe\ensis-ops.sqlite'
+  address_unix: '/tmp/ensis-ops.sqlite.sock'
   protocol: length_prefixed_json
 lifecycle:
   startup: lazy

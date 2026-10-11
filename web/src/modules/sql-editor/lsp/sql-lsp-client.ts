@@ -116,7 +116,7 @@ export class SqlLspClient {
     await this.request('initialize', {
       processId: null,
       capabilities: {},
-      clientInfo: { name: 'niuma-web', version: '0.1' },
+      clientInfo: { name: 'ensis-web', version: '0.1' },
     })
     await this.notify('initialized', {})
     this.initialized = true
@@ -178,12 +178,12 @@ export class SqlLspClient {
   }
 
   /**
-   * 更新补全默认库（自定义通知 `niuma/setSuggestDatabase`）。
+   * 更新补全默认库（自定义通知 `ensis-ops/setSuggestDatabase`）。
    * 传入 uri 时按文档隔离，避免同 session 多编辑器互相覆盖。
    * schema：金仓/PG 系默认 schema；MySQL/达梦可省略。
    */
   async setSuggestDatabase(database: string, uri?: string, schema?: string): Promise<void> {
-    await this.notify('niuma/setSuggestDatabase', {
+    await this.notify('ensis-ops/setSuggestDatabase', {
       database: database.trim(),
       ...(schema?.trim() ? { schema: schema.trim() } : {}),
       ...(uri ? { uri } : {}),

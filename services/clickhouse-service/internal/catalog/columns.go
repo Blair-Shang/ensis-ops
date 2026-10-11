@@ -9,7 +9,7 @@ import (
 	"fmt"
 	"strings"
 
-	"niuma/services/clickhouse-service/internal/tree"
+	"ensis-ops/services/clickhouse-service/internal/tree"
 )
 
 const (

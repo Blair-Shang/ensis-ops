@@ -3,7 +3,7 @@ package dmparser
 import (
 	"strings"
 
-	"niuma/pkg/sqllsp"
+	"ensis-ops/pkg/sqllsp"
 )
 
 // FormatDocument 轻量格式化：折叠多余空行；不重排子句、不强制补分号。

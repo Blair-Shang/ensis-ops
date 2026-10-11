@@ -11,7 +11,7 @@ import (
 	"strings"
 	"time"
 
-	"niuma/platform/internal/ai/mcp"
+	"ensis-ops/platform/internal/ai/mcp"
 )
 
 const (
@@ -78,7 +78,7 @@ func (s *API) InstallSkillPack(ctx context.Context, params SkillPackInstallParam
 		if !strings.EqualFold(filepath.Ext(abs), ".zip") {
 			return nil, fmt.Errorf("ai: source must be a skill directory or .zip")
 		}
-		tmp, err := os.MkdirTemp("", "niuma-skill-pack-*")
+		tmp, err := os.MkdirTemp("", "ensis-skill-pack-*")
 		if err != nil {
 			return nil, err
 		}
@@ -276,7 +276,7 @@ func (s *API) ExportSkillPack(ctx context.Context, params SkillPackExportParams)
 	}
 	if packPath == "" {
 		// 非包安装的 Skill：导出最小 SKILL.md 包。
-		tmp, err := os.MkdirTemp("", "niuma-skill-export-*")
+		tmp, err := os.MkdirTemp("", "ensis-skill-export-*")
 		if err != nil {
 			return "", err
 		}

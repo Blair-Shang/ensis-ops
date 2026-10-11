@@ -26,7 +26,7 @@
 #include <unordered_set>
 #include <vector>
 
-namespace niuma::oracle::dataio {
+namespace ensisops::oracle::dataio {
 namespace {
 
 bool Canceled(const CancelFlag& cancel) { return cancel && cancel->load(); }
@@ -890,8 +890,8 @@ bool RunDumpSql(const session::ConnectParams& connect, const DumpParams& dump, C
   const bool want_struct = mode == "structure_and_data" || mode == "structure_only";
   const bool want_data = mode == "structure_and_data" || mode == "data_only";
 
-  out << "-- NiuMa Oracle dump\n"
-      << "-- format: niuma-oracle-dump/1\n"
+  out << "-- ensis-ops Oracle dump\n"
+      << "-- format: ensis-oracle-dump/1\n"
       << "-- schema: " << dump.schema << "\n"
       << "-- generated: " << IsoNowUtc() << "\n"
       << "-- mode: " << mode << "\n"
@@ -993,4 +993,4 @@ bool RunDumpSql(const session::ConnectParams& connect, const DumpParams& dump, C
   return true;
 }
 
-}  // namespace niuma::oracle::dataio
+}  // namespace ensisops::oracle::dataio

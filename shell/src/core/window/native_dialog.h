@@ -3,13 +3,13 @@
 #include <functional>
 #include <string>
 
-#if NIUMMA_WITH_CEF
+#if ENSIS_WITH_CEF
 #include "include/cef_browser.h"
 #endif
 
-namespace niuma {
+namespace ensisops {
 
-#if NIUMMA_WITH_CEF
+#if ENSIS_WITH_CEF
 
 using NativeDialogCallback =
     std::function<void(bool ok, const std::string& result_json, const std::string& error)>;
@@ -29,4 +29,4 @@ class NativeDialog {
 
 #endif
 
-}  // namespace niuma
+}  // namespace ensisops

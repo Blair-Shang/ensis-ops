@@ -6,7 +6,7 @@ import (
 	"strings"
 	"time"
 
-	"niuma/pkg/serviceipc/event"
+	"ensis-ops/pkg/serviceipc/event"
 )
 
 const logMsgSessionRedial = "session.redial"

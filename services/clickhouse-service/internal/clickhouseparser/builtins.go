@@ -1,6 +1,6 @@
 package clickhouseparser
 
-import "niuma/pkg/sqllsp"
+import "ensis-ops/pkg/sqllsp"
 
 type builtinFn struct {
 	Name   string

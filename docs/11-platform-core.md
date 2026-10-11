@@ -26,8 +26,8 @@ SQLite `nm_app_setting`，壳层不读库、不含任何业务分支。
 
 | 项 | 取值 |
 |----|------|
-| 传输（Windows） | 命名管道 `\\.\pipe\niuma.platform` |
-| 传输（其他平台） | Unix Domain Socket `${TMPDIR}/niuma.platform.sock` |
+| 传输（Windows） | 命名管道 `\\.\pipe\ensis-ops.platform` |
+| 传输（其他平台） | Unix Domain Socket `${TMPDIR}/ensis-ops.platform.sock` |
 | 分帧 | **4 字节小端长度前缀** + **UTF-8 JSON 载荷**（前缀值 = 载荷字节数，不含前缀） |
 | 单帧上限 | 1 GiB（`protocol.MaxFrameSize`，与 C++ `kMaxFrameBytes` 对齐） |
 | 连接模型 | 每连接一个 goroutine；连接内支持多个**顺序**请求；多连接并发 |
@@ -82,8 +82,8 @@ SQLite `nm_app_setting`，壳层不读库、不含任何业务分支。
 
 | 项 | 值 |
 |----|----|
-| 用户库路径（Windows） | `%LOCALAPPDATA%\NiuMa\data\niuma.db` |
-| 用户库路径（其他） | `~/.niuma/data/niuma.db`（无 HOME 时回退可执行文件同级 `data/`） |
+| 用户库路径（Windows） | `%LOCALAPPDATA%\ensis-ops\data\ensis-ops.db` |
+| 用户库路径（其他） | `~/.ensis-ops/data/ensis-ops.db`（无 HOME 时回退可执行文件同级 `data/`） |
 | 驱动 | `modernc.org/sqlite`（纯 Go，无 cgo） |
 | 连接 | `SetMaxOpenConns(1)` + `journal_mode=WAL` + `busy_timeout=5000` |
 | KV 表 | `nm_app_setting(setting_key PK, setting_value, updated_at)` |
@@ -113,7 +113,7 @@ Windows 库路径与壳层 `GetUserDataDir()`（`plugin_registry.cpp`）一致�
 | 环节 | 文件 | 做什么 |
 |------|------|--------|
 | 方法路由 | `bridge/bridge_router.cpp` | `platform.*` 解析为 `service=platform.settings, action=get`，透传 `req.params`（**完整原始请求 JSON**） |
-| 进程管家 | `core/runtime/service_manager.cpp` | `platform*` 段映射到 manifest `com.niuma.platform`；未监听则 `CreateProcessW` 拉起 `services/bin/platform-core.exe`；退出时 `TerminateProcess` + 关句柄 |
+| 进程管家 | `core/runtime/service_manager.cpp` | `platform*` 段映射到 manifest `com.ensisops.platform`；未监听则 `CreateProcessW` 拉起 `services/bin/platform-core.exe`；退出时 `TerminateProcess` + 关句柄 |
 | 应用 IPC | `ipc/platform_client.cpp` | **工作线程**上连接管道、成帧收发、解析 `ok/result/error`，经 `CefPostTask(TID_UI)` 回 UI 线程触发 callback |
 
 关键约束：

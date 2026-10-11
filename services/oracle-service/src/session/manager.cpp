@@ -1,6 +1,6 @@
 #include "session/manager.hpp"
 
-namespace niuma::oracle::session {
+namespace ensisops::oracle::session {
 
 void Session::Close() {
   std::lock_guard lock(mu);
@@ -44,4 +44,4 @@ bool Manager::Close(const std::string& id) {
   return true;
 }
 
-}  // namespace niuma::oracle::session
+}  // namespace ensisops::oracle::session

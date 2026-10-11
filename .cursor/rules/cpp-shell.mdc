@@ -6,7 +6,7 @@ alwaysApply: false
 
 # C++ 壳层开发规范
 
-对齐 **Google C++ Style Guide**（命名与结构）、**Doxygen** 文档约定；适用于 `shell/` CEF 宿主与 `shell/include/niuma/` 公共头文件。
+对齐 **Google C++ Style Guide**（命名与结构）、**Doxygen** 文档约定；适用于 `shell/` CEF 宿主与 `shell/include/ensisops/` 公共头文件。
 
 架构设计见 [docs/02-shell-cpp-cef.md](../../docs/02-shell-cpp-cef.md)。
 
@@ -20,7 +20,7 @@ shell/
 │   ├── bridge/               # CEF IPC ↔ 应用 IPC
 │   ├── protocol/             # app:// scheme
 │   └── service/              # ServiceManager / IpcClient
-├── include/niuma/            # 对外类型（BridgeRequest 等）
+├── include/ensisops/            # 对外类型（BridgeRequest 等）
 └── CMakeLists.txt
 ```
 
@@ -37,7 +37,7 @@ shell/
 
 | 类别 | 风格 | 示例 |
 |------|------|------|
-| 命名空间 | 小写 | `niuma` |
+| 命名空间 | 小写 | `ensis-ops` |
 | 类 / 结构体 | PascalCase | `BridgeRouter`, `ServiceManager` |
 | 函数 / 方法 | PascalCase（CEF 回调沿用 CEF 命名）或 camelCase 自有 API | `Dispatch`, `EnsureRunning` |
 | 成员变量 | snake_case + 尾下划线 | `service_manager_` |
@@ -51,12 +51,12 @@ shell/
 - 使用 `#pragma once`
 - 顺序：`#pragma once` → 对应 `.h` → 项目头 → CEF 头 → STL → 第三方
 - 头文件尽量 **前向声明**，减少 CEF 头扩散
-- 实现细节放 `.cpp`；`include/niuma/` 只放稳定契约类型
+- 实现细节放 `.cpp`；`include/ensisops/` 只放稳定契约类型
 
 ```cpp
 #pragma once
 
-#include "niuma/types.h"
+#include "ensis-ops/types.h"
 
 #include <functional>
 #include <memory>
@@ -66,9 +66,9 @@ shell/
 #include "include/cef_browser.h"
 #endif
 
-namespace niuma {
+namespace ensisops {
 // ...
-}  // namespace niuma
+}  // namespace ensisops
 ```
 
 ## 文档注释（必须 — Doxygen）
@@ -79,7 +79,7 @@ namespace niuma {
 
 | 类别 | 要求 |
 |------|------|
-| **头文件**（`include/niuma/*.h`） | 文件顶 `@file` + 一句模块说明 |
+| **头文件**（`include/ensisops/*.h`） | 文件顶 `@file` + 一句模块说明 |
 | **公开 class / struct** | 类职责摘要 |
 | **public 方法** | `@brief`；**每个形参**必须写 `@param`；有返回值必须写 `@return` |
 | **public 枚举 / 枚举值** | 非显然枚举值各写一行 |
@@ -144,13 +144,13 @@ void OnAfterCreated(CefRefPtr<CefBrowser> browser) override;
  * @brief CEF Bridge 与 Shell 层共享的请求/响应类型。
  */
 
-namespace niuma {
+namespace ensisops {
 
 /**
  * @brief Web → Shell 的 CEF IPC 请求体（JSON 解析后）。
  */
 struct BridgeRequest {
-  std::string method;   ///< 完整方法名，如 com.niuma.ssh.exec
+  std::string method;   ///< 完整方法名，如 com.ensisops.ssh.exec
   std::string params;   ///< JSON 字符串
   std::string id;       ///< 请求 correlation id
 };
@@ -189,7 +189,7 @@ class MessageRouterHandler : public CefMessageRouterBrowserSide::Handler {
                CefRefPtr<Callback> callback) override;
 };
 
-}  // namespace niuma
+}  // namespace ensisops
 ```
 
 ### 标签约定
@@ -218,10 +218,10 @@ class MessageRouterHandler : public CefMessageRouterBrowserSide::Handler {
 ### 引用计数
 
 ```cpp
-class NiuMaClient : public CefClient {
+class EnsisClient : public CefClient {
   // ...
  private:
-  IMPLEMENT_REFCOUNTING(NiuMaClient);
+  IMPLEMENT_REFCOUNTING(EnsisClient);
 };
 ```
 
@@ -396,7 +396,7 @@ struct ServiceRecord {
 |------|------|
 | Debug 构建 `_CrtSetDbgFlag(_CRTDBG_LEAK_CHECK_DF)` | 进程退出时报告 CRT 泄漏 |
 | 壳退出前 log：`pending_queries`、`active_streams`、`running_services` 应为 **0** |
-| 反复打开/关闭窗口 50 次 | 任务管理器无累积 `NiuMa.exe` / `ssh-service.exe` |
+| 反复打开/关闭窗口 50 次 | 任务管理器无累积 `ensis-ops.exe` / `ssh-service.exe` |
 | Application Verifier（Windows） | Handle 泄漏检测 |
 
 实现 `ServiceManager::DebugSnapshot()` 输出三类计数，便于 QA 与自动化断言。
@@ -421,7 +421,7 @@ CefPostTask(TID_UI, base::BindOnce([this]() { ... }));
 
 ## CMake
 
-- 目标名：`niuma`（壳 executable）
+- 目标名：`ensis-ops`（壳 executable）
 - `CEF_ROOT` 由外部传入；未设置时 CMake 明确 `FATAL_ERROR` 提示
 - 新增 `.cpp` 必须加入 `CMakeLists.txt` 的 `SHELL_SOURCES`
 

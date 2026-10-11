@@ -4,9 +4,9 @@
 
 #include <algorithm>
 
-namespace niuma {
+namespace ensisops {
 
-#if NIUMMA_WITH_CEF
+#if ENSIS_WITH_CEF
 
 WindowRegistry& WindowRegistry::Instance() {
   static WindowRegistry instance;
@@ -205,4 +205,4 @@ std::string WindowRegistry::JsonEscape(const std::string& value) {
 
 #endif
 
-}  // namespace niuma
+}  // namespace ensisops

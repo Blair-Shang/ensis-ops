@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { RsButton, RsEmpty, RsIcon, RsLoading, RsTable, RsToolbar, useRsToast } from '@niuma/ui'
-import type { RsTableColumn } from '@niuma/ui'
+import { RsButton, RsEmpty, RsIcon, RsLoading, RsTable, RsToolbar, useRsToast } from 'ensis-ui'
+import type { RsTableColumn } from 'ensis-ui'
 import { computed, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { vastbaseApi } from '@/api'

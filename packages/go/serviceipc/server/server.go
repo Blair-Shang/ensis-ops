@@ -9,8 +9,8 @@ import (
 	"net"
 	"time"
 
-	"niuma/pkg/logutil"
-	"niuma/pkg/serviceipc/protocol"
+	"ensis-ops/pkg/logutil"
+	"ensis-ops/pkg/serviceipc/protocol"
 )
 
 // FrameDispatcher 处理一帧请求 JSON 并返回响应 JSON 字节。

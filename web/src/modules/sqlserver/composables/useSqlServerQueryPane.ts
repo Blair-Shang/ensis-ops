@@ -3,7 +3,7 @@
  */
 import { computed, onMounted, onUnmounted, ref, shallowRef } from 'vue'
 import { useI18n } from 'vue-i18n'
-import { useRsToast, type RsContextMenuItem, type RsTableColumn } from '@niuma/ui'
+import { useRsToast, type RsContextMenuItem, type RsTableColumn } from 'ensis-ui'
 import { sqlserverApi } from '@/api/sqlserver'
 import type { SqlServerQueryColumn, SqlServerQueryExecResult } from '@/api/types/sqlserver'
 import {
@@ -113,7 +113,7 @@ export function useSqlServerQueryPane(props: SqlServerQueryPaneProps) {
 
   const { historyOpen, historyEntries, rememberSql, onHistoryPick } = useSqlQueryHistory({
     profileId: () => props.profileId,
-    storagePrefix: 'niuma.sqlserver.sqlHistory.',
+    storagePrefix: 'ensis-ops.sqlserver.sqlHistory.',
     sqlText,
   })
 

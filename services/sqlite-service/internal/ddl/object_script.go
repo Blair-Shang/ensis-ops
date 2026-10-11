@@ -9,7 +9,7 @@ import (
 	"strings"
 	"time"
 
-	"niuma/services/sqlite-service/internal/dialect"
+	"ensis-ops/services/sqlite-service/internal/dialect"
 )
 
 const (

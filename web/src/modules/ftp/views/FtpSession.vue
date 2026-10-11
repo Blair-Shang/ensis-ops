@@ -12,7 +12,7 @@ import {
   type RsInputInstance,
   type RsSplitPaneInstance,
   type RsSplitPaneItem,
-} from '@niuma/ui'
+} from 'ensis-ui'
 import { computed, nextTick, onMounted, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { connectionApi, dialogApi, fsApi, ftpApi } from '@/api'

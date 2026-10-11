@@ -6,7 +6,7 @@
 #include <string>
 #include <vector>
 
-namespace niuma::oracle::session {
+namespace ensisops::oracle::session {
 
 struct RoutineCallArg {
   std::string name;
@@ -35,4 +35,4 @@ struct RoutineCallParams {
  */
 nlohmann::json CallRoutine(Session& session, const RoutineCallParams& params, std::string& error);
 
-}  // namespace niuma::oracle::session
+}  // namespace ensisops::oracle::session

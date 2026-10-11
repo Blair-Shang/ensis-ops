@@ -1,6 +1,6 @@
 <script setup lang="ts">
 /**
- * NiuMa 品牌剑形标 — 与 assets/brand/app-icon.svg / favicon 同源几何。
+ * ensis-ops 品牌剑形标 — 与 assets/brand/app-icon.svg / favicon 同源几何。
  * `mark` 使用 `currentColor`，随主题/父级颜色动态变化；`app` 仅用于系统图标等需固定蓝底的场景。
  */
 withDefaults(

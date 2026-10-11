@@ -9,8 +9,8 @@ import (
 
 	"github.com/jackc/pgx/v5/pgxpool"
 
-	"niuma/services/postgres-service/internal/dialect"
-	"niuma/services/postgres-service/internal/session"
+	"ensis-ops/services/postgres-service/internal/dialect"
+	"ensis-ops/services/postgres-service/internal/session"
 )
 
 func (d *Dispatcher) sessionOpen(ctx context.Context, req Request) Response {

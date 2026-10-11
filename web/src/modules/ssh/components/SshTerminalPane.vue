@@ -8,7 +8,7 @@ import {
   useRsToast,
   type RsContextMenuItem,
   type RsTerminalExpose,
-} from '@niuma/ui'
+} from 'ensis-ui'
 import { sshApi } from '@/api'
 import type { SshRemoteEncoding } from '@/api/types/ssh'
 import { useSshTerminal } from '@/modules/ssh/composables/useSshTerminal'

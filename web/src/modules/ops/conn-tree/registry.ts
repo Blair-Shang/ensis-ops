@@ -1,6 +1,6 @@
 import type { Component, ShallowRef } from 'vue'
 import { shallowRef } from 'vue'
-import type { RsContextMenuItem } from '@niuma/ui'
+import type { RsContextMenuItem } from 'ensis-ui'
 import type { ConnItem } from '@/modules/ops/types'
 import type { ConnResourceDescriptor, ConnResourcePath } from '@/modules/ops/conn-tree/types'
 

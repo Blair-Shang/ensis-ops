@@ -8,9 +8,9 @@
 #include "include/views/cef_window.h"
 #include "include/wrapper/cef_helpers.h"
 
-namespace niuma {
+namespace ensisops {
 
-#if NIUMMA_WITH_CEF
+#if ENSIS_WITH_CEF
 
 namespace {
 
@@ -47,7 +47,7 @@ void SplashWindow::Create(CefRefPtr<CefClient> client) {
   // 小窗、不可缩放/最小化；无边框；禁止用户关闭（Shell Close 经 AllowShellClose 放行）
   WindowCreateOptions opts;
   opts.url = WindowFactory::Instance().ResolveSplashUrl();
-  opts.title = "NiuMa";
+  opts.title = "ensis-ops";
   opts.width = 420;
   opts.height = 280;
   opts.min_width = 420;
@@ -109,4 +109,4 @@ void SplashWindow::OnDetached(int window_id) {
 
 #endif
 
-}  // namespace niuma
+}  // namespace ensisops

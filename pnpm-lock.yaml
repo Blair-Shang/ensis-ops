@@ -40,9 +40,9 @@ importers:
 
   web:
     dependencies:
-      '@niuma/ui':
-        specifier: link:../../niuma-ui
-        version: link:../../niuma-ui
+      'ensis-ui':
+        specifier: link:../../ensis-ui
+        version: link:../../ensis-ui
       dompurify:
         specifier: ^3.4.12
         version: 3.4.12

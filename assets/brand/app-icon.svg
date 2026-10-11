@@ -1,6 +1,6 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" fill="none">
   <!--
-    NiuMa 品牌剑形标 — 与应用内 .nm-brand-icon（tokens.css）同源配色。
+    ensis-ops 品牌剑形标 — 与应用内 .nm-brand-icon（tokens.css）同源配色。
     极光渐变（aurora a→e）+ 顶部高光叠层，白色剑形几何剪影。
     任务栏 / 安装包 / favicon 均由本文件经 scripts/gen-app-icon.mjs 生成。
   -->

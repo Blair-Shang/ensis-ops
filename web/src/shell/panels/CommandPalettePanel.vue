@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { RsIcon, RsInput } from '@niuma/ui'
-import type { RsInputInstance } from '@niuma/ui'
+import { RsIcon, RsInput } from 'ensis-ui'
+import type { RsInputInstance } from 'ensis-ui'
 import { computed, nextTick, onMounted, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import {

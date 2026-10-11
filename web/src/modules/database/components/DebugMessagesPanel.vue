@@ -2,7 +2,7 @@
 /**
  * 调试辅助「消息」侧栏：OK/ERR 着色日志列表。
  */
-import { RsEmpty } from '@niuma/ui'
+import { RsEmpty } from 'ensis-ui'
 import { computed } from 'vue'
 import {
   debugMessageBadge,

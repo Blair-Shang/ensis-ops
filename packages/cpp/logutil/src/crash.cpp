@@ -1,4 +1,4 @@
-#include <niuma/logutil/logutil.hpp>
+#include <ensisops/logutil/logutil.hpp>
 
 #include <cstdlib>
 #include <filesystem>
@@ -20,7 +20,7 @@
 #include <unistd.h>
 #endif
 
-namespace niuma::logutil {
+namespace ensisops::logutil {
 namespace {
 
 namespace fs = std::filesystem;
@@ -29,10 +29,10 @@ std::string CrashServiceName;
 fs::path CrashDumpPath;
 
 fs::path CrashLogDir() {
-  if (const char* dir = std::getenv("NIUMMA_LOG_DIR"); dir && *dir) {
+  if (const char* dir = std::getenv("ENSIS_LOG_DIR"); dir && *dir) {
     return fs::path(dir) / "crashes";
   }
-  if (const char* root = std::getenv("NIUMMA_LOG_ROOT"); root && *root) {
+  if (const char* root = std::getenv("ENSIS_LOG_ROOT"); root && *root) {
     return fs::path(root) / "crashes";
   }
   return {};
@@ -95,4 +95,4 @@ bool InstallCrashDump(std::string_view service_name) {
   return true;
 }
 
-}  // namespace niuma::logutil
+}  // namespace ensisops::logutil

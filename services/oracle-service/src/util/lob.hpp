@@ -4,7 +4,7 @@
 #include <nlohmann/json.hpp>
 #include <string>
 
-namespace niuma::oracle::util {
+namespace ensisops::oracle::util {
 
 constexpr uint64_t kLobPreviewMax = 4096;
 constexpr uint64_t kLobFullMax = 4ull * 1024 * 1024;
@@ -31,4 +31,4 @@ nlohmann::json LobCellToJson(dpiContext* ctx, dpiOracleTypeNum oracle_type, dpiN
 
 std::string Base64Encode(const std::string& raw);
 
-}  // namespace niuma::oracle::util
+}  // namespace ensisops::oracle::util

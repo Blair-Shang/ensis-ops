@@ -72,12 +72,12 @@ describe('import openapi', () => {
 })
 
 describe('import dispatch', () => {
-  it('routes niuma, postman, openapi, and rejects other JSON', () => {
-    const niuma = serializeCollection([
+  it('routes ensis-ops, postman, openapi, and rejects other JSON', () => {
+    const ensisOps = serializeCollection([
       { id: 'f', name: 'Drafts', parentId: null, vars: {}, requests: [] },
     ] as ApiFolder[])
-    const native = parseImportedCollection(JSON.stringify(niuma))
-    expect('source' in native && native.source).toBe('niuma')
+    const native = parseImportedCollection(JSON.stringify(ensisOps))
+    expect('source' in native && native.source).toBe('ensis-ops')
 
     const postman = parseImportedCollection(JSON.stringify({
       info: { name: 'P', schema: 'https://schema.getpostman.com/json/collection/v2.1.0/collection.json' },

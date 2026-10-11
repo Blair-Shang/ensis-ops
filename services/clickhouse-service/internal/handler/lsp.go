@@ -7,13 +7,13 @@ import (
 	"fmt"
 	"strings"
 
-	"niuma/pkg/sqllsp"
+	"ensis-ops/pkg/sqllsp"
 
-	"niuma/services/clickhouse-service/internal/catalog"
-	"niuma/services/clickhouse-service/internal/clickhouseparser"
-	"niuma/services/clickhouse-service/internal/meta"
-	"niuma/services/clickhouse-service/internal/session"
-	"niuma/services/clickhouse-service/internal/tree"
+	"ensis-ops/services/clickhouse-service/internal/catalog"
+	"ensis-ops/services/clickhouse-service/internal/clickhouseparser"
+	"ensis-ops/services/clickhouse-service/internal/meta"
+	"ensis-ops/services/clickhouse-service/internal/session"
+	"ensis-ops/services/clickhouse-service/internal/tree"
 )
 
 const (

@@ -8,9 +8,9 @@
 #include "include/cef_command_line.h"
 #include "include/wrapper/cef_helpers.h"
 
-namespace niuma {
+namespace ensisops {
 
-#if NIUMMA_WITH_CEF
+#if ENSIS_WITH_CEF
 
 MainWindow& MainWindow::Instance() {
   static MainWindow instance;
@@ -30,7 +30,7 @@ void MainWindow::Create(CefRefPtr<CefClient> client) {
 
   WindowCreateOptions opts;
   opts.url = ResolveStartupUrl();
-  opts.title = "NiuMa";
+  opts.title = "ensis-ops";
   opts.width = 1280;
   opts.height = 800;
   opts.min_width = 1024;
@@ -82,8 +82,8 @@ void MainWindow::OnClosing() {
 
 #endif
 
-// 兼容 niuma_app 等现有调用点
-#if NIUMMA_WITH_CEF
+// 兼容 ensis_app 等现有调用点
+#if ENSIS_WITH_CEF
 
 void CreateMainBrowser(CefRefPtr<CefClient> client) {
   MainWindow::Instance().Create(client);
@@ -95,4 +95,4 @@ std::string ResolveStartupUrl() {
 
 #endif
 
-}  // namespace niuma
+}  // namespace ensisops

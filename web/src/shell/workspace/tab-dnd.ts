@@ -13,7 +13,7 @@ export const draggingTabId = ref<string | null>(null)
 export const draggingGroupId = ref<string | null>(null)
 
 /** 页签拖到 AI 助手时的自定义 MIME（与文件拖入区分）。 */
-export const NIUMA_TAB_MIME = 'application/x-niuma-tab'
+export const ENSIS_TAB_MIME = 'application/x-ensis-tab'
 
 /** 当前拖拽是否为工作区页签（dragover 只能读 types，不能读数据）。 */
 export function isNiumaTabDrag(event: DragEvent): boolean {
@@ -24,7 +24,7 @@ export function isNiumaTabDrag(event: DragEvent): boolean {
   if (!types) {
     return false
   }
-  return Array.from(types).includes(NIUMA_TAB_MIME)
+  return Array.from(types).includes(ENSIS_TAB_MIME)
 }
 
 /** 开始拖拽某 Tab */

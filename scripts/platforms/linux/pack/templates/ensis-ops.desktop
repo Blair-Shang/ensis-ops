@@ -1,0 +1,13 @@
+[Desktop Entry]
+Type=Application
+Version=1.5
+Name=ensis-ops
+Comment=All-in-one AI operations platform
+Exec=/usr/bin/ensis-ops
+Icon=ensis-ops
+Terminal=false
+Categories=Development;Utility;
+Keywords=database;ssh;ftp;ops;ai;
+StartupNotify=true
+StartupWMClass=ensis-ops
+

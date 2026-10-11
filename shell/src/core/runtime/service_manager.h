@@ -6,7 +6,7 @@
 #include <unordered_map>
 #include <unordered_set>
 
-namespace niuma {
+namespace ensisops {
 
 /**
  * @brief 后端子进程生命周期管理：读 manifest、按需启停进程。
@@ -30,7 +30,7 @@ class ServiceManager {
    * @brief 确保目标服务处于运行态；必要时拉起其子进程。
    *
    * 解析规则：除已在 BridgeRouter 本地处理的 `shell.*` 外，一律映射到
-   * manifest `com.niuma.platform`（由 platform-core 再代理到各能力服务）。
+   * manifest `com.ensisops.platform`（由 platform-core 再代理到各能力服务）。
    * 若本会话已登记运行中，则立即返回、不探管道（避免 UI 线程 WaitNamedPipe）。
    * 尚未登记时探测监听或 spawn。本方法**不等待**管道就绪（PlatformClient 会在工作线程上带重试连接）。
    *
@@ -58,7 +58,7 @@ class ServiceManager {
   struct SpawnedProcess {
     void* process_handle = nullptr;
     void* thread_handle = nullptr;
-    /// Windows Job Object：关闭时级联终止 platform 及其拉起的 niuma-* 能力服务。
+    /// Windows Job Object：关闭时级联终止 platform 及其拉起的 ensis-* 能力服务。
     void* job_handle = nullptr;
   };
 
@@ -96,4 +96,4 @@ class ServiceManager {
   std::unordered_map<std::string, SpawnedProcess> spawned_;
 };
 
-}  // namespace niuma
+}  // namespace ensisops

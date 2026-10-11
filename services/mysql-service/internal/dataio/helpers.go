@@ -9,7 +9,7 @@ import (
 	"strings"
 	"time"
 
-	"niuma/services/mysql-service/internal/session"
+	"ensis-ops/services/mysql-service/internal/session"
 )
 
 // requirePath 校验路径非空。

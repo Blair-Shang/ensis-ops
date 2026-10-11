@@ -1,6 +1,6 @@
-//! NiuMa Redis 能力服务（Layer 1）独立进程入口。
+//! ensis-ops Redis 能力服务（Layer 1）独立进程入口。
 //!
-//! 与 platform-core 通过应用 IPC 通信（见 `packages/rust/niuma-serviceipc`）。
+//! 与 platform-core 通过应用 IPC 通信（见 `packages/rust/ensis-serviceipc`）。
 
 mod eventpub;
 mod handler;
@@ -10,16 +10,16 @@ mod suggest;
 
 use std::sync::Arc;
 
-use niuma_serviceipc::serve;
+use ensis_serviceipc::serve;
 use tokio::sync::broadcast;
 use tracing::{error, info};
 
-const WINDOWS_PIPE_ADDR: &str = r"\\.\pipe\niuma.redis";
-const UNIX_SOCKET_NAME: &str = "niuma.redis.sock";
+const WINDOWS_PIPE_ADDR: &str = r"\\.\pipe\ensis-ops.redis";
+const UNIX_SOCKET_NAME: &str = "ensis-ops.redis.sock";
 
 #[tokio::main]
 async fn main() {
-    if let Err(err) = niuma_logutil::init("redis-service") {
+    if let Err(err) = ensis_logutil::init("redis-service") {
         eprintln!("redis-service: log init: {err}");
     }
 
@@ -43,8 +43,8 @@ async fn run() -> Result<(), Box<dyn std::error::Error + Send + Sync>> {
     let addr = ipc_address();
     info!(
         addr,
-        version = env!("NIUMMA_BUILD_VERSION"),
-        build = env!("NIUMMA_BUILD_ID"),
+        version = env!("ENSIS_BUILD_VERSION"),
+        build = env!("ENSIS_BUILD_ID"),
         "redis-service starting"
     );
     serve(&addr, dispatcher).await?;

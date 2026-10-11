@@ -6,7 +6,7 @@
 #include <unordered_map>
 #include <vector>
 
-namespace niuma::oracle::dataio {
+namespace ensisops::oracle::dataio {
 
 class CsvRecordReader {
  public:
@@ -37,4 +37,4 @@ bool BuildCsvProjection(
     const std::unordered_map<std::string, std::string>& column_map,
     const std::vector<std::string>& table_columns, CsvProjection& out, std::string& error);
 
-}  // namespace niuma::oracle::dataio
+}  // namespace ensisops::oracle::dataio

@@ -3,7 +3,7 @@
  * FTP 模块主页：无活动会话时展示站点列表，双击或点「连接」在工作区打开传输会话。
  * 站点 CRUD 与侧栏运维面板共用 useConnectionProfiles，此处仅作工作区入口。
  */
-import { RsButton, RsLoading, useRsToast } from '@niuma/ui'
+import { RsButton, RsLoading, useRsToast } from 'ensis-ui'
 import { computed, onMounted, toRefs } from 'vue'
 import { useI18n } from 'vue-i18n'
 import type { ConnectionProfile } from '@/api/types/ftp'

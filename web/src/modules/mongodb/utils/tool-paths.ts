@@ -1,7 +1,7 @@
 import { componentsApi } from '@/api/components'
 
 /** MongoDB 工具组件包 ID（与 components/mongodb-tools/manifest.yaml 一致）。 */
-export const MONGODB_TOOLS_BUNDLE_ID = 'com.niuma.components.mongodb-tools'
+export const MONGODB_TOOLS_BUNDLE_ID = 'com.ensisops.components.mongodb-tools'
 
 function pathsFromBundle(bundle: { tools: { toolId: string; path?: string }[] }): Record<string, string> {
   const paths: Record<string, string> = {}

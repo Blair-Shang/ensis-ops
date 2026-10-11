@@ -3,7 +3,7 @@
 services:
   postgres:
     image: postgres:16
-    container_name: niuma-postgres
+    container_name: ensis-postgres
     ports:
       - "65432:5432"
     environment:
@@ -16,7 +16,7 @@ services:
       timeout: 5s
       retries: 20
     volumes:
-      - niuma-postgres-data:/var/lib/postgresql/data
+      - ensis-postgres-data:/var/lib/postgresql/data
 
 volumes:
-  niuma-postgres-data:
+  ensis-postgres-data:

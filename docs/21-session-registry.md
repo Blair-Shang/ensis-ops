@@ -248,7 +248,7 @@ sequenceDiagram
 - **DBeaver**：JDBC Connection vs SQL Editor Tab  
 - **Navicat**：左侧「已连接」vs 右侧查询/数据窗口  
 
-NiuMa 对应：**Registry 管物理会话，Tab 管 UI 状态**。
+ensis-ops 对应：**Registry 管物理会话，Tab 管 UI 状态**。
 
 ### 3.2 SessionRegistry（Web Pinia Store）
 

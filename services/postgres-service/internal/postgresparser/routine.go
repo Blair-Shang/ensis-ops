@@ -3,7 +3,7 @@ package postgresparser
 import (
 	"strings"
 
-	"niuma/pkg/sqllsp"
+	"ensis-ops/pkg/sqllsp"
 )
 
 func diagnoseRoutine(text string, compat CompatMode) []sqllsp.Diagnostic {

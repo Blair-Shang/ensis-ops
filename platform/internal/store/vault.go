@@ -17,17 +17,17 @@ import (
 // masterVaultService / masterVaultAccount 是主密钥在 OS Keychain 中的唯一条目。
 // 无论管理多少连接凭据，Keychain 条目数始终为 1。
 const (
-	masterVaultService = "NiuMa/master-vault"
+	masterVaultService = "ensis-ops/master-vault"
 	masterVaultAccount = "key"
 
 	// credentialServicePrefix 是凭据 service 名的固定前缀，用于从 service 中解析 credential_id。
-	credentialServicePrefix = "NiuMa/credential/"
+	credentialServicePrefix = "ensis-ops/credential/"
 )
 
 // VaultStore 是 SecretStore 的本地加密库实现。
 //
 // 密文用 AES-256-GCM 加密后直接存入 nm_credential_ref.cipher_text；
-// 主密钥（32 字节随机密钥）存于 OS Keychain 单条条目（NiuMa/master-vault）。
+// 主密钥（32 字节随机密钥）存于 OS Keychain 单条条目（ensis-ops/master-vault）。
 //
 // 调用约定：
 //   - SetSecret 须在 CredentialStore.Create 之后调用（行已存在才能 UPDATE）。
@@ -49,7 +49,7 @@ func NewVaultStore(db *sql.DB, keyring SecretStore) *VaultStore {
 }
 
 // SetSecret 加密 secret 并写入对应的 nm_credential_ref.cipher_text。
-// service 须为 "NiuMa/credential/{credential_id}" 格式。
+// service 须为 "ensis-ops/credential/{credential_id}" 格式。
 func (v *VaultStore) SetSecret(service, _ string, secret string) error {
 	key, err := v.masterKey()
 	if err != nil {
@@ -75,7 +75,7 @@ func (v *VaultStore) SetSecret(service, _ string, secret string) error {
 }
 
 // GetSecret 从 nm_credential_ref 读取并解密密文。
-// service 须为 "NiuMa/credential/{credential_id}" 格式。
+// service 须为 "ensis-ops/credential/{credential_id}" 格式。
 func (v *VaultStore) GetSecret(service, _ string) (string, bool, error) {
 	key, err := v.masterKey()
 	if err != nil {
@@ -143,7 +143,7 @@ func (v *VaultStore) masterKey() ([]byte, error) {
 	return key, nil
 }
 
-// credentialIDFrom 从 "NiuMa/credential/{id}" 格式的 service 名中提取 credential_id。
+// credentialIDFrom 从 "ensis-ops/credential/{id}" 格式的 service 名中提取 credential_id。
 func credentialIDFrom(service string) string {
 	return strings.TrimPrefix(service, credentialServicePrefix)
 }

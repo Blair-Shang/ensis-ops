@@ -1,15 +1,15 @@
 #pragma once
 
-#if NIUMMA_WITH_CEF
+#if ENSIS_WITH_CEF
 #include "include/cef_context_menu_handler.h"
 #endif
 
-namespace niuma {
+namespace ensisops {
 
-#if NIUMMA_WITH_CEF
+#if ENSIS_WITH_CEF
 
 /** 生产包去掉 Chromium 默认导航 / 打印 / 查看源代码菜单项，保留复制粘贴。 */
-class NiuMaContextMenuHandler : public CefContextMenuHandler {
+class EnsisContextMenuHandler : public CefContextMenuHandler {
  public:
   void OnBeforeContextMenu(CefRefPtr<CefBrowser> browser,
                            CefRefPtr<CefFrame> frame,
@@ -23,9 +23,9 @@ class NiuMaContextMenuHandler : public CefContextMenuHandler {
                             EventFlags event_flags) override;
 
  private:
-  IMPLEMENT_REFCOUNTING(NiuMaContextMenuHandler);
+  IMPLEMENT_REFCOUNTING(EnsisContextMenuHandler);
 };
 
 #endif
 
-}  // namespace niuma
+}  // namespace ensisops

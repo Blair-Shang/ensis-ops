@@ -1,8 +1,8 @@
-#include <niuma/serviceipc/frame.hpp>
+#include <ensisops/serviceipc/frame.hpp>
 
 #include <cstring>
 
-namespace niuma::serviceipc {
+namespace ensisops::serviceipc {
 
 bool TryReadFrame(std::string& buffer, std::string& payload, std::string& error) {
   error.clear();
@@ -38,4 +38,4 @@ std::string EncodeFrame(std::string_view payload) {
   return out;
 }
 
-}  // namespace niuma::serviceipc
+}  // namespace ensisops::serviceipc

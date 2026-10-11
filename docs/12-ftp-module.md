@@ -8,7 +8,7 @@
 
 ## 1. 目标与范围
 
-面向服务器运维/建站的**专业 FTP 客户端**能力，纳入 NiuMa 的 `ops` 领域（与 SSH 同域）。
+面向服务器运维/建站的**专业 FTP 客户端**能力，纳入 ensis-ops 的 `ops` 领域（与 SSH 同域）。
 
 ### 1.1 协议范围（本期锁定）
 
@@ -23,7 +23,7 @@
 | 协议 | 仅 FTP / FTPS | 聚焦建站/主机场景，纯 Go 库成熟 |
 | 能力服务落位 | **独立 Layer-1 进程 `ftp-service`** | 崩溃隔离、可独立升级，符合架构分层 |
 | 进程拉起层 | **壳层只拉 platform-core；platform-core 拉起/守护 Layer-1 与插件服务** | 壳层零业务；对动态插件与后端多语言扩展最有利（见 §7.1） |
-| 传输进度通道 | **事件流优先**（`niuma:event`） | 实时进度/速度，未来 SSH/DB 复用同一推送链路 |
+| 传输进度通道 | **事件流优先**（`ensis-ops:event`） | 实时进度/速度，未来 SSH/DB 复用同一推送链路 |
 
 ### 1.3 专业能力清单（分期实现）
 
@@ -40,7 +40,7 @@
 ```
 ┌ Layer 4 ─ Web ────────────────────────────────────────────────┐
 │ web/src/modules/ftp/  站点管理器 · 双栏浏览 · 传输队列          │
-│   ↑ bridgeInvoke(method, params)      ↑ bridgeOnEvent(niuma:event)
+│   ↑ bridgeInvoke(method, params)      ↑ bridgeOnEvent(ensis-ops:event)
 └───┼───────────────────────────────────┼──────────────────────┘
     │ cefQuery (请求/响应)               │ PostMessage (事件推送)
 ┌ Layer 3 ─ C++ Shell ──────────────────┴──────────────────────┐
@@ -62,7 +62,7 @@
 
 - **两级进程模型（已定）**：壳层**只拉起 platform-core 这一个根进程**、只做字节透传（壳层零业务）；`ftp-service`、未来 `ssh-service` 及插件后端一律由 **platform-core 作为编排者**拉起/守护/路由。服务 manifest（`services/manifests/*.yaml`）的**消费方从 C++ 壳层上移到 platform-core**（壳层仅保留 platform-core 自身那条）。理由与权衡见 §7.1。
 - **platform-core 是编排者**：负责拉起/守护 `ftp-service`、注入凭据、鉴权，并在 `ftp.*` 方法上做代理转发。Web 永远只跟壳层对话，不直连 `ftp-service`。
-- **两段事件链路**（本期需新建，见 §7.2）：`ftp-service → platform-core → C++ Shell → Web(niuma:event)`。
+- **两段事件链路**（本期需新建，见 §7.2）：`ftp-service → platform-core → C++ Shell → Web(ensis-ops:event)`。
 - **凭据边界**：明文密码只在 platform-core 从 Vault 解密后、注入给 `ftp-service` 的一次性调用中出现，**绝不回传 Web**；库内仅存 AES-256-GCM 密文。
 - **大数据不过桥**：GB 级文件字节只在 `ftp-service ↔ 本地磁盘 / 远端` 之间流动，**绝不经过 IPC 帧 / cefQuery**；桥上只走控制指令与进度事件。高并发/大数据评估见 §7.3。
 
@@ -181,7 +181,7 @@
 
 ---
 
-## 5. 事件契约（`niuma:event`）
+## 5. 事件契约（`ensis-ops:event`）
 
 `ftp-service` 主动上报，经 platform-core → 壳层 → Web 的 `bridgeOnEvent`。载荷统一 `{ type, ... }`：
 
@@ -243,13 +243,13 @@ const off = bridgeOnEvent((detail) => {
 
 在帧协议上**新增两处能力**：
 
-1. **子进程管理 + 请求转发**：platform-core 新增 `FtpServiceClient`，在首个 `ftp.*` 请求时按 `ftp-service` 的 manifest 地址（独立命名管道 `\\.\pipe\niuma.ftp` / UDS）建连；`handler.dispatch` 对 `ftp.*` 前缀方法转发，密码从 Vault 解密后随 `ftp.session.open` 下发。
+1. **子进程管理 + 请求转发**：platform-core 新增 `FtpServiceClient`，在首个 `ftp.*` 请求时按 `ftp-service` 的 manifest 地址（独立命名管道 `\\.\pipe\ensis-ops.ftp` / UDS）建连；`handler.dispatch` 对 `ftp.*` 前缀方法转发，密码从 Vault 解密后随 `ftp.session.open` 下发。
 2. **反向事件帧**：`ftp-service` 在传输过程中主动写「事件帧」给 platform-core；platform-core 再推给壳层。**这是本期新链路的核心**：
-   - platform-core → 壳层：需壳层在 `platform_client.cpp` 的连接上支持接收**非请求响应**的推送帧，并 `PostMessage`/`ExecuteJavaScript` 触发 Web 的 `niuma:event`（`web/src/api/client.ts` 已在监听）。
+   - platform-core → 壳层：需壳层在 `platform_client.cpp` 的连接上支持接收**非请求响应**的推送帧，并 `PostMessage`/`ExecuteJavaScript` 触发 Web 的 `ensis-ops:event`（`web/src/api/client.ts` 已在监听）。
    - **事件与 RPC 分离**：事件帧走独立方向/独立连接，不与请求响应复用同一顺序流，互不阻塞。
    - 该链路建成后，SSH/DB/AI 流式输出可复用。
 
-长流与事件已走当前帧协议：`ftp-service` 写反向事件帧，platform-core 推给壳层 `StreamProxy` → Web `niuma:event`。方法名与事件名保持稳定；本机 IPC **不上 gRPC、不定 TCP 端口**。
+长流与事件已走当前帧协议：`ftp-service` 写反向事件帧，platform-core 推给壳层 `StreamProxy` → Web `ensis-ops:event`。方法名与事件名保持稳定；本机 IPC **不上 gRPC、不定 TCP 端口**。
 
 ### 7.3 高并发与大数据瓶颈评估
 

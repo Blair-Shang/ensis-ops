@@ -1,9 +1,9 @@
 <!DOCTYPE html>
 <!--
   冷启动品牌页（Shell SplashWindow 专用）。
-  - 放在 public/：Vite 原样输出为 /splash.html；打包后为 app://niuma/splash.html
+  - 放在 public/：Vite 原样输出为 /splash.html；打包后为 app://ensis-ops/splash.html
   - 禁止依赖 Vue / 主应用 bundle，保证 CEF 一加载即可出画面
-  - 主题仅读 localStorage niuma-theme，与 index.html 启动层一致
+  - 主题仅读 localStorage ensis-theme，与 index.html 启动层一致
 -->
 <html lang="zh-CN">
   <head>
@@ -12,7 +12,7 @@
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="icon" type="image/png" sizes="256x256" href="/app-icon-256.png" />
     <link rel="shortcut icon" href="/favicon.ico" />
-    <title>NiuMa</title>
+    <title>ensis-ops</title>
     <style>
       html,
       body {
@@ -79,7 +79,7 @@
     <script>
       (function () {
         try {
-          var pref = localStorage.getItem('niuma-theme') || 'system'
+          var pref = localStorage.getItem('ensis-theme') || 'system'
           var dark =
             pref === 'dark' ||
             (pref === 'system' &&
@@ -102,7 +102,7 @@
           }
           root.style.background = getComputedStyle(root).getPropertyValue('--splash-bg')
         } catch (e) {
-          console.warn('[niuma] splash theme skipped:', e)
+          console.warn('[ensis-ops] splash theme skipped:', e)
         }
       })()
     </script>
@@ -110,7 +110,7 @@
   <body>
     <div class="splash" aria-live="polite" aria-busy="true">
       <img class="splash__logo" src="/favicon.svg" width="64" height="64" alt="" />
-      <h1 class="splash__brand">NiuMa</h1>
+      <h1 class="splash__brand">ensis-ops</h1>
       <div class="splash__status">
         <div class="splash__spinner" aria-hidden="true"></div>
         <span>正在启动…</span>

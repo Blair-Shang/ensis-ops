@@ -6,8 +6,8 @@ import (
 	"fmt"
 	"strings"
 
-	"niuma/services/sqlite-service/internal/dataio"
-	"niuma/services/sqlite-service/internal/session"
+	"ensis-ops/services/sqlite-service/internal/dataio"
+	"ensis-ops/services/sqlite-service/internal/session"
 )
 
 // resolveTaskConnect 从会话或 platform 注入的 ConnectParams 解析旁路连接。

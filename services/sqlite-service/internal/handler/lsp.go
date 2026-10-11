@@ -7,13 +7,13 @@ import (
 	"fmt"
 	"strings"
 
-	"niuma/pkg/sqllsp"
+	"ensis-ops/pkg/sqllsp"
 
-	"niuma/services/sqlite-service/internal/catalog"
-	"niuma/services/sqlite-service/internal/meta"
-	"niuma/services/sqlite-service/internal/session"
-	"niuma/services/sqlite-service/internal/sqliteparser"
-	"niuma/services/sqlite-service/internal/tree"
+	"ensis-ops/services/sqlite-service/internal/catalog"
+	"ensis-ops/services/sqlite-service/internal/meta"
+	"ensis-ops/services/sqlite-service/internal/session"
+	"ensis-ops/services/sqlite-service/internal/sqliteparser"
+	"ensis-ops/services/sqlite-service/internal/tree"
 )
 
 const (

@@ -21,7 +21,7 @@
 
 | 层 | 必须独立 | 允许共用（仅框架，无引擎业务） |
 |----|----------|--------------------------------|
-| 进程 / 二进制 | `niuma-postgres-service` 独享 | — |
+| 进程 / 二进制 | `ensis-postgres-service` 独享 | — |
 | manifest / namespace / kind | `postgres` 独享 | — |
 | Go 模块 | `services/postgres-service/` 自有 `go.mod` + `internal/*` | `packages/go/serviceipc`、`tunnel`、`logutil`、`sqllsp` 等**无引擎语义**包 |
 | Web 业务模块 | `web/src/modules/postgres/`、`api/postgres.ts` | `modules/database/*` 壳、`sql-editor` 编排（只认 family/Cap） |
@@ -55,13 +55,13 @@
 
 ### 1.1 架构对齐（对标 DBeaver / Navicat）
 
-| 能力层 | 参考 | NiuMa 做法 |
+| 能力层 | 参考 | ensis-ops 做法 |
 |--------|------|-----------|
 | GUI / 对象树 / SQL | DBeaver / Navicat for PostgreSQL / psql 常用集 | Vue + Monaco + Go 能力服务 |
 | 连接与查询 | PostgreSQL wire（默认端口 **5432**） | **Go + `jackc/pgx/v5`** |
 | 方言差异 | 客户端能力探测 | **DialectFamily + CapabilitySet**（契约见 [23](./23-sql-dialect-completion.md)） |
 | 外部 CLI | pg_dump / pg_restore / psql | [20](./20-tool-components.md) 组件包 `postgresql-client`，**不**编进 platform |
-| 安装包 | 独立客户端 | 仅 `niuma-postgres-service` Go 二进制（无 JVM / 无 libpq 旁载） |
+| 安装包 | 独立客户端 | 仅 `ensis-postgres-service` Go 二进制（无 JVM / 无 libpq 旁载） |
 
 ### 1.2 关键决策（已锁定）
 
@@ -83,11 +83,11 @@
 ### 1.3 实现语言推荐（锁定：**Go**）
 
 > **结论：产品默认实现语言 = Go。**  
-> PostgreSQL 在 NiuMa 中定位为 **Layer-1 Go 能力服务**，与 MySQL / 金仓 / SQL Server / ClickHouse 同构；**不**走 Oracle 式 C++ L3 Native，也**不**引入 JVM。
+> PostgreSQL 在 ensis-ops 中定位为 **Layer-1 Go 能力服务**，与 MySQL / 金仓 / SQL Server / ClickHouse 同构；**不**走 Oracle 式 C++ L3 Native，也**不**引入 JVM。
 
 #### 1.3.1 候选对照
 
-| 方案 | 专业度（协议/生态） | 与 NiuMa 架构契合 | 分发 / 运维 | 结论 |
+| 方案 | 专业度（协议/生态） | 与 ensis-ops 架构契合 | 分发 / 运维 | 结论 |
 |------|---------------------|-------------------|-------------|------|
 | **A. Go + `jackc/pgx/v5`（采用）** | 高：PG wire 事实标准；COPY / Listen / 取消持续演进 | **最高**：与既有 L1、`serviceipc`、构建/打包、supervisor 完全同构 | 单二进制；`CGO_ENABLED=0`；无旁载 | **产品默认 / 锁定** |
 | B. C + `libpq` / C++ | 最高（官方客户端） | 低：需新增 CGO 或 C++ 宿主；无 Instant Client 级强制理由 | 捆绑 libpq / OpenSSL | **否决为默认** |
@@ -225,7 +225,7 @@ flowchart TD
 ┌ Layer 4 ─ Web ────────────────────────────────────────────┐
 │ web/src/modules/postgres/（后续）                          │
 │   连接表单 · 树 Provider · Query · Browse · Monitor        │
-│   ↑ bridgeInvoke(postgres.*) ↑ bridgeOnEvent(niuma:event) │
+│   ↑ bridgeInvoke(postgres.*) ↑ bridgeOnEvent(ensis-ops:event) │
 └───┼───────────────────────────┼────────────────────────────┘
     │ cefQuery                  │ PostMessage
 ┌ Layer 3 ─ C++ Shell ──────────┴────────────────────────────┐
@@ -287,7 +287,7 @@ services/
 | ssl_root_cert / ssl_cert / ssl_key | 空 | PEM 路径（libpq 形） |
 | search_path | 空 | 可选；打开后 `SET search_path` |
 | client_encoding | 空（服务端默认 UTF8） | 仅字母数字下划线写入 DSN |
-| application_name | `niuma-postgres` | `pg_stat_activity` 识别 |
+| application_name | `ensis-postgres` | `pg_stat_activity` 识别 |
 | connect_timeout_seconds | 10 | 建连超时 |
 | statement_timeout_ms | 0 | 0 = 不设置 |
 | exclude_system_schemas | `true` | 树/catalog 默认隐藏 `pg_catalog` / `information_schema` / `pg_*` |
@@ -391,7 +391,7 @@ res:{profileId}:database:{db}:schema:{schema}:table:{table}
 
 见 `services/manifests/postgres-service.yaml`。
 
-构建：`go.work` 含 `services/postgres-service`；`scripts/shared/build/build-services.ps1` / `.sh` 纳入；二进制名 **`niuma-postgres-service`**。
+构建：`go.work` 含 `services/postgres-service`；`scripts/shared/build/build-services.ps1` / `.sh` 纳入；二进制名 **`ensis-postgres-service`**。
 
 ---
 

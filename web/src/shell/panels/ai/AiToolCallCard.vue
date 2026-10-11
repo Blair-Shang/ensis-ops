@@ -3,7 +3,7 @@
  * 工具调用过程卡：running / ok / error / pending，可展开参数与结果；pending 可 Approve/Reject。
  */
 import { computed, ref, watch } from 'vue'
-import { RsIcon } from '@niuma/ui'
+import { RsIcon } from 'ensis-ui'
 import { useI18n } from 'vue-i18n'
 import AiToolConfirmActions from './AiToolConfirmActions.vue'
 

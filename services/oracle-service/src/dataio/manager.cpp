@@ -3,13 +3,13 @@
 #include "dataio/ops.hpp"
 #include "util/idgen.hpp"
 
-#include <niuma/logutil/logutil.hpp>
-#include <niuma/serviceipc/event.hpp>
+#include <ensisops/logutil/logutil.hpp>
+#include <ensisops/serviceipc/event.hpp>
 #include <nlohmann/json.hpp>
 #include <chrono>
 #include <thread>
 
-namespace niuma::oracle::dataio {
+namespace ensisops::oracle::dataio {
 namespace {
 
 CsvOptions NormalizeCsv(CsvOptions opts) {
@@ -92,7 +92,7 @@ void Manager::EmitProgress(const std::string& task_id, const std::string& phase,
                     {"bytes", bytes},
                     {"rows", rows},
                     {"message", message}};
-  niuma::serviceipc::PublishEvent(ev.dump());
+  ensisops::serviceipc::PublishEvent(ev.dump());
 }
 
 void Manager::EmitDone(const std::string& task_id, bool ok, const std::string& message,
@@ -103,14 +103,14 @@ void Manager::EmitDone(const std::string& task_id, bool ok, const std::string& m
   }
   // 异步任务失败不会走 dispatcher 的 LogOpWarn；必须在此落盘，否则日志只剩 io.*.start。
   if (!ok) {
-    niuma::logutil::Warn("oracle.io.done",
+    ensisops::logutil::Warn("oracle.io.done",
                          {{"op", "io.done"},
                           {"task", task_id},
                           {"ok", false},
                           {"err", message},
                           {"outputPath", output_path}});
   } else {
-    niuma::logutil::Info("oracle.io.done",
+    ensisops::logutil::Info("oracle.io.done",
                          {{"op", "io.done"},
                           {"task", task_id},
                           {"ok", true},
@@ -121,7 +121,7 @@ void Manager::EmitDone(const std::string& task_id, bool ok, const std::string& m
   if (!output_path.empty()) {
     ev["outputPath"] = output_path;
   }
-  niuma::serviceipc::PublishEvent(ev.dump());
+  ensisops::serviceipc::PublishEvent(ev.dump());
 }
 
 std::string Manager::StartTask(std::string owner, JobFn job, std::string& error) {
@@ -301,4 +301,4 @@ std::string Manager::ExecSqlFile(const session::ConnectParams& connect, const st
       error);
 }
 
-}  // namespace niuma::oracle::dataio
+}  // namespace ensisops::oracle::dataio

@@ -6,8 +6,8 @@ import (
 	"fmt"
 	"strings"
 
-	"niuma/services/vastbase-service/internal/dataio"
-	"niuma/services/vastbase-service/internal/session"
+	"ensis-ops/services/vastbase-service/internal/dataio"
+	"ensis-ops/services/vastbase-service/internal/session"
 )
 
 type ioCsvParams struct {

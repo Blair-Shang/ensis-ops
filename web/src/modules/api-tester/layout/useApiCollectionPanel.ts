@@ -6,7 +6,7 @@ import {
   useRsToast,
   type RsContextMenuItem,
   type RsTreeDropPosition,
-} from '@niuma/ui'
+} from 'ensis-ui'
 import { computed, nextTick, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useTabStore } from '@/stores/tab'
@@ -394,10 +394,10 @@ export function useApiCollectionPanel() {
       return
     }
     if (key === 'export') {
-      exportFolders(api.folders, `niuma-api-${fileSlug('collection')}.json`)
+      exportFolders(api.folders, `ensis-api-${fileSlug('collection')}.json`)
     }
     if (key === 'export-postman') {
-      downloadJson(`postman-${fileSlug('collection')}.json`, exportPostmanCollection(api.folders, 'NiuMa'))
+      downloadJson(`postman-${fileSlug('collection')}.json`, exportPostmanCollection(api.folders, 'ensis-ops'))
       toast.success(t('modules.api.exportSuccess'))
     }
   }
@@ -415,7 +415,7 @@ export function useApiCollectionPanel() {
       return
     }
     if (key === 'export') {
-      exportFolders([folder], `niuma-api-${fileSlug(folder.name)}.json`)
+      exportFolders([folder], `ensis-api-${fileSlug(folder.name)}.json`)
       return
     }
     if (key === 'new-subfolder') {
@@ -445,7 +445,7 @@ export function useApiCollectionPanel() {
       const folder = api.folders.find((item) => item.requests.some((row) => row.id === requestId))
       exportFolders(
         [{ id: folder?.id ?? requestId, name: req.name, parentId: folder?.parentId ?? null, vars: { ...(folder?.vars ?? emptyVars()) }, requests: [{ ...req }] }],
-        `niuma-api-${fileSlug(req.name)}.json`,
+        `ensis-api-${fileSlug(req.name)}.json`,
       )
       return
     }

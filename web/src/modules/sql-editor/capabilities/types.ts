@@ -9,7 +9,7 @@ import type { SqlFormatterLanguage, SqlMonacoLanguageId } from '../dialect'
 import type { SqlSplitFeatures } from '../split/types'
 
 /**
- * Capability 解析实际产出、且 `@niuma/ui` RsMonacoEditor 已登记的语言 ID。
+ * Capability 解析实际产出、且 `ensis-ui` RsMonacoEditor 已登记的语言 ID。
  * mysql / dameng / postgresql 等 = Bridge LSP；sql = 未迁方言静默内置。
  */
 export type ResolvedMonacoLanguageId = Extract<

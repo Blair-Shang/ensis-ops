@@ -1,4 +1,4 @@
-#include <niuma/serviceipc/frame.hpp>
+#include <ensisops/serviceipc/frame.hpp>
 
 #include <iostream>
 
@@ -13,7 +13,7 @@ static int failures = 0;
   } while (0)
 
 int main() {
-  using namespace niuma::serviceipc;
+  using namespace ensisops::serviceipc;
   const std::string payload = R"({"method":"session.test","id":"1"})";
   const auto frame = EncodeFrame(payload);
   EXPECT(frame.size() == 4 + payload.size());

@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { RsButton, RsEmpty, RsIcon, RsLoading, RsSplitPane, RsTree, useRsToast } from '@niuma/ui'
-import type { RsSplitPaneItem } from '@niuma/ui'
+import { RsButton, RsEmpty, RsIcon, RsLoading, RsSplitPane, RsTree, useRsToast } from 'ensis-ui'
+import type { RsSplitPaneItem } from 'ensis-ui'
 import { computed, defineAsyncComponent, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { mongodbApi } from '@/api'

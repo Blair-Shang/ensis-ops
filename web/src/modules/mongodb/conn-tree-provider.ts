@@ -1,4 +1,4 @@
-import type { RsContextMenuItem } from '@niuma/ui'
+import type { RsContextMenuItem } from 'ensis-ui'
 import type { ConnTreeChildProvider } from '@/modules/ops/conn-tree/registry'
 import type { ConnOpenContext, ConnResourcePath } from '@/modules/ops/conn-tree/types'
 import { mongodbApi } from '@/api'

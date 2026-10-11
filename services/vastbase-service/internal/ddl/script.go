@@ -12,7 +12,7 @@ import (
 
 	"github.com/jackc/pgx/v5/pgxpool"
 
-	"niuma/services/vastbase-service/internal/dialect"
+	"ensis-ops/services/vastbase-service/internal/dialect"
 )
 
 const (

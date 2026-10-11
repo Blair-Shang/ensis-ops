@@ -1,7 +1,7 @@
-//! NiuMa SFTP 能力服务（Layer 1）独立进程入口。
+//! ensis-ops SFTP 能力服务（Layer 1）独立进程入口。
 //!
 //! 只建立 SSH 传输并打开 SFTP 子系统，不申请 PTY / shell / exec。
-//! 与 platform-core 通过应用 IPC 通信（见 `packages/rust/niuma-serviceipc`）。
+//! 与 platform-core 通过应用 IPC 通信（见 `packages/rust/ensis-serviceipc`）。
 
 mod eventpub;
 mod handler;
@@ -11,16 +11,16 @@ mod transfer;
 
 use std::sync::Arc;
 
-use niuma_serviceipc::serve;
+use ensis_serviceipc::serve;
 use tokio::sync::broadcast;
 use tracing::{error, info};
 
-const WINDOWS_PIPE_ADDR: &str = r"\\.\pipe\niuma.sftp";
-const UNIX_SOCKET_NAME: &str = "niuma.sftp.sock";
+const WINDOWS_PIPE_ADDR: &str = r"\\.\pipe\ensis-ops.sftp";
+const UNIX_SOCKET_NAME: &str = "ensis-ops.sftp.sock";
 
 #[tokio::main]
 async fn main() {
-    if let Err(err) = niuma_logutil::init("sftp-service") {
+    if let Err(err) = ensis_logutil::init("sftp-service") {
         eprintln!("sftp-service: log init: {err}");
     }
 
@@ -44,8 +44,8 @@ async fn run() -> Result<(), Box<dyn std::error::Error + Send + Sync>> {
     let addr = ipc_address();
     info!(
         addr,
-        version = env!("NIUMMA_BUILD_VERSION"),
-        build = env!("NIUMMA_BUILD_ID"),
+        version = env!("ENSIS_BUILD_VERSION"),
+        build = env!("ENSIS_BUILD_ID"),
         "sftp-service starting"
     );
     serve(&addr, dispatcher).await?;

@@ -1,5 +1,5 @@
 /**
- * niuma-cloud HTTP 客户端（账户 / 反馈）。
+ * ensis-cloud HTTP 客户端（账户 / 反馈）。
  * Base URL：`VITE_CLOUD_API_BASE`
  * - 开发默认：`http://127.0.0.1:8090/niuma/cloud`
  * - 生产：`https://www.niuma007.com/niuma/cloud`

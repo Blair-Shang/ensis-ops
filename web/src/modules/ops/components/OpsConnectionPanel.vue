@@ -7,8 +7,8 @@
  *   2. 在 modules/<kind>/register-conn-full.ts 自注册，并在 register-builtin-conn-kinds.ts 挂 loader
  *   本文件无需修改。
  */
-import { RsContextMenu, RsIcon, RsInput, RsLoading, RsTree, useRsToast } from '@niuma/ui'
-import type { RsContextMenuItem, RsTreeDropPosition, RsTreeNode } from '@niuma/ui'
+import { RsContextMenu, RsIcon, RsInput, RsLoading, RsTree, useRsToast } from 'ensis-ui'
+import type { RsContextMenuItem, RsTreeDropPosition, RsTreeNode } from 'ensis-ui'
 import { computed, nextTick, onMounted, onUnmounted, ref, toRef, toRefs, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import type { ModuleCategory } from '@/extensions/types/module'

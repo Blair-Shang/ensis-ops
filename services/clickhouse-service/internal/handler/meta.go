@@ -6,7 +6,7 @@ import (
 	"fmt"
 	"strings"
 
-	"niuma/services/clickhouse-service/internal/meta"
+	"ensis-ops/services/clickhouse-service/internal/meta"
 )
 
 type metaRelationParams struct {

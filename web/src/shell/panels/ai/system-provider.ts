@@ -4,7 +4,7 @@ import { fetchAiCatalog } from '@/api/cloud/ai'
 import type { AiProvider } from '@/api/types/ai'
 
 /** 云端系统模型在本机 SQLite 中的稳定主键。 */
-export const SYSTEM_AI_PROVIDER_ID = 'niuma-system'
+export const SYSTEM_AI_PROVIDER_ID = 'ensis-system'
 
 export function isSystemAiProvider(input: {
   providerId?: string
@@ -65,7 +65,7 @@ export async function ensureSystemAiProvider(accessToken: string): Promise<boole
   await aiApi.ensureSystemProvider({
     enabled: Boolean(catalog.enabled),
     baseUrl: `${cloudApiBase()}/api/v1/ai/v1`,
-    providerName: catalog.providerName?.trim() || 'NiuMa',
+    providerName: catalog.providerName?.trim() || 'ensis-ops',
     defaultModelCode: systemDefaultFromCatalog(catalog, models),
     models,
   })

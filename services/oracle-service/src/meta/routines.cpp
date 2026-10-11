@@ -13,7 +13,7 @@
 #include <cstdlib>
 #include <sstream>
 
-namespace niuma::oracle::meta {
+namespace ensisops::oracle::meta {
 namespace {
 
 std::string DpiError(dpiContext* ctx) {
@@ -414,4 +414,4 @@ nlohmann::json ListRoutineParameters(session::Session& session, const RoutineRef
   return out;
 }
 
-}  // namespace niuma::oracle::meta
+}  // namespace ensisops::oracle::meta

@@ -8,8 +8,8 @@ import (
 	"strings"
 	"sync"
 
-	"niuma/services/sqlite-service/internal/idgen"
-	"niuma/services/sqlite-service/internal/session"
+	"ensis-ops/services/sqlite-service/internal/idgen"
+	"ensis-ops/services/sqlite-service/internal/session"
 )
 
 // Emitter 上报 IO 任务事件。

@@ -1,4 +1,4 @@
-id: com.niuma.vastbase
+id: com.ensisops.vastbase
 name: Vastbase Service
 version: 0.1.0
 bridge:
@@ -51,17 +51,17 @@ session:
     - debug.capabilities
     - debug.start
 runtime:
-  executable: bin/niuma-vastbase-service.exe
-  executable_windows: bin/niuma-vastbase-service.exe
-  executable_unix: bin/niuma-vastbase-service
+  executable: bin/ensis-vastbase-service.exe
+  executable_windows: bin/ensis-vastbase-service.exe
+  executable_unix: bin/ensis-vastbase-service
   lang: go
 ipc:
   transport: named_pipe
   transport_windows: named_pipe
   transport_unix: unix_socket
-  address: '\\.\pipe\niuma.vastbase'
-  address_windows: '\\.\pipe\niuma.vastbase'
-  address_unix: '/tmp/niuma.vastbase.sock'
+  address: '\\.\pipe\ensis-ops.vastbase'
+  address_windows: '\\.\pipe\ensis-ops.vastbase'
+  address_unix: '/tmp/ensis-ops.vastbase.sock'
   protocol: length_prefixed_json
 lifecycle:
   startup: lazy

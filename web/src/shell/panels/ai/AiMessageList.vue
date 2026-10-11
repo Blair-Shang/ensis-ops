@@ -2,7 +2,7 @@
 /**
  * AI 消息列表：空态 / 加载 / 错误 / 消息流；贴底自动滚动。
  */
-import { RsButton, RsIcon } from '@niuma/ui'
+import { RsButton, RsIcon } from 'ensis-ui'
 import { computed, nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import type { AiLiveToolInvocation } from '@/api/types/ai'

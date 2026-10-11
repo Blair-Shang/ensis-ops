@@ -1,7 +1,7 @@
 /**
  * Vastbase 连接树菜单 / 激活动作（按需 dynamic import，勿从启动注册路径静态引用）。
  */
-import { useRsToast } from '@niuma/ui'
+import { useRsToast } from 'ensis-ui'
 import { vastbaseApi } from '@/api'
 import type { VastDdlAction } from '@/api/types/vastbase'
 import { useConnectionNavigation } from '@/modules/ops/composables/useConnectionNavigation'

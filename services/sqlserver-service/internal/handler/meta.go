@@ -6,7 +6,7 @@ import (
 	"fmt"
 	"strings"
 
-	"niuma/services/sqlserver-service/internal/meta"
+	"ensis-ops/services/sqlserver-service/internal/meta"
 )
 
 type metaRelationParams struct {

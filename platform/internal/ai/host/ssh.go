@@ -90,7 +90,7 @@ func resolveSSHNS(ctx context.Context, rt Runtime, s sshScope) (string, error) {
 // SSHToolSpecs 返回官方 SSH 工具列表（与 UI 同 Bridge：ssh.* → ssh-service）。
 func SSHToolSpecs() []ToolSpec {
 	scope := map[string]any{
-		"profileId": map[string]any{"type": "string", "description": "NiuMa SSH connection profile id"},
+		"profileId": map[string]any{"type": "string", "description": "ensis-ops SSH connection profile id"},
 		"sessionId": map[string]any{"type": "string", "description": "Active SSH session id from the open tab"},
 	}
 	schemaProps := func(extra map[string]any) map[string]any {

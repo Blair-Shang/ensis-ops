@@ -5,8 +5,8 @@ import (
 	"context"
 	"encoding/json"
 
-	"niuma/pkg/logutil"
-	"niuma/pkg/serviceipc/envelope"
+	"ensis-ops/pkg/logutil"
+	"ensis-ops/pkg/serviceipc/envelope"
 )
 
 type diagTraceParams struct {

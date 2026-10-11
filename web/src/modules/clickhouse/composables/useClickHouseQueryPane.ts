@@ -4,7 +4,7 @@
  */
 import { computed, onMounted, onUnmounted, ref, shallowRef } from 'vue'
 import { useI18n } from 'vue-i18n'
-import { useRsToast, type RsContextMenuItem, type RsSelectOptions, type RsTableColumn } from '@niuma/ui'
+import { useRsToast, type RsContextMenuItem, type RsSelectOptions, type RsTableColumn } from 'ensis-ui'
 import { clickhouseApi } from '@/api/clickhouse'
 import type { ClickHouseQueryColumn, ClickHouseQueryExecResult } from '@/api/types/clickhouse'
 import {
@@ -210,7 +210,7 @@ export function useClickHouseQueryPane(props: ClickHouseQueryPaneProps) {
 
   const { historyOpen, historyEntries, rememberSql, onHistoryPick } = useSqlQueryHistory({
     profileId: () => props.profileId,
-    storagePrefix: 'niuma.clickhouse.sqlHistory.',
+    storagePrefix: 'ensis-ops.clickhouse.sqlHistory.',
     sqlText,
   })
 

@@ -2,8 +2,8 @@
 # 由 build-deb-installer.sh 嵌入 .run 安装包；在目标机器上执行。
 set -euo pipefail
 
-APP_NAME="${NIUMMA_APP_NAME:-NiuMa}"
-APP_VERSION="${NIUMMA_APP_VERSION:-0.0.0}"
+APP_NAME="${ENSIS_APP_NAME:-ensis-ops}"
+APP_VERSION="${ENSIS_APP_VERSION:-0.0.0}"
 DEB_FILE="$(cd "$(dirname "$0")" && pwd)/package.deb"
 
 have_gui() {
@@ -56,7 +56,7 @@ agree_eula() {
     return 0
   fi
   if have_gui; then
-    question_gui "You must accept the NiuMa EULA to continue.\nSee licenses after install, or the text in this package.\n\nAgree and continue?" || return 1
+    question_gui "You must accept the ensis-ops EULA to continue.\nSee licenses after install, or the text in this package.\n\nAgree and continue?" || return 1
     return 0
   fi
   printf '\n===== EULA =====\n'
@@ -120,25 +120,25 @@ if command -v apt-get >/dev/null 2>&1; then
   fi
 fi
 
-start_niuma() {
-  if command -v gtk-launch >/dev/null 2>&1 && [[ -f /usr/share/applications/niuma.desktop ]]; then
-    nohup gtk-launch niuma >/dev/null 2>&1 &
+start_ensis() {
+  if command -v gtk-launch >/dev/null 2>&1 && [[ -f /usr/share/applications/ensis-ops.desktop ]]; then
+    nohup gtk-launch ensis-ops >/dev/null 2>&1 &
     return 0
   fi
-  if command -v niuma >/dev/null 2>&1; then
-    nohup niuma >/dev/null 2>&1 &
+  if command -v ensis-ops >/dev/null 2>&1; then
+    nohup ensis-ops >/dev/null 2>&1 &
     return 0
   fi
-  if [[ -x /opt/niuma/niuma ]]; then
-    nohup /opt/niuma/niuma >/dev/null 2>&1 &
+  if [[ -x /opt/ensis-ops/ensis-ops ]]; then
+    nohup /opt/ensis-ops/ensis-ops >/dev/null 2>&1 &
     return 0
   fi
   return 1
 }
 
 if [[ "$UNATTENDED" -eq 1 ]]; then
-  start_niuma || true
+  start_ensis || true
 else
   info_gui "$APP_NAME $APP_VERSION has been installed.\n\nYou can launch it from the application menu."
-  start_niuma || true
+  start_ensis || true
 fi

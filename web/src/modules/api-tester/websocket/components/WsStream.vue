@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { RsButton, RsEmpty } from '@niuma/ui'
+import { RsButton, RsEmpty } from 'ensis-ui'
 import type { ApiSocketDataEvent } from '@/api/types/api-socket'
 
 defineProps<{

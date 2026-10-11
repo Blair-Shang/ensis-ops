@@ -10,7 +10,7 @@ import (
 	"strings"
 	"unicode"
 
-	"niuma/pkg/sqllsp"
+	"ensis-ops/pkg/sqllsp"
 )
 
 // Parser 实现 sqllsp.DialectParser（SQLite）。

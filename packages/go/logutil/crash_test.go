@@ -9,8 +9,8 @@ import (
 
 func TestInstallCrashDump_WritesHeader(t *testing.T) {
 	dir := t.TempDir()
-	t.Setenv("NIUMMA_LOG_DIR", dir)
-	t.Setenv("NIUMMA_LOG_ROOT", "")
+	t.Setenv("ENSIS_LOG_DIR", dir)
+	t.Setenv("ENSIS_LOG_ROOT", "")
 
 	if err := Init("crash-test"); err != nil {
 		t.Fatal(err)

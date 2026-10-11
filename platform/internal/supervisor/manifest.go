@@ -9,7 +9,7 @@ import (
 
 	"gopkg.in/yaml.v3"
 
-	"niuma/pkg/serviceipc/streamspec"
+	"ensis-ops/pkg/serviceipc/streamspec"
 )
 
 // Manifest 描述一个 Layer-1 能力服务的注册信息（对应 services/manifests/*.yaml）。

@@ -4,7 +4,7 @@ import {
   useRsToast,
   type RsCodeEditorSqlConfig,
   type RsTableColumn,
-} from '@niuma/ui'
+} from 'ensis-ui'
 import { computed, ref, shallowRef, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { connectionApi, dialogApi, fsApi } from '@/api'

@@ -8,7 +8,7 @@
 #include <string_view>
 #include <vector>
 
-namespace niuma::oracle::dataio {
+namespace ensisops::oracle::dataio {
 
 /**
  * 按 Oracle SQL*Plus 脚本规则拆句：
@@ -87,4 +87,4 @@ std::string StripSqlPlusTerminator(std::string sql);
  */
 void SplitPackageSpecBody(const std::string& ddl, std::string& spec, std::string& body);
 
-}  // namespace niuma::oracle::dataio
+}  // namespace ensisops::oracle::dataio

@@ -3,7 +3,7 @@
  * SFTP 模块主页：无活动会话时展示站点列表，双击或点「连接」打开传输会话。
  * 只走 sftp-service，不申请 SSH shell。
  */
-import { RsButton, RsLoading, useRsToast } from '@niuma/ui'
+import { RsButton, RsLoading, useRsToast } from 'ensis-ui'
 import { computed, onMounted, toRefs } from 'vue'
 import { useI18n } from 'vue-i18n'
 import ConnectionFormDialog from '@/modules/ops/components/ConnectionFormDialog.vue'

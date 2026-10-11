@@ -7,8 +7,8 @@ import (
 	"fmt"
 	"strings"
 
-	"niuma/services/dameng-service/internal/meta"
-	"niuma/services/dameng-service/internal/tree"
+	"ensis-ops/services/dameng-service/internal/meta"
+	"ensis-ops/services/dameng-service/internal/tree"
 )
 
 const (

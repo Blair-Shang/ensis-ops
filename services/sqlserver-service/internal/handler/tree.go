@@ -6,8 +6,8 @@ import (
 	"fmt"
 	"time"
 
-	"niuma/services/sqlserver-service/internal/session"
-	"niuma/services/sqlserver-service/internal/tree"
+	"ensis-ops/services/sqlserver-service/internal/session"
+	"ensis-ops/services/sqlserver-service/internal/tree"
 )
 
 const (

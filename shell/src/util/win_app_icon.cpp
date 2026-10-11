@@ -4,7 +4,7 @@
 #include "resource.h"
 #endif
 
-namespace niuma {
+namespace ensisops {
 
 #if defined(_WIN32)
 
@@ -16,7 +16,7 @@ HINSTANCE AppInstance() {
 
 HICON LoadAppIconSized(int cx, int cy) {
   return static_cast<HICON>(LoadImageW(
-      AppInstance(), MAKEINTRESOURCEW(IDI_NIUMA_APP), IMAGE_ICON, cx, cy,
+      AppInstance(), MAKEINTRESOURCEW(IDI_ENSIS_APP), IMAGE_ICON, cx, cy,
       LR_DEFAULTCOLOR));
 }
 
@@ -72,4 +72,4 @@ void ApplyAppIconToWindow(void* /*hwnd*/) {}
 
 #endif
 
-}  // namespace niuma
+}  // namespace ensisops

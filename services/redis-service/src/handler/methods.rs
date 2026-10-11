@@ -1,6 +1,6 @@
 //! IPC 方法参数解析与处理函数（不涉及会话生命周期的部分，见 `handler::Dispatcher`）。
 
-use niuma_serviceipc::Response;
+use ensis_serviceipc::Response;
 use serde::Deserialize;
 use serde_json::{json, Value};
 use tracing::{info, warn};

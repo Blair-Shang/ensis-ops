@@ -6,8 +6,8 @@ import {
   RsTable,
   RsTabs,
   useRsToast,
-} from '@niuma/ui'
-import type { RsContextMenuItem, RsTabItem, RsTableColumn } from '@niuma/ui'
+} from 'ensis-ui'
+import type { RsContextMenuItem, RsTabItem, RsTableColumn } from 'ensis-ui'
 import { computed, inject, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { connectionApi, vastbaseApi } from '@/api'

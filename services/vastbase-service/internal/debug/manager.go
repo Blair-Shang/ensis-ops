@@ -15,8 +15,8 @@ import (
 	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgxpool"
 
-	"niuma/services/vastbase-service/internal/idgen"
-	"niuma/services/vastbase-service/internal/session"
+	"ensis-ops/services/vastbase-service/internal/idgen"
+	"ensis-ops/services/vastbase-service/internal/session"
 )
 
 // Emitter 上报调试事件。

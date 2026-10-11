@@ -60,18 +60,18 @@ function Get-ShellExePath {
     )
     $buildDir = Get-ShellBuildDir -RepoRoot $RepoRoot -Platform $Platform -Arch $Arch
     if ($Platform -eq 'windows') {
-        return Join-Path $buildDir "$Configuration/niuma.exe"
+        return Join-Path $buildDir "$Configuration/ensis-ops.exe"
     }
     $configLower = $Configuration.ToLowerInvariant()
     foreach ($candidate in @(
-            (Join-Path $buildDir 'niuma')
-            (Join-Path $buildDir "$configLower/niuma")
+            (Join-Path $buildDir 'ensis-ops')
+            (Join-Path $buildDir "$configLower/ensis-ops")
         )) {
         if (Test-Path $candidate) {
             return $candidate
         }
     }
-    return (Join-Path $buildDir 'niuma')
+    return (Join-Path $buildDir 'ensis-ops')
 }
 
 function Get-ShellInstallDir {
@@ -123,7 +123,7 @@ function Resolve-ShellExePath {
     if (Test-Path $matrixExe) {
         return $matrixExe
     }
-    $legacyExe = Join-Path $RepoRoot "build/shell/$Configuration/niuma.exe"
+    $legacyExe = Join-Path $RepoRoot "build/shell/$Configuration/ensis-ops.exe"
     if (Test-Path $legacyExe) {
         return $legacyExe
     }

@@ -3,7 +3,7 @@
  * 工具确认操作：主按钮允许一次，下拉可选本轮 / 本会话同类工具不再询问。
  */
 import { computed } from 'vue'
-import { RsButton, RsDropdown, RsIcon, type RsDropdownItems } from '@niuma/ui'
+import { RsButton, RsDropdown, RsIcon, type RsDropdownItems } from 'ensis-ui'
 import { useI18n } from 'vue-i18n'
 
 const props = withDefaults(

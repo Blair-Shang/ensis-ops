@@ -1,4 +1,4 @@
-#include <niuma/netproxy/netproxy.hpp>
+#include <ensisops/netproxy/netproxy.hpp>
 
 #include <array>
 #include <cerrno>
@@ -6,7 +6,7 @@
 #include <mutex>
 #include <vector>
 
-#ifdef NIUMA_NETPROXY_WIN
+#ifdef ENSIS_NETPROXY_WIN
 #ifndef WIN32_LEAN_AND_MEAN
 #define WIN32_LEAN_AND_MEAN
 #endif
@@ -26,12 +26,12 @@ using Sock = int;
 constexpr Sock kInvalidSock = -1;
 #endif
 
-namespace niuma::netproxy {
+namespace ensisops::netproxy {
 namespace {
 
 constexpr size_t kHttpConnectReadLimit = 16 * 1024;
 
-#ifdef NIUMA_NETPROXY_WIN
+#ifdef ENSIS_NETPROXY_WIN
 std::once_flag g_wsa_once;
 bool EnsureWinsock(std::string& error) {
   static bool ok = false;
@@ -59,7 +59,7 @@ void CloseSock(Sock fd) {
   if (fd == kInvalidSock) {
     return;
   }
-#ifdef NIUMA_NETPROXY_WIN
+#ifdef ENSIS_NETPROXY_WIN
   closesocket(fd);
 #else
   close(fd);
@@ -67,7 +67,7 @@ void CloseSock(Sock fd) {
 }
 
 bool SetCloexec(Sock fd) {
-#ifdef NIUMA_NETPROXY_WIN
+#ifdef ENSIS_NETPROXY_WIN
   (void)fd;
   return true;
 #else
@@ -80,7 +80,7 @@ bool SetCloexec(Sock fd) {
 }
 
 std::string LastSockError(const char* prefix) {
-#ifdef NIUMA_NETPROXY_WIN
+#ifdef ENSIS_NETPROXY_WIN
   return std::string(prefix) + ": " + std::to_string(WSAGetLastError());
 #else
   return std::string(prefix) + ": " + std::strerror(errno);
@@ -91,7 +91,7 @@ bool SendAll(Sock fd, const void* data, size_t len) {
   const auto* p = static_cast<const char*>(data);
   size_t sent = 0;
   while (sent < len) {
-#ifdef NIUMA_NETPROXY_WIN
+#ifdef ENSIS_NETPROXY_WIN
     const int n = send(fd, p + sent, static_cast<int>(len - sent), 0);
 #else
     const ssize_t n = send(fd, p + sent, len - sent, 0);
@@ -108,7 +108,7 @@ bool RecvExact(Sock fd, void* data, size_t len) {
   auto* p = static_cast<char*>(data);
   size_t got = 0;
   while (got < len) {
-#ifdef NIUMA_NETPROXY_WIN
+#ifdef ENSIS_NETPROXY_WIN
     const int n = recv(fd, p + got, static_cast<int>(len - got), 0);
 #else
     const ssize_t n = recv(fd, p + got, len - got, 0);
@@ -456,7 +456,7 @@ bool DialThroughProxy(const Options& proxy, const std::string& host, uint16_t po
 void Pump(Sock a, Sock b) {
   char buf[16 * 1024];
   for (;;) {
-#ifdef NIUMA_NETPROXY_WIN
+#ifdef ENSIS_NETPROXY_WIN
     const int n = recv(a, buf, sizeof(buf), 0);
 #else
     const ssize_t n = recv(a, buf, sizeof(buf), 0);
@@ -468,7 +468,7 @@ void Pump(Sock a, Sock b) {
       break;
     }
   }
-#ifdef NIUMA_NETPROXY_WIN
+#ifdef ENSIS_NETPROXY_WIN
   shutdown(a, SD_BOTH);
   shutdown(b, SD_BOTH);
 #else
@@ -509,7 +509,7 @@ RelayGuard::~RelayGuard() { Stop(); }
 
 void RelayGuard::Stop() {
   stop_.store(true);
-#ifdef NIUMA_NETPROXY_WIN
+#ifdef ENSIS_NETPROXY_WIN
   if (listen_fd_ != static_cast<uintptr_t>(INVALID_SOCKET)) {
     closesocket(static_cast<SOCKET>(listen_fd_));
     listen_fd_ = static_cast<uintptr_t>(INVALID_SOCKET);
@@ -542,7 +542,7 @@ std::unique_ptr<RelayGuard> StartRelay(const Options& proxy, const std::string& 
   }
   SetCloexec(listen_fd);
   int yes = 1;
-#ifdef NIUMA_NETPROXY_WIN
+#ifdef ENSIS_NETPROXY_WIN
   setsockopt(listen_fd, SOL_SOCKET, SO_REUSEADDR, reinterpret_cast<const char*>(&yes), sizeof(yes));
 #else
   setsockopt(listen_fd, SOL_SOCKET, SO_REUSEADDR, &yes, sizeof(yes));
@@ -571,7 +571,7 @@ std::unique_ptr<RelayGuard> StartRelay(const Options& proxy, const std::string& 
   }
 
   auto guard = std::make_unique<RelayGuard>();
-#ifdef NIUMA_NETPROXY_WIN
+#ifdef ENSIS_NETPROXY_WIN
   guard->listen_fd_ = static_cast<uintptr_t>(listen_fd);
 #else
   guard->listen_fd_ = listen_fd;
@@ -621,4 +621,4 @@ bool Dial(const Options& proxy, const std::string& host, uint16_t port, intptr_t
   return true;
 }
 
-}  // namespace niuma::netproxy
+}  // namespace ensisops::netproxy

@@ -5,7 +5,7 @@
  * 右键菜单对齐同仓库 MySQL：分隔分组 + 新建/工具子菜单 + 生成脚本 + 维护子菜单 + 导入导出。
  * 菜单同步定义；激活动作经 dynamic import 加载 conn-tree-actions。
  */
-import type { RsContextMenuItem } from '@niuma/ui'
+import type { RsContextMenuItem } from 'ensis-ui'
 import type { ConnTreeChildProvider } from '@/modules/ops/conn-tree/registry'
 import type { ConnResourcePath } from '@/modules/ops/conn-tree/types'
 import { sqliteApi } from '@/api/sqlite'

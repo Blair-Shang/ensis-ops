@@ -4,7 +4,7 @@ import "testing"
 
 func TestLostEvents(t *testing.T) {
 	t.Parallel()
-	got := lostEvents("com.niuma.mysql", "mysql", "capability service exited")
+	got := lostEvents("com.ensisops.mysql", "mysql", "capability service exited")
 	if len(got) != 2 {
 		t.Fatalf("len=%d", len(got))
 	}
@@ -15,7 +15,7 @@ func TestLostEvents(t *testing.T) {
 		t.Fatalf("session event: %#v", got[1])
 	}
 
-	plain := lostEvents("com.niuma.unknown", "", "x")
+	plain := lostEvents("com.ensisops.unknown", "", "x")
 	if len(plain) != 1 {
 		t.Fatalf("no namespace should skip session.state, got %d", len(plain))
 	}

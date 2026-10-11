@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { RsButton, RsDialog } from '@niuma/ui'
+import { RsButton, RsDialog } from 'ensis-ui'
 import { storeToRefs } from 'pinia'
 import { computed, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'

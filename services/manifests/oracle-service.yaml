@@ -1,4 +1,4 @@
-id: com.niuma.oracle
+id: com.ensisops.oracle
 name: Oracle Service
 version: 0.4.0
 bridge:
@@ -39,25 +39,25 @@ session:
     - io.execSqlFile
     # io.cancel 仅按 taskId 取消，无需注入连接凭据
 runtime:
-  executable: bin/niuma-oracle-service.exe
-  executable_windows: bin/niuma-oracle-service.exe
-  executable_unix: bin/niuma-oracle-service
+  executable: bin/ensis-oracle-service.exe
+  executable_windows: bin/ensis-oracle-service.exe
+  executable_unix: bin/ensis-oracle-service
   lang: cpp
   native_runtime: bin/runtime/oracle
   # 标准 Oracle 客户端环境变量；路径来自工具组件（浏览指定 oci.dll）。
   # platform-core 不硬编码 Oracle，仅按本声明通用注入。
   env_from_component:
     - name: ORACLE_HOME
-      bundle_id: com.niuma.components.oracle-native
+      bundle_id: com.ensisops.components.oracle-native
       tool_id: instant-client
       as_directory: true
 ipc:
   transport: named_pipe
   transport_windows: named_pipe
   transport_unix: unix_socket
-  address: '\\.\pipe\niuma.oracle'
-  address_windows: '\\.\pipe\niuma.oracle'
-  address_unix: '/tmp/niuma.oracle.sock'
+  address: '\\.\pipe\ensis-ops.oracle'
+  address_windows: '\\.\pipe\ensis-ops.oracle'
+  address_unix: '/tmp/ensis-ops.oracle.sock'
   protocol: length_prefixed_json
 lifecycle:
   startup: lazy

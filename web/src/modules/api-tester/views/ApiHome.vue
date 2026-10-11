@@ -3,7 +3,7 @@
  * API 请求页签壳：按 method 查 paneKind，ensureApiPane 后懒加载工作台。
  * 对齐 VastSession：壳不拼面板回调，新协议只加 catalog + {kind}/register。
  */
-import { RsButton, RsEmpty } from '@niuma/ui'
+import { RsButton, RsEmpty } from 'ensis-ui'
 import { computed, onActivated, onDeactivated, onUnmounted, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useTabStore } from '@/stores/tab'

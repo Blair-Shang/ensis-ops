@@ -21,7 +21,7 @@
 
 | 层 | 必须独立 | 允许共用（仅框架，无引擎业务） |
 |----|----------|--------------------------------|
-| 进程 / 二进制 | `niuma-clickhouse-service` 独享 | — |
+| 进程 / 二进制 | `ensis-clickhouse-service` 独享 | — |
 | manifest / namespace / kind | `clickhouse` 独享 | — |
 | Go 模块 | `services/clickhouse-service/` 自有 `go.mod` + `internal/*` | `packages/go/serviceipc`、`tunnel`、`logutil` 等**无引擎语义**包 |
 | Web 业务模块 | `web/src/modules/clickhouse/`、`api/clickhouse.ts` | `modules/database/*` 壳、`sql-editor` 编排（只认 family/Cap） |
@@ -55,12 +55,12 @@
 
 ### 1.1 架构对齐
 
-| 能力层 | 参考 | NiuMa 做法 |
+| 能力层 | 参考 | ensis-ops 做法 |
 |--------|------|-----------|
 | GUI / 对象树 / SQL | DBeaver / DataGrip / Tabix / ClickHouse Play | Vue + Monaco + Go 能力服务 |
 | 连接与查询 | Native TCP / HTTP | **Go + 官方 `clickhouse-go/v2`** |
 | 方言差异 | 客户端能力探测 | **DialectFamily + CapabilitySet**（契约见 [23](./23-sql-dialect-completion.md)） |
-| 安装包 | 独立客户端 | 仅 `niuma-clickhouse-service` Go 二进制（无 JVM / 无额外 native 旁载） |
+| 安装包 | 独立客户端 | 仅 `ensis-clickhouse-service` Go 二进制（无 JVM / 无额外 native 旁载） |
 
 ### 1.2 关键决策
 
@@ -219,7 +219,7 @@ flowchart TD
 ┌ Layer 4 ─ Web ────────────────────────────────────────────┐
 │ web/src/modules/clickhouse/                                │
 │   连接表单 · 树 Provider · Query · Browse · Monitor        │
-│   ↑ bridgeInvoke(clickhouse.*) ↑ bridgeOnEvent(niuma:event)│
+│   ↑ bridgeInvoke(clickhouse.*) ↑ bridgeOnEvent(ensis-ops:event)│
 └───┼───────────────────────────┼────────────────────────────┘
     │ cefQuery                  │ PostMessage
 ┌ Layer 3 ─ C++ Shell ──────────┴────────────────────────────┐
@@ -250,7 +250,7 @@ flowchart TD
 services/
 ├── manifests/clickhouse-service.yaml
 └── clickhouse-service/
-    ├── go.mod                 # clickhouse-go/v2 + niuma/pkg/*
+    ├── go.mod                 # clickhouse-go/v2 + ensis-ops/pkg/*
     ├── cmd/clickhouse-service/main.go
     └── internal/
         ├── dialect/           # ServerProfile / Cap* / Probe
@@ -416,7 +416,7 @@ res:{profileId}:database:{db}:dictionary:{name}
 - `register-conn-form.ts` / `register-conn-full.ts`  
 - `builtin-modules.ts`：`id: 'clickhouse'`，`category: 'data'`，`routePath: '/clickhouse'`  
 - i18n：`nav.clickhouse`（中文「ClickHouse」）  
-- 图标：暂用 `database`（`niuma-ui` 尚无专用 clickhouse 图标）
+- 图标：暂用 `database`（`ensis-ui` 尚无专用 clickhouse 图标）
 
 ### 6.2 会话 Tab
 
@@ -465,7 +465,7 @@ res:{profileId}:database:{db}:dictionary:{name}
 ## 8. manifest 草案
 
 ```yaml
-id: com.niuma.clickhouse
+id: com.ensisops.clickhouse
 name: ClickHouse Service
 version: 0.1.0
 bridge:
@@ -503,22 +503,22 @@ session:
     - io.execSqlFile
     - io.cancel
 runtime:
-  executable: bin/niuma-clickhouse-service.exe
-  executable_windows: bin/niuma-clickhouse-service.exe
-  executable_unix: bin/niuma-clickhouse-service
+  executable: bin/ensis-clickhouse-service.exe
+  executable_windows: bin/ensis-clickhouse-service.exe
+  executable_unix: bin/ensis-clickhouse-service
   lang: go
 ipc:
   transport_windows: named_pipe
   transport_unix: unix_socket
-  address_windows: '\\.\pipe\niuma.clickhouse'
-  address_unix: '/tmp/niuma.clickhouse.sock'
+  address_windows: '\\.\pipe\ensis-ops.clickhouse'
+  address_unix: '/tmp/ensis-ops.clickhouse.sock'
   protocol: length_prefixed_json
 lifecycle:
   startup: lazy
 permissions: []
 ```
 
-构建：`go.work` 增加 `services/clickhouse-service`；`scripts/shared/build/build-services.*` 纳入；二进制名 **`niuma-clickhouse-service`**。
+构建：`go.work` 增加 `services/clickhouse-service`；`scripts/shared/build/build-services.*` 纳入；二进制名 **`ensis-clickhouse-service`**。
 
 ---
 

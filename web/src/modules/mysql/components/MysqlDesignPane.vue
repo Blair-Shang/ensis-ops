@@ -14,7 +14,7 @@ import {
   type RsSelectOptions,
   type RsTableColumn,
   type RsTableRowDropPosition,
-} from '@niuma/ui'
+} from 'ensis-ui'
 import { computed, onMounted, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { mysqlApi } from '@/api'

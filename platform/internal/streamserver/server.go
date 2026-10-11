@@ -10,10 +10,10 @@ import (
 	"net"
 	"sync"
 
-	"niuma/pkg/serviceipc/event"
-	"niuma/pkg/serviceipc/protocol"
-	"niuma/pkg/serviceipc/streamspec"
-	"niuma/platform/internal/streamregistry"
+	"ensis-ops/pkg/serviceipc/event"
+	"ensis-ops/pkg/serviceipc/protocol"
+	"ensis-ops/pkg/serviceipc/streamspec"
+	"ensis-ops/platform/internal/streamregistry"
 )
 
 // Server 在命名管道/UDS 上提供分帧长流服务。

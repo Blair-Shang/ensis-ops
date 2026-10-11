@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { RsDropdown, RsButton, RsIcon, RsInput } from '@niuma/ui'
-import type { RsDropdownItems } from '@niuma/ui'
+import { RsDropdown, RsButton, RsIcon, RsInput } from 'ensis-ui'
+import type { RsDropdownItems } from 'ensis-ui'
 import { useI18n } from 'vue-i18n'
 import { useAppStore } from '@/stores/app'
 import { themeMenu } from '@/theme/registry'

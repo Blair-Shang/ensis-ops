@@ -1,15 +1,15 @@
 #!/usr/bin/env node
 /**
- * 将本 tag 的安装包上传到 niuma-cloud 本机目录，并登记 published，
+ * 将本 tag 的安装包上传到 ensis-cloud 本机目录，并登记 published，
  * 供官网与桌面更新从 niuma007.com 下载（不走 GitHub）。
  * Usage: node push-cloud-release.mjs <release-files-dir>
  *
  * Env:
- *   NIUMA_CLOUD_API_BASE          默认 https://www.niuma007.com/niuma/cloud
- *   NIUMA_CLOUD_PIPELINE_TOKEN    必填
+ *   ENSIS_CLOUD_API_BASE          默认 https://www.niuma007.com/niuma/cloud
+ *   ENSIS_CLOUD_PIPELINE_TOKEN    必填
  *   RELEASE_TAG                   如 v1.0.2
- *   NIUMA_CHANNEL                 Windows 渠道，默认 stable
- *   NIUMA_PREVIEW_CHANNEL         Linux / macOS 渠道，默认 beta（尚未稳定）
+ *   ENSIS_CHANNEL                 Windows 渠道，默认 stable
+ *   ENSIS_PREVIEW_CHANNEL         Linux / macOS 渠道，默认 beta（尚未稳定）
  *   CHANGELOG_PATH                可选，默认 ./CHANGELOG.md
  */
 import { openAsBlob, readFileSync, readdirSync, statSync, existsSync } from 'node:fs'
@@ -29,13 +29,13 @@ if (!dir) {
   process.exit(1)
 }
 
-const token = (process.env.NIUMA_CLOUD_PIPELINE_TOKEN || '').trim()
+const token = (process.env.ENSIS_CLOUD_PIPELINE_TOKEN || '').trim()
 if (!token) {
-  process.stderr.write('NIUMA_CLOUD_PIPELINE_TOKEN is empty; skip cloud push.\n')
+  process.stderr.write('ENSIS_CLOUD_PIPELINE_TOKEN is empty; skip cloud push.\n')
   process.exit(0)
 }
 
-const apiBase = (process.env.NIUMA_CLOUD_API_BASE || 'https://www.niuma007.com/niuma/cloud').replace(
+const apiBase = (process.env.ENSIS_CLOUD_API_BASE || 'https://www.niuma007.com/niuma/cloud').replace(
   /\/$/,
   '',
 )
@@ -53,8 +53,8 @@ if (!notesMd) {
   process.exit(1)
 }
 process.stdout.write(`release notes ${notesMd.length} chars for ${version}\n`)
-const stableChannel = process.env.NIUMA_CHANNEL || 'stable'
-const previewChannel = process.env.NIUMA_PREVIEW_CHANNEL || 'beta'
+const stableChannel = process.env.ENSIS_CHANNEL || 'stable'
+const previewChannel = process.env.ENSIS_PREVIEW_CHANNEL || 'beta'
 const hashes = loadChecksums(dir)
 const files = pickInstallers(dir)
 if (files.length === 0) {
@@ -109,10 +109,10 @@ function channelForPlatform(platform) {
 
 async function registerReleases(channel, group, notesMd) {
   const body = {
-    product: 'niuma',
+    product: 'ensis-ops',
     version,
     channel,
-    title: `NiuMa ${version}`,
+    title: `ensis-ops ${version}`,
     notesMd,
     publish: true,
     items: group.map(({ platform, arch, name, downloadUrl, sha256, fileSize }) => ({
@@ -162,7 +162,7 @@ async function uploadAsset(file, dim, sha, channel) {
   const blob = await openAsBlob(file)
   const form = new FormData()
   form.set('file', blob, basename(file))
-  form.set('product', 'niuma')
+  form.set('product', 'ensis-ops')
   form.set('channel', channel)
   form.set('platform', dim.platform)
   form.set('arch', dim.arch)
@@ -235,12 +235,12 @@ function installerRank(file) {
 
 function parseInstallerName(name) {
   let m = name.match(
-    /^NiuMa-(.+)-(windows|linux|macos|kylin)-(x64|arm64)-Setup\.(exe|run|pkg)$/i,
+    /^ensis-ops-(.+)-(windows|linux|macos|kylin)-(x64|arm64)-Setup\.(exe|run|pkg)$/i,
   )
   if (m) {
     return { version: m[1], platform: normalizePlatform(m[2]), arch: m[3].toLowerCase() }
   }
-  m = name.match(/^NiuMa-(.+)-(windows|linux|macos|kylin)-(x64|arm64)\.(dmg|deb|rpm)$/i)
+  m = name.match(/^ensis-ops-(.+)-(windows|linux|macos|kylin)-(x64|arm64)\.(dmg|deb|rpm)$/i)
   if (m) {
     return { version: m[1], platform: normalizePlatform(m[2]), arch: m[3].toLowerCase() }
   }

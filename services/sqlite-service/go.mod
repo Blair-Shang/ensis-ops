@@ -1,4 +1,4 @@
-module niuma/services/sqlite-service
+module ensis-ops/services/sqlite-service
 
 go 1.25.0
 
@@ -6,10 +6,10 @@ require (
 	github.com/mutecomm/go-sqlcipher/v4 v4.4.2
 	golang.org/x/text v0.40.0
 	modernc.org/sqlite v1.29.10
-	niuma/pkg/common v0.0.0
-	niuma/pkg/logutil v0.0.0
-	niuma/pkg/serviceipc v0.0.0
-	niuma/pkg/sqllsp v0.0.0
+	ensis-ops/pkg/common v0.0.0
+	ensis-ops/pkg/logutil v0.0.0
+	ensis-ops/pkg/serviceipc v0.0.0
+	ensis-ops/pkg/sqllsp v0.0.0
 )
 
 require (
@@ -29,10 +29,10 @@ require (
 	modernc.org/token v1.1.0 // indirect
 )
 
-replace niuma/pkg/common => ../../packages/go/common
+replace ensis-ops/pkg/common => ../../packages/go/common
 
-replace niuma/pkg/logutil => ../../packages/go/logutil
+replace ensis-ops/pkg/logutil => ../../packages/go/logutil
 
-replace niuma/pkg/serviceipc => ../../packages/go/serviceipc
+replace ensis-ops/pkg/serviceipc => ../../packages/go/serviceipc
 
-replace niuma/pkg/sqllsp => ../../packages/go/sqllsp
+replace ensis-ops/pkg/sqllsp => ../../packages/go/sqllsp

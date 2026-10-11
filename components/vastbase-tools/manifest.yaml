@@ -1,4 +1,4 @@
-id: com.niuma.components.vastbase-tools
+id: com.ensisops.components.vastbase-tools
 name: Vastbase 官方客户端工具
 module: vastbase
 install:

@@ -10,8 +10,8 @@ import (
 
 func TestObserveIPC_RoundTripSearchAndSummary(t *testing.T) {
 	dir := t.TempDir()
-	t.Setenv("NIUMMA_LOG_DIR", dir)
-	t.Setenv("NIUMMA_LOG_ROOT", "")
+	t.Setenv("ENSIS_LOG_DIR", dir)
+	t.Setenv("ENSIS_LOG_ROOT", "")
 	setServiceName("observe-test")
 	t.Cleanup(CloseObserve)
 
@@ -57,8 +57,8 @@ func TestObserveIPC_RoundTripSearchAndSummary(t *testing.T) {
 
 func TestObserveIPC_SkipsEmptyMethod(t *testing.T) {
 	dir := t.TempDir()
-	t.Setenv("NIUMMA_LOG_DIR", dir)
-	t.Setenv("NIUMMA_LOG_ROOT", "")
+	t.Setenv("ENSIS_LOG_DIR", dir)
+	t.Setenv("ENSIS_LOG_ROOT", "")
 	setServiceName("observe-test")
 	ObserveIPC([]byte(`{"id":"x"}`), []byte(`{"ok":true}`), time.Millisecond)
 	if _, err := os.Stat(filepath.Join(dir, ObserveFileName)); !os.IsNotExist(err) {

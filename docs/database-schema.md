@@ -1,4 +1,4 @@
-# NiuMa 本地数据库设计规范
+# ensis-ops 本地数据库设计规范
 
 > 版本：v1.1 · 更新：2026-07-17  
 > 适用：**离线桌面客户端** · 数据存本机，无云端 SaaS 依赖  
@@ -11,7 +11,7 @@
 
 ### 1.1 与云端项目的差异
 
-| 项 | 原云端规范 | NiuMa 本地规范 |
+| 项 | 原云端规范 | ensis-ops 本地规范 |
 |----|------------|----------------|
 | 部署 | PG/MySQL 集群 | **单机 SQLite 文件** |
 | 租户 | 必备 `org_id` | **无多租户**；可选 `workspace_id` 做本地分组 |
@@ -49,9 +49,9 @@
 
 | 平台 | 默认路径 |
 |------|----------|
-| Windows | `%LOCALAPPDATA%\NiuMa\data\niuma.db` |
-| macOS | `~/Library/Application Support/NiuMa/data/niuma.db` |
-| Linux | `~/.local/share/NiuMa/data/niuma.db` |
+| Windows | `%LOCALAPPDATA%\ensis-ops\data\ensis-ops.db` |
+| macOS | `~/Library/Application Support/ensis-ops/data/ensis-ops.db` |
+| Linux | `~/.local/share/ensis-ops/data/ensis-ops.db` |
 
 - 单用户单库文件；WAL 模式开启：`PRAGMA journal_mode=WAL`
 - 迁移版本表：`nm_schema_migration`（基础设施表，不计业务清单）
@@ -143,7 +143,7 @@ PRIMARY KEY (parent_id, child_id)
 
 ## 5. 业务域与表清单
 
-前缀 **`nm_`**（NiuMa）。下表为 v1 规划，实现时可按阶段增减。
+前缀 **`nm_`**（ensis-ops）。下表为 v1 规划，实现时可按阶段增减。
 
 ### 5.1 基础与配置
 
@@ -262,7 +262,7 @@ CREATE UNIQUE INDEX uk_nm_conn_profile_name ON nm_connection_profile (workspace_
 
 ```sql
 -- 凭据：明文永不落库；cipher_text 为 VaultStore AES-256-GCM 密文
--- OS Keychain 仅存主密钥 NiuMa/master-vault（见 platform/internal/store/vault.go）
+-- OS Keychain 仅存主密钥 ensis-ops/master-vault（见 platform/internal/store/vault.go）
 CREATE TABLE nm_credential_ref (
     credential_id     TEXT NOT NULL PRIMARY KEY,
     credential_label  TEXT NOT NULL,
@@ -592,5 +592,5 @@ CREATE TABLE connection (
 
 | 版本 | 日期 | 说明 |
 |------|------|------|
-| v1.0 | 2026-07-03 | 自云端规范适配：离线 SQLite、物理删除、nm_ 前缀、NiuMa 业务域 |
+| v1.0 | 2026-07-03 | 自云端规范适配：离线 SQLite、物理删除、nm_ 前缀、ensis-ops 业务域 |
 | v1.1 | 2026-07-17 | 凭据对齐实现：VaultStore 密文存 `cipher_text`，OS Keychain 仅主密钥 |

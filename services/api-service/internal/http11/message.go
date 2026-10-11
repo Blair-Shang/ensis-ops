@@ -17,7 +17,7 @@ import (
 
 const (
 	// UserAgent 是未由调用方指定时写入的产品标识。
-	UserAgent = "NiuMa"
+	UserAgent = "ensis-ops"
 	// AcceptEncoding 是本包能够解开的内容编码。
 	AcceptEncoding = "gzip, deflate"
 	maxMessage     = 1 << 20

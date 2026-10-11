@@ -3,7 +3,7 @@
  * 写库仍由方言 onRowEditCommit / persistRowChanges 完成。
  */
 import { ref, type Ref } from 'vue'
-import type { RsTableStagedCell } from '@niuma/ui'
+import type { RsTableStagedCell } from 'ensis-ui'
 import {
   useBrowseCellDialog,
   type BrowseCellEditorDialogLabels,

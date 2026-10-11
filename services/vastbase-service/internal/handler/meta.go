@@ -7,7 +7,7 @@ import (
 
 	"github.com/jackc/pgx/v5/pgxpool"
 
-	"niuma/services/vastbase-service/internal/meta"
+	"ensis-ops/services/vastbase-service/internal/meta"
 )
 
 type metaRelationParams struct {

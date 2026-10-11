@@ -10,14 +10,14 @@ import (
 )
 
 func TestShutdown_StopsSpawnedChild(t *testing.T) {
-	if runtime.GOOS == "windows" && os.Getenv("NIUMMA_INTEGRATION") == "" {
-		t.Skip("set NIUMMA_INTEGRATION=1 to run")
+	if runtime.GOOS == "windows" && os.Getenv("ENSIS_INTEGRATION") == "" {
+		t.Skip("set ENSIS_INTEGRATION=1 to run")
 	}
 
 	dir := filepath.Join("..", "..", "..", "build", "shell", "Release", "services")
-	exe := filepath.Join(dir, "bin", "niuma-ftp-service.exe")
+	exe := filepath.Join(dir, "bin", "ensis-ftp-service.exe")
 	if _, err := os.Stat(exe); err != nil {
-		t.Skip("niuma-ftp-service.exe not staged")
+		t.Skip("ensis-ftp-service.exe not staged")
 	}
 
 	sup, err := New(dir)
@@ -26,11 +26,11 @@ func TestShutdown_StopsSpawnedChild(t *testing.T) {
 	}
 	ctx, cancel := context.WithTimeout(context.Background(), 15*time.Second)
 	defer cancel()
-	if err := sup.Ensure(ctx, "com.niuma.ftp"); err != nil {
+	if err := sup.Ensure(ctx, "com.ensisops.ftp"); err != nil {
 		t.Fatal(err)
 	}
 
-	cmd := sup.spawned["com.niuma.ftp"]
+	cmd := sup.spawned["com.ensisops.ftp"]
 	if cmd == nil || cmd.Process == nil {
 		t.Fatal("ftp service not tracked in spawned map")
 	}
@@ -49,7 +49,7 @@ func TestShutdown_StopsSpawnedChild(t *testing.T) {
 		t.Fatalf("child pid %d still running after Shutdown", pid)
 	}
 
-	if sup.spawned["com.niuma.ftp"] != nil {
+	if sup.spawned["com.ensisops.ftp"] != nil {
 		t.Fatal("spawned map not cleared")
 	}
 }

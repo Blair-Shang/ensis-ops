@@ -2,7 +2,7 @@
 export interface ComponentBundleHandler {
   /** 目录名，如 `mongodb-tools` */
   slug: string
-  /** manifest.id，如 `com.niuma.components.mongodb-tools` */
+  /** manifest.id，如 `com.ensisops.components.mongodb-tools` */
   bundleId: string
   icon: string
   /** i18n 键 `settings.componentBundles.<localeKey>` */

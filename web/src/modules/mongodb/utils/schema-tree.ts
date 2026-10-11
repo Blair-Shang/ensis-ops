@@ -1,5 +1,5 @@
 import type { MongoSchemaField } from '@/api/types/mongodb'
-import type { RsTreeNode } from '@niuma/ui'
+import type { RsTreeNode } from 'ensis-ui'
 
 export interface SchemaTreeNode extends RsTreeNode {
   key: string

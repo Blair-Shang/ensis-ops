@@ -1,4 +1,4 @@
-NiuMa Third-Party Notices
+ensis-ops Third-Party Notices
 =========================
 
 This distribution includes third-party software components. The following
@@ -6,7 +6,7 @@ notices apply to redistributed binaries.
 
 Chromium Embedded Framework (CEF)
 ---------------------------------
-NiuMa embeds Chromium Embedded Framework (CEF). See licenses/CEF-LICENSE.txt
+ensis-ops embeds Chromium Embedded Framework (CEF). See licenses/CEF-LICENSE.txt
 for the full CEF license text.
 
 Inno Setup (Windows installer only)
@@ -14,9 +14,9 @@ Inno Setup (Windows installer only)
 Windows installers are produced with Inno Setup 6, which may be used free of
 charge for commercial distribution. See: https://jrsoftware.org/files/is/license.txt
 
-NiuMa application code
+ensis-ops application code
 ----------------------
-Portions written by the NiuMa Authors are licensed under Apache License 2.0.
+Portions written by the ensis-ops Authors are licensed under Apache License 2.0.
 See licenses/LICENSE and licenses/NOTICE in this distribution (or LICENSE and
 NOTICE at the source repository root). The official no-liability statement is
 licenses/DISCLAIMER.zh-CN.txt and licenses/DISCLAIMER.en-US.txt. Additional
@@ -30,15 +30,15 @@ Cargo respectively and remain under their own licenses.
 
 Oracle Instant Client (optional, not bundled by default)
 --------------------------------------------------------
-NiuMa's Oracle module uses ODPI-C and may load Oracle Instant Client libraries
+ensis-ops's Oracle module uses ODPI-C and may load Oracle Instant Client libraries
 when the user connects to Oracle Database. Instant Client is NOT included in
-the default NiuMa installer.
+the default ensis-ops installer.
 
 Users may:
   1. Use an existing Instant Client / Oracle Client via ORACLE_HOME or PATH; or
-  2. Download Instant Client from Oracle and point NiuMa to oci.dll via
+  2. Download Instant Client from Oracle and point ensis-ops to oci.dll via
      Settings → Tool Components → Oracle Instant Client
-     (NiuMa injects the standard ORACLE_HOME variable for the oracle-service process).
+     (ensis-ops injects the standard ORACLE_HOME variable for the oracle-service process).
 
 Redistribution of Instant Client (if a future edition bundles or proxies the
 download) is subject to the Oracle Technology Network Development and

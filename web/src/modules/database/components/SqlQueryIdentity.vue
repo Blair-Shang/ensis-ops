@@ -3,7 +3,7 @@
  * 查询顶栏左侧上下文：引擎图标 + 当前库/schema。
  * Tab 已含连接名，此处不再重复；样式与 SqlQueryToolbar 同一套密度。
  */
-import { RsIcon } from '@niuma/ui'
+import { RsIcon } from 'ensis-ui'
 
 withDefaults(
   defineProps<{

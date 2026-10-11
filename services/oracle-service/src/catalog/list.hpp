@@ -5,7 +5,7 @@
 #include <nlohmann/json.hpp>
 #include <string>
 
-namespace niuma::oracle::catalog {
+namespace ensisops::oracle::catalog {
 
 struct ListParams {
   std::string schema;
@@ -20,4 +20,4 @@ nlohmann::json ListSchemas(session::Session& session, const ListParams& params, 
 nlohmann::json ListTables(session::Session& session, const ListParams& params, std::string& error);
 nlohmann::json ListColumns(session::Session& session, const ListParams& params, std::string& error);
 
-}  // namespace niuma::oracle::catalog
+}  // namespace ensisops::oracle::catalog

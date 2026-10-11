@@ -6,7 +6,7 @@ import (
 	"fmt"
 
 	"github.com/jackc/pgx/v5/pgxpool"
-	"niuma/services/kingbase-service/internal/meta"
+	"ensis-ops/services/kingbase-service/internal/meta"
 )
 
 type metaRelationParams struct {

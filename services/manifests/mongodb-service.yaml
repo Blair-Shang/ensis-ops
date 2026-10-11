@@ -1,4 +1,4 @@
-id: com.niuma.mongodb
+id: com.ensisops.mongodb
 name: MongoDB Service
 version: 0.1.0
 bridge:
@@ -15,17 +15,17 @@ session:
     - catalog.renameCollection
     - catalog.renameDatabase
 runtime:
-  executable: bin/niuma-mongodb-service.exe
-  executable_windows: bin/niuma-mongodb-service.exe
-  executable_unix: bin/niuma-mongodb-service
+  executable: bin/ensis-mongodb-service.exe
+  executable_windows: bin/ensis-mongodb-service.exe
+  executable_unix: bin/ensis-mongodb-service
   lang: go
 ipc:
   transport: named_pipe
   transport_windows: named_pipe
   transport_unix: unix_socket
-  address: '\\.\pipe\niuma.mongodb'
-  address_windows: '\\.\pipe\niuma.mongodb'
-  address_unix: '/tmp/niuma.mongodb.sock'
+  address: '\\.\pipe\ensis-ops.mongodb'
+  address_windows: '\\.\pipe\ensis-ops.mongodb'
+  address_unix: '/tmp/ensis-ops.mongodb.sock'
   protocol: length_prefixed_json
 lifecycle:
   startup: lazy

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { RsLoading, RsMonacoEditor, RsSelect, type RsSplitPaneItem } from '@niuma/ui'
+import { RsLoading, RsMonacoEditor, RsSelect, type RsSplitPaneItem } from 'ensis-ui'
 import { QueryResultPanel, SqlQueryIdentity, SqlQueryShell } from '@/modules/database'
 import { useClickHouseQueryPane } from '@/modules/clickhouse/composables/useClickHouseQueryPane'
 

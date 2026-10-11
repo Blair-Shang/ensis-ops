@@ -7,8 +7,8 @@ import (
 	"fmt"
 	"strings"
 
-	"niuma/services/sqlite-service/internal/meta"
-	"niuma/services/sqlite-service/internal/tree"
+	"ensis-ops/services/sqlite-service/internal/meta"
+	"ensis-ops/services/sqlite-service/internal/tree"
 )
 
 const (

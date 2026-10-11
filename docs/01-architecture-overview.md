@@ -6,7 +6,7 @@
 
 ## 1. 项目定位
 
-NiuMa 是一个**全能型 AI 运维桌面平台**，目标能力包括：
+ensis-ops 是一个**全能型 AI 运维桌面平台**，目标能力包括：
 
 | 域 | 能力 |
 |----|------|
@@ -37,7 +37,7 @@ NiuMa 是一个**全能型 AI 运维桌面平台**，目标能力包括：
 ```
 ┌─────────────────────────────────────────────────────────────┐
 │  Layer 4 — Web UI                                           │
-│  Vue 3 / TypeScript · @niuma/ui · xterm · RsCodeEditor      │
+│  Vue 3 / TypeScript · ensis-ui · xterm · RsCodeEditor      │
 │  插件 UI 以路由/动态组件加载                                    │
 └──────────────────────────┬──────────────────────────────────┘
                            │ ① CEF IPC
@@ -101,7 +101,7 @@ NiuMa 是一个**全能型 AI 运维桌面平台**，目标能力包括：
 
 ```
 壳层:       C++17 + CEF Binary Distribution + CMake
-前端:       Vue 3 + TypeScript + Vite + @niuma/ui + Pinia
+前端:       Vue 3 + TypeScript + Vite + ensis-ui + Pinia
 Platform:   **Go**（独立进程，权限/SQLite/IPC 中枢）
 后端服务:   按模块 — Rust / Go / Python / C++ / Java
 契约:       JSON 信封（Named Pipe / UDS；见 docs/03）
@@ -114,9 +114,9 @@ Platform:   **Go**（独立进程，权限/SQLite/IPC 中枢）
 
 ## 5. 与微信架构的对照
 
-微信客户端做法与 NiuMa 设计高度同构：
+微信客户端做法与 ensis-ops 设计高度同构：
 
-| 微信 | NiuMa |
+| 微信 | ensis-ops |
 |------|-------|
 | C++ 跨端逻辑层 | C++ Shell + Platform Core |
 | mmmojo（Mojo IPC + Protobuf） | 应用 IPC（Named Pipe / UDS + JSON 信封） |

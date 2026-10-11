@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { RsCard, RsEmpty, RsIcon, RsLoading, RsTooltip, RsTooltipProvider } from '@niuma/ui'
+import { RsCard, RsEmpty, RsIcon, RsLoading, RsTooltip, RsTooltipProvider } from 'ensis-ui'
 import { computed, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import type { RedisMonitorMetricsResult } from '@/api/types/redis'

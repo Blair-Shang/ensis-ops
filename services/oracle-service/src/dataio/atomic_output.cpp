@@ -8,7 +8,7 @@
 #include <windows.h>
 #endif
 
-namespace niuma::oracle::dataio {
+namespace ensisops::oracle::dataio {
 namespace {
 
 std::atomic<uint64_t> g_output_sequence{0};
@@ -17,7 +17,7 @@ std::filesystem::path TemporaryPath(const std::filesystem::path& target) {
   const auto ticks = std::chrono::steady_clock::now().time_since_epoch().count();
   const auto seq = g_output_sequence.fetch_add(1, std::memory_order_relaxed);
   return target.parent_path() /
-         (target.filename().string() + ".niuma-" + std::to_string(ticks) + "-" +
+         (target.filename().string() + ".ensis-" + std::to_string(ticks) + "-" +
           std::to_string(seq) + ".part");
 }
 
@@ -84,4 +84,4 @@ bool AtomicOutput::Commit(std::string& error) {
   return true;
 }
 
-}  // namespace niuma::oracle::dataio
+}  // namespace ensisops::oracle::dataio

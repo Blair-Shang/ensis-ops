@@ -5,13 +5,13 @@
 #include <string>
 #include <vector>
 
-#if NIUMMA_WITH_CEF
+#if ENSIS_WITH_CEF
 #include "include/cef_browser.h"
 #endif
 
-namespace niuma {
+namespace ensisops {
 
-#if NIUMMA_WITH_CEF
+#if ENSIS_WITH_CEF
 
 /** 已挂载的顶层 CEF 窗口记录 */
 struct WindowRecord {
@@ -95,4 +95,4 @@ class WindowRegistry {
 
 #endif
 
-}  // namespace niuma
+}  // namespace ensisops

@@ -745,7 +745,7 @@ dependencies = [
 ]
 
 [[package]]
-name = "niuma-logutil"
+name = "ensis-logutil"
 version = "0.1.0"
 dependencies = [
  "chrono",
@@ -757,7 +757,7 @@ dependencies = [
 ]
 
 [[package]]
-name = "niuma-netproxy"
+name = "ensis-netproxy"
 version = "0.1.0"
 dependencies = [
  "serde",
@@ -766,11 +766,11 @@ dependencies = [
 ]
 
 [[package]]
-name = "niuma-serviceipc"
+name = "ensis-serviceipc"
 version = "0.1.0"
 dependencies = [
  "async-trait",
- "niuma-logutil",
+ "ensis-logutil",
  "serde",
  "serde_json",
  "thiserror 2.0.18",
@@ -779,11 +779,11 @@ dependencies = [
 ]
 
 [[package]]
-name = "niuma-tunnel"
+name = "ensis-tunnel"
 version = "0.1.0"
 dependencies = [
  "async-trait",
- "niuma-netproxy",
+ "ensis-netproxy",
  "russh",
  "russh-keys",
  "serde",

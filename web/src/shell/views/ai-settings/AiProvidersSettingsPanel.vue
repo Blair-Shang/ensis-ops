@@ -4,8 +4,8 @@
  *
  * 布局对齐「工具组件」：左列表 + 右详情；API Key 经 Vault 加密，从不回显明文。
  */
-import { RsButton, RsEmpty, RsIcon, RsInput, RsSelect, RsTooltip, unwrapSelectEntry } from '@niuma/ui'
-import type { RsSelectModelValue, RsSelectOption } from '@niuma/ui'
+import { RsButton, RsEmpty, RsIcon, RsInput, RsSelect, RsTooltip, unwrapSelectEntry } from 'ensis-ui'
+import type { RsSelectModelValue, RsSelectOption } from 'ensis-ui'
 import { useI18n } from 'vue-i18n'
 import { computed, onMounted, ref, watch } from 'vue'
 import { aiApi } from '@/api/ai'

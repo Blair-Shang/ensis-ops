@@ -15,7 +15,7 @@ import {
   type RsSelectOptions,
   type RsTableColumn,
   type RsTableRowDropPosition,
-} from '@niuma/ui'
+} from 'ensis-ui'
 import { computed, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { clickhouseApi } from '@/api/clickhouse'

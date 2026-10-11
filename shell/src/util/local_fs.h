@@ -3,7 +3,7 @@
 #include <cstddef>
 #include <string>
 
-namespace niuma {
+namespace ensisops {
 
 /** 本地文件系统只读/写入/元数据；不含业务解析。 */
 class LocalFs {
@@ -28,7 +28,7 @@ class LocalFs {
   /** 使用系统默认浏览器打开 http(s) URL。 */
   static bool OpenExternalUrl(const std::string& url, std::string& error);
   /**
-   * 拉起本机安装包（仅允许临时目录 niuma-update/ 下的安装程序）。
+   * 拉起本机安装包（仅允许临时目录 ensis-update/ 下的安装程序）。
    * Windows：.exe 走 Inno /SILENT；.msi 走 /qn。Linux：.run --unattended 且新会话
    * 拉起，其它包 xdg-open。macOS：open。调用方成功后应退出本进程。
    */
@@ -38,4 +38,4 @@ class LocalFs {
   static bool IsAccessiblePath(const std::string& path, std::string& error);
 };
 
-}  // namespace niuma
+}  // namespace ensisops

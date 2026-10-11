@@ -22,9 +22,9 @@
 
 | 层 | 必须独立 | 允许共用（仅框架，无引擎业务） |
 |----|----------|--------------------------------|
-| 进程 / 二进制 | `niuma-oracle-service` 独享 | — |
+| 进程 / 二进制 | `ensis-oracle-service` 独享 | — |
 | manifest / namespace / kind | `oracle` 独享 | — |
-| 实现语言与工程 | `services/oracle-service/`（**C++**，自有 CMake） | `packages/cpp/serviceipc`（`niuma::serviceipc`；与 Go/Rust **字节兼容**） |
+| 实现语言与工程 | `services/oracle-service/`（**C++**，自有 CMake） | `packages/cpp/serviceipc`（`ensisops::serviceipc`；与 Go/Rust **字节兼容**） |
 | Web 业务模块 | `web/src/modules/oracle/`、`api/oracle.ts` | `modules/database/*` 壳、`sql-editor` 编排（只认 family/Cap） |
 | Cap / Probe / 字典 SQL | 只写在本服务 `src/` | — |
 | 厂商 native | 仅本服务加载 `runtime/oracle/`（Instant Client） | — |
@@ -61,7 +61,7 @@
 
 ### 1.1 架构对齐
 
-| 能力层 | 参考 | NiuMa 做法 |
+| 能力层 | 参考 | ensis-ops 做法 |
 |--------|------|-----------|
 | GUI / 对象树 / SQL | SQL Developer / DBeaver / Navicat | Vue + Monaco + **Native 能力服务** |
 | 连接与查询 | Oracle Net + OCI | **C++20 + ODPI-C + Instant Client（thick）** |
@@ -119,7 +119,7 @@
 | `SqlDialect` / `DialectFamily` | 已含 `'oracle'` |
 | 拆句 | `oracleQQuotes`、`plsqlBlocks`；Cap `script.oracle_slash` |
 | `useSqlQueryEditor` | `family === 'oracle'` → `'oracle'` |
-| sql-history key | `niuma.oracle.sqlHistory.*` 前缀已预留 |
+| sql-history key | `ensis-ops.oracle.sqlHistory.*` 前缀已预留 |
 
 落地时补：`defaultOracleProfile()`、Cap 常量、`defaultProfileForFamily('oracle')`、AI 方言规则、Web 模块注册。
 
@@ -213,7 +213,7 @@ flowchart TD
 ┌ Layer 4 ─ Web ────────────────────────────────────────────┐
 │ web/src/modules/oracle/                                    │
 │   连接表单 · 树 Provider · Query · 对象面板                 │
-│   ↑ bridgeInvoke(oracle.*)    ↑ bridgeOnEvent(niuma:event) │
+│   ↑ bridgeInvoke(oracle.*)    ↑ bridgeOnEvent(ensis-ops:event) │
 └───┼───────────────────────────┼────────────────────────────┘
     │ cefQuery                  │ PostMessage
 ┌ Layer 3 ─ C++ Shell ──────────┴────────────────────────────┐
@@ -246,10 +246,10 @@ flowchart TD
 services/
 ├── manifests/oracle-service.yaml
 ├── bin/
-│   ├── niuma-oracle-service.exe      # 构建产物
+│   ├── ensis-oracle-service.exe      # 构建产物
 │   └── runtime/oracle/               # Instant Client + ODPI-C 运行时（不进 git 大文件；LFS 或安装包）
 └── oracle-service/
-    ├── CMakeLists.txt                # add_subdirectory → niuma::serviceipc
+    ├── CMakeLists.txt                # add_subdirectory → ensisops::serviceipc
     ├── README.md
     ├── third_party/
     │   └── odpi/                     # ODPI-C 源码（git submodule 或 vendor）
@@ -264,7 +264,7 @@ services/
     └── tests/
 
 packages/cpp/serviceipc/              # 公共 IPC（勿在各 C++ 服务内复制）
-├── include/niuma/serviceipc/         # frame · server · message
+├── include/ensisops/serviceipc/         # frame · server · message
 └── src/
 
 web/src/modules/oracle/
@@ -297,9 +297,9 @@ Oracle 的 session/query/tree/meta/IO/对象脚本 **适配只写在** `modules/
 1. 每帧：`uint32` 小端长度 + UTF-8 JSON 正文（长度不含 4 字节头）。  
 2. 请求：`{ "id", "method", "params" }`（platform 已剥 `oracle.` 前缀，method 为 `session.open` 等）。  
 3. 响应：`{ "id", "result" }` 或 `{ "id", "error": { "code", "message" } }`。  
-4. 事件（后续）：独立连接或同管道约定帧，形状对齐其它服务 `niuma:event`。
+4. 事件（后续）：独立连接或同管道约定帧，形状对齐其它服务 `ensis-ops:event`。
 
-Windows：Named Pipe `\\.\pipe\niuma.oracle`；Unix：UDS `/tmp/niuma.oracle.sock`。
+Windows：Named Pipe `\\.\pipe\ensis-ops.oracle`；Unix：UDS `/tmp/ensis-ops.oracle.sock`。
 
 ---
 
@@ -315,7 +315,7 @@ Windows：Named Pipe `\\.\pipe\niuma.oracle`；Unix：UDS `/tmp/niuma.oracle.soc
 | sid | — | 与 `service_name` 二选一；并存时 **service_name 优先** |
 | schema | 空 | 默认 `ALTER SESSION SET CURRENT_SCHEMA` |
 | role | `normal` | `normal` / `sysdba` / `sysoper`（ODPI-C auth mode） |
-| appName | `NiuMa` | `dpiConn_setClientInfo` / module |
+| appName | `ensis-ops` | `dpiConn_setClientInfo` / module |
 | ssl_mode | `disable` | `disable`（TCP）/ `require`（TCPS）/ `verify-full`（TCPS + Wallet + DN 校验） |
 | wallet_path / wallet_password | 空 | `verify-full` 必填路径；优先自动登录钱包（`cwallet.sso`） |
 | tunnel | SSH 跳板 | 复用 platform 公共 tunnel |
@@ -472,7 +472,7 @@ IO 约束：
 ## 8. manifest 草案
 
 ```yaml
-id: com.niuma.oracle
+id: com.ensisops.oracle
 name: Oracle Service
 version: 0.1.0
 bridge:
@@ -484,22 +484,22 @@ session:
     - session.open
     - session.test
 runtime:
-  executable: bin/niuma-oracle-service.exe
-  executable_windows: bin/niuma-oracle-service.exe
-  executable_unix: bin/niuma-oracle-service
+  executable: bin/ensis-oracle-service.exe
+  executable_windows: bin/ensis-oracle-service.exe
+  executable_unix: bin/ensis-oracle-service
   lang: cpp
   # Instant Client 旁路目录（相对 services/）；进程启动时设置 OCI DLL 搜索路径
   native_runtime: bin/runtime/oracle
   env_from_component:
     - name: ORACLE_HOME
-      bundle_id: com.niuma.components.oracle-native
+      bundle_id: com.ensisops.components.oracle-native
       tool_id: instant-client
       as_directory: true
 ipc:
   transport_windows: named_pipe
   transport_unix: unix_socket
-  address_windows: '\\.\pipe\niuma.oracle'
-  address_unix: '/tmp/niuma.oracle.sock'
+  address_windows: '\\.\pipe\ensis-ops.oracle'
+  address_unix: '/tmp/ensis-ops.oracle.sock'
   protocol: length_prefixed_json
 lifecycle:
   startup: lazy
@@ -616,7 +616,7 @@ permissions: []
 |------|------|------|
 | v0.1 | 2026-07-26 | 初稿：锁定 C++20 + ODPI-C + Instant Client；独立服务/kind；Cap/树/分期；禁止与达梦合流及 Go/JDBC 默认路径 |
 | v0.2 | 2026-07-26 | 后端 P0：`oracle-service` CMake/IPC/`session.*`/`query.*`/manifest/构建脚本；文档交叉引用 |
-| v0.3 | 2026-07-26 | IPC 抽至 `packages/cpp/serviceipc`（`niuma::serviceipc`），oracle-service 仅业务 |
+| v0.3 | 2026-07-26 | IPC 抽至 `packages/cpp/serviceipc`（`ensisops::serviceipc`），oracle-service 仅业务 |
 | v0.4 | 2026-07-26 | 查询 RAII/`hasMore`/超时取消；`tree.*`/`catalog.*`；Web P0 模块注册与 Query |
 | v0.5 | 2026-07-26 | 连接树；`meta.*`/`tx.*`；Browse/DDL；manifest 凭据注入扩展 |
 | v0.6 | 2026-07-26 | packages/ObjectScript；LOB/`loadLob`；Explain；Monitor |

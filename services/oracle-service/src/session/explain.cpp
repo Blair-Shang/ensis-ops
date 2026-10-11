@@ -7,7 +7,7 @@
 #include <chrono>
 #include <cctype>
 
-namespace niuma::oracle::session {
+namespace ensisops::oracle::session {
 namespace {
 
 std::string Trim(std::string s) {
@@ -62,4 +62,4 @@ nlohmann::json ExplainQuery(Session& session, const QueryExecParams& params, std
   return result;
 }
 
-}  // namespace niuma::oracle::session
+}  // namespace ensisops::oracle::session

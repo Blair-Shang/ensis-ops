@@ -1,4 +1,4 @@
-# 生成 NiuMa 原创剑形图标 → PNG / ICO / favicon 资源
+# 生成 ensis-ops 原创剑形图标 → PNG / ICO / favicon 资源
 param(
     [string]$BrandDir = "$PSScriptRoot\..\..\..\..\assets\brand",
     [string]$ShellIco = "$PSScriptRoot\..\..\..\..\shell\resources\app.ico",
@@ -18,7 +18,7 @@ using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Drawing.Imaging;
 
-public static class NiuMaIconRenderer
+public static class EnsisIconRenderer
 {
     static readonly Color AuroraA = Color.FromArgb(255, 0x5a, 0xc8, 0xfa);
     static readonly Color AuroraB = Color.FromArgb(255, 0xbf, 0x5a, 0xf2);
@@ -142,7 +142,7 @@ function Save-Png([System.Drawing.Bitmap]$bmp, [string]$path) {
 }
 
 function New-SquareIcon([int]$size) {
-    return [NiuMaIconRenderer]::Render($size)
+    return [EnsisIconRenderer]::Render($size)
 }
 
 if (-not (Test-Path $BrandDir)) {

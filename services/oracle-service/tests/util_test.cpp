@@ -17,7 +17,7 @@ static int failures = 0;
   } while (0)
 
 int main() {
-  using namespace niuma::oracle;
+  using namespace ensisops::oracle;
 
   EXPECT(util::QuoteIdent("SCOTT") == "\"SCOTT\"");
   EXPECT(util::QuoteIdent("A\"B") == "\"A\"\"B\"");

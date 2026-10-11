@@ -2,7 +2,7 @@
 /**
  * API 侧栏：API 管理树常驻，环境配置开 Shell Tab，历史同栏展开。
  */
-import { RsButton, RsConfirmDialog, RsContextMenu, RsIcon, RsInput, useRsToast, type RsContextMenuItem } from '@niuma/ui'
+import { RsButton, RsConfirmDialog, RsContextMenu, RsIcon, RsInput, useRsToast, type RsContextMenuItem } from 'ensis-ui'
 import { computed, defineAsyncComponent, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useApiTesterStore } from '../stores/api-tester'

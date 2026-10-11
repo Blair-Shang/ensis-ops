@@ -2,7 +2,7 @@
  * 方言无关的 SQL 查询编辑器行为：选区、格式化 / 压缩、剪贴板、快捷键、补全作用域。
  * 方言差异通过 getDialect / prepareLanguage 注入，便于 MySQL / Vastbase / Oracle / PG 复用。
  */
-import type { RsMonacoEditorExpose } from '@niuma/ui'
+import type { RsMonacoEditorExpose } from 'ensis-ui'
 import { computed, nextTick, onUnmounted, ref, watch, type Ref } from 'vue'
 import {
   claimSuggestScope,

@@ -6,9 +6,9 @@ import (
 	"fmt"
 	"strings"
 
-	"niuma/services/kingbase-service/internal/meta"
-	"niuma/services/kingbase-service/internal/session"
-	"niuma/services/kingbase-service/internal/tree"
+	"ensis-ops/services/kingbase-service/internal/meta"
+	"ensis-ops/services/kingbase-service/internal/session"
+	"ensis-ops/services/kingbase-service/internal/tree"
 )
 
 const (

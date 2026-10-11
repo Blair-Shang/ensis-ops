@@ -18,7 +18,7 @@
  *
  * @see docs/09-web-app-shell.md 第 7 节「模块工作区约定」
  */
-import { RsIcon } from '@niuma/ui'
+import { RsIcon } from 'ensis-ui'
 import { onBeforeUnmount, ref } from 'vue'
 
 const props = withDefaults(

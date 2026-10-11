@@ -1,4 +1,4 @@
-# NiuMa 插件包
+# ensis-ops 插件包
 
 可插拔运维模块与 IDE 扩展的**安装单元**，由 Platform 管理生命周期，Shell 经 `app://plugins/` 提供静态资源，Web 经 Extension Registry 注册路由。
 

@@ -6,7 +6,7 @@ import (
 	"fmt"
 	"strings"
 
-	"niuma/services/sqlite-service/internal/catalog"
+	"ensis-ops/services/sqlite-service/internal/catalog"
 )
 
 type catalogListParams struct {

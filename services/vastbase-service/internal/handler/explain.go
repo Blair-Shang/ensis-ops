@@ -7,9 +7,9 @@ import (
 	"strings"
 	"time"
 
-	"niuma/pkg/common/id"
-	"niuma/services/vastbase-service/internal/explainrewrite"
-	"niuma/services/vastbase-service/internal/session"
+	"ensis-ops/pkg/common/id"
+	"ensis-ops/services/vastbase-service/internal/explainrewrite"
+	"ensis-ops/services/vastbase-service/internal/session"
 )
 
 type queryExplainParams struct {

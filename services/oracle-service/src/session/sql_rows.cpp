@@ -5,7 +5,7 @@
 
 #include <cstring>
 
-namespace niuma::oracle::session {
+namespace ensisops::oracle::session {
 namespace {
 
 std::string DpiError(dpiContext* ctx) {
@@ -95,4 +95,4 @@ bool ExecStringRows(Session& session, const std::string& sql, int limit_plus_one
   return true;
 }
 
-}  // namespace niuma::oracle::session
+}  // namespace ensisops::oracle::session

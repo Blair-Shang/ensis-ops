@@ -27,7 +27,7 @@ extern char** environ;
 
 namespace fs = std::filesystem;
 
-namespace niuma {
+namespace ensisops {
 
 namespace {
 
@@ -457,11 +457,11 @@ bool PathUnderUpdateDir(const std::string& path, std::string& error) {
     error = "temp path unavailable";
     return false;
   }
-  std::string root = std::string(tmp) + "niuma-update";
+  std::string root = std::string(tmp) + "ensis-update";
 #else
   const char* tmp = std::getenv("TMPDIR");
   if (!tmp || !*tmp) tmp = "/tmp";
-  std::string root = std::string(tmp) + "/niuma-update";
+  std::string root = std::string(tmp) + "/ensis-update";
 #endif
   // 规范化比较：要求 path 以 root + 分隔符开头
   auto norm = [](std::string s) {
@@ -597,4 +597,4 @@ bool LocalFs::LaunchInstaller(const std::string& path, std::string& error) {
 #endif
 }
 
-}  // namespace niuma
+}  // namespace ensisops

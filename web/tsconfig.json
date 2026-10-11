@@ -14,13 +14,13 @@
     "baseUrl": ".",
     "paths": {
       "@/*": ["./src/*"],
-      "@niuma/ui": [
-        "./node_modules/@niuma/ui/src/index.ts",
-        "../node_modules/@niuma/ui/src/index.ts"
+      "ensis-ui": [
+        "./node_modules/ensis-ui/src/index.ts",
+        "../node_modules/ensis-ui/src/index.ts"
       ],
-      "@niuma/ui/*": [
-        "./node_modules/@niuma/ui/*",
-        "../node_modules/@niuma/ui/*"
+      "ensis-ui/*": [
+        "./node_modules/ensis-ui/*",
+        "../node_modules/ensis-ui/*"
       ]
     },
     "types": ["vite/client"]

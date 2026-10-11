@@ -4,7 +4,7 @@ import (
 	"strings"
 	"testing"
 
-	"niuma/platform/internal/store"
+	"ensis-ops/platform/internal/store"
 )
 
 func TestNormalizeContext_capabilitiesDialect(t *testing.T) {

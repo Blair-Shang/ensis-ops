@@ -67,7 +67,7 @@ func dumpSql(
 	}}
 
 	header := fmt.Sprintf(
-		"-- NiuMa MySQL dump\n-- format: niuma-mysql-dump/4\n-- database: %s\n-- generated: %s\n-- mode: %s\n-- dropIfExists: %v\n-- truncateBeforeData: %v\n-- includeCreateDatabase: %v\n-- includeProcedures: %v\n-- includeFunctions: %v\n-- includeTriggers: %v\n-- includeEvents: %v\n-- note: object names are unqualified so restore can target another database\n\nSET NAMES utf8mb4;\nSET FOREIGN_KEY_CHECKS=0;\nSET SQL_MODE='NO_AUTO_VALUE_ON_ZERO';\n\n",
+		"-- ensis-ops MySQL dump\n-- format: ensis-mysql-dump/4\n-- database: %s\n-- generated: %s\n-- mode: %s\n-- dropIfExists: %v\n-- truncateBeforeData: %v\n-- includeCreateDatabase: %v\n-- includeProcedures: %v\n-- includeFunctions: %v\n-- includeTriggers: %v\n-- includeEvents: %v\n-- note: object names are unqualified so restore can target another database\n\nSET NAMES utf8mb4;\nSET FOREIGN_KEY_CHECKS=0;\nSET SQL_MODE='NO_AUTO_VALUE_ON_ZERO';\n\n",
 		params.Database,
 		time.Now().UTC().Format(time.RFC3339),
 		params.Mode,

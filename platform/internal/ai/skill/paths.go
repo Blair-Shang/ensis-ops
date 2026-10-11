@@ -9,17 +9,17 @@ import (
 
 // SkillsRootDir 返回本机已安装 Skill 包根目录。
 //
-// Windows：%LOCALAPPDATA%\NiuMa\skills
-// 其他：~/.niuma/skills；无法确定用户目录时回退到可执行文件同级 skills。
+// Windows：%LOCALAPPDATA%\ensis-ops\skills
+// 其他：~/.ensis-ops/skills；无法确定用户目录时回退到可执行文件同级 skills。
 func SkillsRootDir() (string, error) {
 	if runtime.GOOS == "windows" {
 		if local := os.Getenv("LOCALAPPDATA"); local != "" {
-			return filepath.Join(local, "NiuMa", "skills"), nil
+			return filepath.Join(local, "ensis-ops", "skills"), nil
 		}
 		return skillsFallbackDir()
 	}
 	if home, err := os.UserHomeDir(); err == nil && home != "" {
-		return filepath.Join(home, ".niuma", "skills"), nil
+		return filepath.Join(home, ".ensis-ops", "skills"), nil
 	}
 	return skillsFallbackDir()
 }

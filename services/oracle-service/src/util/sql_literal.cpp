@@ -1,6 +1,6 @@
 #include "util/sql_literal.hpp"
 
-namespace niuma::oracle::util {
+namespace ensisops::oracle::util {
 
 std::string QuoteLiteral(const std::string& value) {
   std::string out;
@@ -38,4 +38,4 @@ int ClampListLimit(int limit, int def, int max) {
   return limit > max ? max : limit;
 }
 
-}  // namespace niuma::oracle::util
+}  // namespace ensisops::oracle::util

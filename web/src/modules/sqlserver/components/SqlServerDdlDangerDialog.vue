@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { RsConfirmDialog } from '@niuma/ui'
+import { RsConfirmDialog } from 'ensis-ui'
 import { computed } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useSqlServerDdlDialog } from '@/modules/sqlserver/composables/useSqlServerDdlDialog'

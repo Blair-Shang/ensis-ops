@@ -10,11 +10,11 @@ import (
 	"time"
 	"unicode/utf8"
 
-	"niuma/services/sqlserver-service/internal/meta"
-	"niuma/services/sqlserver-service/internal/tree"
+	"ensis-ops/services/sqlserver-service/internal/meta"
+	"ensis-ops/services/sqlserver-service/internal/tree"
 )
 
-const dumpFormatVersion = "niuma-sqlserver-dump/2"
+const dumpFormatVersion = "ensis-sqlserver-dump/2"
 
 type dumpTarget struct {
 	Schema string
@@ -58,7 +58,7 @@ func dumpSql(ctx context.Context, db *sql.DB, taskID string, m *Manager, params 
 
 	schemaField, schemasLine := dumpSchemaHeaderFields(params, schemas)
 	header := fmt.Sprintf(
-		"-- NiuMa SQL Server dump\n-- format: %s\n-- database: %s\n-- schema: %s\n%s-- generated: %s\n-- mode: %s\n-- dropIfExists: %v\n-- truncateBeforeData: %v\n-- excludeSystem: %v\n-- createSchema: %v\n-- note: GO is a client batch separator; do not send GO to the server\n\nSET NOCOUNT ON;\nSET XACT_ABORT ON;\nGO\nUSE %s;\nGO\n\n",
+		"-- ensis-ops SQL Server dump\n-- format: %s\n-- database: %s\n-- schema: %s\n%s-- generated: %s\n-- mode: %s\n-- dropIfExists: %v\n-- truncateBeforeData: %v\n-- excludeSystem: %v\n-- createSchema: %v\n-- note: GO is a client batch separator; do not send GO to the server\n\nSET NOCOUNT ON;\nSET XACT_ABORT ON;\nGO\nUSE %s;\nGO\n\n",
 		dumpFormatVersion,
 		params.Database,
 		schemaField,

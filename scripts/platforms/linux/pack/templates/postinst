@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-SANDBOX="/opt/niuma/chrome-sandbox"
+SANDBOX="/opt/ensis-ops/chrome-sandbox"
 if [[ -f "$SANDBOX" ]]; then
   chown root:root "$SANDBOX" >/dev/null 2>&1 || true
   chmod 4755 "$SANDBOX" >/dev/null 2>&1 || true

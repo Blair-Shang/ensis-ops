@@ -7,7 +7,7 @@ import (
 	"fmt"
 	"strings"
 
-	"niuma/pkg/tunnel"
+	"ensis-ops/pkg/tunnel"
 )
 
 // 连接类能力统一的 session 方法名（Web 与 service 内部一致，经 namespace 前缀区分）。

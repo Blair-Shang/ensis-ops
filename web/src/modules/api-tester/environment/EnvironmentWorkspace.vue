@@ -2,7 +2,7 @@
 /**
  * 环境配置工作台。列表选中编辑；请求栏的当前环境由详情「设为当前」切换。
  */
-import { RsButton, RsIcon, RsInput, useRsToast } from '@niuma/ui'
+import { RsButton, RsIcon, RsInput, useRsToast } from 'ensis-ui'
 import { useI18n } from 'vue-i18n'
 import { pickJsonFile } from '../utils/collection-io'
 import { importPostmanEnvironment } from '../http/import/postman-env'

@@ -2,7 +2,7 @@
 
 #include <cctype>
 
-namespace niuma::oracle::util {
+namespace ensisops::oracle::util {
 
 std::string QuoteIdent(const std::string& ident) {
   if (ident.empty()) {
@@ -40,4 +40,4 @@ bool IsSafeIdent(const std::string& ident) {
   return true;
 }
 
-}  // namespace niuma::oracle::util
+}  // namespace ensisops::oracle::util

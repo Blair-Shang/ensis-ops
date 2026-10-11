@@ -2,10 +2,10 @@
 
 #include <string>
 
-namespace niuma {
+namespace ensisops {
 
 /**
- * 用户数据目录（插件启用状态等），如 %LOCALAPPDATA%\\NiuMa\\data\\
+ * 用户数据目录（插件启用状态等），如 %LOCALAPPDATA%\\ensis-ops\\data\\
  */
 std::string GetUserDataDir();
 
@@ -27,4 +27,4 @@ bool IsPluginEnabled(const std::string& plugin_id);
  */
 bool SetPluginEnabled(const std::string& plugin_id, bool enabled, std::string& error);
 
-}  // namespace niuma
+}  // namespace ensisops

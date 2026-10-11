@@ -14,7 +14,7 @@ body,
   --nm-sidebar-w: 13.5rem;
   --nm-ai-panel-w: 26rem;
   --nm-tabbar-h: 2.125rem;
-  /* Shell 区域背景 — 跟随 niuma-ui --rs-* 分层（frame < 内容 < 悬浮层） */
+  /* Shell 区域背景 — 跟随 ensis-ui --rs-* 分层（frame < 内容 < 悬浮层） */
   --nm-frame-bg: var(--rs-bg);
   --nm-editor-bg: var(--rs-surface);
   --nm-elevated-bg: var(--rs-surface-elevated);

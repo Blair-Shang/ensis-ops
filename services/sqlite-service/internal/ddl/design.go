@@ -7,7 +7,7 @@ import (
 	"strings"
 	"time"
 
-	"niuma/services/sqlite-service/internal/meta"
+	"ensis-ops/services/sqlite-service/internal/meta"
 )
 
 // requiresRebuild 判断该操作是否无法用原生 ALTER 完成。
@@ -308,7 +308,7 @@ func buildRebuildSQL(ctx context.Context, db *sql.DB, schema, table string, ops 
 		return nil, fmt.Errorf("sqlite: rebuild would leave no columns")
 	}
 
-	tmpName := "__niuma_rebuild_" + table
+	tmpName := "__ensis_rebuild_" + table
 	createParams := CreateTableParams{
 		Schema: schema,
 		Name:   tmpName,

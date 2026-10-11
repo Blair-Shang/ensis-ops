@@ -2,14 +2,14 @@
 
 #include <cstdint>
 
-#ifdef NIUMA_OS_WIN
+#ifdef ENSIS_OS_WIN
 #ifndef WIN32_LEAN_AND_MEAN
 #define WIN32_LEAN_AND_MEAN
 #endif
 #include <windows.h>
 #endif
 
-namespace niuma::oracle::util {
+namespace ensisops::oracle::util {
 namespace {
 
 bool DecodeUtf8(std::string_view s, bool replace, std::string* out) {
@@ -92,7 +92,7 @@ bool DecodeUtf8(std::string_view s, bool replace, std::string* out) {
   return true;
 }
 
-#ifdef NIUMA_OS_WIN
+#ifdef ENSIS_OS_WIN
 std::string GbkToUtf8(std::string_view gbk) {
   if (gbk.empty()) {
     return {};
@@ -138,7 +138,7 @@ std::string EnsureUtf8(std::string_view s) {
   if (IsValidUtf8(s)) {
     return std::string(s);
   }
-#ifdef NIUMA_OS_WIN
+#ifdef ENSIS_OS_WIN
   std::string from_gbk = GbkToUtf8(s);
   if (!from_gbk.empty() && IsValidUtf8(from_gbk)) {
     return from_gbk;
@@ -149,4 +149,4 @@ std::string EnsureUtf8(std::string_view s) {
   return replaced;
 }
 
-}  // namespace niuma::oracle::util
+}  // namespace ensisops::oracle::util

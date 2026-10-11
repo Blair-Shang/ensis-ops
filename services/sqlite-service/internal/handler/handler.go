@@ -7,15 +7,15 @@ import (
 	"errors"
 	"fmt"
 
-	"niuma/pkg/serviceipc/envelope"
-	"niuma/pkg/serviceipc/event"
-	"niuma/pkg/sqllsp"
+	"ensis-ops/pkg/serviceipc/envelope"
+	"ensis-ops/pkg/serviceipc/event"
+	"ensis-ops/pkg/sqllsp"
 
-	"niuma/services/sqlite-service/internal/dataio"
-	"niuma/services/sqlite-service/internal/eventpub"
-	"niuma/services/sqlite-service/internal/idgen"
-	"niuma/services/sqlite-service/internal/session"
-	"niuma/services/sqlite-service/internal/sqliteparser"
+	"ensis-ops/services/sqlite-service/internal/dataio"
+	"ensis-ops/services/sqlite-service/internal/eventpub"
+	"ensis-ops/services/sqlite-service/internal/idgen"
+	"ensis-ops/services/sqlite-service/internal/session"
+	"ensis-ops/services/sqlite-service/internal/sqliteparser"
 )
 
 const (

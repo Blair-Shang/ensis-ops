@@ -1,12 +1,12 @@
-#include <niuma/serviceipc/server.hpp>
+#include <ensisops/serviceipc/server.hpp>
 
-#include <niuma/serviceipc/frame.hpp>
-#include <niuma/serviceipc/message.hpp>
+#include <ensisops/serviceipc/frame.hpp>
+#include <ensisops/serviceipc/message.hpp>
 
 #include <iostream>
 #include <thread>
 
-#ifdef NIUMA_SERVICEIPC_WIN
+#ifdef ENSIS_SERVICEIPC_WIN
 #ifndef WIN32_LEAN_AND_MEAN
 #define WIN32_LEAN_AND_MEAN
 #endif
@@ -19,7 +19,7 @@
 #include <cstring>
 #endif
 
-namespace niuma::serviceipc {
+namespace ensisops::serviceipc {
 namespace {
 
 void HandleBufferedConnection(
@@ -49,7 +49,7 @@ void HandleBufferedConnection(
   }
 }
 
-#ifdef NIUMA_SERVICEIPC_WIN
+#ifdef ENSIS_SERVICEIPC_WIN
 
 std::wstring WidenPipeName(const std::string& address) {
   int n = MultiByteToWideChar(CP_UTF8, 0, address.c_str(), -1, nullptr, 0);
@@ -104,7 +104,7 @@ Server::~Server() { Stop(); }
 
 void Server::Stop() { stopping_.store(true); }
 
-#ifdef NIUMA_SERVICEIPC_WIN
+#ifdef ENSIS_SERVICEIPC_WIN
 
 int Server::Serve() {
   const auto pipe_name = WidenPipeName(address_);
@@ -207,4 +207,4 @@ int Server::Serve() {
 
 #endif
 
-}  // namespace niuma::serviceipc
+}  // namespace ensisops::serviceipc

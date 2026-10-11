@@ -19,7 +19,7 @@
 
 ### 参考谱系
 
-| 来源 | 吸收 | NiuMa 落地 |
+| 来源 | 吸收 | ensis-ops 落地 |
 |------|------|------------|
 | macOS HIG | systemBlue / label / groupedBackground | 明暗色板、输入框描边、功能色 |
 | Linear / Vercel | 暗色分层、半透明描边 | `surface` 栈、导航激活态 |
@@ -35,20 +35,20 @@
 
 | 使用 | 禁止 |
 |------|------|
-| `@niuma/ui` 的 `Rs*` 组件 | Element Plus、Ant Design Vue、Tailwind |
+| `ensis-ui` 的 `Rs*` 组件 | Element Plus、Ant Design Vue、Tailwind |
 | `var(--rs-*)` design token | 硬编码 `#hex`、`rgb()` |
 | BEM（`.nm-*`）+ `--rs-*` | 超长工具类字符串、`:deep(.rs-*)` 改高度/圆角 |
 | `lucide-vue-next` 图标 | Element 图标集 |
 | `vue-sonner`（经 `RsToaster`） | `ElMessage` |
-| Reka UI（**仅** niuma-ui 内部） | 业务层 `import 'reka-ui'` |
+| Reka UI（**仅** ensis-ui 内部） | 业务层 `import 'reka-ui'` |
 
 ### 组件封装原则
 
 ```
 Reka UI（无障碍/键盘/焦点）
-    ↓ 仅在 niuma-ui 内
+    ↓ 仅在 ensis-ui 内
 Rs* 组件（样式 100% --rs-* token 驱动）
-    ↓ 业务只从 @niuma/ui 包根具名导入
+    ↓ 业务只从 ensis-ui 包根具名导入
 web/、modules/
 ```
 
@@ -56,7 +56,7 @@ web/、modules/
 
 ## 3. 颜色与 Token
 
-**权威来源**：`niuma-ui` 的 `styles.css`（`[data-rs-theme]` + `--rs-*`）。宿主只 `import '@niuma/ui/styles.css'`，再用 `tokens.css` / `brand.css` 覆盖同名变量。接入约定见 niuma-ui `docs/consumers.md` 与文档站。
+**权威来源**：`ensis-ui` 的 `styles.css`（`[data-rs-theme]` + `--rs-*`）。宿主只 `import 'ensis-ui/styles.css'`，再用 `tokens.css` / `brand.css` 覆盖同名变量。接入约定见 ensis-ui `docs/consumers.md` 与文档站。
 
 禁止在业务代码硬编码颜色；只读 CSS 变量：
 
@@ -76,7 +76,7 @@ web/、modules/
 
 - JS **只切换** `data-rs-theme="light|dark"`，不改 token 定义
 - 使用 `RsConfigProvider` 或 `applyTheme()` / `setTheme()`
-- NiuMa 品牌覆盖：`web/src/styles/brand.css` 覆盖同名 `--rs-*`（在 `niuma-ui/styles.css` **之后** import）。禁止新开 `--el-*` / `--niuma-*` 色板。
+- ensis-ops 品牌覆盖：`web/src/styles/brand.css` 覆盖同名 `--rs-*`（在 `ensis-ui/styles.css` **之后** import）。禁止新开 `--el-*` / `--ensis-*` 色板。
 
 ### 亮色 / 暗色基准（macOS system）
 
@@ -200,7 +200,7 @@ web/、modules/
 
 可插拔模块（`web/src/modules/*`）必须：
 
-1. **只使用** `@niuma/ui` 组件与 `--rs-*` token（从包根具名导入）
+1. **只使用** `ensis-ui` 组件与 `--rs-*` token（从包根具名导入）
 2. **禁止**自带 Element/Ant、Tailwind 或第二套 CSS 框架
 3. **禁止** `import 'reka-ui'`
 4. 模块 UI 由 Shell 的工作区挂载，不改变全局 token 定义
@@ -221,7 +221,7 @@ web/、modules/
 
 ## 11. 检查清单
 
-1. 是否只 import `@niuma/ui`，未引入 Element/Ant/Tailwind？
+1. 是否只 import `ensis-ui`，未引入 Element/Ant/Tailwind？
 2. 颜色 / 字号 / 间距是否全部 `var(--rs-*)`？
 3. 双主题（light/dark）目测是否像 Linear/Vercel 工具风？
 4. 危险操作是否有 `RsConfirmDialog`？

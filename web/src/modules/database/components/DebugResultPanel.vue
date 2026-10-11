@@ -3,7 +3,7 @@
  * 调试辅助结果区：多结果 Tab + 元信息条 + 结果表。
  * 单行（常见 OUT 回显）转置为「出参标题 | 出参值」；多行仍用宽表。
  */
-import { RsEmpty, RsIcon, RsTable, RsTabs, type RsTabItem, type RsTableColumn } from '@niuma/ui'
+import { RsEmpty, RsIcon, RsTable, RsTabs, type RsTabItem, type RsTableColumn } from 'ensis-ui'
 import { computed } from 'vue'
 import type { DebugResultGrid, DebugResultPanelLabels } from '../types/debug-result'
 

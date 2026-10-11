@@ -17,8 +17,8 @@ import (
 	"github.com/jackc/pgx/v5/pgconn"
 	"github.com/jackc/pgx/v5/pgxpool"
 
-	"niuma/pkg/netproxy"
-	"niuma/pkg/tunnel"
+	"ensis-ops/pkg/netproxy"
+	"ensis-ops/pkg/tunnel"
 )
 
 const (
@@ -28,7 +28,7 @@ const (
 	defaultTimeoutSeconds = 10
 	defaultDatabase       = "postgres"
 	defaultSSLMode        = "prefer"
-	defaultAppName        = "niuma-vastbase"
+	defaultAppName        = "ensis-vastbase"
 )
 
 // ConnectOptions 与 Web connection_options JSON 对齐。

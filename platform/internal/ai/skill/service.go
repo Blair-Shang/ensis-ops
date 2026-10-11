@@ -5,9 +5,9 @@ import (
 	"fmt"
 	"strings"
 
-	"niuma/platform/internal/ai/mcp"
-	"niuma/platform/internal/idgen"
-	"niuma/platform/internal/store"
+	"ensis-ops/platform/internal/ai/mcp"
+	"ensis-ops/platform/internal/idgen"
+	"ensis-ops/platform/internal/store"
 )
 
 // API 管理 Skill 模板与 Skill 包安装。

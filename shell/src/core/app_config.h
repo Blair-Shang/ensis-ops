@@ -1,6 +1,6 @@
 #pragma once
 
-namespace niuma {
+namespace ensisops {
 
 /** 应用级配置（版本等）。构建期由 CMake / version:sync 注入宏。 */
 class AppConfig {
@@ -14,4 +14,4 @@ class AppConfig {
   static const char* BuildId();
 };
 
-}  // namespace niuma
+}  // namespace ensisops

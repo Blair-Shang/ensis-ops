@@ -1,4 +1,4 @@
-id: com.niuma.mysql
+id: com.ensisops.mysql
 name: MySQL Service
 version: 0.1.0
 bridge:
@@ -42,17 +42,17 @@ session:
     - tools.dump
     - tools.restore
 runtime:
-  executable: bin/niuma-mysql-service.exe
-  executable_windows: bin/niuma-mysql-service.exe
-  executable_unix: bin/niuma-mysql-service
+  executable: bin/ensis-mysql-service.exe
+  executable_windows: bin/ensis-mysql-service.exe
+  executable_unix: bin/ensis-mysql-service
   lang: go
 ipc:
   transport: named_pipe
   transport_windows: named_pipe
   transport_unix: unix_socket
-  address: '\\.\pipe\niuma.mysql'
-  address_windows: '\\.\pipe\niuma.mysql'
-  address_unix: '/tmp/niuma.mysql.sock'
+  address: '\\.\pipe\ensis-ops.mysql'
+  address_windows: '\\.\pipe\ensis-ops.mysql'
+  address_unix: '/tmp/ensis-ops.mysql.sock'
   protocol: length_prefixed_json
 lifecycle:
   startup: lazy

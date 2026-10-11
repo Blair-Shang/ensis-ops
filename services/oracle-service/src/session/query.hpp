@@ -5,7 +5,7 @@
 #include <nlohmann/json.hpp>
 #include <string>
 
-namespace niuma::oracle::session {
+namespace ensisops::oracle::session {
 
 struct QueryExecParams {
   std::string session_id;
@@ -23,4 +23,4 @@ nlohmann::json FetchMore(Session& session, const std::string& result_set_id, int
 bool CloseResultSet(Session& session, const std::string& result_set_id);
 bool CancelQuery(Session& session, const std::string& request_id);
 
-}  // namespace niuma::oracle::session
+}  // namespace ensisops::oracle::session

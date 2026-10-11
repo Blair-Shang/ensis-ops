@@ -6,9 +6,9 @@ import (
 	"fmt"
 	"strings"
 
-	"niuma/services/postgres-service/internal/meta"
-	"niuma/services/postgres-service/internal/session"
-	"niuma/services/postgres-service/internal/tree"
+	"ensis-ops/services/postgres-service/internal/meta"
+	"ensis-ops/services/postgres-service/internal/session"
+	"ensis-ops/services/postgres-service/internal/tree"
 )
 
 const (

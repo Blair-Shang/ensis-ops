@@ -4,7 +4,7 @@ import (
 	"log/slog"
 	"strings"
 
-	"niuma/pkg/serviceipc/envelope"
+	"ensis-ops/pkg/serviceipc/envelope"
 )
 
 // logDispatchError 记录 IPC 分发失败，带上 id / traceId / errorCode。

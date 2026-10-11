@@ -8,7 +8,7 @@
 ## 1. 顶层概览
 
 ```
-NiuMa/
+ensis-ops/
 ├── docs/                        # 设计文档
 ├── proto/                       # 非当前契约占位（勿加 gRPC .proto）
 ├── scripts/                     # 构建、打包、开发脚本
@@ -18,8 +18,8 @@ NiuMa/
 │   ├── go/serviceipc/           # IPC 信封（权威）
 │   ├── go/logutil/              # 落盘日志 + observe.jsonl（无 APM）
 │   ├── cpp/serviceipc/
-│   ├── rust/niuma-serviceipc/
-│   └── ui/                      # @niuma/ui 组件库
+│   ├── rust/ensis-serviceipc/
+│   └── ui/                      # ensis-ui 组件库
 │
 ├── web/                         # Layer 4 — CEF 内 Vue 主应用
 ├── shell/                       # Layer 3 — C++ CEF 壳
@@ -52,7 +52,7 @@ web/src/
 ├── extensions/                  # ★ 扩展体系（Registry / API / 类型）
 │   ├── types/                   # manifest、contribution、module 类型
 │   ├── registry/                # 注册表：builtin + dynamic
-│   ├── api/                     # niuma.* 扩展 API 门面（受控）
+│   ├── api/                     # ensis-ops.* 扩展 API 门面（受控）
 │   └── contributions/           # commands / views 运行时（规划）
 │
 ├── modules/                     # 内置模块实现（等同第一方插件）
@@ -93,9 +93,9 @@ plugins/
 
 | 平台 | 路径 |
 |------|------|
-| Windows | `%LOCALAPPDATA%\NiuMa\plugins\` |
-| macOS | `~/Library/Application Support/NiuMa/plugins/` |
-| Linux | `~/.local/share/niuma/plugins/` |
+| Windows | `%LOCALAPPDATA%\ensis-ops\plugins\` |
+| macOS | `~/Library/Application Support/ensis-ops/plugins/` |
+| Linux | `~/.local/share/ensis-ops/plugins/` |
 
 开发时可直接读仓库内 `plugins/`，由 Shell `app://plugins/<id>/` 提供静态资源。
 
@@ -107,10 +107,10 @@ plugins/
 shell/src/
 ├── main.cpp
 ├── core/
-│   ├── cef/                     # NiuMaApp、CEF 配置
+│   ├── cef/                     # EnsisApp、CEF 配置
 │   ├── window/                  # WindowManager、NativeDialog
 │   └── runtime/                 # ServiceManager、manifest 扫描
-├── browser/                     # NiuMaClient、handlers
+├── browser/                     # EnsisClient、handlers
 ├── bridge/                      # BridgeRouter、StreamProxy
 ├── ipc/                         # PlatformClient（Named Pipe / UDS）
 ├── protocol/                    # app:// scheme（含 plugins/ 路径规划）

@@ -1,0 +1,4 @@
+#include "resource.h"
+
+IDI_ENSIS_MAIN ICON "app.ico"
+IDI_ENSIS_APP ICON "app.ico"

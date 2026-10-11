@@ -2,7 +2,7 @@
  * Postgres 连接树 Provider：database → schema → 分类 → 对象。
  * 右键菜单覆盖连接 / 库 / Schema / 对象的常用操作。
  */
-import type { RsContextMenuItem } from '@niuma/ui'
+import type { RsContextMenuItem } from 'ensis-ui'
 import type { ConnTreeChildProvider } from '@/modules/ops/conn-tree/registry'
 import type { ConnResourcePath } from '@/modules/ops/conn-tree/types'
 import { postgresApi } from '@/api'

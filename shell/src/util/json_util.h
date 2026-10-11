@@ -2,7 +2,7 @@
 
 #include <string>
 
-namespace niuma {
+namespace ensisops {
 
 /** 从 JSON 对象字符串中提取字符串字段（极简解析，无第三方依赖）。 */
 std::string JsonGetString(const std::string& json, const char* key);
@@ -28,4 +28,4 @@ std::string FormatBridgeFailureJson(const std::string& error,
                                     const std::string& error_code,
                                     const std::string& trace_id);
 
-}  // namespace niuma
+}  // namespace ensisops

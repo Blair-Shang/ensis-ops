@@ -2,7 +2,7 @@
 
 #include <cctype>
 
-namespace niuma {
+namespace ensisops {
 namespace {
 
 size_t SkipWs(const std::string& s, size_t i) {
@@ -285,4 +285,4 @@ std::string FormatBridgeFailureJson(const std::string& error,
   return out;
 }
 
-}  // namespace niuma
+}  // namespace ensisops

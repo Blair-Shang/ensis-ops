@@ -129,7 +129,7 @@ func putJSONArg(params map[string]any, key string, v any) {
 // MongoToolSpecs 返回官方 MongoDB 工具列表（与 UI 同 Bridge：mongodb.* → mongodb-service）。
 func MongoToolSpecs() []ToolSpec {
 	scope := map[string]any{
-		"profileId":  map[string]any{"type": "string", "description": "NiuMa MongoDB connection profile id"},
+		"profileId":  map[string]any{"type": "string", "description": "ensis-ops MongoDB connection profile id"},
 		"sessionId":  map[string]any{"type": "string", "description": "Active MongoDB session id from the open tab"},
 		"database":   map[string]any{"type": "string", "description": "Database name"},
 		"collection": map[string]any{"type": "string", "description": "Collection name"},

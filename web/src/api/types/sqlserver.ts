@@ -29,7 +29,7 @@ export const DEFAULT_SQLSERVER_OPTIONS: SqlServerConnectionOptions = {
   instance: '',
   auth_type: 'sql',
   encrypt: 'optional',
-  application_name: 'NiuMa',
+  application_name: 'ensis-ops',
   connect_timeout_seconds: 10,
   exclude_system_schemas: true,
   proxy: { type: 'none' },

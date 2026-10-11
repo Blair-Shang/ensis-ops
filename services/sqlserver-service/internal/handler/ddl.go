@@ -6,7 +6,7 @@ import (
 	"fmt"
 	"strings"
 
-	"niuma/services/sqlserver-service/internal/ddl"
+	"ensis-ops/services/sqlserver-service/internal/ddl"
 )
 
 func (d *Dispatcher) ddlDesignPreview(_ context.Context, req Request) Response {

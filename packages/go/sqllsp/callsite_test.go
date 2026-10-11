@@ -3,7 +3,7 @@ package sqllsp_test
 import (
 	"testing"
 
-	"niuma/pkg/sqllsp"
+	"ensis-ops/pkg/sqllsp"
 )
 
 func TestParseCallSiteActiveParam(t *testing.T) {

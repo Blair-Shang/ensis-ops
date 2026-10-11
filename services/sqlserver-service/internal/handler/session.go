@@ -8,8 +8,8 @@ import (
 	"fmt"
 	"strings"
 
-	"niuma/services/sqlserver-service/internal/dialect"
-	"niuma/services/sqlserver-service/internal/session"
+	"ensis-ops/services/sqlserver-service/internal/dialect"
+	"ensis-ops/services/sqlserver-service/internal/session"
 )
 
 func (d *Dispatcher) sessionOpen(ctx context.Context, req Request) Response {

@@ -1,4 +1,4 @@
-id: com.niuma.components.oracle-native
+id: com.ensisops.components.oracle-native
 name: Oracle Instant Client
 module: oracle
 # Instant Client 不编进安装包（OTN 再分发 + 国内下载不稳定）。

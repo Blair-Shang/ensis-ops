@@ -2,7 +2,7 @@
 /**
  * 调试辅助「说明」侧栏：会话开关 + 编号提示列表。
  */
-import { RsCheckbox } from '@niuma/ui'
+import { RsCheckbox } from 'ensis-ui'
 
 withDefaults(
   defineProps<{

@@ -1,16 +1,16 @@
 cmake_minimum_required(VERSION 3.21)
-project(niuma_sshtunnel VERSION 0.1.0 LANGUAGES C CXX)
+project(ensis_sshtunnel VERSION 0.1.0 LANGUAGES C CXX)
 
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 # 父工程可在 add_subdirectory 前：
-#   set(NIUMA_SSHTUNNEL_BUILD_TESTS OFF CACHE BOOL "" FORCE)
-option(NIUMA_SSHTUNNEL_BUILD_TESTS "Build niuma_sshtunnel unit tests" OFF)
+#   set(ENSIS_SSHTUNNEL_BUILD_TESTS OFF CACHE BOOL "" FORCE)
+option(ENSIS_SSHTUNNEL_BUILD_TESTS "Build ensis_sshtunnel unit tests" OFF)
 
 # 依赖 packages/cpp/netproxy（Dial + Options）
-if(NOT TARGET niuma_netproxy AND NOT TARGET niuma::netproxy)
-  message(FATAL_ERROR "niuma_sshtunnel requires niuma::netproxy (add_subdirectory netproxy first)")
+if(NOT TARGET ensis_netproxy AND NOT TARGET ensisops::netproxy)
+  message(FATAL_ERROR "ensis_sshtunnel requires ensisops::netproxy (add_subdirectory netproxy first)")
 endif()
 
 include(FetchContent)
@@ -31,39 +31,39 @@ FetchContent_Declare(
 )
 FetchContent_MakeAvailable(libssh2)
 
-add_library(niuma_sshtunnel STATIC
+add_library(ensis_sshtunnel STATIC
   src/sshtunnel.cpp
 )
 
-add_library(niuma::sshtunnel ALIAS niuma_sshtunnel)
+add_library(ensisops::sshtunnel ALIAS ensis_sshtunnel)
 
-target_include_directories(niuma_sshtunnel
+target_include_directories(ensis_sshtunnel
   PUBLIC
     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
     $<INSTALL_INTERFACE:include>
 )
 
-target_link_libraries(niuma_sshtunnel PUBLIC niuma::netproxy)
+target_link_libraries(ensis_sshtunnel PUBLIC ensisops::netproxy)
 
 if(TARGET libssh2_static)
-  target_link_libraries(niuma_sshtunnel PUBLIC libssh2_static)
+  target_link_libraries(ensis_sshtunnel PUBLIC libssh2_static)
 elseif(TARGET Libssh2::libssh2_static)
-  target_link_libraries(niuma_sshtunnel PUBLIC Libssh2::libssh2_static)
+  target_link_libraries(ensis_sshtunnel PUBLIC Libssh2::libssh2_static)
 elseif(TARGET libssh2)
-  target_link_libraries(niuma_sshtunnel PUBLIC libssh2)
+  target_link_libraries(ensis_sshtunnel PUBLIC libssh2)
 else()
   message(FATAL_ERROR "libssh2 target not found after FetchContent")
 endif()
 
 if(WIN32)
-  target_compile_definitions(niuma_sshtunnel PRIVATE _CRT_SECURE_NO_WARNINGS)
+  target_compile_definitions(ensis_sshtunnel PRIVATE _CRT_SECURE_NO_WARNINGS)
   if(MSVC)
-    target_compile_options(niuma_sshtunnel PRIVATE /utf-8)
+    target_compile_options(ensis_sshtunnel PRIVATE /utf-8)
   endif()
 else()
-  target_link_libraries(niuma_sshtunnel PUBLIC pthread)
+  target_link_libraries(ensis_sshtunnel PUBLIC pthread)
 endif()
 
-if(NIUMA_SSHTUNNEL_BUILD_TESTS)
+if(ENSIS_SSHTUNNEL_BUILD_TESTS)
   enable_testing()
 endif()

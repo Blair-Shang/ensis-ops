@@ -3,7 +3,7 @@
  * 表设计 SQL 预览：锚定工具栏按钮的 RsPopover + RsCodeBlock（CodeMirror）。
  * 仅展示与复制，不在此执行创建/应用或跳转查询。
  */
-import { RsButton, RsCodeBlock, RsLoading, RsPopover } from '@niuma/ui'
+import { RsButton, RsCodeBlock, RsLoading, RsPopover } from 'ensis-ui'
 import { computed } from 'vue'
 
 const open = defineModel<boolean>('open', { default: false })

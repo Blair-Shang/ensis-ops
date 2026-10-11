@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="icon" type="image/png" sizes="256x256" href="/app-icon-256.png" />
-    <title>NiuMa</title>
+    <title>ensis-ops</title>
     <!-- 防启动黑/白屏：在 CSS bundle / Vue 挂载前同步主题与底色 -->
     <style>
       html,
@@ -21,7 +21,7 @@
        * 冷启动有 Shell Splash 时主窗应保持隐藏至 mount 后 dismiss+reveal，
        * 用户不应看到本层；本层主要用于辅助窗早显与热重载 Conceal 后再显。
        */
-      #niuma-boot-loader {
+      #ensis-boot-loader {
         position: fixed;
         inset: 0;
         z-index: 2147483646;
@@ -30,27 +30,27 @@
         align-items: center;
         justify-content: center;
         gap: 14px;
-        background: var(--niuma-boot-bg, #181818);
-        color: var(--niuma-boot-fg, rgba(255, 255, 255, 0.72));
+        background: var(--ensis-boot-bg, #181818);
+        color: var(--ensis-boot-fg, rgba(255, 255, 255, 0.72));
         font: 13px/1.4 system-ui, -apple-system, 'Segoe UI', sans-serif;
         transition: opacity 0.22s ease;
       }
 
-      #niuma-boot-loader.niuma-boot-loader--hide {
+      #ensis-boot-loader.ensis-boot-loader--hide {
         opacity: 0;
         pointer-events: none;
       }
 
-      .niuma-boot-loader__spinner {
+      .ensis-boot-loader__spinner {
         width: 28px;
         height: 28px;
-        border: 2px solid var(--niuma-boot-track, rgba(255, 255, 255, 0.14));
-        border-top-color: var(--niuma-boot-accent, rgba(255, 255, 255, 0.88));
+        border: 2px solid var(--ensis-boot-track, rgba(255, 255, 255, 0.14));
+        border-top-color: var(--ensis-boot-accent, rgba(255, 255, 255, 0.88));
         border-radius: 50%;
-        animation: niuma-boot-spin 0.75s linear infinite;
+        animation: ensis-boot-spin 0.75s linear infinite;
       }
 
-      @keyframes niuma-boot-spin {
+      @keyframes ensis-boot-spin {
         to {
           transform: rotate(360deg);
         }
@@ -59,7 +59,7 @@
     <script>
       (function () {
         try {
-          var pref = localStorage.getItem('niuma-theme') || 'system'
+          var pref = localStorage.getItem('ensis-theme') || 'system'
           var dark =
             pref === 'dark' ||
             (pref === 'system' && globalThis.matchMedia('(prefers-color-scheme: dark)').matches)
@@ -72,26 +72,26 @@
           root.dataset.rsTheme = mode
           root.style.background = bg
           root.style.colorScheme = mode
-          root.style.setProperty('--niuma-boot-bg', bg)
-          root.style.setProperty('--niuma-boot-fg', fg)
-          root.style.setProperty('--niuma-boot-track', track)
-          root.style.setProperty('--niuma-boot-accent', accent)
+          root.style.setProperty('--ensis-boot-bg', bg)
+          root.style.setProperty('--ensis-boot-fg', fg)
+          root.style.setProperty('--ensis-boot-track', track)
+          root.style.setProperty('--ensis-boot-accent', accent)
           document.addEventListener('DOMContentLoaded', function () {
             document.body.style.background = bg
             var app = document.getElementById('app')
             if (app) app.style.background = bg
-            var loader = document.getElementById('niuma-boot-loader')
+            var loader = document.getElementById('ensis-boot-loader')
             if (loader) loader.style.background = bg
           })
         } catch (e) {
-          console.warn('[niuma] theme preflight skipped:', e)
+          console.warn('[ensis-ops] theme preflight skipped:', e)
         }
       })()
     </script>
   </head>
   <body>
-    <div id="niuma-boot-loader" aria-live="polite" aria-busy="true">
-      <div class="niuma-boot-loader__spinner" aria-hidden="true"></div>
+    <div id="ensis-boot-loader" aria-live="polite" aria-busy="true">
+      <div class="ensis-boot-loader__spinner" aria-hidden="true"></div>
       <span>加载中…</span>
     </div>
     <div id="app"></div>

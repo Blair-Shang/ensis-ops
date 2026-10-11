@@ -1,7 +1,7 @@
 #Requires -Version 5.1
 <#
 .SYNOPSIS
-  构建 NiuMa Windows CEF Shell（Layer 3）；可选复制 web/dist。
+  构建 ensis-ops Windows CEF Shell（Layer 3）；可选复制 web/dist。
 .NOTES
   进度信息走 Write-Host；返回值仅为 niuma.exe 绝对路径（供调用方捕获）。
   矩阵产物：build/shell-<platform>-<arch>/<Configuration>/niuma.exe

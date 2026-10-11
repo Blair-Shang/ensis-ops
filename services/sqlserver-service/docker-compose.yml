@@ -26,9 +26,9 @@
 #        docker compose -f services/sqlserver-service/docker-compose.yml pull
 #        docker compose -f services/sqlserver-service/docker-compose.yml up -d
 #   3. 看崩溃原因（不要只看 dump 段）：
-#        docker logs niuma-sqlserver 2>&1 | head -n 80
+#        docker logs ensis-sqlserver 2>&1 | head -n 80
 #
-# 连接（NiuMa 新建连接 / session.test）：
+# 连接（ensis-ops 新建连接 / session.test）：
 #   Host=<服务器IP或127.0.0.1>  Port=61433  Database=master
 #   User=sa / Your_strong_Passw0rd
 #   Auth=sql  Encrypt=disable  Trust Server Certificate=true
@@ -37,7 +37,7 @@ services:
   sqlserver:
     image: mcr.microsoft.com/mssql/server:2022-latest
     platform: linux/amd64
-    container_name: niuma-sqlserver
+    container_name: ensis-sqlserver
     # 官方镜像默认 mssql(uid=10001)；卷权限异常时 sqlservr 会直接崩，root 更稳
     user: "0:0"
     ports:
@@ -49,7 +49,7 @@ services:
       # 限制引擎内存，避免把主机吃满后被 OOM killer 干掉
       MSSQL_MEMORY_LIMIT_MB: "2048"
     volumes:
-      - niuma-sqlserver-data:/var/opt/mssql
+      - ensis-sqlserver-data:/var/opt/mssql
     mem_limit: 3g
     mem_reservation: 2g
     # 2 核对齐 2GB；必须同 NODE（偶数或奇数），不要 0-3 / 18-19
@@ -69,4 +69,4 @@ services:
       start_period: 90s
 
 volumes:
-  niuma-sqlserver-data:
+  ensis-sqlserver-data:

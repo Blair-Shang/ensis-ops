@@ -5,7 +5,7 @@ import (
 	"context"
 	"fmt"
 
-	ipclient "niuma/pkg/serviceipc/client"
+	ipclient "ensis-ops/pkg/serviceipc/client"
 )
 
 // Client 在指定 IPC 地址上与能力服务通信。

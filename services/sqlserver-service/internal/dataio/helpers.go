@@ -9,7 +9,7 @@ import (
 	"strings"
 	"time"
 
-	"niuma/services/sqlserver-service/internal/session"
+	"ensis-ops/services/sqlserver-service/internal/session"
 )
 
 func requirePath(path string) error {

@@ -14,8 +14,8 @@ import (
 	"sync"
 	"time"
 
-	"niuma/services/clickhouse-service/internal/idgen"
-	"niuma/services/clickhouse-service/internal/session"
+	"ensis-ops/services/clickhouse-service/internal/idgen"
+	"ensis-ops/services/clickhouse-service/internal/session"
 )
 
 // Emitter 上报工具任务事件。
@@ -243,7 +243,7 @@ func (m *Manager) runDump(ctx context.Context, taskID, exe string, connect sessi
 	defer out.Close()
 
 	header := fmt.Sprintf(
-		"-- NiuMa clickhouse-client dump\n-- format: niuma-clickhouse-cli-dump/1\n-- database: %s\n-- generated: %s\n-- mode: %s\n-- note: DDL ends with ';' for --multiquery restore; object names are unqualified\n-- note: not for HTTP/SSH-tunnel sessions; use built-in engine instead\n\n",
+		"-- ensis-ops clickhouse-client dump\n-- format: ensis-clickhouse-cli-dump/1\n-- database: %s\n-- generated: %s\n-- mode: %s\n-- note: DDL ends with ';' for --multiquery restore; object names are unqualified\n-- note: not for HTTP/SSH-tunnel sessions; use built-in engine instead\n\n",
 		database,
 		time.Now().UTC().Format(time.RFC3339),
 		opts.Mode,

@@ -9,8 +9,8 @@ import (
 
 	"github.com/jackc/pgx/v5/pgxpool"
 
-	"niuma/services/kingbase-service/internal/dialect"
-	"niuma/services/kingbase-service/internal/session"
+	"ensis-ops/services/kingbase-service/internal/dialect"
+	"ensis-ops/services/kingbase-service/internal/session"
 )
 
 func (d *Dispatcher) sessionOpen(ctx context.Context, req Request) Response {

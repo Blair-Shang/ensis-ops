@@ -8,10 +8,10 @@ import (
 	"path/filepath"
 	"testing"
 
-	"niuma/platform/internal/components"
-	"niuma/platform/internal/handler"
-	"niuma/platform/internal/migrate"
-	"niuma/platform/internal/store"
+	"ensis-ops/platform/internal/components"
+	"ensis-ops/platform/internal/handler"
+	"ensis-ops/platform/internal/migrate"
+	"ensis-ops/platform/internal/store"
 
 	_ "modernc.org/sqlite"
 )
@@ -34,7 +34,7 @@ func newDispatcherWithComponents(t *testing.T) (*handler.Dispatcher, string) {
 	if err := os.MkdirAll(mongoDir, 0o755); err != nil {
 		t.Fatal(err)
 	}
-	manifest := `id: com.niuma.components.mongodb-tools
+	manifest := `id: com.ensisops.components.mongodb-tools
 name: MongoDB Tools
 module: mongodb
 tools:
@@ -79,7 +79,7 @@ func TestComponentsList(t *testing.T) {
 	if err := json.Unmarshal([]byte(resp.Result), &payload); err != nil {
 		t.Fatal(err)
 	}
-	if len(payload.Bundles) != 1 || payload.Bundles[0].BundleID != "com.niuma.components.mongodb-tools" {
+	if len(payload.Bundles) != 1 || payload.Bundles[0].BundleID != "com.ensisops.components.mongodb-tools" {
 		t.Fatalf("unexpected bundles: %+v", payload.Bundles)
 	}
 	if len(payload.Bundles[0].Tools) != 1 || payload.Bundles[0].Tools[0].Status != "missing" {
@@ -93,7 +93,7 @@ func TestComponentsSetPath(t *testing.T) {
 	if err := os.WriteFile(fakeExe, []byte("x"), 0o644); err != nil {
 		t.Fatal(err)
 	}
-	params := `{"bundleId":"com.niuma.components.mongodb-tools","toolId":"mongosh","path":` + mustJSON(t, fakeExe) + `}`
+	params := `{"bundleId":"com.ensisops.components.mongodb-tools","toolId":"mongosh","path":` + mustJSON(t, fakeExe) + `}`
 	resp := invoke(t, d, handler.MethodComponentsSetPath, params, "c2")
 	if !resp.OK {
 		t.Fatalf("setPath failed: %q", resp.Error)

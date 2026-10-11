@@ -1,4 +1,4 @@
-// Command sqlite-service 是 NiuMa SQLite 能力服务（Layer 1）的独立进程入口。
+// Command sqlite-service 是 ensis-ops SQLite 能力服务（Layer 1）的独立进程入口。
 //
 // 源码位于 services/sqlite-service/，与 platform-core 及其它库服务分离；
 // 契约见 docs/27-sqlite-module.md。本服务面向用户文件库，不暴露平台元库。
@@ -13,16 +13,16 @@ import (
 	"runtime"
 	"syscall"
 
-	"niuma/pkg/logutil"
-	"niuma/pkg/serviceipc/server"
-	"niuma/services/sqlite-service/internal/eventpub"
-	"niuma/services/sqlite-service/internal/handler"
-	"niuma/services/sqlite-service/internal/idgen"
+	"ensis-ops/pkg/logutil"
+	"ensis-ops/pkg/serviceipc/server"
+	"ensis-ops/services/sqlite-service/internal/eventpub"
+	"ensis-ops/services/sqlite-service/internal/handler"
+	"ensis-ops/services/sqlite-service/internal/idgen"
 )
 
 const (
-	windowsPipeAddr = `\\.\pipe\niuma.sqlite`
-	unixSocketName  = "niuma.sqlite.sock"
+	windowsPipeAddr = `\\.\pipe\ensis-ops.sqlite`
+	unixSocketName  = "ensis-ops.sqlite.sock"
 )
 
 func main() {

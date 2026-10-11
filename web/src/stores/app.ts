@@ -1,6 +1,6 @@
 import { defineStore } from 'pinia'
 import { computed, ref, watch } from 'vue'
-import type { RsCodeEditorTheme, RsLocale, RsResolvedTheme } from '@niuma/ui'
+import type { RsCodeEditorTheme, RsLocale, RsResolvedTheme } from 'ensis-ui'
 import {
   applyHostTheme,
   clearHostTheme,
@@ -17,9 +17,9 @@ export type ThemePreference = BuiltinThemeId
 /** 内置明暗，或已安装主题的 id。名单来自注册表，不要在这里再写一遍。 */
 export type ThemeId = ThemePreference | HostThemeId
 
-const STORAGE_THEME = 'niuma-theme'
-const LEGACY_COLOR_SKIN = 'niuma-color-skin'
-const STORAGE_LOCALE = 'niuma-locale'
+const STORAGE_THEME = 'ensis-theme'
+const LEGACY_COLOR_SKIN = 'ensis-color-skin'
+const STORAGE_LOCALE = 'ensis-locale'
 
 export function isThemeId(value: string | null): value is ThemeId {
   return value === 'light' || value === 'dark' || value === 'system' || isHostThemeId(value)

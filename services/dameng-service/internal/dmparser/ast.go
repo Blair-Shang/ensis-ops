@@ -3,7 +3,7 @@ package dmparser
 import (
 	"strings"
 
-	"niuma/pkg/sqllsp"
+	"ensis-ops/pkg/sqllsp"
 )
 
 // WorkAST 私有工作 AST：只服务补全 / 语义 / 符号，不做完整文法还原。

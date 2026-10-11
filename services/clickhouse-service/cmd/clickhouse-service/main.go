@@ -1,4 +1,4 @@
-// Command clickhouse-service 是 NiuMa ClickHouse 能力服务（Layer 1）的独立进程入口。
+// Command clickhouse-service 是 ensis-ops ClickHouse 能力服务（Layer 1）的独立进程入口。
 //
 // 源码位于 services/clickhouse-service/，与 platform-core 分离；契约见
 // docs/30-clickhouse-module.md。本服务仅覆盖 ClickHouse，禁止与 mysql-service 混用。
@@ -13,16 +13,16 @@ import (
 	"runtime"
 	"syscall"
 
-	"niuma/pkg/logutil"
-	"niuma/pkg/serviceipc/server"
-	"niuma/services/clickhouse-service/internal/eventpub"
-	"niuma/services/clickhouse-service/internal/handler"
-	"niuma/services/clickhouse-service/internal/idgen"
+	"ensis-ops/pkg/logutil"
+	"ensis-ops/pkg/serviceipc/server"
+	"ensis-ops/services/clickhouse-service/internal/eventpub"
+	"ensis-ops/services/clickhouse-service/internal/handler"
+	"ensis-ops/services/clickhouse-service/internal/idgen"
 )
 
 const (
-	windowsPipeAddr = `\\.\pipe\niuma.clickhouse`
-	unixSocketName  = "niuma.clickhouse.sock"
+	windowsPipeAddr = `\\.\pipe\ensis-ops.clickhouse`
+	unixSocketName  = "ensis-ops.clickhouse.sock"
 )
 
 func main() {

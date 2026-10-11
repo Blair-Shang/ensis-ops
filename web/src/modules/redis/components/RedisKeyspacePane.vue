@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { RsButton, RsConfirmDialog, RsDialog, RsEmpty, RsIcon, RsLoading, RsTable, useRsToast } from '@niuma/ui'
-import type { RsTableColumn } from '@niuma/ui'
+import { RsButton, RsConfirmDialog, RsDialog, RsEmpty, RsIcon, RsLoading, RsTable, useRsToast } from 'ensis-ui'
+import type { RsTableColumn } from 'ensis-ui'
 import { computed, inject, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { redisApi } from '@/api'

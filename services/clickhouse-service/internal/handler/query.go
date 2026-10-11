@@ -7,8 +7,8 @@ import (
 	"strings"
 	"time"
 
-	"niuma/pkg/common/id"
-	"niuma/services/clickhouse-service/internal/session"
+	"ensis-ops/pkg/common/id"
+	"ensis-ops/services/clickhouse-service/internal/session"
 )
 
 func (d *Dispatcher) queryExec(ctx context.Context, req Request) Response {

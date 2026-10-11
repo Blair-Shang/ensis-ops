@@ -8,7 +8,7 @@ export default {
     sessionLost: '{name} 连接已断开，请重新打开连接',
   },
   app: {
-    title: 'NiuMa',
+    title: 'ensis-ops',
     subtitle: '全能 AI 运维平台',
   },
   nav: {
@@ -57,7 +57,7 @@ export default {
     thinkingLive: '正在思考…',
     noProvider: '尚未配置模型服务商',
     loginToUse: '登录后即可使用系统助手',
-    loginToUseDesc: '使用 NiuMa 提供的模型，无需自己填写 API Key。也可以在设置中接入自己的模型。',
+    loginToUseDesc: '使用 ensis-ops 提供的模型，无需自己填写 API Key。也可以在设置中接入自己的模型。',
     openLogin: '登录账号',
     openSettings: '打开模型设置',
     openMcpSettings: '打开 MCP 设置',
@@ -179,23 +179,23 @@ export default {
     askAiSelection: '询问 AI（当前选区）',
     openModule: '打开',
     openAccount: '打开账户设置',
-    login: '登录 NiuMa 账户',
+    login: '登录 ensis-ops 账户',
     openFeedback: '问题反馈',
   },
   account: {
     section: '账户',
-    sectionDesc: 'NiuMa 云账户与问题反馈',
+    sectionDesc: 'ensis-cloud 账户与问题反馈',
     loginTitle: '登录',
     registerTitle: '注册',
     otpLoginTitle: '验证码登录',
     resetTitle: '重置密码',
-    authBrand: 'NiuMa 云账户',
+    authBrand: 'ensis-cloud 账户',
     authSubtitleLogin: '登录以同步账户与问题反馈',
     authSubtitleRegister: '创建账户以提交反馈并接收回复',
     authSubtitleOtp: '使用邮箱验证码登录；未注册将自动创建账号',
     authSubtitleReset: '验证邮箱后设置新密码',
-    authLegal: '继续即表示你同意 NiuMa 服务条款与隐私政策',
-    authLegalOtp: '未注册将自动创建账号。继续即表示你同意 NiuMa 服务条款与隐私政策',
+    authLegal: '继续即表示你同意 ensis-ops 服务条款与隐私政策',
+    authLegalOtp: '未注册将自动创建账号。继续即表示你同意 ensis-ops 服务条款与隐私政策',
     tabPassword: '密码登录',
     tabOtp: '验证码登录',
     tabRegister: '注册',
@@ -374,8 +374,8 @@ export default {
     help: {
       menuAria: '帮助',
       changelog: '更新日志',
-      about: '关于 NiuMa',
-      aboutTitle: '关于 NiuMa',
+      about: '关于 ensis-ops',
+      aboutTitle: '关于 ensis-ops',
       aboutTagline: '全能 AI 运维平台',
       platform: '平台',
       checkUpdate: '检查更新',
@@ -422,7 +422,7 @@ export default {
     applyingLinux: '正在更新，请稍候。如系统提示授权，请确认。完成后将自动打开。',
     applyingLinuxHint: '窗口即将关闭。',
     applyingMacos: '正在打开安装程序，请稍候。',
-    applyingMacosHint: '完成后请从启动台打开 NiuMa。',
+    applyingMacosHint: '完成后请从启动台打开 ensis-ops。',
     statusApplying: '正在更新…',
     cancelDownload: '取消下载',
     snooze: '稍后再说',
@@ -567,7 +567,7 @@ export default {
     aiProvidersHasKey: '已配置密钥',
     aiProvidersNoKey: '未配置密钥',
     aiProvidersSystem: '系统提供',
-    aiProvidersSystemHint: '由 NiuMa 云端提供，使用当前登录账号，无需填写 API Key。登录后自动同步，不可删除。',
+    aiProvidersSystemHint: '由 ensis-cloud提供，使用当前登录账号，无需填写 API Key。登录后自动同步，不可删除。',
     aiProvidersModelCount: '{n} 个模型',
     aiMcp: 'MCP 服务',
     aiMcpDesc: '注册外部 MCP Server；工具发现后按开关暴露给 Agent（不编译进平台）',
@@ -665,7 +665,7 @@ export default {
     aiMcpRiskRead: '只读',
     aiMcpRiskWrite: '写入',
     aiMcpRiskDangerous: '危险',
-    componentsHint: '与「插件」不同：此处管理操作系统上的可执行文件，而非 NiuMa 扩展。',
+    componentsHint: '与「插件」不同：此处管理操作系统上的可执行文件，而非 ensis-ops 扩展。',
     componentsRefresh: '刷新',
     componentsLoading: '正在检测工具…',
     componentsEmpty: '未发现已注册的工具组件包。',
@@ -702,7 +702,7 @@ export default {
     componentsExecutablePath: '可执行路径',
     componentsModuleLabel: '所属模块',
     componentsSelectBundle: '请在左侧选择一个组件包',
-    componentsTooltip: '检测并配置本机第三方 CLI（如 MongoDB Shell、mongo-tools）。与「插件」不同：此处管理操作系统上的可执行文件，而非 NiuMa 扩展。',
+    componentsTooltip: '检测并配置本机第三方 CLI（如 MongoDB Shell、mongo-tools）。与「插件」不同：此处管理操作系统上的可执行文件，而非 ensis-ops 扩展。',
     componentsDownloadTooltip: '在系统默认浏览器中打开官方下载页',
     componentsStatus: {
       missing: '未找到',
@@ -711,7 +711,7 @@ export default {
       bundled: '已安装',
     },
     componentBundles: {
-      com_niuma_components_mongodb_tools: {
+      com_ensis_components_mongodb_tools: {
         name: 'MongoDB 官方工具',
         tools: {
           mongosh: 'MongoDB Shell',
@@ -721,7 +721,7 @@ export default {
           mongoimport: 'mongoimport',
         },
       },
-      com_niuma_components_vastbase_tools: {
+      com_ensis_components_vastbase_tools: {
         name: 'Vastbase 官方客户端工具',
         tools: {
           vb_dump: 'vb_dump',
@@ -729,7 +729,7 @@ export default {
           vsql: 'vsql',
         },
       },
-      com_niuma_components_postgresql_client: {
+      com_ensis_components_postgresql_client: {
         name: 'PostgreSQL 客户端工具（备选）',
         tools: {
           pg_dump: 'pg_dump',
@@ -737,7 +737,7 @@ export default {
           psql: 'psql',
         },
       },
-      com_niuma_components_oracle_native: {
+      com_ensis_components_oracle_native: {
         name: 'Oracle Instant Client',
         tip: '请选择解压后的 Instant Client 目录（含 oci.dll）。推荐 Basic 或 Basic Light 的 Windows x64 ZIP；版本需与目标库兼容（常用 19c / 21c）。',
         downloadTip:

@@ -1,13 +1,13 @@
-#include "niuma/sqllsp/server.hpp"
+#include "ensisops/sqllsp/server.hpp"
 
-#include "niuma/sqllsp/heuristic.hpp"
+#include "ensisops/sqllsp/heuristic.hpp"
 
 #include <algorithm>
 #include <cctype>
 #include <sstream>
 #include <unordered_set>
 
-namespace niuma::sqllsp {
+namespace ensisops::sqllsp {
 namespace {
 
 std::string ToLowerCopy(std::string s) {
@@ -470,7 +470,7 @@ std::optional<nlohmann::json> Server::HandleMessage(Connection& conn, const nloh
     if (!DidClose(conn, params, error)) return respond_err(error);
     return respond_ok(nullptr);
   }
-  if (method == "niuma/setSuggestDatabase") {
+  if (method == "ensis-ops/setSuggestDatabase") {
     if (!SetSuggestDatabase(conn, params, error)) return respond_err(error);
     return respond_ok(nullptr);
   }
@@ -487,4 +487,4 @@ std::optional<nlohmann::json> Server::HandleMessage(Connection& conn, const nloh
   return respond_err("method not found: " + method);
 }
 
-}  // namespace niuma::sqllsp
+}  // namespace ensisops::sqllsp

@@ -4,7 +4,7 @@
 #include <cctype>
 #include <unordered_set>
 
-namespace niuma::oracle::dataio {
+namespace ensisops::oracle::dataio {
 namespace {
 
 std::string Trim(std::string value) {
@@ -183,4 +183,4 @@ bool BuildCsvProjection(
   return true;
 }
 
-}  // namespace niuma::oracle::dataio
+}  // namespace ensisops::oracle::dataio

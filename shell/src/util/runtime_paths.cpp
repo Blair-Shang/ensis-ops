@@ -19,13 +19,13 @@
 
 namespace fs = std::filesystem;
 
-namespace niuma {
+namespace ensisops {
 
 namespace {
 
-constexpr char kPlatformUnixSocketName[] = "niuma.platform.sock";
-constexpr char kPlatformUnixEventSocketName[] = "niuma.platform.events.sock";
-constexpr char kPlatformUnixStreamSocketName[] = "niuma.platform.stream.sock";
+constexpr char kPlatformUnixSocketName[] = "ensis-ops.platform.sock";
+constexpr char kPlatformUnixEventSocketName[] = "ensis-ops.platform.events.sock";
+constexpr char kPlatformUnixStreamSocketName[] = "ensis-ops.platform.stream.sock";
 
 fs::path ExeDirectory() {
 #if defined(_WIN32)
@@ -104,15 +104,15 @@ std::string GetRuntimeDir() {
 #if defined(_WIN32)
   const char* local = std::getenv("LOCALAPPDATA");
   if (local) {
-    return std::string(local) + "\\NiuMa\\run\\";
+    return std::string(local) + "\\ensis-ops\\run\\";
   }
 #elif defined(__APPLE__)
   const char* home = std::getenv("HOME");
   if (home) {
-    return std::string(home) + "/Library/Application Support/NiuMa/run/";
+    return std::string(home) + "/Library/Application Support/ensis-ops/run/";
   }
 #else
-  if (const char* env = std::getenv("NIUMMA_RUNTIME_DIR")) {
+  if (const char* env = std::getenv("ENSIS_RUNTIME_DIR")) {
     if (env[0] != '\0') {
       std::string dir = env;
       if (!dir.empty() && dir.back() != '/') {
@@ -122,10 +122,10 @@ std::string GetRuntimeDir() {
     }
   }
   if (const char* xdg = std::getenv("XDG_DATA_HOME")) {
-    return std::string(xdg) + "/NiuMa/run/";
+    return std::string(xdg) + "/ensis-ops/run/";
   }
   if (const char* home = std::getenv("HOME")) {
-    return std::string(home) + "/.local/share/NiuMa/run/";
+    return std::string(home) + "/.local/share/ensis-ops/run/";
   }
 #endif
   return GetInstallDir() + "/run/";
@@ -138,7 +138,7 @@ std::string GetWebResourcesPath() {
     return (MacContentsDir(exe_dir) / "Resources" / "web").string();
   }
 #endif
-  return (exe_dir / NIUMMA_RESOURCES_DIR / "web").string();
+  return (exe_dir / ENSIS_RESOURCES_DIR / "web").string();
 }
 
 std::string GetCefResourcesDir() {
@@ -163,7 +163,7 @@ std::string GetCefLocalesDir() {
 
 std::string GetPlatformIpcAddress() {
 #if defined(_WIN32)
-  return R"(\\.\pipe\niuma.platform)";
+  return R"(\\.\pipe\ensis-ops.platform)";
 #else
   return (fs::temp_directory_path() / kPlatformUnixSocketName).string();
 #endif
@@ -171,7 +171,7 @@ std::string GetPlatformIpcAddress() {
 
 std::string GetPlatformEventAddress() {
 #if defined(_WIN32)
-  return R"(\\.\pipe\niuma.platform.events)";
+  return R"(\\.\pipe\ensis-ops.platform.events)";
 #else
   return (fs::temp_directory_path() / kPlatformUnixEventSocketName).string();
 #endif
@@ -179,14 +179,14 @@ std::string GetPlatformEventAddress() {
 
 std::string GetPlatformStreamAddress() {
 #if defined(_WIN32)
-  return R"(\\.\pipe\niuma.platform.stream)";
+  return R"(\\.\pipe\ensis-ops.platform.stream)";
 #else
   return (fs::temp_directory_path() / kPlatformUnixStreamSocketName).string();
 #endif
 }
 
 std::string GetPluginsPath() {
-  if (const char* env = std::getenv("NIUMMA_PLUGINS_DIR")) {
+  if (const char* env = std::getenv("ENSIS_PLUGINS_DIR")) {
     if (env[0] != '\0') {
       return env;
     }
@@ -197,7 +197,7 @@ std::string GetPluginsPath() {
     return (MacContentsDir(exe_dir) / "Resources" / "plugins").string();
   }
 #endif
-  return (exe_dir / NIUMMA_RESOURCES_DIR / "plugins").string();
+  return (exe_dir / ENSIS_RESOURCES_DIR / "plugins").string();
 }
 
-}  // namespace niuma
+}  // namespace ensisops

@@ -3,7 +3,7 @@ package dmparser
 import (
 	"strings"
 
-	"niuma/pkg/sqllsp"
+	"ensis-ops/pkg/sqllsp"
 )
 
 // CompatMode 达梦 SQL 兼容模式（影响关键字提示、内置函数与轻量诊断）。

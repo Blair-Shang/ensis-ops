@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"strings"
 
-	"niuma/platform/internal/ai/tool"
+	"ensis-ops/platform/internal/ai/tool"
 )
 
 // ConfirmPolicy 处理 platform.ai.policy.confirm。

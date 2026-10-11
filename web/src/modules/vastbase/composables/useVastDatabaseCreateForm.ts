@@ -1,5 +1,5 @@
-import { useRsToast } from '@niuma/ui'
-import type { RsSelectOptions } from '@niuma/ui'
+import { useRsToast } from 'ensis-ui'
+import type { RsSelectOptions } from 'ensis-ui'
 import { storeToRefs } from 'pinia'
 import { computed, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'

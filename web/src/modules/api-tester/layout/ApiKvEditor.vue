@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { RsButton, RsCheckbox, RsInput } from '@niuma/ui'
+import { RsButton, RsCheckbox, RsInput } from 'ensis-ui'
 import { watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { dialogApi } from '@/api'

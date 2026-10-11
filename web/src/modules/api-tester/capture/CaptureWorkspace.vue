@@ -2,7 +2,7 @@
 /**
  * 启动本机代理，把抓到的 HTTP 请求存进集合。HTTPS 只看到目标主机。
  */
-import { RsButton, RsInput } from '@niuma/ui'
+import { RsButton, RsInput } from 'ensis-ui'
 import { onBeforeUnmount, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { apiCaptureApi, type ApiCaptureEntry } from '@/api/api-capture'

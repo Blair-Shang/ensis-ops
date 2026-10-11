@@ -119,7 +119,7 @@ function onDataTasksClick(): void {
       >
         {{ dataTasksLabel }}
       </button>
-      <span class="nm-statusbar__ver">NiuMa {{ bridgeStore.shellVersion || '—' }}</span>
+      <span class="nm-statusbar__ver">ensis-ops {{ bridgeStore.shellVersion || '—' }}</span>
     </span>
   </footer>
 </template>

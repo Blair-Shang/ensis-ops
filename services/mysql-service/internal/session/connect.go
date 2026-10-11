@@ -16,8 +16,8 @@ import (
 
 	mysqldriver "github.com/go-sql-driver/mysql"
 
-	"niuma/pkg/netproxy"
-	"niuma/pkg/tunnel"
+	"ensis-ops/pkg/netproxy"
+	"ensis-ops/pkg/tunnel"
 )
 
 const (
@@ -27,7 +27,7 @@ const (
 	defaultTimeoutSeconds = 10
 	defaultCharset        = "utf8mb4"
 	defaultSSLMode        = "preferred"
-	defaultAppName        = "niuma-mysql"
+	defaultAppName        = "ensis-mysql"
 )
 
 // ConnectOptions 与 Web connection_options JSON 对齐。

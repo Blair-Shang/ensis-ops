@@ -8,12 +8,12 @@ import (
 
 	"github.com/jackc/pgx/v5/pgxpool"
 
-	"niuma/pkg/sqllsp"
+	"ensis-ops/pkg/sqllsp"
 
-	"niuma/services/kingbase-service/internal/kingbaseparser"
-	"niuma/services/kingbase-service/internal/meta"
-	"niuma/services/kingbase-service/internal/session"
-	"niuma/services/kingbase-service/internal/tree"
+	"ensis-ops/services/kingbase-service/internal/kingbaseparser"
+	"ensis-ops/services/kingbase-service/internal/meta"
+	"ensis-ops/services/kingbase-service/internal/session"
+	"ensis-ops/services/kingbase-service/internal/tree"
 )
 
 func lspOK(id string, value any) Response { return okResponse(id, value) }

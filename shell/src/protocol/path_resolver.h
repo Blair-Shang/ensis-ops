@@ -2,10 +2,10 @@
 
 #include <string>
 
-namespace niuma {
+namespace ensisops {
 
 /**
- * 将 app://niuma URL 路径解析为本地文件绝对路径。
+ * 将 app://ensis-ops URL 路径解析为本地文件绝对路径。
  *
  * - `/` 或空 → `resources/web/index.html`
  * - `/plugins/...` → `{plugins}/...`（见 GetPluginsPath）
@@ -16,4 +16,4 @@ namespace niuma {
  */
 std::string ResolveAppResourcePath(const std::string& url_path);
 
-}  // namespace niuma
+}  // namespace ensisops

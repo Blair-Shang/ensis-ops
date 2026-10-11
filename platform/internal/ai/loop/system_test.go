@@ -3,7 +3,7 @@ package loop
 import "testing"
 
 func TestIsSystemProviderID(t *testing.T) {
-	if !IsSystemProviderID("niuma-system") {
+	if !IsSystemProviderID("ensis-system") {
 		t.Fatal("expected system id")
 	}
 	if IsSystemProviderID("openai") {

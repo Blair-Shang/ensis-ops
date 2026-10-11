@@ -10,7 +10,7 @@ import (
 
 	gopty "github.com/aymanbagabas/go-pty"
 
-	"niuma/services/mongodb-service/internal/idgen"
+	"ensis-ops/services/mongodb-service/internal/idgen"
 )
 
 // ShellState 是 PTY 生命周期状态。

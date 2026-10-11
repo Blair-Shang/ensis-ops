@@ -2,7 +2,7 @@
 /**
  * 收发流。自动视图：有文本显示文本，否则 Hex dump。
  */
-import { RsButton, RsEmpty } from '@niuma/ui'
+import { RsButton, RsEmpty } from 'ensis-ui'
 import type { ApiSocketDataEvent } from '@/api/types/api-socket'
 import type { ApiLiveSocket } from '../../types'
 

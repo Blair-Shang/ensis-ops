@@ -8,8 +8,8 @@ import (
 	"fmt"
 	"strings"
 
-	"niuma/services/mysql-service/internal/dialect"
-	"niuma/services/mysql-service/internal/session"
+	"ensis-ops/services/mysql-service/internal/dialect"
+	"ensis-ops/services/mysql-service/internal/session"
 )
 
 func (d *Dispatcher) sessionOpen(ctx context.Context, req Request) Response {

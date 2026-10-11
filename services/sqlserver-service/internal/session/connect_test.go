@@ -19,7 +19,7 @@ func TestBuildDSN_Basic(t *testing.T) {
 			Database:               "master",
 			Encrypt:                "disable",
 			TrustServerCertificate: &trust,
-			ApplicationName:        "NiuMa-Test",
+			ApplicationName:        "ensis-ops-Test",
 		},
 	}
 	dsn, err := buildDSN(params)

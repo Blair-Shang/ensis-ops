@@ -2,7 +2,7 @@
 /**
  * 环境详情：变量表，或全局变量。名称在标题和左侧列表，Base URL 写在变量 baseUrl。
  */
-import { RsButton, RsConfirmDialog } from '@niuma/ui'
+import { RsButton, RsConfirmDialog } from 'ensis-ui'
 import { useEnvironmentPanel } from '../composables/useEnvironmentPanel'
 import VariableTable from './VariableTable.vue'
 

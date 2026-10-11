@@ -6,9 +6,9 @@ import (
 	"fmt"
 	"strings"
 
-	"niuma/services/sqlserver-service/internal/meta"
-	"niuma/services/sqlserver-service/internal/session"
-	"niuma/services/sqlserver-service/internal/tree"
+	"ensis-ops/services/sqlserver-service/internal/meta"
+	"ensis-ops/services/sqlserver-service/internal/session"
+	"ensis-ops/services/sqlserver-service/internal/tree"
 )
 
 const (

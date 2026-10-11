@@ -1,6 +1,6 @@
 /**
  * Hello 插件 ESM 入口（P1–P3）。
- * 由 app://niuma/plugins/ 或 Vite /plugins 提供，不含 Vue 编译依赖。
+ * 由 app://ensis-ops/plugins/ 或 Vite /plugins 提供，不含 Vue 编译依赖。
  */
 
 /** @type {import('@/extensions/api/create-extension-context').ExtensionActivateContext} */

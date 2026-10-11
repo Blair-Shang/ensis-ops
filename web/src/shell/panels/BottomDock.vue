@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { RsIcon } from '@niuma/ui'
+import { RsIcon } from 'ensis-ui'
 import { onBeforeUnmount } from 'vue'
 import { useI18n } from 'vue-i18n'
 import TransferQueue from '@/modules/ftp/components/TransferQueue.vue'

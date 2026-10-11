@@ -8,7 +8,7 @@ import (
 	"os"
 	"strings"
 
-	"niuma/platform/internal/appupdate"
+	"ensis-ops/platform/internal/appupdate"
 )
 
 const (

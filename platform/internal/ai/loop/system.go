@@ -6,14 +6,14 @@ import (
 	"fmt"
 	"strings"
 
-	"niuma/platform/internal/store"
+	"ensis-ops/platform/internal/store"
 )
 
 // SystemProviderID 是云端系统模型在本机 SQLite 中的稳定主键。
-const SystemProviderID = "niuma-system"
+const SystemProviderID = "ensis-system"
 
 const (
-	systemProviderOptions = `{"system":true,"source":"niuma-cloud"}`
+	systemProviderOptions = `{"system":true,"source":"ensis-cloud"}`
 	systemProviderKind    = "openai"
 	systemProviderSort    = int64(-100)
 )
@@ -77,7 +77,7 @@ func (s *Service) EnsureSystemProvider(ctx context.Context, params EnsureSystemP
 
 	name := strings.TrimSpace(params.ProviderName)
 	if name == "" {
-		name = "NiuMa"
+		name = "ensis-ops"
 	}
 	status := "active"
 	if !params.Enabled {

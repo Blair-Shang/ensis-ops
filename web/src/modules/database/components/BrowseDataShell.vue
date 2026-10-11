@@ -11,7 +11,7 @@ import {
   RsPagination,
   RsPopover,
   RsToolbar,
-} from '@niuma/ui'
+} from 'ensis-ui'
 import type { BrowseDataShellLabels } from '../types/browse-data'
 
 const props = withDefaults(

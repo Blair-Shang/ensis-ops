@@ -5,7 +5,7 @@ mod methods;
 use std::sync::Arc;
 
 use async_trait::async_trait;
-use niuma_serviceipc::{parse_request, FrameHandler, Response};
+use ensis_serviceipc::{parse_request, FrameHandler, Response};
 use russh::Disconnect;
 use serde_json::Value;
 use tracing::{error, info, warn};

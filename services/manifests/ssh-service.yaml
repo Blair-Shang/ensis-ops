@@ -1,4 +1,4 @@
-id: com.niuma.ssh
+id: com.ensisops.ssh
 name: SSH Service
 version: 0.1.0
 bridge:
@@ -10,17 +10,17 @@ session:
     - session.open
     - session.test
 runtime:
-  executable: bin/niuma-ssh-service.exe
-  executable_windows: bin/niuma-ssh-service.exe
-  executable_unix: bin/niuma-ssh-service
+  executable: bin/ensis-ssh-service.exe
+  executable_windows: bin/ensis-ssh-service.exe
+  executable_unix: bin/ensis-ssh-service
   lang: rust
 ipc:
   transport: named_pipe
   transport_windows: named_pipe
   transport_unix: unix_socket
-  address: '\\.\pipe\niuma.ssh'
-  address_windows: '\\.\pipe\niuma.ssh'
-  address_unix: '/tmp/niuma.ssh.sock'
+  address: '\\.\pipe\ensis-ops.ssh'
+  address_windows: '\\.\pipe\ensis-ops.ssh'
+  address_unix: '/tmp/ensis-ops.ssh.sock'
   protocol: length_prefixed_json
 lifecycle:
   startup: lazy

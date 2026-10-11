@@ -1,4 +1,4 @@
-#include <niuma/serviceipc/message.hpp>
+#include <ensisops/serviceipc/message.hpp>
 
 #include <fstream>
 #include <iostream>
@@ -15,8 +15,8 @@ static int failures = 0;
     }                                                                        \
   } while (0)
 
-#ifndef NIUMA_IPC_GOLDEN_DIR
-#define NIUMA_IPC_GOLDEN_DIR ""
+#ifndef ENSIS_IPC_GOLDEN_DIR
+#define ENSIS_IPC_GOLDEN_DIR ""
 #endif
 
 static std::string ReadFile(const std::string& path) {
@@ -36,11 +36,11 @@ static std::string ReadFile(const std::string& path) {
 }
 
 static std::string Golden(const char* name) {
-  return std::string(NIUMA_IPC_GOLDEN_DIR) + "/" + name;
+  return std::string(ENSIS_IPC_GOLDEN_DIR) + "/" + name;
 }
 
 int main() {
-  using namespace niuma::serviceipc;
+  using namespace ensisops::serviceipc;
   const auto ok = MakeOkResponse("req-1", R"({"closed":true})");
   EXPECT(ok == ReadFile(Golden("ok-v1.json")));
 

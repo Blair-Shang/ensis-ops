@@ -11,7 +11,7 @@ import (
 
 	"github.com/ClickHouse/clickhouse-go/v2"
 
-	"niuma/services/clickhouse-service/internal/session"
+	"ensis-ops/services/clickhouse-service/internal/session"
 )
 
 // requirePath 校验路径非空。

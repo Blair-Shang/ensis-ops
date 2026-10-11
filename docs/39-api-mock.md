@@ -8,7 +8,7 @@
 
 ## 1. 定位
 
-NiuMa **保留本机 HTTP Mock Server**，对齐 Postman Mock Server 与 Apifox 本地 Mock 的**调试用途**，但：
+ensis-ops **保留本机 HTTP Mock Server**，对齐 Postman Mock Server 与 Apifox 本地 Mock 的**调试用途**，但：
 
 | 做 | 不做 |
 |----|------|
@@ -24,7 +24,7 @@ Mock 是**桌面单机能力**：配置写入 `api.workspace`，随 JSON 导入�
 
 ## 2. 与 Postman / Apifox 对照
 
-| 能力 | Postman | Apifox | NiuMa |
+| 能力 | Postman | Apifox | ensis-ops |
 |------|---------|--------|-------|
 | 本地 Mock | Mock Server（需账号时可云） | 本地 + 云端 | **仅本地** P2 |
 | 按 path/method 匹配 | 有 | 有 | 有 |

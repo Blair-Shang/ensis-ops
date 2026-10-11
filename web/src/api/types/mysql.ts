@@ -58,7 +58,7 @@ export const DEFAULT_MYSQL_OPTIONS: MysqlConnectionOptions = {
   ssl_cert: '',
   ssl_key: '',
   allowNativePasswords: true,
-  application_name: 'niuma-mysql',
+  application_name: 'ensis-mysql',
   connect_timeout_seconds: 10,
   exclude_system_schemas: true,
   proxy: { type: 'none' },

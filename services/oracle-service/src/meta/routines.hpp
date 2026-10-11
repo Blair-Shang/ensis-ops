@@ -5,7 +5,7 @@
 #include <nlohmann/json.hpp>
 #include <string>
 
-namespace niuma::oracle::meta {
+namespace ensisops::oracle::meta {
 
 struct RoutineRef {
   std::string schema;
@@ -28,4 +28,4 @@ nlohmann::json GetPackageSource(session::Session& session, const PackageRef& ref
 /** ALL_ARGUMENTS 形参列表（含 OUT/IN OUT）；函数返回值放 returnType。 */
 nlohmann::json ListRoutineParameters(session::Session& session, const RoutineRef& ref, std::string& error);
 
-}  // namespace niuma::oracle::meta
+}  // namespace ensisops::oracle::meta

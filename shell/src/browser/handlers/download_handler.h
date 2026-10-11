@@ -1,15 +1,15 @@
 #pragma once
 
-#if NIUMMA_WITH_CEF
+#if ENSIS_WITH_CEF
 #include "include/cef_download_handler.h"
 #endif
 
-namespace niuma {
+namespace ensisops {
 
-#if NIUMMA_WITH_CEF
+#if ENSIS_WITH_CEF
 
 /** 允许网页触发的文件下载（设置页装工具、导出 blob），Alloy 默认会直接拒绝。 */
-class NiuMaDownloadHandler : public CefDownloadHandler {
+class EnsisDownloadHandler : public CefDownloadHandler {
  public:
   bool CanDownload(CefRefPtr<CefBrowser> browser,
                    const CefString& url,
@@ -21,9 +21,9 @@ class NiuMaDownloadHandler : public CefDownloadHandler {
                         CefRefPtr<CefBeforeDownloadCallback> callback) override;
 
  private:
-  IMPLEMENT_REFCOUNTING(NiuMaDownloadHandler);
+  IMPLEMENT_REFCOUNTING(EnsisDownloadHandler);
 };
 
 #endif
 
-}  // namespace niuma
+}  // namespace ensisops

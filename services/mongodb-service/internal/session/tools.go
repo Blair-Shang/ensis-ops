@@ -12,7 +12,7 @@ import (
 	"strings"
 	"sync"
 
-	"niuma/services/mongodb-service/internal/idgen"
+	"ensis-ops/services/mongodb-service/internal/idgen"
 )
 
 // ToolsEmitter 上报工具任务事件。
@@ -79,7 +79,7 @@ func (m *ToolsManager) Dump(ctx context.Context, sessionID, database, outputDir 
 		return "", err
 	}
 	if strings.TrimSpace(outputDir) == "" {
-		outputDir, err = os.MkdirTemp("", "niuma-mongodump-")
+		outputDir, err = os.MkdirTemp("", "ensis-mongodump-")
 		if err != nil {
 			return "", err
 		}
@@ -303,7 +303,7 @@ func (m *ToolsManager) tempOutput(prefix, format string) (string, error) {
 	if strings.EqualFold(format, "csv") {
 		ext = ".csv"
 	}
-	f, err := os.CreateTemp("", "niuma-mongo-"+prefix+"-*"+ext)
+	f, err := os.CreateTemp("", "ensis-mongo-"+prefix+"-*"+ext)
 	if err != nil {
 		return "", err
 	}

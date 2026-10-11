@@ -9,7 +9,7 @@ import {
   type RsTableColumn,
   type RsTableRowDropPosition,
   type RsTableSortState,
-} from '@niuma/ui'
+} from 'ensis-ui'
 import { computed, ref, toRef, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { buildFtpContextMenuItems } from '@/modules/ftp/composables/useFtpContextMenu'

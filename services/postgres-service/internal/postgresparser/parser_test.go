@@ -4,8 +4,8 @@ import (
 	"strings"
 	"testing"
 
-	"niuma/pkg/sqllsp"
-	"niuma/services/postgres-service/internal/postgresparser"
+	"ensis-ops/pkg/sqllsp"
+	"ensis-ops/services/postgres-service/internal/postgresparser"
 )
 
 func TestKeywordsNonEmpty(t *testing.T) {

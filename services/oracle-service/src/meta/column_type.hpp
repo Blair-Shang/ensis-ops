@@ -2,7 +2,7 @@
 
 #include <string>
 
-namespace niuma::oracle::meta {
+namespace ensisops::oracle::meta {
 
 // ALL_TAB_COLUMNS → 可执行的完整类型（VARCHAR2(n)、NUMBER(p,s) 等）。
 inline constexpr const char* kAllTabColumnsTypeExpr = R"SQL(
@@ -45,4 +45,4 @@ END
 
 std::string TrimOracleDefault(std::string value);
 
-}  // namespace niuma::oracle::meta
+}  // namespace ensisops::oracle::meta

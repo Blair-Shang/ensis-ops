@@ -1,4 +1,4 @@
-// Command sqlserver-service 是 NiuMa SQL Server 能力服务（Layer 1）的独立进程入口。
+// Command sqlserver-service 是 ensis-ops SQL Server 能力服务（Layer 1）的独立进程入口。
 //
 // 源码位于 services/sqlserver-service/，与 platform-core 分离；契约见
 // docs/32-sqlserver-module.md。本服务仅覆盖 Microsoft SQL Server / Azure SQL，
@@ -14,16 +14,16 @@ import (
 	"runtime"
 	"syscall"
 
-	"niuma/pkg/logutil"
-	"niuma/pkg/serviceipc/server"
-	"niuma/services/sqlserver-service/internal/eventpub"
-	"niuma/services/sqlserver-service/internal/handler"
-	"niuma/services/sqlserver-service/internal/idgen"
+	"ensis-ops/pkg/logutil"
+	"ensis-ops/pkg/serviceipc/server"
+	"ensis-ops/services/sqlserver-service/internal/eventpub"
+	"ensis-ops/services/sqlserver-service/internal/handler"
+	"ensis-ops/services/sqlserver-service/internal/idgen"
 )
 
 const (
-	windowsPipeAddr = `\\.\pipe\niuma.sqlserver`
-	unixSocketName  = "niuma.sqlserver.sock"
+	windowsPipeAddr = `\\.\pipe\ensis-ops.sqlserver`
+	unixSocketName  = "ensis-ops.sqlserver.sock"
 )
 
 func main() {

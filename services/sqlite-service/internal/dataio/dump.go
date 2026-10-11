@@ -46,7 +46,7 @@ func dumpSql(
 	}}
 
 	header := fmt.Sprintf(
-		"-- NiuMa SQLite dump\n-- format: niuma-sqlite-dump/1\n-- schema: %s\n-- generated: %s\n-- mode: %s\n-- dropIfExists: %v\n-- truncateBeforeData: %v\n\nPRAGMA foreign_keys=OFF;\nBEGIN TRANSACTION;\n\n",
+		"-- ensis-ops SQLite dump\n-- format: ensis-sqlite-dump/1\n-- schema: %s\n-- generated: %s\n-- mode: %s\n-- dropIfExists: %v\n-- truncateBeforeData: %v\n\nPRAGMA foreign_keys=OFF;\nBEGIN TRANSACTION;\n\n",
 		schema,
 		time.Now().UTC().Format(time.RFC3339),
 		params.Mode,

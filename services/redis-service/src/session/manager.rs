@@ -17,8 +17,8 @@ use super::commanddocs;
 use super::connect::RedisBackend;
 use super::monitor::{parse_info_metrics, parse_monitor_line, parse_slowlog_entry};
 use super::value::redis_value_to_json;
-use niuma_netproxy::RelayGuard;
-use niuma_tunnel::TunnelGuard;
+use ensis_netproxy::RelayGuard;
+use ensis_tunnel::TunnelGuard;
 
 /// CommandDocsOutcome 缓存一次 `COMMAND DOCS` 探测的结果（成功或失败），确保同一会话生命周期内
 /// 只向服务器发起一次探测——旧版本 Redis（< 7.0）不支持该命令会持续返回错误，缓存失败结果可以

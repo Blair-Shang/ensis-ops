@@ -1,8 +1,8 @@
 #include "browser/handlers/download_handler.h"
 
-#if NIUMMA_WITH_CEF
+#if ENSIS_WITH_CEF
 
-namespace niuma {
+namespace ensisops {
 
 namespace {
 
@@ -13,7 +13,7 @@ bool IsAllowedDownloadUrl(const std::string& url) {
 
 }  // namespace
 
-bool NiuMaDownloadHandler::CanDownload(CefRefPtr<CefBrowser> browser,
+bool EnsisDownloadHandler::CanDownload(CefRefPtr<CefBrowser> browser,
                                        const CefString& url,
                                        const CefString& request_method) {
   (void)browser;
@@ -21,7 +21,7 @@ bool NiuMaDownloadHandler::CanDownload(CefRefPtr<CefBrowser> browser,
   return IsAllowedDownloadUrl(url.ToString());
 }
 
-bool NiuMaDownloadHandler::OnBeforeDownload(
+bool EnsisDownloadHandler::OnBeforeDownload(
     CefRefPtr<CefBrowser> browser,
     CefRefPtr<CefDownloadItem> download_item,
     const CefString& suggested_name,
@@ -37,6 +37,6 @@ bool NiuMaDownloadHandler::OnBeforeDownload(
   return true;
 }
 
-}  // namespace niuma
+}  // namespace ensisops
 
 #endif

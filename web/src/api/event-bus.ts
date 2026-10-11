@@ -1,5 +1,5 @@
 /**
- * Shell 事件总线 — 全应用仅一个 `niuma:event` 监听，按订阅过滤后分发。
+ * Shell 事件总线 — 全应用仅一个 `ensis-ops:event` 监听，按订阅过滤后分发。
  *
  * 多 Tab（keep-alive）场景下避免每个 FtpSession / SshSession 各自挂监听；
  * platform 批量帧 `platform.event.batch` 在此拆包。

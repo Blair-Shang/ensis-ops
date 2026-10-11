@@ -9,7 +9,7 @@ import (
 	"strings"
 )
 
-const mysqlToolsBundleID = "com.niuma.components.mysql-tools"
+const mysqlToolsBundleID = "com.ensisops.components.mysql-tools"
 
 // PathOverrides 是请求级工具路径覆盖。
 type PathOverrides map[string]string
@@ -88,11 +88,11 @@ func resolveBundled(toolID string) (string, bool) {
 func userDataDir() string {
 	if runtime.GOOS == "windows" {
 		if local := os.Getenv("LOCALAPPDATA"); local != "" {
-			return filepath.Join(local, "NiuMa", "data")
+			return filepath.Join(local, "ensis-ops", "data")
 		}
 	}
 	if home, err := os.UserHomeDir(); err == nil && home != "" {
-		return filepath.Join(home, ".niuma", "data")
+		return filepath.Join(home, ".ensis-ops", "data")
 	}
 	return ""
 }

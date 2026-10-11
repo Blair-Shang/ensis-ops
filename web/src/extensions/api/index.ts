@@ -1,5 +1,5 @@
 /**
- * 扩展 API 门面 — 插件应通过 niuma.* 访问能力，而非裸 bridge.invoke。
+ * 扩展 API 门面 — 插件应通过 ensis-ops.* 访问能力，而非裸 bridge.invoke。
  *
  * @see docs/10-web-extension-system.md
  */

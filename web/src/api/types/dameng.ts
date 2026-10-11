@@ -20,7 +20,7 @@ export const DEFAULT_DAMENG_OPTIONS: DamengConnectionOptions = {
   ssl_mode: 'disable',
   exclude_system_schemas: true,
   connect_timeout_seconds: 30,
-  application_name: 'NiuMa',
+  application_name: 'ensis-ops',
   proxy: { type: 'none' },
 }
 

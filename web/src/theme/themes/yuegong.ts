@@ -1,6 +1,6 @@
 import { defineHostTheme } from '../types'
 
-export const yuegongThemeId = 'niuma.yuegong' as const
+export const yuegongThemeId = 'ensis-ops.yuegong' as const
 
 /** 月宫：内容区是冷岩白，边栏略沉一档。字是岩墨。终端与界面同一套。 */
 export const yuegongTheme = defineHostTheme({

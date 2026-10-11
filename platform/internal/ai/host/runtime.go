@@ -159,7 +159,7 @@ func objectSchema(props map[string]any, required []string) json.RawMessage {
 // 只读（含 SHOW/EXPLAIN）自动执行；sql_exec 与 ssh_exec 一样需用户确认。
 func SQLToolSpecs() []ToolSpec {
 	scope := map[string]any{
-		"profileId": map[string]any{"type": "string", "description": "NiuMa connection profile id"},
+		"profileId": map[string]any{"type": "string", "description": "ensis-ops connection profile id"},
 		"sessionId": map[string]any{"type": "string", "description": "Optional active session id"},
 		"database":  map[string]any{"type": "string", "description": "Current database (MySQL/ClickHouse: also used as catalog schema)"},
 		"moduleId":  map[string]any{"type": "string", "description": "Connection kind / module (vastbase, postgres, mysql, …)"},

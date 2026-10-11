@@ -3,7 +3,7 @@ package handler
 import (
 	"testing"
 
-	"niuma/platform/internal/supervisor"
+	"ensis-ops/platform/internal/supervisor"
 )
 
 func TestCapabilityRegistryResolve(t *testing.T) {
@@ -15,7 +15,7 @@ func TestCapabilityRegistryResolve(t *testing.T) {
 	reg.routes = []*capabilityRoute{
 		{namespace: "ftp"},
 		{namespace: "ssh"},
-		{namespace: "com.niuma.db-pg"},
+		{namespace: "com.ensis-ops.db-pg"},
 	}
 
 	tests := []struct {
@@ -26,8 +26,8 @@ func TestCapabilityRegistryResolve(t *testing.T) {
 	}{
 		{"ftp.session.open", "ftp", "session.open", true},
 		{"ftp.dir.list", "ftp", "dir.list", true},
-		{"com.niuma.db-pg.session.open", "com.niuma.db-pg", "session.open", true},
-		{"com.niuma.db-pg.query.exec", "com.niuma.db-pg", "query.exec", true},
+		{"com.ensis-ops.db-pg.session.open", "com.ensis-ops.db-pg", "session.open", true},
+		{"com.ensis-ops.db-pg.query.exec", "com.ensis-ops.db-pg", "query.exec", true},
 		{"platform.settings.get", "", "", false},
 		{"ssh.session.open", "ssh", "session.open", true},
 		{"ssh.terminal.open", "ssh", "terminal.open", true},

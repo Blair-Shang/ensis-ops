@@ -2,9 +2,9 @@
 # 由 build-installer.sh 嵌入 .run 卸载包；在目标机器上执行。
 set -euo pipefail
 
-APP_NAME="${NIUMMA_APP_NAME:-NiuMa}"
-APP_VERSION="${NIUMMA_APP_VERSION:-0.0.0}"
-PACKAGE_ID="${NIUMMA_PACKAGE_ID:-__PACKAGE_ID__}"
+APP_NAME="${ENSIS_APP_NAME:-ensis-ops}"
+APP_VERSION="${ENSIS_APP_VERSION:-0.0.0}"
+PACKAGE_ID="${ENSIS_PACKAGE_ID:-__PACKAGE_ID__}"
 
 have_gui() {
   command -v zenity >/dev/null 2>&1

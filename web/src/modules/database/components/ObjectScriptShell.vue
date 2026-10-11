@@ -9,7 +9,7 @@ import {
   RsContextMenu,
   RsEmpty,
   type RsContextMenuItem,
-} from '@niuma/ui'
+} from 'ensis-ui'
 import SqlQueryIdentity from './SqlQueryIdentity.vue'
 import { sqlIdeToolbarIconButton } from '../types/sql-ide-toolbar'
 import type {

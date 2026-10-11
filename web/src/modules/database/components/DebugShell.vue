@@ -3,8 +3,8 @@
  * 例程调试外壳：探测空态 / 工具栏控制 / 参数网格 / 源码+巡视分栏 / 状态条。
  * 方言侧负责 RPC 与 #source / #inspect 内容；布局与控件态由本组件统一。
  */
-import { RsButton, RsEmpty, RsIcon, RsLoading, RsSplitPane, RsToolbar, RsTooltip } from '@niuma/ui'
-import type { RsSplitPaneItem } from '@niuma/ui'
+import { RsButton, RsEmpty, RsIcon, RsLoading, RsSplitPane, RsToolbar, RsTooltip } from 'ensis-ui'
+import type { RsSplitPaneItem } from 'ensis-ui'
 import { computed } from 'vue'
 import DebugParamsGrid from './DebugParamsGrid.vue'
 import type {

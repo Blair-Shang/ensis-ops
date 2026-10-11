@@ -1,4 +1,4 @@
-#include <niuma/sshtunnel/sshtunnel.hpp>
+#include <ensisops/sshtunnel/sshtunnel.hpp>
 
 #include <libssh2.h>
 
@@ -10,7 +10,7 @@
 #include <mutex>
 #include <sstream>
 
-#ifdef NIUMA_NETPROXY_WIN
+#ifdef ENSIS_NETPROXY_WIN
 #ifndef WIN32_LEAN_AND_MEAN
 #define WIN32_LEAN_AND_MEAN
 #endif
@@ -30,7 +30,7 @@ using Sock = int;
 constexpr Sock kInvalidSock = -1;
 #endif
 
-namespace niuma::sshtunnel {
+namespace ensisops::sshtunnel {
 namespace {
 
 std::once_flag g_libssh2_once;
@@ -44,7 +44,7 @@ void CloseSock(Sock fd) {
   if (fd == kInvalidSock) {
     return;
   }
-#ifdef NIUMA_NETPROXY_WIN
+#ifdef ENSIS_NETPROXY_WIN
   closesocket(fd);
 #else
   close(fd);
@@ -52,7 +52,7 @@ void CloseSock(Sock fd) {
 }
 
 bool SetCloexec(Sock fd) {
-#ifdef NIUMA_NETPROXY_WIN
+#ifdef ENSIS_NETPROXY_WIN
   (void)fd;
   return true;
 #else
@@ -65,7 +65,7 @@ bool SetCloexec(Sock fd) {
 }
 
 std::string LastSockError(const char* prefix) {
-#ifdef NIUMA_NETPROXY_WIN
+#ifdef ENSIS_NETPROXY_WIN
   return std::string(prefix) + ": " + std::to_string(WSAGetLastError());
 #else
   return std::string(prefix) + ": " + std::strerror(errno);
@@ -101,7 +101,7 @@ bool SameTunnelHost(const std::string& target, const std::string& jump) {
 std::string ExpandHome(const std::string& path) {
   const std::string trimmed = Trim(path);
   if (trimmed == "~") {
-#ifdef NIUMA_NETPROXY_WIN
+#ifdef ENSIS_NETPROXY_WIN
     if (const char* home = std::getenv("USERPROFILE")) {
       return home;
     }
@@ -112,7 +112,7 @@ std::string ExpandHome(const std::string& path) {
     return trimmed;
   }
   if (trimmed.size() >= 2 && trimmed[0] == '~' && (trimmed[1] == '/' || trimmed[1] == '\\')) {
-#ifdef NIUMA_NETPROXY_WIN
+#ifdef ENSIS_NETPROXY_WIN
     if (const char* home = std::getenv("USERPROFILE")) {
       return std::string(home) + trimmed.substr(1);
     }
@@ -145,7 +145,7 @@ struct SSHSession {
   void Close() {
     std::lock_guard lock(mu);
     if (session) {
-      libssh2_session_disconnect(session, "niuma sshtunnel stop");
+      libssh2_session_disconnect(session, "ensis-ops sshtunnel stop");
       libssh2_session_free(session);
       session = nullptr;
     }
@@ -214,7 +214,7 @@ std::shared_ptr<SSHSession> DialSSHJump(const SSHProfile& profile, std::string& 
   const uint16_t jump_port =
       static_cast<uint16_t>(profile.port_number > 0 ? profile.port_number : 22);
   intptr_t fd = 0;
-  if (!niuma::netproxy::Dial(profile.proxy, profile.host_address, jump_port, fd, error)) {
+  if (!ensisops::netproxy::Dial(profile.proxy, profile.host_address, jump_port, fd, error)) {
     if (error.empty()) {
       error = "sshtunnel: dial jump host failed";
     } else {
@@ -275,7 +275,7 @@ void BridgeLocalToChannel(Sock local, LIBSSH2_CHANNEL* channel, SSHSession* ssh,
     FD_ZERO(&read_set);
     FD_SET(local, &read_set);
 
-#ifdef NIUMA_NETPROXY_WIN
+#ifdef ENSIS_NETPROXY_WIN
     const int nfds = 0;
 #else
     const int nfds = static_cast<int>(local) + 1;
@@ -286,7 +286,7 @@ void BridgeLocalToChannel(Sock local, LIBSSH2_CHANNEL* channel, SSHSession* ssh,
     const int sel = select(nfds, &read_set, nullptr, nullptr, &tv);
 
     if (sel > 0 && FD_ISSET(local, &read_set)) {
-#ifdef NIUMA_NETPROXY_WIN
+#ifdef ENSIS_NETPROXY_WIN
       const int n = recv(local, buf, sizeof(buf), 0);
 #else
       const ssize_t n = recv(local, buf, sizeof(buf), 0);
@@ -320,7 +320,7 @@ void BridgeLocalToChannel(Sock local, LIBSSH2_CHANNEL* channel, SSHSession* ssh,
           break;
         }
       } else {
-#ifdef NIUMA_NETPROXY_WIN
+#ifdef ENSIS_NETPROXY_WIN
         const int w = send(local, buf, static_cast<int>(n), 0);
 #else
         const ssize_t w = send(local, buf, static_cast<size_t>(n), 0);
@@ -338,7 +338,7 @@ done:
     libssh2_channel_close(channel);
     libssh2_channel_free(channel);
   }
-#ifdef NIUMA_NETPROXY_WIN
+#ifdef ENSIS_NETPROXY_WIN
   shutdown(local, SD_BOTH);
 #else
   shutdown(local, SHUT_RDWR);
@@ -368,7 +368,7 @@ void ForwardConn(const std::shared_ptr<SSHSession>& ssh, Sock local, std::string
 
 struct TunnelGuard::Impl {
   std::atomic<bool> stop{false};
-#ifdef NIUMA_NETPROXY_WIN
+#ifdef ENSIS_NETPROXY_WIN
   uintptr_t listen_fd = ~static_cast<uintptr_t>(0);
 #else
   int listen_fd = -1;
@@ -388,7 +388,7 @@ void TunnelGuard::Stop() {
     return;
   }
   impl_->stop.store(true);
-#ifdef NIUMA_NETPROXY_WIN
+#ifdef ENSIS_NETPROXY_WIN
   if (impl_->listen_fd != static_cast<uintptr_t>(INVALID_SOCKET)) {
     closesocket(static_cast<SOCKET>(impl_->listen_fd));
     impl_->listen_fd = static_cast<uintptr_t>(INVALID_SOCKET);
@@ -447,7 +447,7 @@ std::unique_ptr<TunnelGuard> StartSSHTunnel(const Options& opts, const std::stri
   }
   SetCloexec(listen_fd);
   int yes = 1;
-#ifdef NIUMA_NETPROXY_WIN
+#ifdef ENSIS_NETPROXY_WIN
   setsockopt(listen_fd, SOL_SOCKET, SO_REUSEADDR, reinterpret_cast<const char*>(&yes), sizeof(yes));
 #else
   setsockopt(listen_fd, SOL_SOCKET, SO_REUSEADDR, &yes, sizeof(yes));
@@ -477,7 +477,7 @@ std::unique_ptr<TunnelGuard> StartSSHTunnel(const Options& opts, const std::stri
 
   auto guard = std::make_unique<TunnelGuard>();
   guard->impl_ = std::make_unique<TunnelGuard::Impl>();
-#ifdef NIUMA_NETPROXY_WIN
+#ifdef ENSIS_NETPROXY_WIN
   guard->impl_->listen_fd = static_cast<uintptr_t>(listen_fd);
 #else
   guard->impl_->listen_fd = listen_fd;
@@ -509,4 +509,4 @@ std::unique_ptr<TunnelGuard> StartSSHTunnel(const Options& opts, const std::stri
   return guard;
 }
 
-}  // namespace niuma::sshtunnel
+}  // namespace ensisops::sshtunnel

@@ -6,7 +6,7 @@ import (
 	"strings"
 	"testing"
 
-	"niuma/pkg/sqllsp"
+	"ensis-ops/pkg/sqllsp"
 )
 
 func TestExtractSelectListColumns(t *testing.T) {
@@ -65,7 +65,7 @@ func TestCTEColumnCompletion(t *testing.T) {
 	conn := srv.Conns.Open("sess-1", "client-1", "app")
 
 	sql := "WITH emp_stat AS (SELECT dept_id, COUNT(*) AS cnt FROM emp GROUP BY dept_id) SELECT emp_stat. FROM emp_stat"
-	uri := "niuma-sql://mysql/sess-1/cte1"
+	uri := "ensis-sql://mysql/sess-1/cte1"
 	openRaw, _ := json.Marshal(map[string]any{
 		"jsonrpc": "2.0",
 		"method":  "textDocument/didOpen",
@@ -116,7 +116,7 @@ func TestDerivedColumnCompletion(t *testing.T) {
 	conn := srv.Conns.Open("sess-1", "client-1", "app")
 
 	sql := "SELECT x. FROM (SELECT id, name FROM users) x"
-	uri := "niuma-sql://mysql/sess-1/der1"
+	uri := "ensis-sql://mysql/sess-1/der1"
 	openRaw, _ := json.Marshal(map[string]any{
 		"jsonrpc": "2.0",
 		"method":  "textDocument/didOpen",

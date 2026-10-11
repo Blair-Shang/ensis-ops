@@ -6,8 +6,8 @@ import (
 	"fmt"
 	"strings"
 
-	"niuma/services/clickhouse-service/internal/session"
-	"niuma/services/clickhouse-service/internal/tools"
+	"ensis-ops/services/clickhouse-service/internal/session"
+	"ensis-ops/services/clickhouse-service/internal/tools"
 )
 
 type toolsPathParams struct {

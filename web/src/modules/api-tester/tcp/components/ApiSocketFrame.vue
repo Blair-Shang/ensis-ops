@@ -3,7 +3,7 @@
  * TCP 切帧。模式在状态行右侧；选中分隔符或长度后，参数独占下一行。
  */
 import { computed } from 'vue'
-import { RsInput, RsTooltip } from '@niuma/ui'
+import { RsInput, RsTooltip } from 'ensis-ui'
 import { useI18n } from 'vue-i18n'
 import {
   modbusLengthFields,

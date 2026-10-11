@@ -31,7 +31,7 @@ if (-not $OutputDir) {
     $OutputDir = Get-DefaultPackOutputDir -RepoRoot $Root -Platform $Platform -Arch $Arch -Format 'setup'
 }
 
-$AppExe = Join-Path $InputDir 'niuma.exe'
+$AppExe = Join-Path $InputDir 'ensis-ops.exe'
 if (-not (Test-Path $AppExe)) {
     throw "Packaged app not found: $AppExe. Run: pnpm pack:win"
 }
@@ -90,10 +90,10 @@ if ($buildInfo.PSObject.Properties['buildNumber']) {
     [void][int]::TryParse([string]$buildInfo.buildNumber, [ref]$buildNumber)
 }
 $AppVersionInno = Format-InnoVersion "$AppVersion.$buildNumber"
-$AppName = 'NiuMa'
-$AppDescription = if ($pkgJson.description) { [string]$pkgJson.description } else { 'NiuMa Desktop' }
+$AppName = 'ensis-ops'
+$AppDescription = if ($pkgJson.description) { [string]$pkgJson.description } else { 'ensis-ops Desktop' }
 if (-not $Publisher) {
-    $Publisher = if ($buildInfo.publisher) { [string]$buildInfo.publisher } else { 'NiuMa' }
+    $Publisher = if ($buildInfo.publisher) { [string]$buildInfo.publisher } else { 'ensis-ops' }
 }
 if (-not $AppUrl) {
     $AppUrl = if ($buildInfo.homepage) { [string]$buildInfo.homepage } else { 'https://www.niuma007.com' }
@@ -109,9 +109,9 @@ Then reopen the terminal and rerun: pnpm pack:win:setup
 }
 
 $archLabel = if ($Arch -eq 'arm64') { 'arm64' } else { 'x64' }
-$setupBaseName = "NiuMa-$AppVersion-windows-$archLabel-Setup"
+$setupBaseName = "ensis-ops-$AppVersion-windows-$archLabel-Setup"
 $issWorkDir = Join-Path $Root 'build/pack-inno'
-$issFile = Join-Path $issWorkDir 'niuma-setup.iss'
+$issFile = Join-Path $issWorkDir 'ensis-setup.iss'
 New-Item -ItemType Directory -Force -Path $issWorkDir | Out-Null
 New-Item -ItemType Directory -Force -Path $OutputDir | Out-Null
 
@@ -149,7 +149,7 @@ $issContent = @"
 #define MyAppVersion "$AppVersionInno"
 #define MyAppPublisher "$Publisher"
 #define MyAppURL "$AppUrl"
-#define MyAppExeName "niuma.exe"
+#define MyAppExeName "ensis-ops.exe"
 #define SourceDir "$inputEscaped"
 #define OutputDir "$outputEscaped"
 #define OutputBase "$setupBaseName"
@@ -174,11 +174,11 @@ SolidCompression=yes
 WizardStyle=modern
 SetupLogging=yes
 MinVersion=10.0
-SetupMutex=NiuMa.Desktop.Setup
+SetupMutex=ensis-ops.Desktop.Setup
 UsePreviousAppDir=yes
 UsePreviousLanguage=yes
 UsePreviousPrivileges=yes
-; 默认当前用户（%LOCALAPPDATA%\Programs\NiuMa），不弹 UAC。
+; 默认当前用户（%LOCALAPPDATA%\Programs\ensis-ops），不弹 UAC。
 ; 向导可选「所有用户」再提权写 Program Files。覆盖升级沿用上次权限。
 PrivilegesRequired=lowest
 PrivilegesRequiredOverridesAllowed=dialog

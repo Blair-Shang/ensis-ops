@@ -7,14 +7,14 @@ import (
 	"errors"
 	"fmt"
 
-	"niuma/pkg/serviceipc/envelope"
-	"niuma/pkg/serviceipc/event"
-	"niuma/pkg/sqllsp"
-	"niuma/services/kingbase-service/internal/dataio"
-	"niuma/services/kingbase-service/internal/eventpub"
-	"niuma/services/kingbase-service/internal/idgen"
-	"niuma/services/kingbase-service/internal/kingbaseparser"
-	"niuma/services/kingbase-service/internal/session"
+	"ensis-ops/pkg/serviceipc/envelope"
+	"ensis-ops/pkg/serviceipc/event"
+	"ensis-ops/pkg/sqllsp"
+	"ensis-ops/services/kingbase-service/internal/dataio"
+	"ensis-ops/services/kingbase-service/internal/eventpub"
+	"ensis-ops/services/kingbase-service/internal/idgen"
+	"ensis-ops/services/kingbase-service/internal/kingbaseparser"
+	"ensis-ops/services/kingbase-service/internal/session"
 )
 
 const (

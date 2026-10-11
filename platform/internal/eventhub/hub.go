@@ -10,8 +10,8 @@ import (
 	"net"
 	"sync"
 
-	"niuma/pkg/serviceipc/event"
-	"niuma/pkg/serviceipc/protocol"
+	"ensis-ops/pkg/serviceipc/event"
+	"ensis-ops/pkg/serviceipc/protocol"
 )
 
 const shellOutQueueSize = 32

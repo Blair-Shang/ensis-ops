@@ -104,7 +104,7 @@
 
 下行事件：`type: "{ns}.lsp"`，`connectionId` + `message`（如 `textDocument/publishDiagnostics`）。
 
-Document URI：`niuma-sql://{ns}/{sessionId}/{editorId}`。
+Document URI：`ensis-sql://{ns}/{sessionId}/{editorId}`。
 
 支持的 LSP 方法（MySQL / Dameng）：`initialize` / `initialized` / `textDocument/didOpen|didChange|didClose` / `textDocument/completion` / `textDocument/hover` / `textDocument/documentSymbol` / `textDocument/definition` / `textDocument/formatting`；诊断经 `publishDiagnostics`（MySQL：TiDB 语法 + catalog；Dameng：StmtClassify + DML/例程启发式语法 + catalog 语义 Warning）。
 
@@ -122,7 +122,7 @@ Dameng 兼容模式约定：
 
 - 未探测到兼容模式（native/`CompatAuto`）：仅达梦基线关键字与原生内置函数。
 - `oracle` / `mysql`：各自追加专属关键字与函数；互不并入对方。
-- `niuma/setSuggestDatabase` 可带 `uri`，按文档隔离默认 schema。
+- `ensis-ops/setSuggestDatabase` 可带 `uri`，按文档隔离默认 schema。
 - 标识符插入经 `IdentifierQuoter`（达梦 `"`，MySQL `` ` ``）。
 - 例程壳层额外检查 DECLARE 区平衡与 IF/WHILE/LOOP/CASE 成对；catalog 表/例程/序列前缀检索使用 `UPPER(...) LIKE UPPER(?)`。
 - 前端 attach：先 `onNotification`，再 `setSuggestDatabase(uri)`，再 `didOpen`，避免首诊丢失。

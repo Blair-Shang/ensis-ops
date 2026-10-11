@@ -4,7 +4,7 @@
  * 代码片段以右侧浮层打开，不挤压请求区。由 http/register 挂上；会话态读 store。
  */
 import { ref } from 'vue'
-import { RsSplitPane } from '@niuma/ui'
+import { RsSplitPane } from 'ensis-ui'
 import type { ApiRequest } from '../types'
 import { useApiTesterStore } from '../stores/api-tester'
 import ApiCodeSnippet from './components/ApiCodeSnippet.vue'

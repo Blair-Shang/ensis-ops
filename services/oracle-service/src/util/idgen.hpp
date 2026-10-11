@@ -5,7 +5,7 @@
 #include <random>
 #include <string>
 
-namespace niuma::oracle::util {
+namespace ensisops::oracle::util {
 
 inline std::string NextId(const char* prefix = "ora") {
   static std::atomic<std::uint64_t> seq{0};
@@ -13,4 +13,4 @@ inline std::string NextId(const char* prefix = "ora") {
   return std::string(prefix) + "-" + std::to_string(now) + "-" + std::to_string(seq.fetch_add(1));
 }
 
-}  // namespace niuma::oracle::util
+}  // namespace ensisops::oracle::util

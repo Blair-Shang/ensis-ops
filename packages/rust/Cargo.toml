@@ -1,10 +1,10 @@
 [workspace]
 resolver = "2"
 members = [
-    "niuma-logutil",
-    "niuma-netproxy",
-    "niuma-serviceipc",
-    "niuma-tunnel",
+    "ensis-logutil",
+    "ensis-netproxy",
+    "ensis-serviceipc",
+    "ensis-tunnel",
 ]
 
 [workspace.package]

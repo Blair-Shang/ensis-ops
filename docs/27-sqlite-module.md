@@ -21,7 +21,7 @@
 
 | 层 | 必须独立 | 允许共用（仅框架，无引擎业务） |
 |----|----------|--------------------------------|
-| 进程 / 二进制 | `niuma-sqlite-service` 独享 | — |
+| 进程 / 二进制 | `ensis-sqlite-service` 独享 | — |
 | manifest / namespace / kind | `sqlite` 独享 | — |
 | Go 模块 | `services/sqlite-service/` 自有 `go.mod` + `internal/*` | `packages/go/serviceipc`、`tunnel`、`logutil` 等**无引擎语义**包 |
 | Web 业务模块 | `web/src/modules/sqlite/`、`api/sqlite.ts` | `modules/database/*` 壳组件、`sql-editor` 编排（只认 family/Cap） |
@@ -60,12 +60,12 @@
 
 ### 1.1 架构对齐
 
-| 能力层 | 参考 | NiuMa 做法 |
+| 能力层 | 参考 | ensis-ops 做法 |
 |--------|------|-----------|
 | GUI / 对象树 / SQL | DBeaver / Navicat / DB Browser | Vue + Monaco + Go 能力服务 |
 | 连接与查询 | SQLite C API / 文件 | **Go + `modernc.org/sqlite`（纯 Go，无 CGO）** |
 | 方言差异 | 客户端能力探测 | **DialectFamily + CapabilitySet**（契约见 [23](./23-sql-dialect-completion.md)） |
-| 安装包 | 独立客户端 | 仅 `niuma-sqlite-service` Go 二进制 |
+| 安装包 | 独立客户端 | 仅 `ensis-sqlite-service` Go 二进制 |
 
 ### 1.2 关键决策
 
@@ -183,7 +183,7 @@ flowchart TD
 ┌ Layer 4 ─ Web ────────────────────────────────────────────┐
 │ web/src/modules/sqlite/                                    │
 │   连接表单（文件路径）· 树 Provider · Query · Browse        │
-│   ↑ bridgeInvoke(sqlite.*)    ↑ bridgeOnEvent(niuma:event) │
+│   ↑ bridgeInvoke(sqlite.*)    ↑ bridgeOnEvent(ensis-ops:event) │
 └───┼───────────────────────────┼────────────────────────────┘
     │ cefQuery                  │ PostMessage
 ┌ Layer 3 ─ C++ Shell ──────────┴────────────────────────────┐
@@ -214,7 +214,7 @@ flowchart TD
 services/
 ├── manifests/sqlite-service.yaml
 └── sqlite-service/
-    ├── go.mod                 # modernc.org/sqlite + niuma/pkg/*
+    ├── go.mod                 # modernc.org/sqlite + ensis-ops/pkg/*
     ├── cmd/sqlite-service/main.go
     └── internal/
         ├── dialect/           # ServerProfile / Cap* / Probe
@@ -459,7 +459,7 @@ Dump：纯 Go 生成 `CREATE` + `INSERT`；可选 `.dump` 风格。导入大批�
 ## 8. manifest 草案
 
 ```yaml
-id: com.niuma.sqlite
+id: com.ensisops.sqlite
 name: SQLite Service
 version: 0.1.0
 bridge:
@@ -496,15 +496,15 @@ session:
     - ddl.createTablePreview
     - backup.copy
 runtime:
-  executable: bin/niuma-sqlite-service.exe
-  executable_windows: bin/niuma-sqlite-service.exe
-  executable_unix: bin/niuma-sqlite-service
+  executable: bin/ensis-sqlite-service.exe
+  executable_windows: bin/ensis-sqlite-service.exe
+  executable_unix: bin/ensis-sqlite-service
   lang: go
 ipc:
   transport_windows: named_pipe
   transport_unix: unix_socket
-  address_windows: '\\.\pipe\niuma.sqlite'
-  address_unix: '/tmp/niuma.sqlite.sock'
+  address_windows: '\\.\pipe\ensis-ops.sqlite'
+  address_unix: '/tmp/ensis-ops.sqlite.sock'
   protocol: length_prefixed_json
 lifecycle:
   startup: lazy

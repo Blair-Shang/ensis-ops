@@ -5,7 +5,7 @@ import (
 	"log/slog"
 	"strings"
 
-	"niuma/pkg/serviceipc/event"
+	"ensis-ops/pkg/serviceipc/event"
 
 	"github.com/jlaffaye/ftp"
 )

@@ -2,7 +2,7 @@
 /**
  * TCP / UDP 服务端：绑定端口、看接入、收发。工作台在 tcp/，udp register 复用。
  */
-import { RsButton, RsInput, RsSplitPane, type RsSplitPaneItem } from '@niuma/ui'
+import { RsButton, RsInput, RsSplitPane, type RsSplitPaneItem } from 'ensis-ui'
 import type { ApiRequest } from '../types'
 import { SOCKET_ALL_PEERS, useApiSocketSession } from './composables/useApiSocketSession'
 import ApiSocketCompose from './components/ApiSocketCompose.vue'

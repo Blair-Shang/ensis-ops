@@ -3,7 +3,7 @@
  * connection → schema → {Tables|Views|Procedures|Functions|Packages|Synonyms|Triggers|Sequences} → object
  * 菜单结构对齐达梦常用集（含 createSchema / synonym / trigger）。
  */
-import type { RsContextMenuItem } from '@niuma/ui'
+import type { RsContextMenuItem } from 'ensis-ui'
 import { oracleApi } from '@/api/oracle'
 import {
   activate,

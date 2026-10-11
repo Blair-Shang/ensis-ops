@@ -23,7 +23,7 @@ pub struct SessionEntry {
     pub handle: Arc<Mutex<client::Handle<SftpClientHandler>>>,
     pub sftp: Arc<Mutex<Option<SftpSession>>>,
     /// 跳板机 SSH 隧道守卫；drop 时自动关闭本地转发端口。
-    pub _tunnel: Option<niuma_tunnel::TunnelGuard>,
+    pub _tunnel: Option<ensis_tunnel::TunnelGuard>,
 }
 
 /// SessionManager 管理活跃 SFTP 会话（无终端 / exec / 监控）。
@@ -45,7 +45,7 @@ impl SessionManager {
         session_id: String,
         handle: client::Handle<SftpClientHandler>,
         sftp: SftpSession,
-        tunnel: Option<niuma_tunnel::TunnelGuard>,
+        tunnel: Option<ensis_tunnel::TunnelGuard>,
     ) -> Result<(), String> {
         let entry = SessionEntry {
             handle: Arc::new(Mutex::new(handle)),

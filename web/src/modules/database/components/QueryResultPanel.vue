@@ -9,7 +9,7 @@ import {
   RsVirtualList,
   copyTextToClipboard,
   type RsTableColumn,
-} from '@niuma/ui'
+} from 'ensis-ui'
 import { computed, onBeforeUnmount, ref, useId, watch } from 'vue'
 import {
   bindQueryCellDialog,

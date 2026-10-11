@@ -1,4 +1,4 @@
-import type { RsContextMenuItem } from '@niuma/ui'
+import type { RsContextMenuItem } from 'ensis-ui'
 import { damengApi } from '@/api/dameng'
 import { i18n } from '@/locale'
 import {

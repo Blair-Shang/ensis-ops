@@ -8,7 +8,7 @@
 
 ## 1. 设计目标
 
-NiuMa 需要一个**独立于主 AppShell 的专用 CEF 顶层窗口**，作为全平台统一的**文件查看 / 编辑工作台**：
+ensis-ops 需要一个**独立于主 AppShell 的专用 CEF 顶层窗口**，作为全平台统一的**文件查看 / 编辑工作台**：
 
 - **多 Tab**：同一窗口内并行打开多个文件，Tab 切换、脏标记、关闭确认
 - **跨模块复用**：FTP、SSH/SFTP、数据库脚本、插件等模块均通过同一套 API 打开文件，不在各模块内重复实现编辑器
@@ -296,7 +296,7 @@ openInFileEditor({
 | `fileEditor.unregisterWindow` | 工作台 onBeforeUnmount 注销（清空窗口注册，**不落盘**） |
 | `fileEditor.listTabs` | 查询当前内存状态（调试用，**非**恢复接口） |
 
-**事件（经 `niuma:event` 广播至所有 CEF 窗口）**：
+**事件（经 `ensis-ops:event` 广播至所有 CEF 窗口）**：
 
 | 事件 type | 载荷 | 消费者 |
 |-----------|------|--------|

@@ -12,7 +12,7 @@ import (
 	"strings"
 	"time"
 
-	"niuma/platform/internal/store"
+	"ensis-ops/platform/internal/store"
 )
 
 // 连接导入导出包版本（与 Web 约定一致；不含凭据明文）。
@@ -42,7 +42,7 @@ type connectionExportBundle struct {
 
 const (
 	// credentialServicePrefix 是凭据在 VaultStore 中的 service 前缀，与 store.credentialServicePrefix 保持一致。
-	credentialServicePrefix = "NiuMa/credential/"
+	credentialServicePrefix = "ensis-ops/credential/"
 	// credentialSecretAccount 是凭据 service 下固定的 account 名。
 	credentialSecretAccount = "secret"
 	// credentialKindPassword 表示密码类凭据。

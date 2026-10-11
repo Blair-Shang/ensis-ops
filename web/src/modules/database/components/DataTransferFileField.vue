@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { RsIcon, RsInput, RsLabel } from '@niuma/ui'
+import { RsIcon, RsInput, RsLabel } from 'ensis-ui'
 import type { DataTransferFileFieldLabels } from '../types/data-transfer'
 
 defineProps<{

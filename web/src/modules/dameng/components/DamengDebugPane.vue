@@ -12,7 +12,7 @@ import {
   useRsToast,
   type RsTableColumn,
   type RsTabItem,
-} from '@niuma/ui'
+} from 'ensis-ui'
 import { computed, onMounted, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { damengApi } from '@/api/dameng'

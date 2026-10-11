@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { RsButton, RsEmpty, RsIcon } from '@niuma/ui'
+import { RsButton, RsEmpty, RsIcon } from 'ensis-ui'
 import { useI18n } from 'vue-i18n'
 import ComponentsBundleDetail from './components/ComponentsBundleDetail.vue'
 import ComponentsBundleSidebar from './components/ComponentsBundleSidebar.vue'

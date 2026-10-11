@@ -22,12 +22,12 @@
 
 ### 1.1 架构对齐
 
-| 能力层 | 参考 | NiuMa 做法 |
+| 能力层 | 参考 | ensis-ops 做法 |
 |--------|------|-----------|
 | GUI / 对象树 / SQL | Vastbase Data Studio / DBeaver / Navicat | Vue + Monaco + Go 能力服务 |
 | 连接与查询 | PG wire + 厂商扩展 | **Go + `jackc/pgx/v5`** |
 | 存储过程调试 | VDS + `DBE_PLDEBUGGER` | **双 SQL 会话状态机（Go）**，事件推前端 |
-| 安装包 | 独立客户端 / JDBC IDE | 仅 `niuma-vastbase-service` Go 二进制 |
+| 安装包 | 独立客户端 / JDBC IDE | 仅 `ensis-vastbase-service` Go 二进制 |
 
 ### 1.2 关键决策
 
@@ -78,7 +78,7 @@
 ┌ Layer 4 ─ Web ──────────────────────────────────────────────────────────┐
 │ web/src/modules/vastbase/                                                │
 │   连接树 · Query · 对象面板 · 调试面板（断点 / 变量 / 堆栈）               │
-│   ↑ bridgeInvoke(vastbase.*)          ↑ bridgeOnEvent(niuma:event)       │
+│   ↑ bridgeInvoke(vastbase.*)          ↑ bridgeOnEvent(ensis-ops:event)       │
 └───┼───────────────────────────────────┼──────────────────────────────────┘
     │ cefQuery                           │ PostMessage
 ┌ Layer 3 ─ C++ Shell ───────────────────┴────────────────────────────────┐
@@ -156,7 +156,7 @@ web/src/api/
 ### 3.2 Manifest（草案）
 
 ```yaml
-id: com.niuma.vastbase
+id: com.ensisops.vastbase
 name: Vastbase Service
 version: 0.1.0
 bridge:
@@ -173,15 +173,15 @@ session:
     - tree.routines
     - tree.sequences
 runtime:
-  executable: bin/niuma-vastbase-service.exe
-  executable_windows: bin/niuma-vastbase-service.exe
-  executable_unix: bin/niuma-vastbase-service
+  executable: bin/ensis-vastbase-service.exe
+  executable_windows: bin/ensis-vastbase-service.exe
+  executable_unix: bin/ensis-vastbase-service
   lang: go
 ipc:
   transport_windows: named_pipe
   transport_unix: unix_socket
-  address_windows: '\\.\pipe\niuma.vastbase'
-  address_unix: '/tmp/niuma.vastbase.sock'
+  address_windows: '\\.\pipe\ensis-ops.vastbase'
+  address_unix: '/tmp/ensis-ops.vastbase.sock'
   protocol: length_prefixed_json
 lifecycle:
   startup: lazy
@@ -191,7 +191,7 @@ permissions: []
 ### 3.3 Go 工作区与构建
 
 - 根 `go.work` 追加 `services/vastbase-service`
-- 构建产物：`services/bin/niuma-vastbase-service(.exe)`
+- 构建产物：`services/bin/ensis-vastbase-service(.exe)`
 - 纳入 `scripts/build-services.ps1`（与 mongodb / ftp 一致）
 
 ### 3.4 Web 注册 checklist
@@ -230,7 +230,7 @@ permissions: []
   "database": "postgres",
   "ssl_mode": "prefer",
   "search_path": "",
-  "application_name": "niuma-vastbase",
+  "application_name": "ensis-vastbase",
   "connect_timeout_seconds": 10,
   "statement_timeout_ms": 0,
   "exclude_system_schemas": true
@@ -372,7 +372,7 @@ P3 扩展（同级或 schema 下分组节点）：
 
 > 实现状态（v0.3）：双连接编排与 Debug 面板已落地；需环境安装 `dbe_pldebugger` 且账号具备 `gs_role_pldebugger`。
 
-事件（`niuma:event`，经 eventpub）：
+事件（`ensis-ops:event`，经 eventpub）：
 
 ```ts
 {
@@ -474,7 +474,7 @@ Vastbase / openGauss 系调试依赖库内 **`DBE_PLDEBUGGER`**，对外是 **SQ
 - 「新建查询」→ 始终 `forceNew`；从 Schema / 分类入口时 Tab 绑定 `database + schema`（标题 `db.schema · 查询`，种子含 `SET search_path`）；从连接 / 库入口只绑库。
 - 「实例属性 / 监控」→ `monitor` 面板（`meta.instanceOverview` / `meta.activity` / `meta.locks`）。
 - 「导入/导出数据」→ `VastDataTransferDialog`：`dialogApi` 选本地路径，服务端 `COPY` 写/读文件（`io.exportCsv` / `io.importCsv`），不经结果网格。
-- 「转储 / 执行 SQL 文件」→ `io.dumpSql` / `io.execSqlFile` 旁路落盘任务；结构+数据 dump 为 DDL + `COPY FROM STDIN`（`niuma-vastbase-dump/1`），执行端用协议 `CopyFrom` 吃数据段至 `\.`；文件不含 `CREATE DATABASE`，新建库需先建空库再导入。
+- 「转储 / 执行 SQL 文件」→ `io.dumpSql` / `io.execSqlFile` 旁路落盘任务；结构+数据 dump 为 DDL + `COPY FROM STDIN`（`ensis-vastbase-dump/1`），执行端用协议 `CopyFrom` 吃数据段至 `\.`；文件不含 `CREATE DATABASE`，新建库需先建空库再导入。
 - 堆转储选项（对齐 Navicat / DBeaver 常用项）：内容模式、表/视图/物化视图、CREATE SCHEMA、DROP IF EXISTS、TRUNCATE before data、排除系统 Schema；Schema 节点下可多选对象。完整逻辑备份走 `tools.*` / 本机 `vb_dump`。
 - 「备份 / 还原工具」→ `tools` 面板（本机 `vb_dump` / `vb_restore`，组件包 `vastbase-tools`；支持格式/内容/schema·表过滤/并行/压缩/clean 等专业化参数）；「复制 shell 命令」按当前选项生成。`postgresql-client` 仅作通用 PG 备选。
 - 「批量 DROP」「编辑视图」「GRANT」→ 生成 SQL 并打开查询编辑器审阅（不静默执行危险操作）。
@@ -496,7 +496,7 @@ Vastbase / openGauss 系调试依赖库内 **`DBE_PLDEBUGGER`**，对外是 **SQ
 | `io.cancel` | 取消 IO 任务 |
 | `tools.detect` / `tools.dump` / `tools.restore` / `tools.cancel` | 本机 vb_dump / vb_restore（`options` 专业化参数） |
 
-**UI 约定：** 对话框 / 工具栏 / 表格 / 空态一律使用 `@niuma/ui`（`RsDialog`、`RsToolbar`、`RsTable`、`RsSelect` 等），禁止业务模块自造原生表单控件外壳。
+**UI 约定：** 对话框 / 工具栏 / 表格 / 空态一律使用 `ensis-ui`（`RsDialog`、`RsToolbar`、`RsTable`、`RsSelect` 等），禁止业务模块自造原生表单控件外壳。
 
 ### 7.2 Session Tab
 

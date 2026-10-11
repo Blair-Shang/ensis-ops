@@ -1,17 +1,17 @@
 #include "core/app_config.h"
 
-#ifndef NIUMMA_APP_VERSION
-#define NIUMMA_APP_VERSION "1.0.0"
+#ifndef ENSIS_APP_VERSION
+#define ENSIS_APP_VERSION "1.0.0"
 #endif
 
-#ifndef NIUMMA_BUILD_ID
-#define NIUMMA_BUILD_ID "dev"
+#ifndef ENSIS_BUILD_ID
+#define ENSIS_BUILD_ID "dev"
 #endif
 
-namespace niuma {
+namespace ensisops {
 
-const char* AppConfig::Version() { return NIUMMA_APP_VERSION; }
+const char* AppConfig::Version() { return ENSIS_APP_VERSION; }
 
-const char* AppConfig::BuildId() { return NIUMMA_BUILD_ID; }
+const char* AppConfig::BuildId() { return ENSIS_BUILD_ID; }
 
-}  // namespace niuma
+}  // namespace ensisops

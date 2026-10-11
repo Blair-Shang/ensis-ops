@@ -7,7 +7,7 @@
 #include <memory>
 #include <string>
 
-namespace niuma::oracle::dataio {
+namespace ensisops::oracle::dataio {
 
 using CancelFlag = IoCancelFlag;
 using ProgressFn = std::function<void(int64_t bytes, int64_t rows, const std::string& message)>;
@@ -44,4 +44,4 @@ bool RunExecSqlFile(const session::ConnectParams& connect, const std::string& sc
                     const std::string& input_path, bool continue_on_error, CancelFlag cancel,
                     ProgressFn progress, std::string& error);
 
-}  // namespace niuma::oracle::dataio
+}  // namespace ensisops::oracle::dataio

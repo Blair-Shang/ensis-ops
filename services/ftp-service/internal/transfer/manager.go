@@ -12,7 +12,7 @@ import (
 	"sync/atomic"
 	"time"
 
-	"niuma/services/ftp-service/internal/idgen"
+	"ensis-ops/services/ftp-service/internal/idgen"
 )
 
 const (

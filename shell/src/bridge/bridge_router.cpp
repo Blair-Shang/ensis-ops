@@ -7,7 +7,7 @@
 #include "util/plugin_registry.h"
 #include "util/plugin_scanner.h"
 
-#if NIUMMA_WITH_CEF
+#if ENSIS_WITH_CEF
 #include "core/window/native_dialog.h"
 #include "core/window/window_manager.h"
 #include "core/window/window_registry.h"
@@ -25,7 +25,7 @@
 #include <sstream>
 #include <string>
 
-namespace niuma {
+namespace ensisops {
 
 namespace {
 
@@ -43,7 +43,7 @@ void Respond(BridgeCallback callback, const BridgeRequest& req, bool ok,
   callback(resp);
 }
 
-#if NIUMMA_WITH_CEF
+#if ENSIS_WITH_CEF
 
 void RunOnUiThread(std::function<void()> task) {
   if (CefCurrentlyOn(TID_UI)) {
@@ -510,7 +510,7 @@ BridgeRouter::BridgeRouter() : platform_client_(std::make_unique<PlatformClient>
 BridgeRouter::~BridgeRouter() = default;
 
 void BridgeRouter::Dispatch(const BridgeRequest& req, BridgeCallback callback) {
-#if NIUMMA_WITH_CEF
+#if ENSIS_WITH_CEF
   if (DispatchWindowMethod(req, callback)) {
     return;
   }
@@ -625,7 +625,7 @@ void BridgeRouter::Dispatch(const BridgeRequest& req, BridgeCallback callback) {
     ss << R"({"runtime":"cef","platform":)" << JsonQuoteString(GetRuntimePlatformName())
        << R"(,"arch":)" << JsonQuoteString(GetRuntimeArchName())
        << R"(,"installDir":)" << JsonQuoteString(GetInstallDir())
-       << R"(,"webPath":"app://niuma/","frameless":)"
+       << R"(,"webPath":"app://ensis-ops/","frameless":)"
        << (frameless ? "true" : "false") << "}";
     resp.result = ss.str();
     callback(resp);
@@ -659,4 +659,4 @@ void BridgeRouter::Dispatch(const BridgeRequest& req, BridgeCallback callback) {
                            });
 }
 
-}  // namespace niuma
+}  // namespace ensisops

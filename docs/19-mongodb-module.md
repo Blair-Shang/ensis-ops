@@ -13,13 +13,13 @@
 
 本模块采用 **Navicat for MongoDB** 的分工，而非 MongoDB Compass（内嵌 Node/mongosh）路线：
 
-| 能力层 | Navicat 做法 | NiuMa 做法 |
+| 能力层 | Navicat 做法 | ensis-ops 做法 |
 |--------|-------------|-----------|
 | GUI / 数据浏览 | 自研 UI + **libmongoc** | Vue 自研面板 + **Go 官方 `mongo-driver`** |
 | Shell 控制台 | **外部 mongosh**（用户配置路径） | PTY 桥接本机 `mongosh`；无则降级内置 REPL |
 | 导入导出 | **外部 mongo-tools**（mongodump 等） | `os/exec` spawn 本机工具 |
 | 监控 / Schema | 自研 UI + 驱动查询 | `serverStatus` / Change Stream / 文档采样 |
-| 安装包 | 不捆绑 Node | 仅 `niuma-mongodb-service` Go 二进制（~10–20 MB） |
+| 安装包 | 不捆绑 Node | 仅 `ensis-mongodb-service` Go 二进制（~10–20 MB） |
 
 要点：**不把 Node.js / mongosh 打进主安装包**；需要 100% 官方 Shell 体验时，引导用户安装 mongosh 或在设置中配置路径（与 Navicat `Mongo Shell Path` 一致）。
 
@@ -59,7 +59,7 @@
 ```
 ┌ Layer 4 ─ Web ─────────────────────────────────────────────────────┐
 │ web/src/modules/mongodb/  连接树 · 集合浏览 · 查询 · Shell · 工具   │
-│   ↑ bridgeInvoke(mongodb.*)          ↑ bridgeOnEvent(niuma:event)   │
+│   ↑ bridgeInvoke(mongodb.*)          ↑ bridgeOnEvent(ensis-ops:event)   │
 └───┼──────────────────────────────────┼──────────────────────────────┘
     │ cefQuery（请求/响应）             │ PostMessage（事件推送）
 ┌ Layer 3 ─ C++ Shell ──────────────────┴────────────────────────────┐
@@ -143,7 +143,7 @@ web/src/modules/mongodb/
 
 - `services/mongodb-service`
 
-构建产物：`services/bin/niuma-mongodb-service.exe`（Windows）/ `niuma-mongodb-service`（Unix）。
+构建产物：`services/bin/ensis-mongodb-service.exe`（Windows）/ `ensis-mongodb-service`（Unix）。
 
 ---
 
@@ -292,7 +292,7 @@ Web 侧命名空间：`mongodb.*`。platform-core 剥前缀后转发至能力服
 
 SSH 隧道场景：工具连接 `127.0.0.1:<localForwardPort>`，隧道由 `packages/go/tunnel` 维持，与 Redis 隧道模型一致。
 
-### 5.7 事件（`niuma:event`）
+### 5.7 事件（`ensis-ops:event`）
 
 | type | 载荷 | 说明 |
 |------|------|------|
@@ -310,7 +310,7 @@ SSH 隧道场景：工具连接 `127.0.0.1:<localForwardPort>`，隧道由 `pack
 `services/manifests/mongodb-service.yaml`：
 
 ```yaml
-id: com.niuma.mongodb
+id: com.ensisops.mongodb
 name: MongoDB Service
 version: 0.1.0
 bridge:
@@ -323,17 +323,17 @@ session:
     - session.test
     - tree.databases
 runtime:
-  executable: bin/niuma-mongodb-service.exe
-  executable_windows: bin/niuma-mongodb-service.exe
-  executable_unix: bin/niuma-mongodb-service
+  executable: bin/ensis-mongodb-service.exe
+  executable_windows: bin/ensis-mongodb-service.exe
+  executable_unix: bin/ensis-mongodb-service
   lang: go
 ipc:
   transport: named_pipe
   transport_windows: named_pipe
   transport_unix: unix_socket
-  address: '\\.\pipe\niuma.mongodb'
-  address_windows: '\\.\pipe\niuma.mongodb'
-  address_unix: '/tmp/niuma.mongodb.sock'
+  address: '\\.\pipe\ensis-ops.mongodb'
+  address_windows: '\\.\pipe\ensis-ops.mongodb'
+  address_unix: '/tmp/ensis-ops.mongodb.sock'
   protocol: length_prefixed_json
 lifecycle:
   startup: lazy
@@ -360,14 +360,14 @@ go.mongodb.org/mongo-driver/mongo/options
 
 公共包：
 
-- `niuma/pkg/serviceipc` — IPC 服务端
-- `niuma/pkg/tunnel` — SSH 隧道
-- `niuma/pkg/netproxy` — 代理
+- `ensis-ops/pkg/serviceipc` — IPC 服务端
+- `ensis-ops/pkg/tunnel` — SSH 隧道
+- `ensis-ops/pkg/netproxy` — 代理
 
 ### 7.2 服务入口
 
 - `main.go` 只做日志初始化、信号处理、Handler 装配、IPC 启动
-- 监听地址与 manifest 保持一致：Windows `\\.\pipe\niuma.mongodb`
+- 监听地址与 manifest 保持一致：Windows `\\.\pipe\ensis-ops.mongodb`
 
 ### 7.3 会话管理
 

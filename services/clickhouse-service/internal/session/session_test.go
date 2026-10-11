@@ -5,7 +5,7 @@ import (
 	"strconv"
 	"testing"
 
-	"niuma/services/clickhouse-service/internal/dialect"
+	"ensis-ops/services/clickhouse-service/internal/dialect"
 )
 
 func itoa(n int) string { return strconv.Itoa(n) }

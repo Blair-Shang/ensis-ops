@@ -31,7 +31,7 @@ export const DEFAULT_CLICKHOUSE_OPTIONS: ClickHouseConnectionOptions = {
   secure: false,
   ssl_mode: 'disable',
   compress: true,
-  application_name: 'NiuMa',
+  application_name: 'ensis-ops',
   connect_timeout_seconds: 10,
   exclude_system_databases: true,
   cluster: '',

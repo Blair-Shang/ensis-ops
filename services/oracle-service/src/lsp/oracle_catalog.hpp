@@ -1,30 +1,30 @@
 #pragma once
 
-#include "niuma/sqllsp/catalog.hpp"
+#include "ensisops/sqllsp/catalog.hpp"
 #include "session/manager.hpp"
 
-namespace niuma::oracle::lsp {
+namespace ensisops::oracle::lsp {
 
 /** 进程内复用 catalog::List* / tree 例程列表。 */
-class OracleCatalog final : public niuma::sqllsp::RoutineCatalog {
+class OracleCatalog final : public ensisops::sqllsp::RoutineCatalog {
  public:
   explicit OracleCatalog(session::Manager& sessions) : sessions_(sessions) {}
 
-  bool ListSchemas(const niuma::sqllsp::CatalogParams& params,
-                   std::vector<niuma::sqllsp::SchemaHit>& out, bool& truncated,
+  bool ListSchemas(const ensisops::sqllsp::CatalogParams& params,
+                   std::vector<ensisops::sqllsp::SchemaHit>& out, bool& truncated,
                    std::string& error) override;
-  bool ListTables(const niuma::sqllsp::CatalogParams& params,
-                  std::vector<niuma::sqllsp::TableHit>& out, bool& truncated,
+  bool ListTables(const ensisops::sqllsp::CatalogParams& params,
+                  std::vector<ensisops::sqllsp::TableHit>& out, bool& truncated,
                   std::string& error) override;
-  bool ListColumns(const niuma::sqllsp::CatalogParams& params,
-                   std::vector<niuma::sqllsp::ColumnHit>& out, bool& truncated,
+  bool ListColumns(const ensisops::sqllsp::CatalogParams& params,
+                   std::vector<ensisops::sqllsp::ColumnHit>& out, bool& truncated,
                    std::string& error) override;
-  bool ListRoutines(const niuma::sqllsp::CatalogParams& params,
-                    std::vector<niuma::sqllsp::RoutineHit>& out, bool& truncated,
+  bool ListRoutines(const ensisops::sqllsp::CatalogParams& params,
+                    std::vector<ensisops::sqllsp::RoutineHit>& out, bool& truncated,
                     std::string& error) override;
 
  private:
   session::Manager& sessions_;
 };
 
-}  // namespace niuma::oracle::lsp
+}  // namespace ensisops::oracle::lsp

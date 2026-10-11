@@ -5,7 +5,7 @@ import (
 	"strings"
 	"testing"
 
-	"niuma/pkg/tunnel"
+	"ensis-ops/pkg/tunnel"
 )
 
 func TestPortOrDefault(t *testing.T) {

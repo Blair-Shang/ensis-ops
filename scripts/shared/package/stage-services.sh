@@ -38,7 +38,7 @@ if [[ "$SKIP_BUILD" != "true" ]]; then
     --configuration "$CONFIGURATION"
 fi
 
-[[ -f "$TARGET_BIN_SRC/niuma-platform-core" || -f "$TARGET_BIN_SRC/niuma-platform-core.exe" ]] || nm_die "missing platform-core under $TARGET_BIN_SRC"
+[[ -f "$TARGET_BIN_SRC/ensis-platform-core" || -f "$TARGET_BIN_SRC/ensis-platform-core.exe" ]] || nm_die "missing platform-core under $TARGET_BIN_SRC"
 
 mkdir -p "$BIN_DST" "$MAN_DST"
 # 生产 stage 只认矩阵目录，不从平铺 services/bin 回退（避免旧产物污染）
@@ -61,6 +61,6 @@ if [[ -d "$BIN_SRC/runtime" ]]; then
 fi
 
 cp -R "$MAN_SRC/." "$MAN_DST/"
-chmod 0755 "$BIN_DST"/niuma-* 2>/dev/null || true
+chmod 0755 "$BIN_DST"/ensis-* 2>/dev/null || true
 
 nm_log "services staged -> $INSTALL_DIR/services (matrix-only: $TARGET_BIN_SRC)"

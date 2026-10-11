@@ -2,7 +2,7 @@
 
 use std::time::Duration;
 
-use niuma_serviceipc::write_frame;
+use ensis_serviceipc::write_frame;
 use serde_json::Value;
 use tokio::sync::mpsc;
 use tracing::warn;
@@ -17,10 +17,10 @@ const CONNECT_RETRY_DELAY_MS: u64 = 50;
 const CONNECT_RETRY_ATTEMPTS: u32 = 40;
 /// Unix 下 platform 事件入口文件名。
 #[cfg(not(windows))]
-const UNIX_INGEST_NAME: &str = "niuma.platform.eventin.sock";
+const UNIX_INGEST_NAME: &str = "ensis-ops.platform.eventin.sock";
 /// Windows 下 platform 事件入口地址。
 #[cfg(windows)]
-const WINDOWS_INGEST_ADDR: &str = r"\\.\pipe\niuma.platform.eventin";
+const WINDOWS_INGEST_ADDR: &str = r"\\.\pipe\ensis-ops.platform.eventin";
 
 /// AsyncPublisher 在后台单任务中串行写入 platform 事件入口。
 #[derive(Clone)]

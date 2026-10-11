@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { RsButton, RsEmpty, RsTable, type RsTableColumn } from '@niuma/ui'
+import { RsButton, RsEmpty, RsTable, type RsTableColumn } from 'ensis-ui'
 import { computed } from 'vue'
 import { useI18n } from 'vue-i18n'
 import type { ConnItem } from '@/modules/ops/types'

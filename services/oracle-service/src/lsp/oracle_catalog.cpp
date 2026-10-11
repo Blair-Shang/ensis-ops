@@ -8,7 +8,7 @@
 
 #include <mutex>
 
-namespace niuma::oracle::lsp {
+namespace ensisops::oracle::lsp {
 namespace {
 
 bool ResolveSession(session::Manager& sessions, const std::string& session_id,
@@ -25,7 +25,7 @@ bool ResolveSession(session::Manager& sessions, const std::string& session_id,
   return true;
 }
 
-std::string SchemaOf(const niuma::sqllsp::CatalogParams& params) {
+std::string SchemaOf(const ensisops::sqllsp::CatalogParams& params) {
   if (!params.schema.empty()) return params.schema;
   return params.database;
 }
@@ -33,7 +33,7 @@ std::string SchemaOf(const niuma::sqllsp::CatalogParams& params) {
 /** 表列为空时探测是否为序列，注入 NEXTVAL / CURRVAL。 */
 bool TrySequencePseudoColumns(session::Session& session, const std::string& schema,
                               const std::string& name, const std::string& prefix,
-                              std::vector<niuma::sqllsp::ColumnHit>& out, std::string& error) {
+                              std::vector<ensisops::sqllsp::ColumnHit>& out, std::string& error) {
   if (!util::IsSafeIdent(schema) || !util::IsSafeIdent(name)) return false;
   const std::string owner = util::QuoteLiteral(schema);
   const std::string seq = util::QuoteLiteral(name);
@@ -62,7 +62,7 @@ bool TrySequencePseudoColumns(session::Session& session, const std::string& sche
       }
       if (ll.rfind(pp, 0) != 0) return;
     }
-    niuma::sqllsp::ColumnHit hit;
+    ensisops::sqllsp::ColumnHit hit;
     hit.name = label;
     hit.data_type = dtype;
     hit.schema = schema;
@@ -76,8 +76,8 @@ bool TrySequencePseudoColumns(session::Session& session, const std::string& sche
 
 }  // namespace
 
-bool OracleCatalog::ListSchemas(const niuma::sqllsp::CatalogParams& params,
-                                std::vector<niuma::sqllsp::SchemaHit>& out, bool& truncated,
+bool OracleCatalog::ListSchemas(const ensisops::sqllsp::CatalogParams& params,
+                                std::vector<ensisops::sqllsp::SchemaHit>& out, bool& truncated,
                                 std::string& error) {
   out.clear();
   truncated = false;
@@ -93,15 +93,15 @@ bool OracleCatalog::ListSchemas(const niuma::sqllsp::CatalogParams& params,
   truncated = result.value("truncated", false);
   for (const auto& item : result.value("schemas", nlohmann::json::array())) {
     if (!item.is_object()) continue;
-    niuma::sqllsp::SchemaHit hit;
+    ensisops::sqllsp::SchemaHit hit;
     hit.name = item.value("name", "");
     if (!hit.name.empty()) out.push_back(std::move(hit));
   }
   return true;
 }
 
-bool OracleCatalog::ListTables(const niuma::sqllsp::CatalogParams& params,
-                               std::vector<niuma::sqllsp::TableHit>& out, bool& truncated,
+bool OracleCatalog::ListTables(const ensisops::sqllsp::CatalogParams& params,
+                               std::vector<ensisops::sqllsp::TableHit>& out, bool& truncated,
                                std::string& error) {
   out.clear();
   truncated = false;
@@ -118,7 +118,7 @@ bool OracleCatalog::ListTables(const niuma::sqllsp::CatalogParams& params,
   truncated = result.value("truncated", false);
   for (const auto& item : result.value("tables", nlohmann::json::array())) {
     if (!item.is_object()) continue;
-    niuma::sqllsp::TableHit hit;
+    ensisops::sqllsp::TableHit hit;
     hit.name = item.value("name", "");
     hit.type = item.value("type", "table");
     hit.schema = item.value("schema", lp.schema);
@@ -138,7 +138,7 @@ bool OracleCatalog::ListTables(const niuma::sqllsp::CatalogParams& params,
       if (seqs.value("truncated", false)) truncated = true;
       for (const auto& item : seqs.value("sequences", nlohmann::json::array())) {
         if (!item.is_object()) continue;
-        niuma::sqllsp::TableHit hit;
+        ensisops::sqllsp::TableHit hit;
         hit.name = item.value("name", "");
         hit.type = "sequence";
         hit.schema = item.value("schema", lp.schema);
@@ -151,8 +151,8 @@ bool OracleCatalog::ListTables(const niuma::sqllsp::CatalogParams& params,
   return true;
 }
 
-bool OracleCatalog::ListColumns(const niuma::sqllsp::CatalogParams& params,
-                                std::vector<niuma::sqllsp::ColumnHit>& out, bool& truncated,
+bool OracleCatalog::ListColumns(const ensisops::sqllsp::CatalogParams& params,
+                                std::vector<ensisops::sqllsp::ColumnHit>& out, bool& truncated,
                                 std::string& error) {
   out.clear();
   truncated = false;
@@ -170,7 +170,7 @@ bool OracleCatalog::ListColumns(const niuma::sqllsp::CatalogParams& params,
   truncated = result.value("truncated", false);
   for (const auto& item : result.value("columns", nlohmann::json::array())) {
     if (!item.is_object()) continue;
-    niuma::sqllsp::ColumnHit hit;
+    ensisops::sqllsp::ColumnHit hit;
     hit.name = item.value("name", "");
     hit.data_type = item.value("dataType", item.value("type", ""));
     hit.schema = lp.schema;
@@ -184,8 +184,8 @@ bool OracleCatalog::ListColumns(const niuma::sqllsp::CatalogParams& params,
   return true;
 }
 
-bool OracleCatalog::ListRoutines(const niuma::sqllsp::CatalogParams& params,
-                                 std::vector<niuma::sqllsp::RoutineHit>& out, bool& truncated,
+bool OracleCatalog::ListRoutines(const ensisops::sqllsp::CatalogParams& params,
+                                 std::vector<ensisops::sqllsp::RoutineHit>& out, bool& truncated,
                                  std::string& error) {
   out.clear();
   truncated = false;
@@ -202,7 +202,7 @@ bool OracleCatalog::ListRoutines(const niuma::sqllsp::CatalogParams& params,
   truncated = result.value("truncated", false);
   for (const auto& item : result.value("routines", nlohmann::json::array())) {
     if (!item.is_object()) continue;
-    niuma::sqllsp::RoutineHit hit;
+    ensisops::sqllsp::RoutineHit hit;
     hit.name = item.value("name", "");
     hit.type = item.value("type", "function");
     if (!hit.name.empty()) out.push_back(std::move(hit));
@@ -220,7 +220,7 @@ bool OracleCatalog::ListRoutines(const niuma::sqllsp::CatalogParams& params,
       if (pkgs.value("truncated", false)) truncated = true;
       for (const auto& item : pkgs.value("packages", nlohmann::json::array())) {
         if (!item.is_object()) continue;
-        niuma::sqllsp::RoutineHit hit;
+        ensisops::sqllsp::RoutineHit hit;
         hit.name = item.value("name", "");
         hit.type = "package";
         if (!hit.name.empty()) out.push_back(std::move(hit));
@@ -232,4 +232,4 @@ bool OracleCatalog::ListRoutines(const niuma::sqllsp::CatalogParams& params,
   return true;
 }
 
-}  // namespace niuma::oracle::lsp
+}  // namespace ensisops::oracle::lsp

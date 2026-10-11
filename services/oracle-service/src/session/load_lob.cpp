@@ -7,7 +7,7 @@
 
 #include <cctype>
 
-namespace niuma::oracle::session {
+namespace ensisops::oracle::session {
 namespace {
 
 std::string DpiError(dpiContext* ctx) {
@@ -132,4 +132,4 @@ nlohmann::json LoadLob(Session& session, const LoadLobParams& params, std::strin
   return out;
 }
 
-}  // namespace niuma::oracle::session
+}  // namespace ensisops::oracle::session

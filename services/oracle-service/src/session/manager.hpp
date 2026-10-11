@@ -13,7 +13,7 @@
 #include <unordered_map>
 #include <vector>
 
-namespace niuma::oracle::session {
+namespace ensisops::oracle::session {
 
 struct ResultSet {
   util::StmtGuard stmt;
@@ -27,8 +27,8 @@ struct ResultSet {
 struct Session {
   std::string id;
   // ssh_tunnel / proxy_relay 须晚于 conn 析构（声明在前 → 析构在后）。
-  std::unique_ptr<niuma::sshtunnel::TunnelGuard> ssh_tunnel;
-  std::unique_ptr<niuma::netproxy::RelayGuard> proxy_relay;
+  std::unique_ptr<ensisops::sshtunnel::TunnelGuard> ssh_tunnel;
+  std::unique_ptr<ensisops::netproxy::RelayGuard> proxy_relay;
   ConnPtr conn;
   ContextPtr ctx;
   ConnectParams params;
@@ -57,4 +57,4 @@ class Manager {
   std::unordered_map<std::string, std::shared_ptr<Session>> sessions_;
 };
 
-}  // namespace niuma::oracle::session
+}  // namespace ensisops::oracle::session

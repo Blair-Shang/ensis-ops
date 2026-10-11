@@ -103,7 +103,7 @@ func findServicesRoot(start string) (string, error) {
 
 // ResolveServicesDir 从当前可执行文件向上查找含 manifests/ 的 services 根目录。
 //
-// 约定：能力服务为 <services>/bin/niuma-<role>[.exe]；壳层为独立 niuma[.exe]。
+// 约定：能力服务为 <services>/bin/ensis-<role>[.exe]；壳层为独立 ensis-ops[.exe]。
 func ResolveServicesDir() (string, error) {
 	exe, err := os.Executable()
 	if err != nil {

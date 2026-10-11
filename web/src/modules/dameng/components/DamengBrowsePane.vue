@@ -10,7 +10,7 @@ import {
   RsEmpty,
   RsLoading,
   RsPopover,
-} from '@niuma/ui'
+} from 'ensis-ui'
 import { computed } from 'vue'
 import { BrowseDataGrid, BrowseDataShell, BrowseIoMenu } from '@/modules/database'
 import { useDamengBrowsePane } from '@/modules/dameng/composables/useDamengBrowsePane'

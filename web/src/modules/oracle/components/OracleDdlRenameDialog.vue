@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { RsButton, RsDialog, RsInput, RsLabel } from '@niuma/ui'
+import { RsButton, RsDialog, RsInput, RsLabel } from 'ensis-ui'
 import { computed, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useOracleDdlDialog } from '@/modules/oracle/composables/useOracleDdlDialog'

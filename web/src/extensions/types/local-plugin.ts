@@ -5,7 +5,7 @@ export type { PluginRecord as LocalPluginRecord } from '@/api/types/plugin'
 export type { PluginListResult as LocalPluginListResponse } from '@/api/types/plugin'
 
 /**
- * 解析插件静态资源 URL（开发 Vite `/plugins` 或 CEF `app://niuma/plugins`）。
+ * 解析插件静态资源 URL（开发 Vite `/plugins` 或 CEF `app://ensis-ops/plugins`）。
  *
  * @param pluginRoot - 相对 plugins/ 的路径
  * @param relativePath - manifest.module.uiEntry 等相对路径
@@ -19,7 +19,7 @@ export function resolvePluginAssetUrl(pluginRoot: string, relativePath: string):
     return `/plugins/${normalized}`
   }
   if (globalThis.cefQuery) {
-    return `app://niuma/plugins/${normalized}`
+    return `app://ensis-ops/plugins/${normalized}`
   }
-  return `app://niuma/plugins/${normalized}`
+  return `app://ensis-ops/plugins/${normalized}`
 }

@@ -24,7 +24,7 @@ export interface ShellInfo {
   arch?: string
   /** 安装目录绝对路径（可为空） */
   installDir: string
-  /** Web 资源根 URL，如 `app://niuma/` */
+  /** Web 资源根 URL，如 `app://ensis-ops/` */
   webPath: string
   /** 是否无边框；Web 据此显示自绘窗口按钮 */
   frameless?: boolean

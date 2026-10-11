@@ -3,7 +3,7 @@
  * WebSocket 客户端。连接保存在 store，切走页签不会断开。
  */
 import type { ApiSocketDataEvent } from '@/api/types/api-socket'
-import { RsButton, RsSplitPane, type RsSplitPaneItem } from '@niuma/ui'
+import { RsButton, RsSplitPane, type RsSplitPaneItem } from 'ensis-ui'
 import { computed, nextTick, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import type { ApiRequest } from '../types'

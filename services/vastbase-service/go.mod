@@ -1,14 +1,14 @@
-module niuma/services/vastbase-service
+module ensis-ops/services/vastbase-service
 
 go 1.25.0
 
 require (
 	github.com/jackc/pgx/v5 v5.7.5
-	niuma/pkg/common v0.0.0
-	niuma/pkg/logutil v0.0.0
-	niuma/pkg/netproxy v0.0.0
-	niuma/pkg/serviceipc v0.0.0
-	niuma/pkg/tunnel v0.0.0
+	ensis-ops/pkg/common v0.0.0
+	ensis-ops/pkg/logutil v0.0.0
+	ensis-ops/pkg/netproxy v0.0.0
+	ensis-ops/pkg/serviceipc v0.0.0
+	ensis-ops/pkg/tunnel v0.0.0
 )
 
 require (
@@ -24,12 +24,12 @@ require (
 	golang.org/x/text v0.40.0 // indirect
 )
 
-replace niuma/pkg/common => ../../packages/go/common
+replace ensis-ops/pkg/common => ../../packages/go/common
 
-replace niuma/pkg/logutil => ../../packages/go/logutil
+replace ensis-ops/pkg/logutil => ../../packages/go/logutil
 
-replace niuma/pkg/netproxy => ../../packages/go/netproxy
+replace ensis-ops/pkg/netproxy => ../../packages/go/netproxy
 
-replace niuma/pkg/serviceipc => ../../packages/go/serviceipc
+replace ensis-ops/pkg/serviceipc => ../../packages/go/serviceipc
 
-replace niuma/pkg/tunnel => ../../packages/go/tunnel
+replace ensis-ops/pkg/tunnel => ../../packages/go/tunnel

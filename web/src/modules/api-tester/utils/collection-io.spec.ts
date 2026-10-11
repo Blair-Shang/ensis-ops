@@ -65,7 +65,7 @@ describe('api collection io', () => {
 
   it('reads a v1 workspace, including socket servers and environments without vars', () => {
     const legacy = {
-      kind: 'niuma.api-workspace',
+      kind: 'ensis-ops.api-workspace',
       version: 1,
       folders: [
         {
@@ -106,7 +106,7 @@ describe('api collection io', () => {
   it('reads collection files that still carry a version field', () => {
     const parsed = parseCollection(
       JSON.stringify({
-        kind: 'niuma.api-collection',
+        kind: 'ensis-ops.api-collection',
         version: 1,
         exportedAt: new Date().toISOString(),
         folders: [
@@ -184,7 +184,7 @@ describe('api collection io', () => {
 
   it('rejects workspace when all folders fail to parse', () => {
     const broken = {
-      kind: 'niuma.api-workspace',
+      kind: 'ensis-ops.api-workspace',
       version: 3,
       folders: [{ id: 'drafts', name: '' }],
       envId: 'local',
@@ -195,7 +195,7 @@ describe('api collection io', () => {
 
   it('reads a v2 workspace into the same snapshot, including globals', () => {
     const legacy = {
-      kind: 'niuma.api-workspace',
+      kind: 'ensis-ops.api-workspace',
       version: 2,
       folders: sampleFolders(),
       environments: sampleEnvs(),
@@ -211,7 +211,7 @@ describe('api collection io', () => {
 
   it('returns null for missing or foreign workspace text', () => {
     expect(parseWorkspace(null)).toBeNull()
-    expect(parseWorkspace('{"kind":"niuma.api-collection","folders":[]}')).toBeNull()
+    expect(parseWorkspace('{"kind":"ensis-ops.api-collection","folders":[]}')).toBeNull()
   })
 
   it('provides a local default environment', () => {
@@ -237,7 +237,7 @@ describe('api collection io', () => {
 
   it('remints nested parentId and flattens cycles on import', () => {
     const file = {
-      kind: 'niuma.api-collection',
+      kind: 'ensis-ops.api-collection',
       exportedAt: new Date().toISOString(),
       folders: [
         { id: 'root', name: 'Root', parentId: null, vars: {}, requests: [] },

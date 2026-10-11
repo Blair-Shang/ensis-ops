@@ -21,7 +21,7 @@
 
 | 层 | 必须独立 | 允许共用（仅框架，无引擎业务） |
 |----|----------|--------------------------------|
-| 进程 / 二进制 | `niuma-kingbase-service` 独享 | — |
+| 进程 / 二进制 | `ensis-kingbase-service` 独享 | — |
 | manifest / namespace / kind | `kingbase` 独享 | — |
 | Go 模块 | `services/kingbase-service/` 自有 `go.mod` + `internal/*` | `packages/go/serviceipc`、`tunnel`、`logutil` 等**无引擎语义**包 |
 | Web 业务模块 | `web/src/modules/kingbase/`、`api/kingbase.ts` | `modules/database/*` 壳、`sql-editor` 编排（只认 family/Cap） |
@@ -60,12 +60,12 @@
 
 ### 1.1 架构对齐
 
-| 能力层 | 参考 | NiuMa 做法 |
+| 能力层 | 参考 | ensis-ops 做法 |
 |--------|------|-----------|
 | GUI / 对象树 / SQL | 金仓管理工具 / DBeaver / Navicat | Vue + Monaco + Go 能力服务 |
 | 连接与查询 | PostgreSQL wire（默认端口 **54321**） | **Go + `jackc/pgx/v5`** |
 | 方言差异 | 客户端能力探测 | **DialectFamily + CapabilitySet**（契约见 [23](./23-sql-dialect-completion.md)） |
-| 安装包 | 厂商 JDBC IDE | 仅 `niuma-kingbase-service` Go 二进制（无 JVM / 无 Gokb 旁载） |
+| 安装包 | 厂商 JDBC IDE | 仅 `ensis-kingbase-service` Go 二进制（无 JVM / 无 Gokb 旁载） |
 
 ### 1.2 关键决策
 
@@ -99,7 +99,7 @@
 
 1. 从厂商渠道拿到可再分发的源码/库；  
 2. Spike 证明过程 `OUT` / 兼容模式相对 pgx 有不可绕过收益；  
-3. 许可允许随 NiuMa 安装包分发；  
+3. 许可允许随 ensis-ops 安装包分发；  
 4. 会话层仍暴露同一套 Bridge RPC（驱动替换不改 Web 契约）。
 
 ### 1.4 协议与兼容范围
@@ -208,7 +208,7 @@ flowchart TD
 ┌ Layer 4 ─ Web ────────────────────────────────────────────┐
 │ web/src/modules/kingbase/                                  │
 │   连接表单 · 树 Provider · Query · Browse · Monitor        │
-│   ↑ bridgeInvoke(kingbase.*) ↑ bridgeOnEvent(niuma:event) │
+│   ↑ bridgeInvoke(kingbase.*) ↑ bridgeOnEvent(ensis-ops:event) │
 └───┼───────────────────────────┼────────────────────────────┘
     │ cefQuery                  │ PostMessage
 ┌ Layer 3 ─ C++ Shell ──────────┴────────────────────────────┐
@@ -239,7 +239,7 @@ flowchart TD
 services/
 ├── manifests/kingbase-service.yaml
 └── kingbase-service/
-    ├── go.mod                 # jackc/pgx/v5 + niuma/pkg/*
+    ├── go.mod                 # jackc/pgx/v5 + ensis-ops/pkg/*
     ├── cmd/kingbase-service/main.go
     └── internal/
         ├── dialect/           # ServerProfile / Cap* / Probe
@@ -291,7 +291,7 @@ web/src/api/
 | ssl_root_cert / ssl_cert / ssl_key | 空 | PEM 路径（libpq 形） |
 | search_path | 空 | 可选；打开后 `SET search_path`（P1） |
 | client_encoding | `UTF8` | — |
-| application_name | `niuma-kingbase` | `pg_stat_activity` 识别 |
+| application_name | `ensis-kingbase` | `pg_stat_activity` 识别 |
 | connect_timeout_seconds | 10 | 建连超时 |
 | statement_timeout_ms | 0 | 0 = 不设置 |
 | exclude_system_schemas | `true` | 树/catalog 默认隐藏系统 schema |
@@ -446,7 +446,7 @@ res:{profileId}:database:{db}:schema:{schema}:sequence:{name}
 ## 8. manifest 草案
 
 ```yaml
-id: com.niuma.kingbase
+id: com.ensisops.kingbase
 name: Kingbase Service
 version: 0.1.0
 bridge:
@@ -479,22 +479,22 @@ session:
     - io.execSqlFile
     - io.cancel
 runtime:
-  executable: bin/niuma-kingbase-service.exe
-  executable_windows: bin/niuma-kingbase-service.exe
-  executable_unix: bin/niuma-kingbase-service
+  executable: bin/ensis-kingbase-service.exe
+  executable_windows: bin/ensis-kingbase-service.exe
+  executable_unix: bin/ensis-kingbase-service
   lang: go
 ipc:
   transport_windows: named_pipe
   transport_unix: unix_socket
-  address_windows: '\\.\pipe\niuma.kingbase'
-  address_unix: '/tmp/niuma.kingbase.sock'
+  address_windows: '\\.\pipe\ensis-ops.kingbase'
+  address_unix: '/tmp/ensis-ops.kingbase.sock'
   protocol: length_prefixed_json
 lifecycle:
   startup: lazy
 permissions: []
 ```
 
-构建：`go.work` 增加 `services/kingbase-service`；`scripts/build-services.ps1` 纳入；二进制名 **`niuma-kingbase-service`**。
+构建：`go.work` 增加 `services/kingbase-service`；`scripts/build-services.ps1` 纳入；二进制名 **`ensis-kingbase-service`**。
 
 ---
 

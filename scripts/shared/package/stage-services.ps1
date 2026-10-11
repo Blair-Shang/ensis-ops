@@ -1,9 +1,9 @@
 #Requires -Version 5.1
 <#
 .SYNOPSIS
-  构建能力服务并复制到壳层安装目录（niuma.exe 同级 services/）。
+  构建能力服务并复制到壳层安装目录（ensis-ops.exe 同级 services/）。
 .NOTES
-  ServiceManager 拉起 services/bin/niuma-platform-core.exe。
+  ServiceManager 拉起 services/bin/ensis-platform-core.exe。
   生产 stage 只认矩阵目录 services/bin/<platform>-<arch>/，不从平铺 bin 回退，
   避免旧产物污染安装包。旁载 runtime 仅同步占位说明，不打入厂商 DLL。
 #>
@@ -39,10 +39,10 @@ if (-not $SkipBuild) {
     & $BuildScript -Platform $Platform -Arch $Arch -Configuration $Configuration
 }
 
-$platformExe = if (Test-Path (Join-Path $TargetBinSrc 'niuma-platform-core.exe')) {
-    Join-Path $TargetBinSrc 'niuma-platform-core.exe'
-} elseif (Test-Path (Join-Path $TargetBinSrc 'niuma-platform-core')) {
-    Join-Path $TargetBinSrc 'niuma-platform-core'
+$platformExe = if (Test-Path (Join-Path $TargetBinSrc 'ensis-platform-core.exe')) {
+    Join-Path $TargetBinSrc 'ensis-platform-core.exe'
+} elseif (Test-Path (Join-Path $TargetBinSrc 'ensis-platform-core')) {
+    Join-Path $TargetBinSrc 'ensis-platform-core'
 } else {
     $null
 }

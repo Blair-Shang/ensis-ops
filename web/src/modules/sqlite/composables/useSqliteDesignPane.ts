@@ -7,7 +7,7 @@ import {
   type RsSelectOptions,
   type RsTableColumn,
   type RsTableRowDropPosition,
-} from '@niuma/ui'
+} from 'ensis-ui'
 import { computed, onMounted, reactive, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { sqliteApi } from '@/api'

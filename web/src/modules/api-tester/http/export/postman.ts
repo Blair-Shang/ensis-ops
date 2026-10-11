@@ -8,7 +8,7 @@ const SCHEMA = 'https://schema.getpostman.com/json/collection/v2.1.0/collection.
 /** 导出可再导入 Postman 的集合 JSON。 */
 export function exportPostmanCollection(folders: readonly ApiFolder[], name: string): string {
   const roots = folders.filter((folder) => !folder.parentId || !folders.some((item) => item.id === folder.parentId))
-  const infoName = name.trim() || roots[0]?.name || 'NiuMa'
+  const infoName = name.trim() || roots[0]?.name || 'ensis-ops'
   const collection = {
     info: {
       name: infoName,

@@ -5,8 +5,8 @@ import (
 	"encoding/json"
 	"fmt"
 
-	"niuma/services/clickhouse-service/internal/session"
-	"niuma/services/clickhouse-service/internal/tree"
+	"ensis-ops/services/clickhouse-service/internal/session"
+	"ensis-ops/services/clickhouse-service/internal/tree"
 )
 
 type treeListParams struct {

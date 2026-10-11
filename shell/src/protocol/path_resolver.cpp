@@ -1,8 +1,8 @@
 #include "protocol/path_resolver.h"
-#include "niuma/types.h"
+#include "ensisops/types.h"
 #include "util/runtime_paths.h"
 
-namespace niuma {
+namespace ensisops {
 
 std::string ResolveAppResourcePath(const std::string& url_path) {
   static constexpr char kPluginsPrefix[] = "/plugins/";
@@ -22,4 +22,4 @@ std::string ResolveAppResourcePath(const std::string& url_path) {
   return base + url_path;
 }
 
-}  // namespace niuma
+}  // namespace ensisops

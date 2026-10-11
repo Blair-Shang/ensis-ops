@@ -6,7 +6,7 @@ import (
 
 	"github.com/jackc/pgx/v5/pgxpool"
 
-	"niuma/services/postgres-service/internal/dialect"
+	"ensis-ops/services/postgres-service/internal/dialect"
 )
 
 // queryCancel 包装 cancel，便于按指针判断是否仍是当前登记项。

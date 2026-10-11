@@ -15,11 +15,11 @@ import (
 
 	"github.com/Microsoft/go-winio"
 
-	"niuma/platform/internal/handler"
-	"niuma/platform/internal/migrate"
-	"niuma/platform/internal/protocol"
-	"niuma/platform/internal/server"
-	"niuma/platform/internal/store"
+	"ensis-ops/platform/internal/handler"
+	"ensis-ops/platform/internal/migrate"
+	"ensis-ops/platform/internal/protocol"
+	"ensis-ops/platform/internal/server"
+	"ensis-ops/platform/internal/store"
 
 	_ "modernc.org/sqlite"
 )
@@ -37,7 +37,7 @@ func TestServerPipeRoundTrip(t *testing.T) {
 		t.Fatalf("migrate: %v", err)
 	}
 
-	addr := fmt.Sprintf(`\\.\pipe\niuma-test-%d`, os.Getpid())
+	addr := fmt.Sprintf(`\\.\pipe\ensis-test-%d`, os.Getpid())
 	srv := server.New(addr, handler.New(handler.Deps{Settings: store.NewSettingStore(db)}))
 
 	ctx, cancel := context.WithCancel(context.Background())

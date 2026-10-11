@@ -19,9 +19,9 @@ static int failures = 0;
   } while (0)
 
 int main() {
-  using niuma::oracle::dataio::LooksLikePlsqlUnit;
-  using niuma::oracle::dataio::SplitSqlScript;
-  using niuma::oracle::dataio::SqlScriptSplitter;
+  using ensisops::oracle::dataio::LooksLikePlsqlUnit;
+  using ensisops::oracle::dataio::SplitSqlScript;
+  using ensisops::oracle::dataio::SqlScriptSplitter;
 
   {
     const auto got = SplitSqlScript("CREATE TABLE t (id INT);\nINSERT INTO t VALUES (1);\n");
@@ -155,7 +155,7 @@ END;
     EXPECT(!splitter.Finish());
   }
 
-  using niuma::oracle::dataio::StripSqlLeadingTrivia;
+  using ensisops::oracle::dataio::StripSqlLeadingTrivia;
   EXPECT(StripSqlLeadingTrivia("  \n-- note\nSELECT 1") == "SELECT 1");
   EXPECT(StripSqlLeadingTrivia("/* a */\n/* b */\nWITH x AS (SELECT 1 c) SELECT c FROM x") ==
          "WITH x AS (SELECT 1 c) SELECT c FROM x");
@@ -208,7 +208,7 @@ DROP FUNCTION "OTHER";
   }
 
   {
-    using niuma::oracle::dataio::StripSqlPlusTerminator;
+    using ensisops::oracle::dataio::StripSqlPlusTerminator;
     EXPECT(StripSqlPlusTerminator("BEGIN NULL; END;\n/\n") == "BEGIN NULL; END;");
     EXPECT(StripSqlPlusTerminator("BEGIN NULL; END;/") == "BEGIN NULL; END;");
     EXPECT(StripSqlPlusTerminator("BEGIN NULL; END; /") == "BEGIN NULL; END;");
@@ -217,7 +217,7 @@ DROP FUNCTION "OTHER";
   }
 
   {
-    using niuma::oracle::dataio::SplitPackageSpecBody;
+    using ensisops::oracle::dataio::SplitPackageSpecBody;
     std::string spec;
     std::string body;
     const std::string combined =

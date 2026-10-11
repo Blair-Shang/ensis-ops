@@ -4,7 +4,7 @@ import (
 	"context"
 	"strings"
 
-	"niuma/services/dameng-service/internal/ddl"
+	"ensis-ops/services/dameng-service/internal/ddl"
 )
 
 func (d *Dispatcher) designPreview(_ context.Context, r Request) Response {

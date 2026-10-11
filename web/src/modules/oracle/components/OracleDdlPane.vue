@@ -4,8 +4,8 @@
  * - scope（sessionId/schema/table）变化：清空并重拉
  * - keep-alive 切回（active=true）且已有 ddl：不重拉
  */
-import { RsMonacoEditor, useRsToast } from '@niuma/ui'
-import type { MonacoLanguage } from '@niuma/ui'
+import { RsMonacoEditor, useRsToast } from 'ensis-ui'
+import type { MonacoLanguage } from 'ensis-ui'
 import { computed, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { oracleApi } from '@/api/oracle'

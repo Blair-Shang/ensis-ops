@@ -113,8 +113,8 @@ Web 方法 = `api.` + 服务内方法。
 
 - 目录：`services/api-service/`
 - manifest：`services/manifests/api-service.yaml`
-- 二进制：`services/bin/niuma-api-service.exe`
-- IPC：`\\.\pipe\niuma.api` / `/tmp/niuma.api.sock`
+- 二进制：`services/bin/ensis-api-service.exe`
+- IPC：`\\.\pipe\ensis-ops.api` / `/tmp/ensis-ops.api.sock`
 - 启动：lazy
 
 ---

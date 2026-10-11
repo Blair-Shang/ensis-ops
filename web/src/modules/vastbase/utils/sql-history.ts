@@ -8,7 +8,7 @@ import {
   type SqlHistoryEntry,
 } from '@/modules/database/utils/sql-history'
 
-const STORAGE_PREFIX = 'niuma.vastbase.sqlHistory.' as const
+const STORAGE_PREFIX = 'ensis-ops.vastbase.sqlHistory.' as const
 
 export type VastSqlHistoryEntry = SqlHistoryEntry
 

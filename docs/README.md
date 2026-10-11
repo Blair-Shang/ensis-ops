@@ -1,4 +1,4 @@
-# NiuMa 设计文档
+# ensis-ops 设计文档
 
 > 版本：v0.2 · 日期：2026-07-03
 
@@ -69,7 +69,7 @@ Platform Core ──→ 多语言 Capability Services
 |--------|------|------|
 | 桌面壳 | 自封装 CEF（非 Electron） | UI 一致、无 Node 包袱、企业主流 |
 | 壳层语言 | **C++** | CEF 原生 API、微信/钉钉同款、长期稳定 |
-| UI 层 | Vue 3 + `@niuma/ui`（自封装 Rs* 组件库） | 固定 Chromium 渲染，一套 token 走全平台 |
+| UI 层 | Vue 3 + `ensis-ui`（自封装 Rs* 组件库） | 固定 Chromium 渲染，一套 token 走全平台 |
 | 壳 ↔ 后端 | 应用 IPC（Named Pipe / UDS + JSON 信封） | 多语言解耦、流式、本机安全；不定 TCP 端口 |
 | UI ↔ 壳 | CEF IPC（cefQuery / PostMessage） | Chromium 内置 |
 | 跨语言契约 | JSON 信封（[03](./03-ipc-protocol.md)） | Go 权威实现；C++ / Rust 对齐金样例 |

@@ -10,16 +10,16 @@ import (
 )
 
 func TestEnsure_RespawnAfterKill(t *testing.T) {
-	if os.Getenv("NIUMMA_INTEGRATION") == "" {
-		t.Skip("set NIUMMA_INTEGRATION=1 to run")
+	if os.Getenv("ENSIS_INTEGRATION") == "" {
+		t.Skip("set ENSIS_INTEGRATION=1 to run")
 	}
 	if runtime.GOOS != "windows" {
 		t.Skip("windows integration")
 	}
 
 	dir := filepath.Join("..", "..", "..", "build", "shell", "Release", "services")
-	if _, err := os.Stat(filepath.Join(dir, "bin", "niuma-ftp-service.exe")); err != nil {
-		t.Skip("staged niuma-ftp-service.exe not found")
+	if _, err := os.Stat(filepath.Join(dir, "bin", "ensis-ftp-service.exe")); err != nil {
+		t.Skip("staged ensis-ftp-service.exe not found")
 	}
 
 	sup, err := New(dir)
@@ -31,10 +31,10 @@ func TestEnsure_RespawnAfterKill(t *testing.T) {
 	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
 	defer cancel()
 
-	if err := sup.Ensure(ctx, "com.niuma.ftp"); err != nil {
+	if err := sup.Ensure(ctx, "com.ensisops.ftp"); err != nil {
 		t.Fatal(err)
 	}
-	cmd := sup.spawned["com.niuma.ftp"]
+	cmd := sup.spawned["com.ensisops.ftp"]
 	if cmd == nil || cmd.Process == nil {
 		t.Fatal("ftp not tracked")
 	}
@@ -45,16 +45,16 @@ func TestEnsure_RespawnAfterKill(t *testing.T) {
 
 	deadline := time.Now().Add(3 * time.Second)
 	for time.Now().Before(deadline) {
-		if _, ok := sup.spawned["com.niuma.ftp"]; !ok {
+		if _, ok := sup.spawned["com.ensisops.ftp"]; !ok {
 			break
 		}
 		time.Sleep(50 * time.Millisecond)
 	}
 
-	if err := sup.Ensure(ctx, "com.niuma.ftp"); err != nil {
+	if err := sup.Ensure(ctx, "com.ensisops.ftp"); err != nil {
 		t.Fatalf("respawn after kill: %v", err)
 	}
-	if sup.spawned["com.niuma.ftp"] == nil {
+	if sup.spawned["com.ensisops.ftp"] == nil {
 		t.Fatal("respawned ftp not tracked")
 	}
 }

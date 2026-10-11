@@ -10,17 +10,17 @@ import (
 	"strings"
 	"time"
 
-	ipclient "niuma/pkg/serviceipc/client"
+	ipclient "ensis-ops/pkg/serviceipc/client"
 )
 
 func platformAddr() string {
-	if v := strings.TrimSpace(os.Getenv("NIUMA_PLATFORM_IPC")); v != "" {
+	if v := strings.TrimSpace(os.Getenv("ENSIS_PLATFORM_IPC")); v != "" {
 		return v
 	}
 	if runtime.GOOS == "windows" {
-		return `\\.\pipe\niuma.platform`
+		return `\\.\pipe\ensis-ops.platform`
 	}
-	return filepath.Join(os.TempDir(), "niuma.platform.sock")
+	return filepath.Join(os.TempDir(), "ensis-ops.platform.sock")
 }
 
 func bridge() *ipclient.Client {

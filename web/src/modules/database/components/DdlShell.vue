@@ -3,7 +3,7 @@
  * DDL 只读预览外壳：身份条 · 复制/刷新 · 加载/空态 · 编辑器区。
  * 方言侧注入 labels 与作用域信息，通过默认插槽挂 Monaco。
  */
-import { RsButton, RsEmpty, RsIcon, RsLoading } from '@niuma/ui'
+import { RsButton, RsEmpty, RsIcon, RsLoading } from 'ensis-ui'
 import type { DdlShellLabels } from '../types/ddl-shell'
 
 withDefaults(

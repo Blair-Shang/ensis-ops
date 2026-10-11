@@ -2,7 +2,7 @@
 
 #include <cctype>
 
-namespace niuma::oracle::meta {
+namespace ensisops::oracle::meta {
 
 std::string TrimOracleDefault(std::string value) {
   while (!value.empty() && std::isspace(static_cast<unsigned char>(value.front()))) {
@@ -36,4 +36,4 @@ std::string TrimOracleDefault(std::string value) {
   return value;
 }
 
-}  // namespace niuma::oracle::meta
+}  // namespace ensisops::oracle::meta

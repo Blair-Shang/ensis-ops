@@ -3,7 +3,7 @@
  * @see docs/04-plugin-system.md
  */
 export interface ExtensionEngine {
-  niuma: string
+  'ensis-ops': string
 }
 
 export interface ExtensionModuleRef {

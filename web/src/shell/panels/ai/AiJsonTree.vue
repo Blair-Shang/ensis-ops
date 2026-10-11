@@ -2,7 +2,7 @@
 /**
  * JSON 树：递归展开完整结构，支持复制与原文/结构切换。
  */
-import { copyTextToClipboard } from '@niuma/ui'
+import { copyTextToClipboard } from 'ensis-ui'
 import { computed, onBeforeUnmount, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import AiJsonNode from './AiJsonNode.vue'

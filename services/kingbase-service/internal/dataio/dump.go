@@ -12,8 +12,8 @@ import (
 	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgxpool"
 
-	"niuma/services/kingbase-service/internal/meta"
-	"niuma/services/kingbase-service/internal/tree"
+	"ensis-ops/services/kingbase-service/internal/meta"
+	"ensis-ops/services/kingbase-service/internal/tree"
 )
 
 type dumpTarget struct {
@@ -53,7 +53,7 @@ func dumpSql(ctx context.Context, pool *pgxpool.Pool, taskID string, m *Manager,
 	}}
 
 	header := fmt.Sprintf(
-		"-- NiuMa Kingbase dump\n-- format: niuma-kingbase-dump/3\n-- database: %s\n-- generated: %s\n-- mode: %s\n-- dropIfExists: %v\n-- createSchema: %v\n-- truncateBeforeData: %v\n-- note: no CREATE DATABASE. Restore into a prepared target DB\n-- note: includes sequences / functions / procedures / triggers when selected\n\nSET client_encoding = 'UTF8';\n\n",
+		"-- ensis-ops Kingbase dump\n-- format: ensis-kingbase-dump/3\n-- database: %s\n-- generated: %s\n-- mode: %s\n-- dropIfExists: %v\n-- createSchema: %v\n-- truncateBeforeData: %v\n-- note: no CREATE DATABASE. Restore into a prepared target DB\n-- note: includes sequences / functions / procedures / triggers when selected\n\nSET client_encoding = 'UTF8';\n\n",
 		params.Database,
 		time.Now().UTC().Format(time.RFC3339),
 		params.Mode,

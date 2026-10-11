@@ -2,15 +2,15 @@
  * PostgreSQL 查询执行模式：默认分页（query.exec）；显式模式 / SQL 标识才同连接批跑（query.execBatch）。
  *
  * - `queryExecMode`：产品入口（树菜单 / 打开查询页）传入，便于扩展
- * - `-- niuma:exec=batch`：脚本自带语义，复制粘贴仍可识别（作兜底）
+ * - `-- ensis-ops:exec=batch`：脚本自带语义，复制粘贴仍可识别（作兜底）
  */
 
 export type PostgresQueryExecMode = 'paged' | 'batch'
 
 /** 稳定标识：出现在脚本任意处即走批跑（大小写不敏感）。 */
-export const NIUMA_EXEC_BATCH_MARKER = '-- niuma:exec=batch'
+export const ENSIS_EXEC_BATCH_MARKER = '-- ensis-ops:exec=batch'
 
-const BATCH_MARKER_RE = /--\s*niuma:exec\s*=\s*batch\b/i
+const BATCH_MARKER_RE = /--\s*ensis-ops:exec\s*=\s*batch\b/i
 
 /** SQL 是否要求同连接批跑。 */
 export function hasBatchExecMarker(sql: string): boolean {
@@ -21,7 +21,7 @@ export function hasBatchExecMarker(sql: string): boolean {
 export function ensureBatchExecMarker(sql: string): string {
   const text = sql.trimStart()
   if (!text || hasBatchExecMarker(text)) return sql
-  return `${NIUMA_EXEC_BATCH_MARKER}\n${sql}`
+  return `${ENSIS_EXEC_BATCH_MARKER}\n${sql}`
 }
 
 /**

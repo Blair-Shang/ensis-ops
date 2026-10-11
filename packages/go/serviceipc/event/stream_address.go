@@ -7,11 +7,11 @@ import (
 )
 
 const (
-	windowsStreamAddr = `\\.\pipe\niuma.platform.stream`
-	unixStreamName    = "niuma.platform.stream.sock"
+	windowsStreamAddr = `\\.\pipe\ensis-ops.platform.stream`
+	unixStreamName    = "ensis-ops.platform.stream.sock"
 )
 
-// StreamAddress 返回 Shell InvokeStream 原生分帧管道地址（与 niuma.platform 同帧格式）。
+// StreamAddress 返回 Shell InvokeStream 原生分帧管道地址（与 ensis-ops.platform 同帧格式）。
 func StreamAddress() string {
 	if runtime.GOOS == "windows" {
 		return windowsStreamAddr

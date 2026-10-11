@@ -5,7 +5,7 @@ import (
 	"encoding/json"
 	"testing"
 
-	"niuma/platform/internal/handler"
+	"ensis-ops/platform/internal/handler"
 )
 
 // TestAIConversationCRUD 覆盖会话创建、列表与删除。

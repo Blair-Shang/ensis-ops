@@ -27,7 +27,7 @@
 
 namespace fs = std::filesystem;
 
-namespace niuma {
+namespace ensisops {
 
 namespace {
 
@@ -39,7 +39,7 @@ constexpr int kListenProbeTimeoutMs = 200;
 /// 退出时等待子进程结束的超时（毫秒）；超时后再强杀，避免 ShutdownAll 卡死。
 constexpr int kTerminateWaitMs = 3000;
 /// Platform 服务的 manifest id。
-constexpr char kPlatformServiceId[] = "com.niuma.platform";
+constexpr char kPlatformServiceId[] = "com.ensisops.platform";
 
 }  // namespace
 
@@ -308,4 +308,4 @@ void ServiceManager::ShutdownAll() {
   running_ids_.clear();
 }
 
-}  // namespace niuma
+}  // namespace ensisops

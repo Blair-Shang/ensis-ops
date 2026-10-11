@@ -4,7 +4,7 @@ import (
 	"context"
 	"fmt"
 
-	"niuma/services/dameng-service/internal/meta"
+	"ensis-ops/services/dameng-service/internal/meta"
 )
 
 func (d *Dispatcher) processlist(ctx context.Context, r Request) Response {

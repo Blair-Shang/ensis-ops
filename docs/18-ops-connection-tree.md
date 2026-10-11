@@ -39,7 +39,7 @@
 | **DBeaver / Navicat** | 借鉴元数据分层与缓存，但不复制独立「对象导航器」双面板 |
 | **RedisInsight / ARDM** | Redis 仅 1–2 层（连接 → DB），不做 SQL 式深树 |
 
-NiuMa 是**运维连接壳**（SSH / FTP / Redis …），不是完整 DBA IDE；设计取 **VS Code 式插件树 + DBeaver 式元数据/会话分离**。
+ensis-ops 是**运维连接壳**（SSH / FTP / Redis …），不是完整 DBA IDE；设计取 **VS Code 式插件树 + DBeaver 式元数据/会话分离**。
 
 ---
 

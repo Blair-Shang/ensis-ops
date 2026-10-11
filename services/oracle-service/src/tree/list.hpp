@@ -6,7 +6,7 @@
 #include <string>
 #include <vector>
 
-namespace niuma::oracle::tree {
+namespace ensisops::oracle::tree {
 
 struct ListParams {
   std::string schema;
@@ -25,4 +25,4 @@ nlohmann::json ListSequences(session::Session& session, const ListParams& params
 nlohmann::json ListPackages(session::Session& session, const ListParams& params, std::string& error);
 nlohmann::json CategoryCounts(session::Session& session, const ListParams& params, std::string& error);
 
-}  // namespace niuma::oracle::tree
+}  // namespace ensisops::oracle::tree

@@ -6,7 +6,7 @@ use std::time::Duration;
 
 use base64::engine::general_purpose::STANDARD;
 use base64::Engine;
-use niuma_serviceipc::write_frame;
+use ensis_serviceipc::write_frame;
 use serde_json::{json, Value};
 use tokio::sync::mpsc;
 use tracing::warn;
@@ -28,10 +28,10 @@ const COALESCE_INTERVAL: Duration = Duration::from_millis(12);
 const COALESCE_MAX_BYTES: usize = 48 * 1024;
 /// Unix 下 platform 事件入口文件名。
 #[cfg(not(windows))]
-const UNIX_INGEST_NAME: &str = "niuma.platform.eventin.sock";
+const UNIX_INGEST_NAME: &str = "ensis-ops.platform.eventin.sock";
 /// Windows 下 platform 事件入口地址。
 #[cfg(windows)]
-const WINDOWS_INGEST_ADDR: &str = r"\\.\pipe\niuma.platform.eventin";
+const WINDOWS_INGEST_ADDR: &str = r"\\.\pipe\ensis-ops.platform.eventin";
 
 #[cfg(windows)]
 type IngestStream = tokio::net::windows::named_pipe::NamedPipeClient;

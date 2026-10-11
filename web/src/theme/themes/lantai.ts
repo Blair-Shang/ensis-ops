@@ -1,6 +1,6 @@
 import { defineHostTheme } from '../types'
 
-export const lantaiThemeId = 'niuma.lantai' as const
+export const lantaiThemeId = 'ensis-ops.lantai' as const
 
 /** 兰台：报表大屏。深底、青辉、金线。终端色与界面同一套。 */
 export const lantaiTheme = defineHostTheme({

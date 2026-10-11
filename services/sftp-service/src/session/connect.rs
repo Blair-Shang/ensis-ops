@@ -55,10 +55,10 @@ pub struct ConnectOptions {
     #[serde(default)]
     pub passphrase: String,
     #[serde(default)]
-    pub proxy: niuma_netproxy::Options,
+    pub proxy: ensis_netproxy::Options,
     /// SSH over SSH 跳板机隧道；platform 在转发前已注入 sshProfile 凭据。
     #[serde(default)]
-    pub tunnel: niuma_tunnel::TunnelOptions,
+    pub tunnel: ensis_tunnel::TunnelOptions,
 }
 
 fn default_timeout_seconds() -> u64 {
@@ -113,9 +113,9 @@ pub enum ConnectError {
         reason: String,
     },
     #[error("sftp: tunnel: {0}")]
-    Tunnel(#[from] niuma_tunnel::TunnelError),
+    Tunnel(#[from] ensis_tunnel::TunnelError),
     #[error("sftp: proxy: {0}")]
-    NetProxy(#[from] niuma_netproxy::Error),
+    NetProxy(#[from] ensis_netproxy::Error),
     #[error("sftp: {0}")]
     Other(#[from] russh::Error),
     #[error("sftp: private key: {0}")]
@@ -156,9 +156,9 @@ impl client::Handler for SftpClientHandler {
 /// 返回 (会话句柄, 可选隧道守卫)；隧道守卫 drop 时自动关闭本地转发端口。
 pub async fn connect_transport(
     params: &ConnectParams,
-) -> Result<(client::Handle<SftpClientHandler>, Option<niuma_tunnel::TunnelGuard>), ConnectError> {
+) -> Result<(client::Handle<SftpClientHandler>, Option<ensis_tunnel::TunnelGuard>), ConnectError> {
     let (actual_host, actual_port, tunnel_guard) = if params.options.tunnel.enabled() {
-        let (h, p, guard) = niuma_tunnel::start_ssh_tunnel(
+        let (h, p, guard) = ensis_tunnel::start_ssh_tunnel(
             &params.options.tunnel,
             &params.host_address,
             params.port_or_default(),
@@ -189,7 +189,7 @@ pub async fn connect_transport(
     };
 
     let connect_fut = async {
-        let socket = niuma_netproxy::dial_tcp(&params.options.proxy, &actual_host, actual_port)
+        let socket = ensis_netproxy::dial_tcp(&params.options.proxy, &actual_host, actual_port)
             .await
             .map_err(ConnectError::NetProxy)?;
         client::connect_stream(config, socket, handler)

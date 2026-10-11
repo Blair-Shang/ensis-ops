@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { RsConfirmDialog, RsContextMenu, RsIcon, RsPopover, RsTooltip, type RsContextMenuItem } from '@niuma/ui'
+import { RsConfirmDialog, RsContextMenu, RsIcon, RsPopover, RsTooltip, type RsContextMenuItem } from 'ensis-ui'
 import { computed, nextTick, onMounted, onUnmounted, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useTabStore, type WorkspaceTab } from '@/stores/tab'
@@ -9,7 +9,7 @@ import {
   draggingGroupId,
   draggingTabId,
   endTabDrag,
-  NIUMA_TAB_MIME,
+  ENSIS_TAB_MIME,
 } from '../workspace/tab-dnd'
 
 /** 本 TabBar 归属的编辑组 id（分屏后每组各一条 Tab 栏） */
@@ -304,7 +304,7 @@ function onDragStart(tab: WorkspaceTab, event: DragEvent): void {
   beginTabDrag(tab.tabId, props.groupId)
   if (event.dataTransfer) {
     event.dataTransfer.effectAllowed = 'copyMove'
-    event.dataTransfer.setData(NIUMA_TAB_MIME, tab.tabId)
+    event.dataTransfer.setData(ENSIS_TAB_MIME, tab.tabId)
     // Firefox 需要写入数据才会真正启动拖拽
     event.dataTransfer.setData('text/plain', tab.tabId)
   }

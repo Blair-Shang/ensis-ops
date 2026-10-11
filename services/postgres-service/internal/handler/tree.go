@@ -5,8 +5,8 @@ import (
 	"encoding/json"
 	"fmt"
 
-	"niuma/services/postgres-service/internal/session"
-	"niuma/services/postgres-service/internal/tree"
+	"ensis-ops/services/postgres-service/internal/session"
+	"ensis-ops/services/postgres-service/internal/tree"
 )
 
 type treeListParams struct {

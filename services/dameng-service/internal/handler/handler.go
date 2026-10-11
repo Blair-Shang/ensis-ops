@@ -10,19 +10,19 @@ import (
 	"strings"
 	"time"
 
-	"niuma/services/dameng-service/internal/catalog"
-	"niuma/services/dameng-service/internal/dataio"
-	"niuma/services/dameng-service/internal/dialect"
-	"niuma/services/dameng-service/internal/dmparser"
-	"niuma/services/dameng-service/internal/eventpub"
-	"niuma/services/dameng-service/internal/idgen"
-	"niuma/services/dameng-service/internal/meta"
-	"niuma/services/dameng-service/internal/session"
-	"niuma/services/dameng-service/internal/tree"
+	"ensis-ops/services/dameng-service/internal/catalog"
+	"ensis-ops/services/dameng-service/internal/dataio"
+	"ensis-ops/services/dameng-service/internal/dialect"
+	"ensis-ops/services/dameng-service/internal/dmparser"
+	"ensis-ops/services/dameng-service/internal/eventpub"
+	"ensis-ops/services/dameng-service/internal/idgen"
+	"ensis-ops/services/dameng-service/internal/meta"
+	"ensis-ops/services/dameng-service/internal/session"
+	"ensis-ops/services/dameng-service/internal/tree"
 
-	"niuma/pkg/serviceipc/envelope"
-	"niuma/pkg/serviceipc/event"
-	"niuma/pkg/sqllsp"
+	"ensis-ops/pkg/serviceipc/envelope"
+	"ensis-ops/pkg/serviceipc/event"
+	"ensis-ops/pkg/sqllsp"
 )
 
 type Request = envelope.Request

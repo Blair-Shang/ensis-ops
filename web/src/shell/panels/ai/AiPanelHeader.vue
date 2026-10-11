@@ -2,7 +2,7 @@
 /**
  * AI 面板顶栏：标题（可重命名）、历史会话、新对话、关闭。
  */
-import { RsIcon, RsPopover, useRsToast } from '@niuma/ui'
+import { RsIcon, RsPopover, useRsToast } from 'ensis-ui'
 import { computed, nextTick, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { dialogApi } from '@/api/dialog'

@@ -11,8 +11,8 @@ import (
 	"github.com/jackc/pgx/v5/pgconn"
 	"github.com/jackc/pgx/v5/pgtype"
 	"github.com/jackc/pgx/v5/pgxpool"
-	"niuma/pkg/common/id"
-	"niuma/pkg/common/sqlcell"
+	"ensis-ops/pkg/common/id"
+	"ensis-ops/pkg/common/sqlcell"
 )
 
 const (

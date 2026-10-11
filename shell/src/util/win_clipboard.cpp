@@ -9,7 +9,7 @@
 #endif
 #include <windows.h>
 
-namespace niuma {
+namespace ensisops {
 namespace {
 
 std::wstring Utf8ToWide(const std::string& value) {
@@ -115,13 +115,13 @@ bool WriteClipboardText(const std::string& text, std::string& error) {
   return true;
 }
 
-}  // namespace niuma
+}  // namespace ensisops
 
 #elif defined(__linux__)
 
 #include <gtk/gtk.h>
 
-namespace niuma {
+namespace ensisops {
 namespace {
 
 GtkClipboard* ClipboardOrError(std::string& error) {
@@ -164,7 +164,7 @@ bool WriteClipboardText(const std::string& text, std::string& error) {
   return true;
 }
 
-}  // namespace niuma
+}  // namespace ensisops
 
 #endif
 

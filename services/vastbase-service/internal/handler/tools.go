@@ -5,7 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 
-	"niuma/services/vastbase-service/internal/tools"
+	"ensis-ops/services/vastbase-service/internal/tools"
 )
 
 type toolsPathParams struct {

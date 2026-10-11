@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { RsButton, RsCodeEditor, RsLabel } from '@niuma/ui'
+import { RsButton, RsCodeEditor, RsLabel } from 'ensis-ui'
 import { computed, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useApiTesterStore } from '../../stores/api-tester'

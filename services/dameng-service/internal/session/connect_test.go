@@ -19,7 +19,7 @@ func TestBuildDSN(t *testing.T) {
 	if !strings.HasPrefix(s, "dm://u ser:p@ss word@db.example:5236?") {
 		t.Fatalf("unexpected dsn prefix: %s", s)
 	}
-	if !strings.Contains(s, "schema=APP") || !strings.Contains(s, "appName=NiuMa") || !strings.Contains(s, "connectTimeout=30000") {
+	if !strings.Contains(s, "schema=APP") || !strings.Contains(s, "appName=ensis-ops") || !strings.Contains(s, "connectTimeout=30000") {
 		t.Fatalf("unexpected dsn query: %s", s)
 	}
 }

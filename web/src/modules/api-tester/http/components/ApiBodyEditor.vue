@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { RsCodeEditor, RsTabs, type RsTabItem } from '@niuma/ui'
+import { RsCodeEditor, RsTabs, type RsTabItem } from 'ensis-ui'
 import { computed } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useAppStore } from '@/stores/app'

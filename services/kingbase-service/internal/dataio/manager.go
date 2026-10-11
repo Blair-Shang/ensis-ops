@@ -10,8 +10,8 @@ import (
 
 	"github.com/jackc/pgx/v5/pgxpool"
 
-	"niuma/services/kingbase-service/internal/idgen"
-	"niuma/services/kingbase-service/internal/session"
+	"ensis-ops/services/kingbase-service/internal/idgen"
+	"ensis-ops/services/kingbase-service/internal/session"
 )
 
 // 确保 fmt 用于 csvWithClause。

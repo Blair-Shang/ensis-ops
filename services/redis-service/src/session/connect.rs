@@ -7,8 +7,8 @@ use redis::{ConnectionAddr, ConnectionInfo, IntoConnectionInfo, RedisConnectionI
 use serde::Deserialize;
 use thiserror::Error;
 
-use niuma_netproxy::{start_relay, RelayGuard};
-use niuma_tunnel::{start_ssh_tunnel, TunnelError, TunnelGuard, TunnelOptions};
+use ensis_netproxy::{start_relay, RelayGuard};
+use ensis_tunnel::{start_ssh_tunnel, TunnelError, TunnelGuard, TunnelOptions};
 
 /// default_dial_timeout 是 Redis 建连默认超时（10 秒）。
 const DEFAULT_DIAL_TIMEOUT_SECS: u64 = 10;
@@ -63,7 +63,7 @@ pub struct ConnectOptions {
     pub tunnel: TunnelOptions,
     /// 直连 SOCKS5/HTTP 代理（与 `tunnel` 互斥：两者都启用时优先走 SSH 隧道）。
     #[serde(default)]
-    pub proxy: niuma_netproxy::Options,
+    pub proxy: ensis_netproxy::Options,
 }
 
 impl Default for ConnectOptions {
@@ -75,7 +75,7 @@ impl Default for ConnectOptions {
             sentinel_master_name: String::new(),
             nodes: Vec::new(),
             tunnel: TunnelOptions::default(),
-            proxy: niuma_netproxy::Options::default(),
+            proxy: ensis_netproxy::Options::default(),
         }
     }
 }
@@ -163,7 +163,7 @@ pub enum ConnectError {
     #[error("redis: direct proxy is only supported for standalone topology")]
     ProxyUnsupportedTopology,
     #[error("redis: proxy: {0}")]
-    Proxy(#[from] niuma_netproxy::Error),
+    Proxy(#[from] ensis_netproxy::Error),
     #[error("redis: {0}")]
     Other(#[from] redis::RedisError),
 }

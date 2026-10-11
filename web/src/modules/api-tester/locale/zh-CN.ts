@@ -396,7 +396,7 @@ export default {
       captureEmpty: '还没有请求。把客户端代理设到上面的地址。',
       captureHint: '只监听 127.0.0.1。HTTP 记录完整请求，HTTPS 只记录目标主机，不解密。',
       importError: '集合文件无法解析',
-      importKindError: '只支持 NiuMa 集合、Postman v2 和 OpenAPI 3 的 JSON',
+      importKindError: '只支持 ensis-ops 集合、Postman v2 和 OpenAPI 3 的 JSON',
       exportSuccess: '已导出集合',
       history: '历史',
       searchHistory: '搜索历史',

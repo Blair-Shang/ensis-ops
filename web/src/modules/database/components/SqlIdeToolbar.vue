@@ -4,7 +4,7 @@
  * 过滤框回车发出 filterSubmit。槽位只留给 Popover 触发器等无法用 items 表达的控件。
  */
 import { computed, useSlots } from 'vue'
-import { RsIcon, RsInput, RsSelect } from '@niuma/ui'
+import { RsIcon, RsInput, RsSelect } from 'ensis-ui'
 import SqlIdeToolbarItems from './SqlIdeToolbarItems.vue'
 import SqlQueryIdentity from './SqlQueryIdentity.vue'
 import {

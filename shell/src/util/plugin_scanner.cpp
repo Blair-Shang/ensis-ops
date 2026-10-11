@@ -11,7 +11,7 @@
 
 namespace fs = std::filesystem;
 
-namespace niuma {
+namespace ensisops {
 
 namespace {
 
@@ -132,4 +132,4 @@ std::string LocalPluginListJson(const std::vector<LocalPluginRecord>& records,
   return ss.str();
 }
 
-}  // namespace niuma
+}  // namespace ensisops

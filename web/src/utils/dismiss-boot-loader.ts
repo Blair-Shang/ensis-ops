@@ -3,11 +3,11 @@ export function dismissBootLoader(): void {
   if (typeof document === 'undefined') {
     return
   }
-  const el = document.getElementById('niuma-boot-loader')
+  const el = document.getElementById('ensis-boot-loader')
   if (!el) {
     return
   }
-  el.classList.add('niuma-boot-loader--hide')
+  el.classList.add('ensis-boot-loader--hide')
   const remove = () => {
     el.remove()
   }

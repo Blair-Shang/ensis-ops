@@ -13,7 +13,7 @@ import (
 	"runtime"
 	"testing"
 
-	"niuma/platform/internal/components"
+	"ensis-ops/platform/internal/components"
 )
 
 func TestRegistryInstallZip(t *testing.T) {
@@ -32,7 +32,7 @@ func TestRegistryInstallZip(t *testing.T) {
 
 	componentsRoot := t.TempDir()
 	dataRoot := t.TempDir()
-	manifest := `id: com.niuma.test
+	manifest := `id: com.ensisops.test
 name: Test
 install:
   mode: optional_download
@@ -60,7 +60,7 @@ tools:
 	if err != nil {
 		t.Fatal(err)
 	}
-	bundle, err := reg.Install(context.Background(), "com.niuma.test", "", nil)
+	bundle, err := reg.Install(context.Background(), "com.ensisops.test", "", nil)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -98,7 +98,7 @@ func TestRegistryInstallTarGzRootDot(t *testing.T) {
 
 	componentsRoot := t.TempDir()
 	dataRoot := t.TempDir()
-	manifest := `id: com.niuma.pgtest
+	manifest := `id: com.ensisops.pgtest
 name: PG Test
 install:
   mode: optional_download
@@ -132,7 +132,7 @@ tools:
 		t.Fatal(err)
 	}
 	var phases []string
-	bundle, err := reg.Install(context.Background(), "com.niuma.pgtest", "pg_dump", func(p components.InstallProgress) {
+	bundle, err := reg.Install(context.Background(), "com.ensisops.pgtest", "pg_dump", func(p components.InstallProgress) {
 		phases = append(phases, p.Phase)
 	})
 	if err != nil {

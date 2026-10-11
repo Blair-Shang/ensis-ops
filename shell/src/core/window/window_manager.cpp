@@ -16,9 +16,9 @@
 #include <sstream>
 #include <unordered_map>
 
-namespace niuma {
+namespace ensisops {
 
-#if NIUMMA_WITH_CEF
+#if ENSIS_WITH_CEF
 
 WindowManager& WindowManager::Instance() {
   static WindowManager instance;
@@ -190,7 +190,7 @@ bool WindowManager::Reveal(int window_id) {
     entry->user_revealed = true;
     window->Show();
     window->Activate();
-    // Web 侧 shell.window.reveal 只走这里，不经 NiuMaClient::RevealBrowserWindow；
+    // Web 侧 shell.window.reveal 只走这里，不经 EnsisClient::RevealBrowserWindow；
     // 主窗首显时必须在此关 Splash，否则小启动窗会一直留在前台。
     if (entry->kind == WindowKind::Main) {
       SplashWindow::Instance().Close();
@@ -349,4 +349,4 @@ bool WindowManager::HasManagedWindow() const {
 
 #endif
 
-}  // namespace niuma
+}  // namespace ensisops

@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { RsButton, RsCheckbox, RsDialog, RsInput, RsLabel, RsSelect, RsTooltip, useRsToast } from '@niuma/ui'
-import type { RsSelectOptions } from '@niuma/ui'
+import { RsButton, RsCheckbox, RsDialog, RsInput, RsLabel, RsSelect, RsTooltip, useRsToast } from 'ensis-ui'
+import type { RsSelectOptions } from 'ensis-ui'
 import { computed, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { postgresApi } from '@/api'

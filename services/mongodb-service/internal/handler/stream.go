@@ -7,7 +7,7 @@ import (
 
 	"go.mongodb.org/mongo-driver/bson"
 
-	"niuma/services/mongodb-service/internal/session"
+	"ensis-ops/services/mongodb-service/internal/session"
 )
 
 type monitorStreamStartParams struct {

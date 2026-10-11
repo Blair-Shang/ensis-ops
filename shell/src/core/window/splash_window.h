@@ -2,13 +2,13 @@
 
 #include "core/window/window_types.h"
 
-#if NIUMMA_WITH_CEF
+#if ENSIS_WITH_CEF
 #include "include/cef_client.h"
 #endif
 
-namespace niuma {
+namespace ensisops {
 
-#if NIUMMA_WITH_CEF
+#if ENSIS_WITH_CEF
 
 /**
  * 冷启动品牌窗（Splash）：进程内唯一，仅存在于启动阶段。
@@ -41,7 +41,7 @@ class SplashWindow {
   void Close();
 
   /**
-   * 供 NiuMaWindowDelegate::CanClose 查询：仅 Shell 发起的 Close 期间为 true。
+   * 供 EnsisWindowDelegate::CanClose 查询：仅 Shell 发起的 Close 期间为 true。
    * 用户 Alt+F4 / 系统关闭在 closable=false 时仍被拒绝。
    */
   bool AllowShellClose() const { return closing_; }
@@ -67,4 +67,4 @@ class SplashWindow {
 
 #endif
 
-}  // namespace niuma
+}  // namespace ensisops

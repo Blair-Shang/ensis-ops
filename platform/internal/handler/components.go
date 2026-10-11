@@ -5,7 +5,7 @@ import (
 	"context"
 	"encoding/json"
 
-	"niuma/platform/internal/components"
+	"ensis-ops/platform/internal/components"
 )
 
 type componentsListParams struct {

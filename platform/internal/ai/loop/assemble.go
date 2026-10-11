@@ -5,7 +5,7 @@ import (
 	"regexp"
 	"strings"
 
-	"niuma/platform/internal/store"
+	"ensis-ops/platform/internal/store"
 )
 
 // nmRefMarkerRe 匹配前端 chip 标记 ⟦nm-ref:…⟧，入模前剥离。

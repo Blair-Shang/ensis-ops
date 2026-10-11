@@ -7,7 +7,7 @@ import (
 	"testing"
 	"time"
 
-	"niuma/pkg/serviceipc/protocol"
+	"ensis-ops/pkg/serviceipc/protocol"
 )
 
 func TestProgressKey_TaskAndBundle(t *testing.T) {

@@ -1,6 +1,6 @@
 import { computed, onMounted, onUnmounted, ref, shallowRef, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
-import { useRsToast, type RsContextMenuItem, type RsTableColumn } from '@niuma/ui'
+import { useRsToast, type RsContextMenuItem, type RsTableColumn } from 'ensis-ui'
 import { oracleApi } from '@/api/oracle'
 import type { OracleQueryColumn, OracleQueryExecResult } from '@/api/types/oracle'
 import { defaultOracleProfile, resolveSplitFeaturesFromProfile } from '@/modules/sql-editor/capabilities'
@@ -103,7 +103,7 @@ export function useOracleQueryPane(props: OracleQueryPaneProps) {
     getSuggestScope: () => props.sessionId ? { sessionId: props.sessionId, schema: props.schema?.trim() || undefined } : null,
   })
   const { historyOpen, historyEntries, rememberSql, onHistoryPick } = useSqlQueryHistory({
-    profileId: () => props.profileId, storagePrefix: 'niuma.oracle.sqlHistory.', sqlText,
+    profileId: () => props.profileId, storagePrefix: 'ensis-ops.oracle.sqlHistory.', sqlText,
   })
   const activeGrid = computed(() => gridTabs.value.find((tab) => tab.id === activePaneTab.value) ?? null)
   const resultColumns = computed((): RsTableColumn[] => (activeGrid.value?.columns ?? []).map((column, index) => {

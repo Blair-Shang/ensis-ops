@@ -5,7 +5,7 @@
 #include <limits>
 #include <new>
 
-namespace niuma::oracle::util {
+namespace ensisops::oracle::util {
 namespace {
 
 std::string DpiError(dpiContext* ctx) {
@@ -202,4 +202,4 @@ nlohmann::json LobCellToJson(dpiContext* ctx, dpiOracleTypeNum oracle_type, dpiN
   return j;
 }
 
-}  // namespace niuma::oracle::util
+}  // namespace ensisops::oracle::util

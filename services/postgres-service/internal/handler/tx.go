@@ -5,7 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 
-	"niuma/services/postgres-service/internal/session"
+	"ensis-ops/services/postgres-service/internal/session"
 )
 
 type txSessionParams struct {

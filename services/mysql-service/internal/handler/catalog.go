@@ -6,9 +6,9 @@ import (
 	"fmt"
 	"strings"
 
-	"niuma/services/mysql-service/internal/meta"
-	"niuma/services/mysql-service/internal/session"
-	"niuma/services/mysql-service/internal/tree"
+	"ensis-ops/services/mysql-service/internal/meta"
+	"ensis-ops/services/mysql-service/internal/session"
+	"ensis-ops/services/mysql-service/internal/tree"
 )
 
 const (

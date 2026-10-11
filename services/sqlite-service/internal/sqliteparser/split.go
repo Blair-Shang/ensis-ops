@@ -4,7 +4,7 @@ import (
 	"strings"
 	"unicode"
 
-	"niuma/pkg/sqllsp"
+	"ensis-ops/pkg/sqllsp"
 )
 
 // SplitSQL 按分号拆分 SQL，保留 CREATE TRIGGER … BEGIN…END 体内的分号。

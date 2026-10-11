@@ -7,8 +7,8 @@ import (
 	"testing"
 	"time"
 
-	"niuma/services/sqlite-service/internal/idgen"
-	"niuma/services/sqlite-service/internal/session"
+	"ensis-ops/services/sqlite-service/internal/idgen"
+	"ensis-ops/services/sqlite-service/internal/session"
 )
 
 func TestExportImportCsvRoundTrip(t *testing.T) {

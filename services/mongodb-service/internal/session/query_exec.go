@@ -165,7 +165,7 @@ func wrapMongoshEval(input string, explain bool) string {
 		src = "(" + src + ").explain('executionStats')"
 	}
 	return fmt.Sprintf(`(() => {
-  const __niuma_safe = (v) => {
+  const __ensis_safe = (v) => {
     if (v == null) return v;
     if (typeof v.toArray === 'function') return v.toArray();
     if (typeof v.hasNext === 'function') {
@@ -196,7 +196,7 @@ func wrapMongoshEval(input string, explain bool) string {
     return v;
   };
   let __result = (%s);
-  return __niuma_safe(__result);
+  return __ensis_safe(__result);
 })()`, src)
 }
 

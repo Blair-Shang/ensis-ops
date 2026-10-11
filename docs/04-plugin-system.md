@@ -7,7 +7,7 @@
 
 ## 1. 定位
 
-NiuMa 扩展分 **两级**，共用 manifest，职责不同：
+ensis-ops 扩展分 **两级**，共用 manifest，职责不同：
 
 | 级别 | 名称 | 类比 | 能做什么 |
 |------|------|------|----------|
@@ -34,10 +34,10 @@ plugins/<plugin-id>/
 
 ```json
 {
-  "id": "com.niuma.db-postgres",
+  "id": "com.ensis-ops.db-postgres",
   "name": "PostgreSQL",
   "version": "1.0.0",
-  "engine": { "niuma": "^0.1.0" },
+  "engine": { "ensis-ops": "^0.1.0" },
   "source": "extension",
   "level": "L2",
   "permissions": ["db.connect", "credential.read"],
@@ -105,17 +105,17 @@ sequenceDiagram
 | 在 `ModuleWorkspace` 挂载 UI | 修改 TopBar / SideNav / StatusBar 源码 |
 | 注册 SideNav **项**（经 Registry） | 覆盖 Shell 路由 `/settings` |
 | `bridge.invoke` 白名单方法 | 绕过桥接直连管道 / 读本地 DB |
-| 使用 `@niuma/ui` | 引入 Element Plus / 业务层 reka-ui |
-| 订阅 `niuma:event` | 任意执行 eval / 内联 script |
+| 使用 `ensis-ui` | 引入 Element Plus / 业务层 reka-ui |
+| 订阅 `ensis-ops:event` | 任意执行 eval / 内联 script |
 
 ---
 
 ## 5. 与 VS Code 的差异
 
-| VS Code | NiuMa |
+| VS Code | ensis-ops |
 |---------|-------|
 | Extension Host 独立进程 | 第一阶段：ESM + 权限白名单；后期可选 Worker 隔离 |
-| 上千 API | 受控 `niuma.*` 门面（见 [10-web-extension-system.md](./10-web-extension-system.md)） |
+| 上千 API | 受控 `ensis-ops.*` 门面（见 [10-web-extension-system.md](./10-web-extension-system.md)） |
 | 改任意 UI | 仅贡献点：commands / views / module 路由 |
 | Marketplace | P4 规划 |
 

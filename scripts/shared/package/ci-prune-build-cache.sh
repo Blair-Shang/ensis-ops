@@ -19,9 +19,9 @@ ARCH="$(nm_detect_arch)"
 nm_log "CI disk before prune"
 df -h "$REPO_ROOT" 2>/dev/null || df -h
 
-UI_MODULES="$(cd "$REPO_ROOT/.." && pwd)/niuma-ui/node_modules"
+UI_MODULES="$(cd "$REPO_ROOT/.." && pwd)/ensis-ui/node_modules"
 if [[ -d "$UI_MODULES" ]]; then
-  nm_log "remove niuma-ui/node_modules"
+  nm_log "remove ensis-ui/node_modules"
   rm -rf "$UI_MODULES"
 fi
 
@@ -56,7 +56,7 @@ fi
 # pack 从壳层目录 stage CEF，不再需要 third_party 里那份完整发行包。
 if [[ "$CEF_READY" == "true" ]]; then
   if [[ -d "$REPO_ROOT/third_party/cef" ]]; then
-    nm_log "remove third_party/cef (runtime already next to niuma)"
+    nm_log "remove third_party/cef (runtime already next to ensis-ops)"
     rm -rf "$REPO_ROOT/third_party/cef"
   fi
   if [[ -d "$REPO_ROOT/third_party/cef-cache" ]]; then

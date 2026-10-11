@@ -5,7 +5,7 @@ import (
 	"strings"
 	"testing"
 
-	"niuma/services/clickhouse-service/internal/dialect"
+	"ensis-ops/services/clickhouse-service/internal/dialect"
 )
 
 func TestParseObjectNameFromSQL(t *testing.T) {

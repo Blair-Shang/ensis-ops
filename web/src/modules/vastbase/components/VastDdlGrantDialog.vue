@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { RsButton, RsDialog, RsInput, RsLabel, RsSelect } from '@niuma/ui'
-import type { RsSelectOptions } from '@niuma/ui'
+import { RsButton, RsDialog, RsInput, RsLabel, RsSelect } from 'ensis-ui'
+import type { RsSelectOptions } from 'ensis-ui'
 import { computed, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useVastDdlDialog } from '@/modules/vastbase/composables/useVastDdlDialog'

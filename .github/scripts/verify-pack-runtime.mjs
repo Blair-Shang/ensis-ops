@@ -46,7 +46,7 @@ const artifact = basename(root)
 if (artifact.startsWith('windows-')) {
   const dir = join(root, 'dir')
   for (const name of [
-    'niuma.exe',
+    'ensis-ops.exe',
     'libcef.dll',
     'chrome_elf.dll',
     'resources.pak',
@@ -86,9 +86,9 @@ if (artifact.startsWith('windows-')) {
   }
   mustExist(join(pak, '..', 'chrome_100_percent.pak'), 'chrome_100_percent.pak')
   mustExist(join(pak, '..', 'icudtl.dat'), 'icudtl.dat')
-  const helper = files.find((file) => file.replaceAll('\\', '/').includes('/NiuMa Helper.app/'))
+  const helper = files.find((file) => file.replaceAll('\\', '/').includes('/ensis-ops Helper.app/'))
   if (!helper) {
-    fail(`missing NiuMa Helper.app under ${root}`)
+    fail(`missing ensis-ops Helper.app under ${root}`)
   }
   const framework = files.find((file) =>
     file.replaceAll('\\', '/').includes('/Chromium Embedded Framework.framework/'),

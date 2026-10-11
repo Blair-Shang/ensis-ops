@@ -8,7 +8,7 @@ import {
   RsSelect,
   RsTooltip,
   useRsToast,
-} from '@niuma/ui'
+} from 'ensis-ui'
 import { computed, onMounted, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { dialogApi, mongodbApi } from '@/api'

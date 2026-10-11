@@ -9,7 +9,7 @@ PLATFORM="linux"
 ARCH="$(nm_detect_arch)"
 INPUT_DIR=""
 OUTPUT_DIR=""
-PACKAGE_ID="niuma"
+PACKAGE_ID="ensis-ops"
 
 while [[ $# -gt 0 ]]; do
   case "$1" in
@@ -23,7 +23,7 @@ while [[ $# -gt 0 ]]; do
 done
 
 if [[ "$PLATFORM" == "kylin" ]]; then
-  PACKAGE_ID="niuma-kylin"
+  PACKAGE_ID="ensis-ops-kylin"
 fi
 
 VERSION="$(nm_package_json_value "$REPO_ROOT" ".version")"
@@ -40,7 +40,7 @@ fi
 
 ARCH_LABEL="$ARCH"
 OS_LABEL="$PLATFORM"
-SETUP_NAME="NiuMa-${VERSION}-${OS_LABEL}-${ARCH_LABEL}-Setup.run"
+SETUP_NAME="ensis-ops-${VERSION}-${OS_LABEL}-${ARCH_LABEL}-Setup.run"
 PAYLOAD_DIR="$REPO_ROOT/build/pack-linux-setup-payload"
 rm -rf "$PAYLOAD_DIR"
 mkdir -p "$PAYLOAD_DIR"
@@ -59,7 +59,7 @@ OUTPUT_RUN="$OUTPUT_DIR/$SETUP_NAME"
 bash "$REPO_ROOT/scripts/shared/package/make-self-extracting-run.sh" \
   "$PAYLOAD_DIR" \
   "$OUTPUT_RUN" \
-  "NiuMa" \
+  "ensis-ops" \
   "$VERSION"
 
 UNINSTALL_PAYLOAD="$REPO_ROOT/build/pack-linux-uninstall-payload"
@@ -69,11 +69,11 @@ cp -f "$REPO_ROOT/scripts/shared/package/templates/linux-uninstall-wizard.sh" "$
 sed -i "s/__PACKAGE_ID__/$PACKAGE_ID/g" "$UNINSTALL_PAYLOAD/uninstall.sh" 2>/dev/null || \
   sed -i '' "s/__PACKAGE_ID__/$PACKAGE_ID/g" "$UNINSTALL_PAYLOAD/uninstall.sh"
 chmod +x "$UNINSTALL_PAYLOAD/uninstall.sh"
-UNINSTALL_RUN="$OUTPUT_DIR/NiuMa-${VERSION}-${OS_LABEL}-${ARCH_LABEL}-Uninstall.run"
+UNINSTALL_RUN="$OUTPUT_DIR/ensis-ops-${VERSION}-${OS_LABEL}-${ARCH_LABEL}-Uninstall.run"
 bash "$REPO_ROOT/scripts/shared/package/make-self-extracting-run.sh" \
   "$UNINSTALL_PAYLOAD" \
   "$UNINSTALL_RUN" \
-  "NiuMa" \
+  "ensis-ops" \
   "$VERSION" \
   "uninstall.sh"
 

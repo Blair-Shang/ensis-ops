@@ -9,7 +9,7 @@ import (
 	"fmt"
 	"strings"
 
-	"niuma/services/clickhouse-service/internal/session"
+	"ensis-ops/services/clickhouse-service/internal/session"
 )
 
 // RelationRef 标识 database.table（或视图 / MV）。

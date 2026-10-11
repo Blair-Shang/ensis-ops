@@ -1,10 +1,10 @@
 #pragma once
 
-#include "niuma/types.h"
+#include "ensisops/types.h"
 
 #include <memory>
 
-namespace niuma {
+namespace ensisops {
 
 class PlatformClient;
 
@@ -20,4 +20,4 @@ class BridgeRouter {
   std::unique_ptr<PlatformClient> platform_client_;
 };
 
-}  // namespace niuma
+}  // namespace ensisops

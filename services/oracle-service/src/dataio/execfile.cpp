@@ -13,7 +13,7 @@
 #include <fstream>
 #include <string_view>
 
-namespace niuma::oracle::dataio {
+namespace ensisops::oracle::dataio {
 namespace {
 
 bool Canceled(const CancelFlag& cancel) { return cancel && cancel->load(); }
@@ -326,4 +326,4 @@ bool RunExecSqlFile(const session::ConnectParams& connect, const std::string& sc
   return true;
 }
 
-}  // namespace niuma::oracle::dataio
+}  // namespace ensisops::oracle::dataio

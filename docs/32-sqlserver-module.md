@@ -1,7 +1,7 @@
 # 32 — SQL Server 管理模块（Layer-1 能力服务 + Web 模块）
 
 > 版本：v0.8 · 日期：2026-08-18  
-> 状态：**后端 P0 + LSP + tree.* + `meta.columns/indexes/primaryKey/ddl` 已落地**；**Web P0–P4 树 / Query / Browse / DDL / 设计器 / Monitor / `io.*` 已落地**；**库级 dump 扫全部用户 schema**（`niuma-sqlserver-dump/2`）；catalog 与 Windows/AAD 待后续；P5（Triggers/Types/约束树、重命名、GRANT、sqlcmd/bcp）未做  
+> 状态：**后端 P0 + LSP + tree.* + `meta.columns/indexes/primaryKey/ddl` 已落地**；**Web P0–P4 树 / Query / Browse / DDL / 设计器 / Monitor / `io.*` 已落地**；**库级 dump 扫全部用户 schema**（`ensis-sqlserver-dump/2`）；catalog 与 Windows/AAD 待后续；P5（Triggers/Types/约束树、重命名、GRANT、sqlcmd/bcp）未做  
 > **隔离**：**独立进程 / 独立 kind / 独立 Web 模块 / 独立实现**；禁止与 MySQL / Oracle / 达梦 / 其它库服务混用代码或运行时互调  
 > 关联：[13](./13-service-layout.md) · [14](./14-capability-connection-framework.md) · [18](./18-ops-connection-tree.md) · [20](./20-tool-components.md) · [21](./21-session-registry.md) · [23](./23-sql-dialect-completion.md) · [25 — MySQL](./25-mysql-module.md)（**分期骨架对照，非实现依赖**） · [31 — 金仓](./31-kingbase-module.md)（**有 schema 层对照，非实现依赖**）
 
@@ -22,7 +22,7 @@
 
 | 层 | 必须独立 | 允许共用（仅框架，无引擎业务） |
 |----|----------|--------------------------------|
-| 进程 / 二进制 | `niuma-sqlserver-service` 独享 | — |
+| 进程 / 二进制 | `ensis-sqlserver-service` 独享 | — |
 | manifest / namespace / kind | `sqlserver` 独享 | — |
 | Go 模块 | `services/sqlserver-service/` 自有 `go.mod` + `internal/*` | `packages/go/serviceipc`、`tunnel`、`logutil` 等**无引擎语义**包 |
 | Web 业务模块 | `web/src/modules/sqlserver/`、`api/sqlserver.ts` | `modules/database/*` 壳、`sql-editor` 编排（只认 family/Cap） |
@@ -56,13 +56,13 @@
 
 ### 1.1 架构对齐（对标 DBeaver / Navicat）
 
-| 能力层 | 参考 | NiuMa 做法 |
+| 能力层 | 参考 | ensis-ops 做法 |
 |--------|------|-----------|
 | GUI / 对象树 / SQL | DBeaver / Navicat for SQL Server / SSMS 常用集 | Vue + Monaco + Go 能力服务 |
 | 连接与查询 | TDS（默认端口 **1433**） | **Go + `microsoft/go-mssqldb`** |
 | 方言差异 | 客户端能力探测 | **DialectFamily + CapabilitySet**（契约见 [23](./23-sql-dialect-completion.md)） |
 | 外部 CLI | sqlcmd / bcp | [20 — 工具组件](./20-tool-components.md)，**不**编进 platform |
-| 安装包 | 独立客户端 | 仅 `niuma-sqlserver-service` Go 二进制（无 JVM / 无 .NET 运行时捆绑） |
+| 安装包 | 独立客户端 | 仅 `ensis-sqlserver-service` Go 二进制（无 JVM / 无 .NET 运行时捆绑） |
 
 ### 1.2 关键决策（已锁定）
 
@@ -84,11 +84,11 @@
 ### 1.3 实现语言推荐（锁定：**Go**）
 
 > **结论：产品默认实现语言 = Go。**  
-> SQL Server 在 NiuMa 中定位为 **Layer-1 Go 能力服务**，与 MySQL / 金仓 / ClickHouse / 达梦同构；**不**走 Oracle 式 C++ L3 Native，也**不**引入 .NET / JVM 作为默认路径。
+> SQL Server 在 ensis-ops 中定位为 **Layer-1 Go 能力服务**，与 MySQL / 金仓 / ClickHouse / 达梦同构；**不**走 Oracle 式 C++ L3 Native，也**不**引入 .NET / JVM 作为默认路径。
 
 #### 1.3.1 候选对照
 
-| 方案 | 专业度（协议/生态） | 与 NiuMa 架构契合 | 分发 / 运维 | 结论 |
+| 方案 | 专业度（协议/生态） | 与 ensis-ops 架构契合 | 分发 / 运维 | 结论 |
 |------|---------------------|-------------------|-------------|------|
 | **A. Go + `microsoft/go-mssqldb`（采用）** | 高：微软官方 Go TDS 驱动；取消 / 类型 / Azure 认证持续演进 | **最高**：与既有 L1、`serviceipc`、构建/打包、supervisor 完全同构 | 单二进制；`CGO_ENABLED=0`；无旁载运行时 | **产品默认 / 锁定** |
 | B. C# / .NET + `Microsoft.Data.SqlClient` | 最高（微软第一方） | 低：需新增 .NET 宿主、IPC 适配、打包链路；与现有 Go L1 分叉 | 捆绑 runtime 或依赖本机 .NET | **否决为默认**（复杂度不换协议收益） |
@@ -110,7 +110,7 @@ SQL Server **没有**对等约束：
 
 #### 1.3.3 为何不用 C#（对照「最原教旨」）
 
-若脱离 NiuMa、单论微软生态，C# + `Microsoft.Data.SqlClient` 确实最贴 SSMS。但本仓库约束是：
+若脱离 ensis-ops、单论微软生态，C# + `Microsoft.Data.SqlClient` 确实最贴 SSMS。但本仓库约束是：
 
 1. Layer-1 已形成 **Go 服务族**（manifest / supervisor / length-prefixed JSON / 打包脚本）；  
 2. 新增 .NET 运行时会破坏「一引擎一 Go 二进制」的运维与体积模型；  
@@ -238,7 +238,7 @@ flowchart TD
 ┌ Layer 4 ─ Web ────────────────────────────────────────────┐
 │ web/src/modules/sqlserver/                                 │
 │   连接表单 · 树 Provider · Query · Browse · Monitor        │
-│   ↑ bridgeInvoke(sqlserver.*) ↑ bridgeOnEvent(niuma:event) │
+│   ↑ bridgeInvoke(sqlserver.*) ↑ bridgeOnEvent(ensis-ops:event) │
 └───┼───────────────────────────┼────────────────────────────┘
     │ cefQuery                  │ PostMessage
 ┌ Layer 3 ─ C++ Shell ──────────┴────────────────────────────┐
@@ -272,7 +272,7 @@ services/
 └── sqlserver-service/
     ├── README.md              # 构建 / Docker 联调 / IPC（对照 oracle-service/README）
     ├── docker-compose.yml     # 本地 SQL Server 2022（宿主机 61433）
-    ├── go.mod                 # microsoft/go-mssqldb + niuma/pkg/*
+    ├── go.mod                 # microsoft/go-mssqldb + ensis-ops/pkg/*
     ├── cmd/sqlserver-service/main.go
     └── internal/
         ├── dialect/           # ServerProfile / Cap* / Probe
@@ -329,7 +329,7 @@ SQL Server 的 session/query/tree/meta/IO **适配只写在** `modules/sqlserver
 | encrypt | `optional`（本地）/ Azure 建议 `mandatory` | 对齐 DBeaver Encrypt / Navicat SSL 区 |
 | trust_server_certificate | `false` | 开发常见勾选；生产默认关 |
 | host_name_in_certificate | 空 | 证书主机名校验（按需） |
-| application_name | `NiuMa` | 会话识别 |
+| application_name | `ensis-ops` | 会话识别 |
 | connect_timeout_seconds | 10 | 建连超时 |
 | packet_size | 驱动默认 | 高级可选 |
 | exclude_system_schemas | `true` | 树/catalog 默认隐藏 `sys` / `INFORMATION_SCHEMA` 等 |
@@ -448,7 +448,7 @@ res:{profileId}:database:{db}:schema:{schema}:table:{table}
 ## 7. manifest 模板
 
 ```yaml
-id: com.niuma.sqlserver
+id: com.ensisops.sqlserver
 name: SQL Server Service
 version: 0.1.0
 bridge:
@@ -462,24 +462,24 @@ session:
     # P1+ 短连接只读方法按需列入，例如：
     # tree.databases / tree.schemas / tree.tables / catalog.* / meta.*
 runtime:
-  executable: bin/niuma-sqlserver-service.exe
-  executable_windows: bin/niuma-sqlserver-service.exe
-  executable_unix: bin/niuma-sqlserver-service
+  executable: bin/ensis-sqlserver-service.exe
+  executable_windows: bin/ensis-sqlserver-service.exe
+  executable_unix: bin/ensis-sqlserver-service
   lang: go
 ipc:
   transport: named_pipe
   transport_windows: named_pipe
   transport_unix: unix_socket
-  address: '\\.\pipe\niuma.sqlserver'
-  address_windows: '\\.\pipe\niuma.sqlserver'
-  address_unix: '/tmp/niuma.sqlserver.sock'
+  address: '\\.\pipe\ensis-ops.sqlserver'
+  address_windows: '\\.\pipe\ensis-ops.sqlserver'
+  address_unix: '/tmp/ensis-ops.sqlserver.sock'
   protocol: length_prefixed_json
 lifecycle:
   startup: lazy
 permissions: []
 ```
 
-构建：`scripts/shared/build/build-services.*` 增加 `sqlserver-service`；`go.work` 纳入模块。二进制名统一为 **`niuma-sqlserver-service`**。
+构建：`scripts/shared/build/build-services.*` 增加 `sqlserver-service`；`go.work` 纳入模块。二进制名统一为 **`ensis-sqlserver-service`**。
 
 ---
 
@@ -500,7 +500,7 @@ permissions: []
 
 ## 9. 与 DBeaver / Navicat 能力对照
 
-| 能力 | DBeaver / Navicat | NiuMa 落点 |
+| 能力 | DBeaver / Navicat | ensis-ops 落点 |
 |------|-------------------|------------|
 | 连接向导（SQL Auth / Encrypt / Tunnel） | ✓ | P0 表单 + Vault + tunnel |
 | 对象树（DB → Schema → 分类计数） | ✓ | P1 `tree.*`（已落地） |
@@ -550,4 +550,4 @@ permissions: []
 | v0.4 | 2026-08-03 | Web P0：`modules/sqlserver` Query + ConnKind/session/`GO` 拆批 + Monaco LSP；无对象树（P1） |
 | v0.5 | 2026-08-10 | 服务目录 README + docker-compose（对照 oracle-service 本地联调说明） |
 | v0.6 | 2026-08-10 | 连接对话框专业化：SSL Tab、Home SSH profiles、测连版本、命名实例/Azure 校验；后端错误映射与互斥校验 |
-| v0.8 | 2026-08-18 | 库级 `io.dumpSql`：空 schema 扫全部用户 schema（`excludeSystem` / `createSchema`）；格式 `niuma-sqlserver-dump/2`；P5 仍不含 Triggers/Types/约束树、重命名、GRANT、sqlcmd/bcp |
+| v0.8 | 2026-08-18 | 库级 `io.dumpSql`：空 schema 扫全部用户 schema（`excludeSystem` / `createSchema`）；格式 `ensis-sqlserver-dump/2`；P5 仍不含 Triggers/Types/约束树、重命名、GRANT、sqlcmd/bcp |

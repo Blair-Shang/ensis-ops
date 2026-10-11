@@ -7,7 +7,7 @@
 #include <cstdint>
 #include <cstring>
 
-namespace niuma::oracle::session {
+namespace ensisops::oracle::session {
 namespace {
 
 class VarGuard {
@@ -97,4 +97,4 @@ nlohmann::json DrainDbmsOutput(Session& session, int max_lines) {
   return lines;
 }
 
-}  // namespace niuma::oracle::session
+}  // namespace ensisops::oracle::session

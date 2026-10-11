@@ -5,8 +5,8 @@ import (
 	"testing"
 	"time"
 
-	"niuma/pkg/logutil"
-	"niuma/platform/internal/handler"
+	"ensis-ops/pkg/logutil"
+	"ensis-ops/platform/internal/handler"
 )
 
 func TestDiagTraceRequiresTraceID(t *testing.T) {
@@ -19,8 +19,8 @@ func TestDiagTraceRequiresTraceID(t *testing.T) {
 
 func TestDiagTraceFindsLocalObserve(t *testing.T) {
 	dir := t.TempDir()
-	t.Setenv("NIUMMA_LOG_DIR", dir)
-	t.Setenv("NIUMMA_LOG_ROOT", "")
+	t.Setenv("ENSIS_LOG_DIR", dir)
+	t.Setenv("ENSIS_LOG_ROOT", "")
 	d := newDispatcher(t)
 	t.Cleanup(logutil.CloseObserve)
 

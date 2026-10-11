@@ -2,7 +2,7 @@
 <#
 .SYNOPSIS
 .DESCRIPTION
-  组装 NiuMa Windows 发布目录。
+  组装 ensis-ops Windows 发布目录。
   默认输出：output/<platform>-<arch>/dir/
   SQL 源脚本来自 scripts/sql/sqlite/，复制到发布包内 platform/migrations/sqlite/。
 #>
@@ -30,7 +30,7 @@ if (-not $OutputDir) {
 $Staging = Join-Path $Root 'build/pack-staging'
 $ShellBuild = Get-ShellInstallDir -RepoRoot $Root -Platform $Platform -Arch $Arch -Configuration $Configuration
 $legacyShellBuild = Join-Path $Root "build/shell/$Configuration"
-if (-not (Test-Path (Join-Path $ShellBuild 'niuma.exe')) -and (Test-Path (Join-Path $legacyShellBuild 'niuma.exe'))) {
+if (-not (Test-Path (Join-Path $ShellBuild 'ensis-ops.exe')) -and (Test-Path (Join-Path $legacyShellBuild 'ensis-ops.exe'))) {
     $ShellBuild = $legacyShellBuild
 }
 $CefRoot = Join-Path $Root 'third_party/cef'
@@ -59,7 +59,7 @@ if (-not (Test-Path (Join-Path $WebDist 'index.html'))) {
 if (-not $SkipShellBuild) {
     if (-not (Test-Path $CefRoot)) {
         Write-Warning "CEF not found at third_party/cef. Run: pnpm cef:download"
-        Write-Warning "Skipping shell build; copy niuma.exe manually if already built."
+        Write-Warning "Skipping shell build; copy ensis-ops.exe manually if already built."
     } else {
         Write-Step "Building shell ($Platform-$Arch) via platform entry..."
         & $BuildShellScript -Platform $Platform -Arch $Arch -Configuration $Configuration
@@ -117,15 +117,15 @@ if (Test-Path $ComponentsSrc) {
     Copy-Item -Recurse -Force $ComponentsSrc $ComponentsDst
 }
 
-$NiumaExe = Join-Path $ShellBuild 'niuma.exe'
+$NiumaExe = Join-Path $ShellBuild 'ensis-ops.exe'
 if (Test-Path $NiumaExe) {
     Copy-Item -Force $NiumaExe $Staging
 } else {
-    Write-Warning "niuma.exe not found at $NiumaExe - pack web-only skeleton"
+    Write-Warning "ensis-ops.exe not found at $NiumaExe - pack web-only skeleton"
 }
 
-# CEF 运行时：优先用壳层 POST_BUILD 已拷到 exe 旁的文件（CI prune 后 third_party/cef 可能已删）。
-# 官方 Windows 发行包把 .pak 放在 Resources/，不在 Release/；只拷 Release 会漏 resources.pak。
+# CEF runtime: prefer files POST_BUILD already copied next to the exe.
+# Official Windows CEF puts .pak under Resources/, not Release/. Copying Release only drops resources.pak.
 $cefRuntimeNames = @(
     'chrome_100_percent.pak'
     'chrome_200_percent.pak'
@@ -176,7 +176,7 @@ Copy-Item -Recurse -Force "$Staging\*" $OutputDir
 Remove-Item -Recurse -Force $Staging
 
 $requiredRuntime = @(
-    'niuma.exe'
+    'ensis-ops.exe'
     'libcef.dll'
     'chrome_elf.dll'
     'chrome_100_percent.pak'
@@ -202,7 +202,7 @@ $StageComplianceScript = Join-Path $Root 'scripts\shared\package\stage-complianc
 & $StageComplianceScript -DestDir $OutputDir -RepoRoot $Root
 
 $SignScript = Join-Path $Root 'scripts\shared\sign\sign-windows.ps1'
-$packedExe = Join-Path $OutputDir 'niuma.exe'
+$packedExe = Join-Path $OutputDir 'ensis-ops.exe'
 if ((Test-Path $SignScript) -and (Test-Path $packedExe)) {
     & $SignScript -FilePath $packedExe
 }

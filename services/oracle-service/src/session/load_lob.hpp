@@ -5,7 +5,7 @@
 #include <nlohmann/json.hpp>
 #include <string>
 
-namespace niuma::oracle::session {
+namespace ensisops::oracle::session {
 
 struct LoadLobParams {
   std::string session_id;
@@ -18,4 +18,4 @@ struct LoadLobParams {
 
 nlohmann::json LoadLob(Session& session, const LoadLobParams& params, std::string& error);
 
-}  // namespace niuma::oracle::session
+}  // namespace ensisops::oracle::session

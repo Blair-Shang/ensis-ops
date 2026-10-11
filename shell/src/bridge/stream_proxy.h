@@ -3,7 +3,7 @@
 #include <cstddef>
 #include <string>
 
-namespace niuma {
+namespace ensisops {
 
 class StreamProxy {
  public:
@@ -18,4 +18,4 @@ class StreamProxy {
   StreamProxy() = default;
 };
 
-}  // namespace niuma
+}  // namespace ensisops

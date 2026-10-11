@@ -12,7 +12,7 @@
 1. **内置模块**与**外部插件**统一注册
 2. 运行时动态追加路由与 SideNav
 3. 未来 IDE 级 **contributions**（commands、views、keybindings）
-4. 受控 **Extension API**（`niuma.*`），禁止裸暴露全部 `bridge.invoke`
+4. 受控 **Extension API**（`ensis-ops.*`），禁止裸暴露全部 `bridge.invoke`
 
 ---
 
@@ -32,7 +32,7 @@
 └───────────────────────────┬─────────────────────────────┘
                             │
 ┌───────────────────────────▼─────────────────────────────┐
-│ Extension API（niuma.*）                                │
+│ Extension API（ensis-ops.*）                                │
 │  commands · window · workspace · bridge（白名单）          │
 └───────────────────────────┬─────────────────────────────┘
                             │ useNiumaBridge.invoke
@@ -51,7 +51,7 @@
 
 | 字段 | 说明 |
 |------|------|
-| `id` | 唯一 ID，如 `ssh`、`com.niuma.db-postgres` |
+| `id` | 唯一 ID，如 `ssh`、`com.ensis-ops.db-postgres` |
 | `source` | `builtin` \| `extension` |
 | `labelKey` | i18n key |
 | `icon` | Lucide 图标名 |
@@ -216,7 +216,7 @@ export function deactivate() {}
 | Settings 插件管理 | ✅ P2 |
 | activate 上下文 `window.*` / `commands.execute` | ✅ P1 |
 | 内置命令 `workbench.*`（⌘K 开箱即用） | ✅ P1 |
-| `@niuma/extension-api` 包 | ❌ P1 |
+| `@ensis-ops/extension-api` 包 | ❌ P1 |
 
 ---
 

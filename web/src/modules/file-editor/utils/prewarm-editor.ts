@@ -1,1 +1,1 @@
-export { prewarmCodeMirrorEditor as prewarmCodeEditor } from '@niuma/ui'
+export { prewarmCodeMirrorEditor as prewarmCodeEditor } from 'ensis-ui'

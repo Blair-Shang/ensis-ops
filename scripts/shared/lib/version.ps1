@@ -58,9 +58,9 @@ function Get-GoVersionLdflags {
     $info = Get-BuildInfo -RepoRoot $RepoRoot
     $strip = if ($Configuration -eq 'Release') { '-s -w' } else { '' }
     $inject = @(
-        "-X niuma/pkg/buildinfo.Version=$($info.version)"
-        "-X niuma/pkg/buildinfo.BuildID=$($info.buildId)"
-        "-X niuma/pkg/buildinfo.BuildDate=$($info.buildDate)"
+        "-X ensis-ops/pkg/buildinfo.Version=$($info.version)"
+        "-X ensis-ops/pkg/buildinfo.BuildID=$($info.buildId)"
+        "-X ensis-ops/pkg/buildinfo.BuildDate=$($info.buildDate)"
     ) -join ' '
     if ($strip) {
         return "$strip $inject"
@@ -72,7 +72,7 @@ function Get-CMakeVersionArgs {
     param([string]$RepoRoot)
     $info = Get-BuildInfo -RepoRoot $RepoRoot
     return @(
-        "-DNIUMMA_APP_VERSION=$($info.version)"
-        "-DNIUMMA_BUILD_ID=$($info.buildId)"
+        "-DENSIS_APP_VERSION=$($info.version)"
+        "-DENSIS_BUILD_ID=$($info.buildId)"
     )
 }

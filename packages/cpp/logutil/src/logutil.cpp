@@ -1,4 +1,4 @@
-#include <niuma/logutil/logutil.hpp>
+#include <ensisops/logutil/logutil.hpp>
 
 #include <chrono>
 #include <cstdlib>
@@ -18,7 +18,7 @@
 #include <unistd.h>
 #endif
 
-namespace niuma::logutil {
+namespace ensisops::logutil {
 namespace {
 
 namespace fs = std::filesystem;
@@ -138,10 +138,10 @@ fs::path ExecutableDir() {
 }
 
 fs::path ResolveLogDir() {
-  if (const auto dir = EnvOrEmpty("NIUMMA_LOG_DIR"); !dir.empty()) {
+  if (const auto dir = EnvOrEmpty("ENSIS_LOG_DIR"); !dir.empty()) {
     return fs::path(dir);
   }
-  if (const auto root = EnvOrEmpty("NIUMMA_LOG_ROOT"); !root.empty()) {
+  if (const auto root = EnvOrEmpty("ENSIS_LOG_ROOT"); !root.empty()) {
     return fs::path(root);
   }
 
@@ -480,4 +480,4 @@ void ObserveIPC(std::string_view service, std::string_view req_json, std::string
   ObserveRPC(service, method, id, trace, ok, code, duration_ms);
 }
 
-}  // namespace niuma::logutil
+}  // namespace ensisops::logutil

@@ -25,20 +25,20 @@
 
 #include "util/connection_error.hpp"
 
-#include <niuma/serviceipc/message.hpp>
+#include <ensisops/serviceipc/message.hpp>
 
-namespace niuma::oracle::handler {
+namespace ensisops::oracle::handler {
 namespace {
 
 constexpr auto kJsonReplace = nlohmann::json::error_handler_t::replace;
 
 std::string Fail(const std::string& id, std::string err) {
   err = util::EnsureUtf8(std::move(err));
-  return niuma::serviceipc::MakeFailResponse(id, err);
+  return ensisops::serviceipc::MakeFailResponse(id, err);
 }
 
 std::string Ok(const std::string& id, const nlohmann::json& result) {
-  return niuma::serviceipc::MakeOkResponse(
+  return ensisops::serviceipc::MakeOkResponse(
       id, result.dump(-1, ' ', false, kJsonReplace));
 }
 
@@ -698,4 +698,4 @@ std::string Dispatcher::HandleFrame(const std::string& raw_json) {
   }
 }
 
-}  // namespace niuma::oracle::handler
+}  // namespace ensisops::oracle::handler

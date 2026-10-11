@@ -1,4 +1,4 @@
-id: com.niuma.components.mongodb-tools
+id: com.ensisops.components.mongodb-tools
 name: MongoDB 官方工具
 module: mongodb
 install:

@@ -1,4 +1,4 @@
-// Command ftp-service 是 NiuMa FTP 能力服务（Layer 1）的独立进程入口。
+// Command ftp-service 是 ensis-ops FTP 能力服务（Layer 1）的独立进程入口。
 //
 // 源码位于 services/ftp-service/，与 platform-core 分离，便于未来用 Rust/C++/Python
 // 实现同类服务时保持同一 manifest + IPC 契约（见 docs/13-service-layout.md）。
@@ -13,15 +13,15 @@ import (
 	"runtime"
 	"syscall"
 
-	"niuma/pkg/logutil"
-	"niuma/pkg/serviceipc/server"
-	"niuma/services/ftp-service/internal/handler"
-	"niuma/services/ftp-service/internal/idgen"
+	"ensis-ops/pkg/logutil"
+	"ensis-ops/pkg/serviceipc/server"
+	"ensis-ops/services/ftp-service/internal/handler"
+	"ensis-ops/services/ftp-service/internal/idgen"
 )
 
 const (
-	windowsPipeAddr = `\\.\pipe\niuma.ftp`
-	unixSocketName  = "niuma.ftp.sock"
+	windowsPipeAddr = `\\.\pipe\ensis-ops.ftp`
+	unixSocketName  = "ensis-ops.ftp.sock"
 )
 
 func main() {

@@ -1,8 +1,8 @@
 /**
  * Vastbase 查询面板状态：执行 / Explain / 历史 / 结果 / 右键菜单。
  */
-import type { RsContextMenuItem, RsTableColumn } from '@niuma/ui'
-import { useRsToast } from '@niuma/ui'
+import type { RsContextMenuItem, RsTableColumn } from 'ensis-ui'
+import { useRsToast } from 'ensis-ui'
 import { computed, nextTick, ref, shallowRef, watch } from 'vue'
 
 import { useI18n } from 'vue-i18n'

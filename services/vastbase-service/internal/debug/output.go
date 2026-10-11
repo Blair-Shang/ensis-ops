@@ -18,11 +18,11 @@ import (
 //   - ENABLE 成功即可；探针失败不应阻断（PUT/GET 形态可能不同）
 
 const (
-	helperEnableProc   = "nm_niuma_dbms_enable"
-	helperDrainProc    = "nm_niuma_dbms_drain"
-	helperPutProc      = "nm_niuma_dbms_put"
-	helperDrainTable   = "nm_niuma_dbms_drain_lines"
-	helperCaptureTable = "nm_niuma_dbms_capture"
+	helperEnableProc   = "nm_ensis_dbms_enable"
+	helperDrainProc    = "nm_ensis_dbms_drain"
+	helperPutProc      = "nm_ensis_dbms_put"
+	helperDrainTable   = "nm_ensis_dbms_drain_lines"
+	helperCaptureTable = "nm_ensis_dbms_capture"
 )
 
 // NoticeSink 收集 NOTICE。

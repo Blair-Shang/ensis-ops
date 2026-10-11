@@ -7,8 +7,8 @@ import (
 	"strings"
 	"time"
 
-	"niuma/pkg/common/id"
-	"niuma/services/postgres-service/internal/session"
+	"ensis-ops/pkg/common/id"
+	"ensis-ops/services/postgres-service/internal/session"
 )
 
 func (d *Dispatcher) queryExec(ctx context.Context, req Request) Response {

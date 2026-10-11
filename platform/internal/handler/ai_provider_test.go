@@ -7,11 +7,11 @@ import (
 	"path/filepath"
 	"testing"
 
-	"niuma/platform/internal/ai"
-	"niuma/platform/internal/handler"
-	"niuma/platform/internal/idgen"
-	"niuma/platform/internal/migrate"
-	"niuma/platform/internal/store"
+	"ensis-ops/platform/internal/ai"
+	"ensis-ops/platform/internal/handler"
+	"ensis-ops/platform/internal/idgen"
+	"ensis-ops/platform/internal/migrate"
+	"ensis-ops/platform/internal/store"
 
 	_ "modernc.org/sqlite"
 )
@@ -172,10 +172,10 @@ func TestAIProviderEnsureSystemAndProtect(t *testing.T) {
 		"params": map[string]any{
 			"enabled":          true,
 			"baseUrl":          "https://www.niuma007.com/niuma/cloud/api/v1/ai/v1",
-			"providerName":     "NiuMa",
-			"defaultModelCode": "niuma-fast",
+			"providerName":     "ensis-ops",
+			"defaultModelCode": "ensis-fast",
 			"models": []map[string]any{
-				{"code": "niuma-fast", "label": "Fast"},
+				{"code": "ensis-fast", "label": "Fast"},
 			},
 		},
 	})
@@ -187,7 +187,7 @@ func TestAIProviderEnsureSystemAndProtect(t *testing.T) {
 	delRaw, _ := json.Marshal(map[string]any{
 		"method": handler.MethodAIProviderDelete,
 		"id":     "s2",
-		"params": map[string]any{"providerId": "niuma-system"},
+		"params": map[string]any{"providerId": "ensis-system"},
 	})
 	delResp := decodeAITestResponse(t, d.HandleFrame(ctx, delRaw))
 	if delResp.OK {
@@ -198,7 +198,7 @@ func TestAIProviderEnsureSystemAndProtect(t *testing.T) {
 		"method": handler.MethodAIProviderUpsert,
 		"id":     "s3",
 		"params": map[string]any{
-			"providerId": "niuma-system",
+			"providerId": "ensis-system",
 			"provider": map[string]any{
 				"providerName": "hack",
 				"providerKind": "openai",
@@ -224,7 +224,7 @@ func TestAIProviderEnsureSystemReplacesModels(t *testing.T) {
 			"params": map[string]any{
 				"enabled":          true,
 				"baseUrl":          "https://www.niuma007.com/niuma/cloud/api/v1/ai/v1",
-				"providerName":     "NiuMa",
+				"providerName":     "ensis-ops",
 				"defaultModelCode": defaultCode,
 				"models":           models,
 			},
@@ -264,7 +264,7 @@ func TestAIProviderEnsureSystemReplacesModels(t *testing.T) {
 	if err := json.Unmarshal([]byte(listResp.Result), &listResult); err != nil {
 		t.Fatalf("parse list: %v body=%s", err, listResp.Result)
 	}
-	if len(listResult.Providers) != 1 || listResult.Providers[0].ProviderID != "niuma-system" {
+	if len(listResult.Providers) != 1 || listResult.Providers[0].ProviderID != "ensis-system" {
 		t.Fatalf("unexpected providers: %+v", listResult.Providers)
 	}
 	got := listResult.Providers[0].Models

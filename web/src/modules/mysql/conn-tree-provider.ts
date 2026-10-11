@@ -6,7 +6,7 @@
  * 菜单同步定义；激活动作经 dynamic import 加载 conn-tree-actions，
  * 避免 sql-seed / script-templates / ddl Dialog 进入启动注册闭包。
  */
-import type { RsContextMenuItem } from '@niuma/ui'
+import type { RsContextMenuItem } from 'ensis-ui'
 import type { ConnTreeChildProvider } from '@/modules/ops/conn-tree/registry'
 import type { ConnResourcePath } from '@/modules/ops/conn-tree/types'
 import { mysqlApi } from '@/api'

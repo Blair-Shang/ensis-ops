@@ -1,4 +1,4 @@
-# NiuMa 本机构建打包流水线。
+# ensis-ops 本机构建打包流水线。
 # 约束：build/pack/release 必须在目标 OS 上执行，禁止交叉编译。
 # 托管 runner 覆盖：Windows x64、Linux x64、macOS arm64。
 # ARM64 Windows / ARM64 Linux / 麒麟需自建 runner，未纳入本矩阵。
@@ -14,8 +14,8 @@ on:
       - 'v*'
   workflow_dispatch:
     inputs:
-      niuma_ui_version:
-        description: 'npm niuma-ui 版本（latest 或 1.1.11）'
+      ensis_ui_version:
+        description: 'npm ensis-ui 版本（latest 或 1.1.11）'
         type: string
         default: 'latest'
 
@@ -43,12 +43,12 @@ jobs:
       date: ${{ steps.plan.outputs.date }}
     defaults:
       run:
-        working-directory: NiuMa
+        working-directory: ensis-ops
     steps:
-      - name: Checkout NiuMa
+      - name: Checkout ensis-ops
         uses: actions/checkout@v5
         with:
-          path: NiuMa
+          path: ensis-ops
           fetch-depth: 0
           fetch-tags: true
 
@@ -117,7 +117,7 @@ jobs:
     timeout-minutes: 180
     defaults:
       run:
-        working-directory: NiuMa
+        working-directory: ensis-ops
     strategy:
       fail-fast: false
       matrix:
@@ -139,10 +139,10 @@ jobs:
             rust_target: aarch64-apple-darwin
 
     steps:
-      - name: Checkout NiuMa
+      - name: Checkout ensis-ops
         uses: actions/checkout@v5
         with:
-          path: NiuMa
+          path: ensis-ops
 
       - name: Enable Windows long paths
         if: runner.os == 'Windows'
@@ -204,7 +204,7 @@ jobs:
         with:
           node-version: '24'
           cache: pnpm
-          cache-dependency-path: NiuMa/pnpm-lock.yaml
+          cache-dependency-path: ensis-ops/pnpm-lock.yaml
           registry-url: https://registry.npmjs.org
 
       - name: Setup Go
@@ -214,11 +214,11 @@ jobs:
           # 若只装 1.25.0，Linux/macOS 的 go generate 都会失败。
           go-version: '1.25.7'
           cache-dependency-path: |
-            NiuMa/go.work
-            NiuMa/go.work.sum
-            NiuMa/platform/go.sum
-            NiuMa/services/**/go.sum
-            NiuMa/packages/go/**/go.sum
+            ensis-ops/go.work
+            ensis-ops/go.work.sum
+            ensis-ops/platform/go.sum
+            ensis-ops/services/**/go.sum
+            ensis-ops/packages/go/**/go.sum
 
       - name: Setup Rust
         uses: dtolnay/rust-toolchain@stable
@@ -229,19 +229,19 @@ jobs:
         uses: Swatinem/rust-cache@v2
         with:
           workspaces: |
-            NiuMa/services/ssh-service
-            NiuMa/services/sftp-service
-            NiuMa/services/redis-service
-            NiuMa/packages/rust
+            ensis-ops/services/ssh-service
+            ensis-ops/services/sftp-service
+            ensis-ops/services/redis-service
+            ensis-ops/packages/rust
 
       - name: Restore CEF cache
         id: cef-cache
         uses: actions/cache/restore@v5
         with:
           path: |
-            NiuMa/third_party/cef
-            NiuMa/third_party/cef-cache
-          key: cef-${{ matrix.artifact }}-${{ hashFiles('NiuMa/scripts/shared/setup/cef-pin.txt') }}
+            ensis-ops/third_party/cef
+            ensis-ops/third_party/cef-cache
+          key: cef-${{ matrix.artifact }}-${{ hashFiles('ensis-ops/scripts/shared/setup/cef-pin.txt') }}
           restore-keys: |
             cef-${{ matrix.artifact }}-
 
@@ -264,34 +264,34 @@ jobs:
       - name: Install JS dependencies
         # Windows 默认 pwsh，不能写 UI="..."。
         # pnpm --filter pkg set 会当成脚本名，改不到 web/package.json。
-        # 必须用 add，才能把 link:../../niuma-ui 换成 npm 上的 niuma-ui。
+        # 必须用 add，才能把 link:../../ensis-ui 换成 npm 上的 ensis-ui。
         shell: bash
         env:
-          NIUMA_UI_PKG: ${{ github.event.inputs.niuma_ui_version || vars.NIUMA_UI_VERSION || 'latest' }}
+          ENSIS_UI_PKG: ${{ github.event.inputs.ensis_ui_version || vars.ENSIS_UI_VERSION || 'latest' }}
         run: |
           set -euo pipefail
-          echo "Installing @niuma/ui from npm:niuma-ui@${NIUMA_UI_PKG}"
-          pnpm --filter @niuma/web add "@niuma/ui@npm:niuma-ui@${NIUMA_UI_PKG}"
-          # niuma-ui >= 1.2.0 只发 dist/；本机 link 才有 src/。用 Node resolve 跟 Vite 同一条路径。
+          echo "Installing ensis-ui from npm:ensis-ui@${ENSIS_UI_PKG}"
+          pnpm --filter @ensis/web add "ensis-ui@npm:ensis-ui@${ENSIS_UI_PKG}"
+          # ensis-ui >= 1.2.0 只发 dist/；本机 link 才有 src/。用 Node resolve 跟 Vite 同一条路径。
           node -e '
             const { createRequire } = require("module");
             const { existsSync } = require("fs");
             const { dirname, join, resolve } = require("path");
             const r = createRequire(resolve("web/package.json"));
-            const pkg = r.resolve("@niuma/ui/package.json");
+            const pkg = r.resolve("ensis-ui/package.json");
             const root = dirname(pkg);
             const dist = join(root, "dist/index.js");
             const src = join(root, "src/index.ts");
             console.log("resolved", pkg);
             if (existsSync(dist)) {
-              console.log("niuma-ui entry", dist);
+              console.log("ensis-ui entry", dist);
               process.exit(0);
             }
             if (existsSync(src)) {
-              console.log("niuma-ui source", src);
+              console.log("ensis-ui source", src);
               process.exit(0);
             }
-            console.error("niuma-ui has neither dist/index.js nor src/index.ts");
+            console.error("ensis-ui has neither dist/index.js nor src/index.ts");
             process.exit(1);
           '
 
@@ -303,13 +303,13 @@ jobs:
         uses: actions/cache/save@v5
         with:
           path: |
-            NiuMa/third_party/cef
-            NiuMa/third_party/cef-cache
+            ensis-ops/third_party/cef
+            ensis-ops/third_party/cef-cache
           key: ${{ steps.cef-cache.outputs.cache-primary-key }}
 
       - name: Build and pack
         env:
-          NIUMA_CHANNEL: stable
+          ENSIS_CHANNEL: stable
           REQUIRE_CODESIGN: ${{ (runner.os == 'Windows' && secrets.WINDOWS_PFX_BASE64 != '') || (runner.os == 'macOS' && secrets.MACOS_P12_BASE64 != '') }}
           CODESIGN_IDENTITY: ${{ secrets.CODESIGN_IDENTITY }}
           CODESIGN_INSTALLER_IDENTITY: ${{ secrets.CODESIGN_INSTALLER_IDENTITY }}
@@ -328,8 +328,8 @@ jobs:
       - name: Upload pack artifacts
         uses: actions/upload-artifact@v5
         with:
-          name: niuma-${{ matrix.artifact }}
-          path: NiuMa/output/${{ matrix.artifact }}/
+          name: ensis-ops-${{ matrix.artifact }}
+          path: ensis-ops/output/${{ matrix.artifact }}/
           if-no-files-found: error
           retention-days: 14
           compression-level: 0
@@ -341,13 +341,13 @@ jobs:
     runs-on: ubuntu-22.04
     timeout-minutes: 90
     env:
-      NIUMA_CLOUD_PIPELINE_TOKEN: ${{ secrets.NIUMA_CLOUD_PIPELINE_TOKEN }}
+      ENSIS_CLOUD_PIPELINE_TOKEN: ${{ secrets.ENSIS_CLOUD_PIPELINE_TOKEN }}
     steps:
       - name: Download pack artifacts
         uses: actions/download-artifact@v5
         with:
           path: dist
-          pattern: niuma-*
+          pattern: ensis-ops-*
           merge-multiple: false
 
       - name: Collect installer assets
@@ -355,13 +355,13 @@ jobs:
         run: |
           set -euo pipefail
           mkdir -p release-files
-          # 只收用户安装包。output/*/dir 里的 niuma.exe、服务 exe、bootstrap
+          # 只收用户安装包。output/*/dir 里的 ensis-ops.exe、服务 exe、bootstrap
           # 以及 Uninstall.run 已打进安装包，不单独挂 GitHub Release。
           mapfile -t files < <(find dist -type f \( \
-            -name 'NiuMa-*-Setup.exe' -o \
-            -name 'NiuMa-*-Setup.run' -o \
-            -name 'NiuMa-*-Setup.pkg' -o \
-            -name 'NiuMa-*.dmg' -o \
+            -name 'ensis-ops-*-Setup.exe' -o \
+            -name 'ensis-ops-*-Setup.run' -o \
+            -name 'ensis-ops-*-Setup.pkg' -o \
+            -name 'ensis-ops-*.dmg' -o \
             -name '*.deb' -o \
             -name '*.rpm' -o \
             -name 'SHA256SUMS.txt' \
@@ -396,13 +396,13 @@ jobs:
         if: needs.plan.outputs.cut_changelog == 'true'
         uses: actions/checkout@v5
         with:
-          path: NiuMa
+          path: ensis-ops
           fetch-depth: 0
           fetch-tags: true
 
       - name: Record changelog version
         if: needs.plan.outputs.cut_changelog == 'true'
-        working-directory: NiuMa
+        working-directory: ensis-ops
         shell: bash
         env:
           GH_TOKEN: ${{ github.token }}
@@ -445,8 +445,8 @@ jobs:
         run: |
           set -euo pipefail
           SRC=release-scripts/CHANGELOG.md
-          if [[ -f NiuMa/CHANGELOG.md ]]; then
-            SRC=NiuMa/CHANGELOG.md
+          if [[ -f ensis-ops/CHANGELOG.md ]]; then
+            SRC=ensis-ops/CHANGELOG.md
           fi
           node release-scripts/.github/scripts/cut-changelog.mjs notes \
             --version "${{ needs.plan.outputs.version }}" \
@@ -484,17 +484,17 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Upload installers to niuma-cloud
-        if: env.NIUMA_CLOUD_PIPELINE_TOKEN != ''
+      - name: Upload installers to ensis-cloud
+        if: env.ENSIS_CLOUD_PIPELINE_TOKEN != ''
         env:
-          NIUMA_CLOUD_API_BASE: ${{ vars.NIUMA_CLOUD_API_BASE || 'https://www.niuma007.com/niuma/cloud' }}
+          ENSIS_CLOUD_API_BASE: ${{ vars.ENSIS_CLOUD_API_BASE || 'https://www.niuma007.com/niuma/cloud' }}
           RELEASE_TAG: ${{ needs.plan.outputs.tag }}
-          NIUMA_CHANNEL: stable
-          NIUMA_PREVIEW_CHANNEL: beta
-          CHANGELOG_PATH: ${{ needs.plan.outputs.cut_changelog == 'true' && 'NiuMa/CHANGELOG.md' || 'release-scripts/CHANGELOG.md' }}
+          ENSIS_CHANNEL: stable
+          ENSIS_PREVIEW_CHANNEL: beta
+          CHANGELOG_PATH: ${{ needs.plan.outputs.cut_changelog == 'true' && 'ensis-ops/CHANGELOG.md' || 'release-scripts/CHANGELOG.md' }}
         run: node release-scripts/.github/scripts/push-cloud-release.mjs release-files
 
-      # 只删过旧 release 的安装包，保留页、tag、说明。官网分发走 niuma-cloud。
+      # 只删过旧 release 的安装包，保留页、tag、说明。官网分发走 ensis-cloud。
       # github.token / GITHUB_REPOSITORY 由 Actions 注入，不必再配仓库 Secret。
       - name: Prune old GitHub Release assets
         env:

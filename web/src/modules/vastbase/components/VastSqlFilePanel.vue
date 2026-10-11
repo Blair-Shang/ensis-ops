@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { RsIcon, RsInput, RsLabel, RsSelect } from '@niuma/ui'
+import { RsIcon, RsInput, RsLabel, RsSelect } from 'ensis-ui'
 import { ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import type { VastIoDumpMode, VastTableInfo } from '@/api/types/vastbase'

@@ -28,7 +28,7 @@ export const DEFAULT_KINGBASE_OPTIONS: KingbaseConnectionOptions = {
   ssl_key: '',
   search_path: '',
   client_encoding: 'UTF8',
-  application_name: 'niuma-kingbase',
+  application_name: 'ensis-kingbase',
   connect_timeout_seconds: 10,
   statement_timeout_ms: 0,
   exclude_system_schemas: true,
@@ -137,7 +137,7 @@ export interface KingbaseRoutineCallParams {
   requestId?: string
   timeoutMs?: number
   limit?: number
-  /** 同连接开启 niuma.debug / NOTICE，供线上日志点使用 */
+  /** 同连接开启 ensis-ops.debug / NOTICE，供线上日志点使用 */
   debugSession?: boolean
 }
 

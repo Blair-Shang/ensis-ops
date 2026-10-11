@@ -1,4 +1,4 @@
-id: com.niuma.postgres
+id: com.ensisops.postgres
 name: PostgreSQL Service
 version: 0.1.0
 bridge:
@@ -51,17 +51,17 @@ session:
     - io.execSqlFile
     - io.cancel
 runtime:
-  executable: bin/niuma-postgres-service.exe
-  executable_windows: bin/niuma-postgres-service.exe
-  executable_unix: bin/niuma-postgres-service
+  executable: bin/ensis-postgres-service.exe
+  executable_windows: bin/ensis-postgres-service.exe
+  executable_unix: bin/ensis-postgres-service
   lang: go
 ipc:
   transport: named_pipe
   transport_windows: named_pipe
   transport_unix: unix_socket
-  address: '\\.\pipe\niuma.postgres'
-  address_windows: '\\.\pipe\niuma.postgres'
-  address_unix: '/tmp/niuma.postgres.sock'
+  address: '\\.\pipe\ensis-ops.postgres'
+  address_windows: '\\.\pipe\ensis-ops.postgres'
+  address_unix: '/tmp/ensis-ops.postgres.sock'
   protocol: length_prefixed_json
 lifecycle:
   startup: lazy

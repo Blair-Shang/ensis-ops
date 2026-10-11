@@ -3,7 +3,7 @@
  * SQLite 表设计器：挂载公共 TableDesignShell + PreviewPopover。
  * 布局与 MySQL Design 对齐（侧栏属性编辑 · 列拖拽/上下移动 · 索引/外键网格）。
  */
-import { RsButton, RsEmpty, RsInput, RsSelect, RsTable } from '@niuma/ui'
+import { RsButton, RsEmpty, RsInput, RsSelect, RsTable } from 'ensis-ui'
 import {
   TableDesignPreviewPopover,
   TableDesignShell,

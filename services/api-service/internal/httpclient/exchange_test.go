@@ -18,7 +18,7 @@ func TestExchangePlainAndGzip(t *testing.T) {
 		if !strings.Contains(r.Header.Get("Accept-Encoding"), "gzip") {
 			t.Errorf("accept-encoding = %q", r.Header.Get("Accept-Encoding"))
 		}
-		if r.Header.Get("User-Agent") != "NiuMa" {
+		if r.Header.Get("User-Agent") != "ensis-ops" {
 			t.Errorf("user-agent = %q", r.Header.Get("User-Agent"))
 		}
 		w.Header().Set("Content-Encoding", "gzip")

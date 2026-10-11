@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { RsButton, RsDialog, RsInput, RsLabel, RsTooltip, useRsToast } from '@niuma/ui'
+import { RsButton, RsDialog, RsInput, RsLabel, RsTooltip, useRsToast } from 'ensis-ui'
 import { computed, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useConnectionNavigation } from '@/modules/ops/composables/useConnectionNavigation'

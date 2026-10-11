@@ -7,8 +7,8 @@ import (
 	"strings"
 	"sync"
 
-	"niuma/services/sqlserver-service/internal/idgen"
-	"niuma/services/sqlserver-service/internal/session"
+	"ensis-ops/services/sqlserver-service/internal/idgen"
+	"ensis-ops/services/sqlserver-service/internal/session"
 )
 
 // Emitter 上报 IO 任务事件。

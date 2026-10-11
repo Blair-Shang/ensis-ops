@@ -3,7 +3,7 @@
 #include <filesystem>
 #include <string>
 
-namespace niuma {
+namespace ensisops {
 
 /** 由 UTF-8 字节串构造 path。C++20 libc++ 已弃用 filesystem::u8path。 */
 inline std::filesystem::path Utf8Path(const std::string& utf8) {
@@ -15,4 +15,4 @@ inline std::filesystem::path Utf8Path(const std::string& utf8) {
 #endif
 }
 
-}  // namespace niuma
+}  // namespace ensisops

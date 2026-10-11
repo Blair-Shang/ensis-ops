@@ -7,7 +7,7 @@ import (
 	"strings"
 	"time"
 
-	"niuma/pkg/common/id"
+	"ensis-ops/pkg/common/id"
 )
 
 // Explain 在同一物理连接上取估计计划（SHOWPLAN_TEXT）或实际计划（STATISTICS XML）。

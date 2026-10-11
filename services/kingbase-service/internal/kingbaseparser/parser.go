@@ -11,7 +11,7 @@ package kingbaseparser
 import (
 	"strings"
 
-	"niuma/pkg/sqllsp"
+	"ensis-ops/pkg/sqllsp"
 )
 
 // Parser 实现 sqllsp.DialectParser（Kingbase）及可选扩展接口。

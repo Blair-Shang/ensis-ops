@@ -31,7 +31,7 @@ describe('api tester http wire', () => {
     expect(wire).toContain('GET /api/items?limit=20 HTTP/1.1')
     expect(wire).toContain('Host: example.com')
     expect(wire).toContain('Connection: close')
-    expect(wire).toContain('User-Agent: NiuMa')
+    expect(wire).toContain('User-Agent: ensis-ops')
     expect(wire).toContain('Accept-Encoding: gzip, deflate')
     expect(wire).not.toContain('Content-Length:')
     expect(wire.endsWith('\r\n\r\n')).toBe(true)

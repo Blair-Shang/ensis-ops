@@ -10,7 +10,7 @@ import (
 	"strings"
 	"time"
 
-	"niuma/services/clickhouse-service/internal/dialect"
+	"ensis-ops/services/clickhouse-service/internal/dialect"
 )
 
 // 对象种类（与前端 ClickHouseObjectKind 对齐）。

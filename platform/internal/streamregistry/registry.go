@@ -4,8 +4,8 @@ package streamregistry
 import (
 	"fmt"
 
-	"niuma/pkg/serviceipc/streamspec"
-	"niuma/platform/internal/supervisor"
+	"ensis-ops/pkg/serviceipc/streamspec"
+	"ensis-ops/platform/internal/supervisor"
 )
 
 // Registry 是 method → 声明式 Spec 的只读表。

@@ -15,16 +15,16 @@ import (
 	"time"
 
 	_ "gitee.com/chunanyong/dm"
-	"niuma/pkg/common/id"
-	"niuma/pkg/common/sqlcell"
-	"niuma/pkg/netproxy"
-	"niuma/pkg/tunnel"
-	"niuma/services/dameng-service/internal/dialect"
+	"ensis-ops/pkg/common/id"
+	"ensis-ops/pkg/common/sqlcell"
+	"ensis-ops/pkg/netproxy"
+	"ensis-ops/pkg/tunnel"
+	"ensis-ops/services/dameng-service/internal/dialect"
 )
 
 const (
 	DefaultPort       = 5236
-	defaultAppName    = "NiuMa"
+	defaultAppName    = "ensis-ops"
 	DefaultQueryLimit = 1000
 	MaxQueryLimit     = 10000
 )

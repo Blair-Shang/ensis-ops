@@ -14,9 +14,9 @@ static int failures = 0;
   } while (0)
 
 int main() {
-  using niuma::oracle::dataio::BuildCsvProjection;
-  using niuma::oracle::dataio::CsvProjection;
-  using niuma::oracle::dataio::CsvRecordReader;
+  using ensisops::oracle::dataio::BuildCsvProjection;
+  using ensisops::oracle::dataio::CsvProjection;
+  using ensisops::oracle::dataio::CsvRecordReader;
 
   {
     std::istringstream input("\xEF\xBB\xBFid,text\r\n1,\"hello\nworld\"\r\n2,\"a\"\"b\"\n");

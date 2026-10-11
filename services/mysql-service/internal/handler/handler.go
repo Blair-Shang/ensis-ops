@@ -7,14 +7,14 @@ import (
 	"errors"
 	"fmt"
 
-	"niuma/pkg/serviceipc/envelope"
-	"niuma/pkg/serviceipc/event"
-	"niuma/pkg/sqllsp"
-	"niuma/services/mysql-service/internal/dataio"
-	"niuma/services/mysql-service/internal/eventpub"
-	"niuma/services/mysql-service/internal/idgen"
-	"niuma/services/mysql-service/internal/session"
-	"niuma/services/mysql-service/internal/tools"
+	"ensis-ops/pkg/serviceipc/envelope"
+	"ensis-ops/pkg/serviceipc/event"
+	"ensis-ops/pkg/sqllsp"
+	"ensis-ops/services/mysql-service/internal/dataio"
+	"ensis-ops/services/mysql-service/internal/eventpub"
+	"ensis-ops/services/mysql-service/internal/idgen"
+	"ensis-ops/services/mysql-service/internal/session"
+	"ensis-ops/services/mysql-service/internal/tools"
 )
 
 const (

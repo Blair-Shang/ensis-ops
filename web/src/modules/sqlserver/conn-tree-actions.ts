@@ -1,7 +1,7 @@
 /**
  * SQL Server 树动作：查询 / 生成脚本 / 新建库对话框 / 清空表与删除表确认执行。
  */
-import { useRsToast } from '@niuma/ui'
+import { useRsToast } from 'ensis-ui'
 import { sqlserverApi } from '@/api/sqlserver'
 import type { ConnItem } from '@/modules/ops/types'
 import { useConnectionNavigation } from '@/modules/ops/composables/useConnectionNavigation'

@@ -7,12 +7,12 @@ import (
 	"fmt"
 	"strings"
 
-	"niuma/pkg/sqllsp"
-	"niuma/services/dameng-service/internal/catalog"
-	"niuma/services/dameng-service/internal/dmparser"
-	"niuma/services/dameng-service/internal/meta"
-	"niuma/services/dameng-service/internal/session"
-	"niuma/services/dameng-service/internal/tree"
+	"ensis-ops/pkg/sqllsp"
+	"ensis-ops/services/dameng-service/internal/catalog"
+	"ensis-ops/services/dameng-service/internal/dmparser"
+	"ensis-ops/services/dameng-service/internal/meta"
+	"ensis-ops/services/dameng-service/internal/session"
+	"ensis-ops/services/dameng-service/internal/tree"
 )
 
 const (

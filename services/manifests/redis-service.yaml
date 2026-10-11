@@ -1,4 +1,4 @@
-id: com.niuma.redis
+id: com.ensisops.redis
 name: Redis Service
 version: 0.1.0
 bridge:
@@ -11,17 +11,17 @@ session:
     - session.test
     - tree.databases
 runtime:
-  executable: bin/niuma-redis-service.exe
-  executable_windows: bin/niuma-redis-service.exe
-  executable_unix: bin/niuma-redis-service
+  executable: bin/ensis-redis-service.exe
+  executable_windows: bin/ensis-redis-service.exe
+  executable_unix: bin/ensis-redis-service
   lang: rust
 ipc:
   transport: named_pipe
   transport_windows: named_pipe
   transport_unix: unix_socket
-  address: '\\.\pipe\niuma.redis'
-  address_windows: '\\.\pipe\niuma.redis'
-  address_unix: '/tmp/niuma.redis.sock'
+  address: '\\.\pipe\ensis-ops.redis'
+  address_windows: '\\.\pipe\ensis-ops.redis'
+  address_unix: '/tmp/ensis-ops.redis.sock'
   protocol: length_prefixed_json
 lifecycle:
   startup: lazy

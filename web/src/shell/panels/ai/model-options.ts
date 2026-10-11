@@ -1,4 +1,4 @@
-import type { RsSelectOption, RsSelectOptions } from '@niuma/ui'
+import type { RsSelectOption, RsSelectOptions } from 'ensis-ui'
 import type { AiProvider } from '@/api/types/ai'
 
 const MODEL_KEY_SEP = '::'

@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { RsMonacoEditor, useRsToast } from '@niuma/ui'
-import type { MonacoLanguage } from '@niuma/ui'
+import { RsMonacoEditor, useRsToast } from 'ensis-ui'
+import type { MonacoLanguage } from 'ensis-ui'
 import { computed, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { clickhouseApi } from '@/api/clickhouse'

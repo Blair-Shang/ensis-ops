@@ -9,7 +9,7 @@
 #include "core/window/window_registry.h"
 #include "util/json_util.h"
 
-#if NIUMMA_WITH_CEF
+#if ENSIS_WITH_CEF
 #include "include/cef_app.h"
 #include "include/base/cef_callback.h"
 #include "include/views/cef_browser_view.h"
@@ -112,8 +112,8 @@ bool IsDevToolsShortcut(const CefKeyEvent& event) {
  * - Auxiliary：文件工作台等，index 起显 + 内联 boot loader
  * Main 仍须等 Web reveal（或超时兜底），避免首帧黑/白屏。
  */
-bool IsEarlyRevealKind(niuma::WindowKind kind) {
-  return kind == niuma::WindowKind::Auxiliary || kind == niuma::WindowKind::Splash;
+bool IsEarlyRevealKind(ensisops::WindowKind kind) {
+  return kind == ensisops::WindowKind::Auxiliary || kind == ensisops::WindowKind::Splash;
 }
 
 /**
@@ -122,21 +122,21 @@ bool IsEarlyRevealKind(niuma::WindowKind kind) {
  * 无 Splash（热重载后再 Conceal）仍用 3s，避免窗口一直隐藏。
  */
 int64_t MainRevealFallbackDelayMs() {
-  return niuma::SplashWindow::Instance().HasSplash() ? 20000 : 3000;
+  return ensisops::SplashWindow::Instance().HasSplash() ? 20000 : 3000;
 }
 
 }  // namespace
 
-namespace niuma {
+namespace ensisops {
 
-#if NIUMMA_WITH_CEF
+#if ENSIS_WITH_CEF
 
-NiuMaClient::NiuMaClient() {
-  context_menu_handler_ = new NiuMaContextMenuHandler();
-  drag_handler_ = new NiuMaDragHandler();
-  permission_handler_ = new NiuMaPermissionHandler();
-  download_handler_ = new NiuMaDownloadHandler();
-  message_router_handler_ = std::make_unique<NiuMaMessageRouterHandler>();
+EnsisClient::EnsisClient() {
+  context_menu_handler_ = new EnsisContextMenuHandler();
+  drag_handler_ = new EnsisDragHandler();
+  permission_handler_ = new EnsisPermissionHandler();
+  download_handler_ = new EnsisDownloadHandler();
+  message_router_handler_ = std::make_unique<EnsisMessageRouterHandler>();
   CefMessageRouterConfig config;
   config.js_query_function = "cefQuery";
   config.js_cancel_function = "cefQueryCancel";
@@ -144,7 +144,7 @@ NiuMaClient::NiuMaClient() {
   browser_router_->AddHandler(message_router_handler_.get(), false);
 }
 
-bool NiuMaClient::OnProcessMessageReceived(
+bool EnsisClient::OnProcessMessageReceived(
     CefRefPtr<CefBrowser> browser,
     CefRefPtr<CefFrame> frame,
     CefProcessId source_process,
@@ -153,7 +153,7 @@ bool NiuMaClient::OnProcessMessageReceived(
                                                    message);
 }
 
-void NiuMaClient::OnAfterCreated(CefRefPtr<CefBrowser> browser) {
+void EnsisClient::OnAfterCreated(CefRefPtr<CefBrowser> browser) {
   CEF_REQUIRE_UI_THREAD();
   if (!IsDevToolsBrowser(browser)) {
     WindowManager::Instance().AttachBrowser(browser);
@@ -171,13 +171,13 @@ void NiuMaClient::OnAfterCreated(CefRefPtr<CefBrowser> browser) {
 #endif
     if (!event_listener_started_) {
       event_listener_started_ = true;
-      NiuMaMessageRouterHandler* handler = message_router_handler_.get();
+      EnsisMessageRouterHandler* handler = message_router_handler_.get();
       auto dispatch_platform_event = [this, handler](const std::string& json) {
         if (!handler) {
           return;
         }
-        niuma::BridgeEvent ev;
-        ev.type = niuma::JsonGetString(json, "type");
+        ensisops::BridgeEvent ev;
+        ev.type = ensisops::JsonGetString(json, "type");
         ev.data = json;
         for (const auto& entry : browsers_) {
           if (entry && !IsDevToolsBrowser(entry)) {
@@ -194,8 +194,8 @@ void NiuMaClient::OnAfterCreated(CefRefPtr<CefBrowser> browser) {
     if (!entry || !IsEarlyRevealKind(entry->kind)) {
       CefPostDelayedTask(
           TID_UI,
-          base::BindOnce(&NiuMaClient::RevealBrowserWindow,
-                         CefRefPtr<NiuMaClient>(this), browser),
+          base::BindOnce(&EnsisClient::RevealBrowserWindow,
+                         CefRefPtr<EnsisClient>(this), browser),
           MainRevealFallbackDelayMs());
     }
   }
@@ -203,7 +203,7 @@ void NiuMaClient::OnAfterCreated(CefRefPtr<CefBrowser> browser) {
   browsers_.push_back(browser);
 }
 
-void NiuMaClient::RevealBrowserWindow(CefRefPtr<CefBrowser> browser) {
+void EnsisClient::RevealBrowserWindow(CefRefPtr<CefBrowser> browser) {
   CEF_REQUIRE_UI_THREAD();
   if (!browser || IsDevToolsBrowser(browser)) {
     return;
@@ -236,7 +236,7 @@ void NiuMaClient::RevealBrowserWindow(CefRefPtr<CefBrowser> browser) {
   }
 }
 
-void NiuMaClient::OnTitleChange(CefRefPtr<CefBrowser> browser,
+void EnsisClient::OnTitleChange(CefRefPtr<CefBrowser> browser,
                                 const CefString& title) {
   CEF_REQUIRE_UI_THREAD();
   const std::string title_str = title.ToString();
@@ -248,7 +248,7 @@ void NiuMaClient::OnTitleChange(CefRefPtr<CefBrowser> browser,
   }
 }
 
-bool NiuMaClient::DoClose(CefRefPtr<CefBrowser> browser) {
+bool EnsisClient::DoClose(CefRefPtr<CefBrowser> browser) {
   CEF_REQUIRE_UI_THREAD();
   if (IsDevToolsBrowser(browser)) {
     return false;
@@ -260,7 +260,7 @@ bool NiuMaClient::DoClose(CefRefPtr<CefBrowser> browser) {
   return false;
 }
 
-void NiuMaClient::OnLoadStart(CefRefPtr<CefBrowser> browser,
+void EnsisClient::OnLoadStart(CefRefPtr<CefBrowser> browser,
                               CefRefPtr<CefFrame> frame,
                               TransitionType transition_type) {
   (void)transition_type;
@@ -288,7 +288,7 @@ void NiuMaClient::OnLoadStart(CefRefPtr<CefBrowser> browser,
   WindowManager::Instance().ConcealBrowser(browser);
 }
 
-void NiuMaClient::OnLoadEnd(CefRefPtr<CefBrowser> browser,
+void EnsisClient::OnLoadEnd(CefRefPtr<CefBrowser> browser,
                             CefRefPtr<CefFrame> frame,
                             int httpStatusCode) {
   (void)httpStatusCode;
@@ -296,9 +296,9 @@ void NiuMaClient::OnLoadEnd(CefRefPtr<CefBrowser> browser,
     return;
   }
   frame->ExecuteJavaScript(
-      R"(window.niuma = window.niuma || { ready: true, mode: 'cef' };)",
+      R"(window["ensis-ops"] = window["ensis-ops"] || { ready: true, mode: 'cef' };)",
       frame->GetURL(), 0);
-  NiuMaDragHandler::InstallFileDropHooks(frame);
+  EnsisDragHandler::InstallFileDropHooks(frame);
 
   // 窗口显示由 Web 侧在 Vue mount() + dismissBootLoader 后 shell.window.reveal。
   // 热重载会 Conceal：此处每次主帧 LoadEnd 重新注册兜底，避免窗口一直隐藏。
@@ -311,13 +311,13 @@ void NiuMaClient::OnLoadEnd(CefRefPtr<CefBrowser> browser,
   if (!entry || !IsEarlyRevealKind(entry->kind)) {
     CefPostDelayedTask(
         TID_UI,
-        base::BindOnce(&NiuMaClient::RevealBrowserWindow,
-                       CefRefPtr<NiuMaClient>(this), browser),
+        base::BindOnce(&EnsisClient::RevealBrowserWindow,
+                       CefRefPtr<EnsisClient>(this), browser),
         MainRevealFallbackDelayMs());
   }
 }
 
-bool NiuMaClient::OnPreKeyEvent(CefRefPtr<CefBrowser> browser,
+bool EnsisClient::OnPreKeyEvent(CefRefPtr<CefBrowser> browser,
                                 const CefKeyEvent& event,
                                 CefEventHandle os_event,
                                 bool* is_keyboard_shortcut) {
@@ -336,7 +336,7 @@ bool NiuMaClient::OnPreKeyEvent(CefRefPtr<CefBrowser> browser,
   return false;
 }
 
-void NiuMaClient::OnBeforeClose(CefRefPtr<CefBrowser> browser) {
+void EnsisClient::OnBeforeClose(CefRefPtr<CefBrowser> browser) {
   CEF_REQUIRE_UI_THREAD();
   if (browser_router_) {
     browser_router_->OnBeforeClose(browser);
@@ -355,7 +355,7 @@ void NiuMaClient::OnBeforeClose(CefRefPtr<CefBrowser> browser) {
         closing_kind != WindowKind::Splash && message_router_handler_) {
       std::ostringstream ss;
       ss << "{\"type\":\"shell.window.closed\",\"windowId\":" << window_id << "}";
-      niuma::BridgeEvent ev;
+      ensisops::BridgeEvent ev;
       ev.type = "shell.window.closed";
       ev.data = ss.str();
       for (const auto& entry : browsers_) {
@@ -394,4 +394,4 @@ void NiuMaClient::OnBeforeClose(CefRefPtr<CefBrowser> browser) {
 
 #endif
 
-}  // namespace niuma
+}  // namespace ensisops

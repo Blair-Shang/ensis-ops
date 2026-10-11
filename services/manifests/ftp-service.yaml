@@ -1,4 +1,4 @@
-id: com.niuma.ftp
+id: com.ensisops.ftp
 name: FTP Service
 version: 0.1.0
 bridge:
@@ -10,17 +10,17 @@ session:
     - session.open
     - session.test
 runtime:
-  executable: bin/niuma-ftp-service.exe
-  executable_windows: bin/niuma-ftp-service.exe
-  executable_unix: bin/niuma-ftp-service
+  executable: bin/ensis-ftp-service.exe
+  executable_windows: bin/ensis-ftp-service.exe
+  executable_unix: bin/ensis-ftp-service
   lang: go
 ipc:
   transport: named_pipe
   transport_windows: named_pipe
   transport_unix: unix_socket
-  address: '\\.\pipe\niuma.ftp'
-  address_windows: '\\.\pipe\niuma.ftp'
-  address_unix: '/tmp/niuma.ftp.sock'
+  address: '\\.\pipe\ensis-ops.ftp'
+  address_windows: '\\.\pipe\ensis-ops.ftp'
+  address_unix: '/tmp/ensis-ops.ftp.sock'
   protocol: length_prefixed_json
 lifecycle:
   startup: lazy

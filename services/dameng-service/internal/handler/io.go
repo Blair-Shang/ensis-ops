@@ -6,8 +6,8 @@ import (
 	"fmt"
 	"strings"
 
-	"niuma/services/dameng-service/internal/dataio"
-	"niuma/services/dameng-service/internal/session"
+	"ensis-ops/services/dameng-service/internal/dataio"
+	"ensis-ops/services/dameng-service/internal/session"
 )
 
 // resolveTaskConnect 从会话获取连接参数；若无 sessionId 则解析 platform 注入的 ConnectParams。

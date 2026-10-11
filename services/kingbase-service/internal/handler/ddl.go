@@ -8,8 +8,8 @@ import (
 
 	"github.com/jackc/pgx/v5/pgxpool"
 
-	"niuma/services/kingbase-service/internal/ddl"
-	"niuma/services/kingbase-service/internal/session"
+	"ensis-ops/services/kingbase-service/internal/ddl"
+	"ensis-ops/services/kingbase-service/internal/session"
 )
 
 type ddlScriptParams struct {

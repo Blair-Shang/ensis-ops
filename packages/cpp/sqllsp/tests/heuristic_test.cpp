@@ -1,4 +1,4 @@
-#include "niuma/sqllsp/heuristic.hpp"
+#include "ensisops/sqllsp/heuristic.hpp"
 
 #include <iostream>
 #include <string>
@@ -14,9 +14,9 @@ static int failures = 0;
   } while (0)
 
 int main() {
-  using niuma::sqllsp::CompletionKind;
-  using niuma::sqllsp::HeuristicCompletionContext;
-  using niuma::sqllsp::Position;
+  using ensisops::sqllsp::CompletionKind;
+  using ensisops::sqllsp::HeuristicCompletionContext;
+  using ensisops::sqllsp::Position;
 
   const std::vector<std::string> kws = {"SELECT", "FROM", "WHERE"};
 

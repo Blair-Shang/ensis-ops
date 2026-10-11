@@ -1,4 +1,4 @@
-import type { RsCodeEditorLanguage } from '@niuma/ui'
+import type { RsCodeEditorLanguage } from 'ensis-ui'
 import type { FileOpenSpec } from '@/api/types/file-editor'
 
 /** Provider 私有上下文 */

@@ -41,7 +41,7 @@ Web UI  ──① CEF IPC──>  Shell  ──② 应用 IPC──>  Platform /
 | Browser 实例 | `browser/` | CefClient、生命周期回调 | — |
 | 请求路由 | `bridge/` | method 解析、透传分发 | 不鉴权 |
 | 流代理 | `bridge/stream_proxy` | stream → Web 分片 + 背压 | — |
-| 资源协议 | `protocol/` | `app://niuma/*` → `resources/web/` | — |
+| 资源协议 | `protocol/` | `app://ensis-ops/*` → `resources/web/` | — |
 | 进程管家 | `core/runtime/` | manifest、启停子进程 | 不裁决权限 |
 | ② 应用 IPC | `ipc/` | Named Pipe / UDS 客户端 **透传** | 不读 SQLite、不见凭据 |
 
@@ -50,10 +50,10 @@ Web UI  ──① CEF IPC──>  Shell  ──② 应用 IPC──>  Platform /
 ## 3. CEF 多进程模型
 
 ```
-NiuMa.exe (Browser Process)          ← 主进程，壳层核心逻辑
-├── NiuMa.exe --type=renderer         ← Web UI 渲染（Vue）
-├── NiuMa.exe --type=gpu-process
-└── NiuMa.exe --type=utility
+ensis-ops.exe (Browser Process)          ← 主进程，壳层核心逻辑
+├── ensis-ops.exe --type=renderer         ← Web UI 渲染（Vue）
+├── ensis-ops.exe --type=gpu-process
+└── ensis-ops.exe --type=utility
 ```
 
 ### 进程入口（main.cpp）
@@ -73,7 +73,7 @@ wWinMain / main
 
 ## 4. 壳层内部模块划分
 
-吸收业界 CEF 桌面项目的 **core / browser / net(ipc)** 分法，并按 NiuMa **零业务** 原则裁剪：
+吸收业界 CEF 桌面项目的 **core / browser / net(ipc)** 分法，并按 ensis-ops **零业务** 原则裁剪：
 
 ```
 shell/
@@ -82,7 +82,7 @@ shell/
 │   │
 │   ├── core/                       # 壳层内核（无业务）
 │   │   ├── cef/                    # CefApp、Settings、RenderProcessHandler
-│   │   ├── window/                 # 主窗口、NIUMMA_DEV_URL、托盘（规划）
+│   │   ├── window/                 # 主窗口、ENSIS_DEV_URL、托盘（规划）
 │   │   └── runtime/                # ServiceManager、manifest 加载
 │   │
 │   ├── browser/                    # CEF Browser 实例
@@ -100,13 +100,13 @@ shell/
 │   ├── protocol/                   # app:// 静态资源
 │   └── util/
 │
-├── include/niuma/types.h           # BridgeRequest / BridgeResponse
+├── include/ensisops/types.h           # BridgeRequest / BridgeResponse
 └── CMakeLists.txt
 ```
 
 ### 与其他项目的差异（刻意为之）
 
-| 常见桌面壳目录 | NiuMa 处理 |
+| 常见桌面壳目录 | ensis-ops 处理 |
 |----------------|------------|
 | `core/security` | ❌ 不放 shell → `platform/` |
 | `core/plugin`（业务插件管理） | ❌ → `platform/` + manifests |
@@ -117,25 +117,25 @@ shell/
 
 ## 5. 核心类设计
 
-### 5.1 NiuMaApp（`core/cef/`）
+### 5.1 EnsisApp（`core/cef/`）
 
 - CEF 全局配置、自定义 scheme 注册
 - `OnContextInitialized` → 注册 `app://`、创建主 Browser
 
-### 5.2 MainBrowser / NiuMaClient（`browser/`）
+### 5.2 MainBrowser / EnsisClient（`browser/`）
 
 - 绑定 MessageRouterHandler
-- 页面加载完成注入 `window.niuma`
+- 页面加载完成注入 `window.ensis-ops`
 - 窗口关闭时清理 router / stream
 
 ### 5.3 MessageRouterHandler（`browser/handlers/`）
 
 - ① CEF IPC：`OnQuery` 解析 JSON → `BridgeRouter`
-- `PushEvent`：Native → `niuma:event` CustomEvent
+- `PushEvent`：Native → `ensis-ops:event` CustomEvent
 
 ### 5.4 BridgeRouter（`bridge/`）
 
-- 解析 `com.niuma.platform.ping` → service + action
+- 解析 `com.ensisops.platform.ping` → service + action
 - 本地仅处理 `ping`、`shell.version`、`shell.info`（运行时元数据，非业务）
 - `ServiceManager::EnsureRunning` → `PlatformClient::Invoke`（透传）
 
@@ -149,7 +149,7 @@ shell/
 
 - Named Pipe / UDS + 4 字节长度前缀 JSON（见 [03](./03-ipc-protocol.md)）
 - `Invoke` / `InvokeStream` 原样转发
-- 连接失败重试；**不**缓存凭据、**不**读 `niuma.db`
+- 连接失败重试；**不**缓存凭据、**不**读 `ensis-ops.db`
 
 ### 5.7 StreamProxy（`bridge/`）
 
@@ -158,7 +158,7 @@ shell/
 
 ### 5.8 AppSchemeHandler（`protocol/`）
 
-- `app://niuma/*` → `resources/web/`
+- `app://ensis-ops/*` → `resources/web/`
 
 ---
 
@@ -180,7 +180,7 @@ Renderer                Browser (Shell)                    Platform
 
 ## 7. App Shell 布局约定
 
-工作台 UI 在 **Layer 4 Web**（`web/`），壳层只加载 `app://niuma/index.html` 或开发服 URL。
+工作台 UI 在 **Layer 4 Web**（`web/`），壳层只加载 `app://ensis-ops/index.html` 或开发服 URL。
 
 ```
 ┌──────────────────────────────────────────┐
@@ -208,8 +208,8 @@ Renderer                Browser (Shell)                    Platform
 ## 9. 打包产物结构
 
 ```
-NiuMa/
-├── NiuMa.exe
+ensis-ops/
+├── ensis-ops.exe
 ├── libcef.dll …
 ├── resources/web/          # web/dist
 ├── services/bin/           # platform-core、各 service

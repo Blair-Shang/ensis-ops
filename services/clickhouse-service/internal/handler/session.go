@@ -8,8 +8,8 @@ import (
 	"fmt"
 	"strings"
 
-	"niuma/services/clickhouse-service/internal/dialect"
-	"niuma/services/clickhouse-service/internal/session"
+	"ensis-ops/services/clickhouse-service/internal/dialect"
+	"ensis-ops/services/clickhouse-service/internal/session"
 )
 
 func (d *Dispatcher) sessionOpen(ctx context.Context, req Request) Response {

@@ -2,14 +2,14 @@
 
 #include "core/window/window_types.h"
 
-#if NIUMMA_WITH_CEF
+#if ENSIS_WITH_CEF
 #include "include/cef_browser.h"
 #include "include/cef_client.h"
 #endif
 
-namespace niuma {
+namespace ensisops {
 
-#if NIUMMA_WITH_CEF
+#if ENSIS_WITH_CEF
 
 /**
  * 应用主窗口（AppShell）：进程内唯一。
@@ -49,10 +49,10 @@ class MainWindow {
   MainWindow& operator=(const MainWindow&) = delete;
 };
 
-/** @deprecated 请使用 MainWindow::Instance().Create；保留供 niuma_app 启动入口 */
+/** @deprecated 请使用 MainWindow::Instance().Create；保留供 ensis_app 启动入口 */
 void CreateMainBrowser(CefRefPtr<CefClient> client);
 std::string ResolveStartupUrl();
 
 #endif
 
-}  // namespace niuma
+}  // namespace ensisops

@@ -3,13 +3,13 @@
 #include "dialect/profile.hpp"
 
 #include <dpi.h>
-#include <niuma/netproxy/netproxy.hpp>
-#include <niuma/sshtunnel/sshtunnel.hpp>
+#include <ensisops/netproxy/netproxy.hpp>
+#include <ensisops/sshtunnel/sshtunnel.hpp>
 #include <nlohmann/json.hpp>
 #include <memory>
 #include <string>
 
-namespace niuma::oracle::session {
+namespace ensisops::oracle::session {
 
 struct ConnectOptions {
   std::string schema;
@@ -24,8 +24,8 @@ struct ConnectOptions {
   std::string ssl_mode;
   std::string wallet_path;
   std::string wallet_password;  // 预留；运行时优先使用自动登录钱包（cwallet.sso）
-  niuma::netproxy::Options proxy;
-  niuma::sshtunnel::Options tunnel;
+  ensisops::netproxy::Options proxy;
+  ensisops::sshtunnel::Options tunnel;
 
   bool SslEnabled() const;
   bool SslVerify() const;
@@ -67,12 +67,12 @@ ContextPtr SharedContext(std::string& error);
 
 struct OpenedConnection {
   // ssh_tunnel / proxy_relay 声明在前：析构时最后释放，避免 ODPI 仍经本地转发时端口先关。
-  std::unique_ptr<niuma::sshtunnel::TunnelGuard> ssh_tunnel;
-  std::unique_ptr<niuma::netproxy::RelayGuard> proxy_relay;
+  std::unique_ptr<ensisops::sshtunnel::TunnelGuard> ssh_tunnel;
+  std::unique_ptr<ensisops::netproxy::RelayGuard> proxy_relay;
   ConnPtr conn;
   dialect::ServerProfile profile;
 };
 
 OpenedConnection ConnectAndProbe(const ConnectParams& params, std::string& error);
 
-}  // namespace niuma::oracle::session
+}  // namespace ensisops::oracle::session

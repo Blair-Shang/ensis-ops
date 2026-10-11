@@ -2,7 +2,7 @@
 /**
  * 调试调用参数网格：名称 / 类型 / NULL / 值（对齐 Navicat）。
  */
-import { RsCheckbox, RsIcon, RsInput } from '@niuma/ui'
+import { RsCheckbox, RsIcon, RsInput } from 'ensis-ui'
 import type { DebugShellLabels, DebugShellParamRow } from '../types/debug-shell'
 
 withDefaults(

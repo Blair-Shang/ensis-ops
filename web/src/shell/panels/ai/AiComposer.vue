@@ -2,8 +2,8 @@
 /**
  * AI 输入区：草稿、@ 引用、模型选择、附件、发送 / 停止。
  */
-import { RsIcon, RsSelect, unwrapSelectEntry } from '@niuma/ui'
-import type { RsSelectModelValue, RsSelectOption, RsSelectOptions } from '@niuma/ui'
+import { RsIcon, RsSelect, unwrapSelectEntry } from 'ensis-ui'
+import type { RsSelectModelValue, RsSelectOption, RsSelectOptions } from 'ensis-ui'
 import { computed, onMounted, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useAiStore } from '@/stores/ai'

@@ -1,9 +1,9 @@
-# niuma_sshtunnel（C++）
+# ensis_sshtunnel（C++）
 
 能力服务共用 SSH direct-tcpip 本地转发，对标：
 
 - `packages/go/tunnel`
-- `packages/rust/niuma-tunnel`
+- `packages/rust/ensis-tunnel`
 
 ## 用途
 
@@ -14,15 +14,15 @@
 ## 使用
 
 ```cmake
-add_subdirectory(${NIUMA_ROOT}/packages/cpp/netproxy netproxy)
-add_subdirectory(${NIUMA_ROOT}/packages/cpp/sshtunnel sshtunnel)
-target_link_libraries(my-cpp-service PRIVATE niuma::sshtunnel)
+add_subdirectory(${ENSIS_ROOT}/packages/cpp/netproxy netproxy)
+add_subdirectory(${ENSIS_ROOT}/packages/cpp/sshtunnel sshtunnel)
+target_link_libraries(my-cpp-service PRIVATE ensisops::sshtunnel)
 ```
 
 ```cpp
-#include <niuma/sshtunnel/sshtunnel.hpp>
+#include <ensis-ops/sshtunnel/sshtunnel.hpp>
 
-niuma::sshtunnel::Options tunnel;
+ensisops::sshtunnel::Options tunnel;
 tunnel.type = "ssh";
 tunnel.has_ssh_profile = true;
 tunnel.ssh_profile.host_address = "jump.example.com";
@@ -33,7 +33,7 @@ tunnel.ssh_profile.auth_type = "password";
 std::string local_host;
 uint16_t local_port = 0;
 std::string error;
-auto guard = niuma::sshtunnel::StartSSHTunnel(tunnel, "db.internal", 1521, local_host, local_port, error);
+auto guard = ensisops::sshtunnel::StartSSHTunnel(tunnel, "db.internal", 1521, local_host, local_port, error);
 ```
 
 依赖 libssh2（CMake FetchContent；Windows 默认 WinCNG，其它平台 OpenSSL）。

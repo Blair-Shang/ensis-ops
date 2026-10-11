@@ -1,5 +1,5 @@
 /** Oracle Instant Client 组件包 ID（与 components/oracle-native/manifest.yaml 对齐）。 */
-export const ORACLE_NATIVE_BUNDLE_ID = 'com.niuma.components.oracle-native'
+export const ORACLE_NATIVE_BUNDLE_ID = 'com.ensisops.components.oracle-native'
 
 /** Instant Client 工具项：用户浏览指定 oci.dll / libclntsh。 */
 export const ORACLE_INSTANT_CLIENT_TOOL_ID = 'instant-client'

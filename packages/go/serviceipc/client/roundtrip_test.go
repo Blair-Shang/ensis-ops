@@ -7,7 +7,7 @@ import (
 	"sync/atomic"
 	"testing"
 
-	"niuma/pkg/serviceipc/protocol"
+	"ensis-ops/pkg/serviceipc/protocol"
 )
 
 type writeFailConn struct {

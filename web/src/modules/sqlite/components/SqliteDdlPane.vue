@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { RsLoading, RsMonacoEditor, useRsToast } from '@niuma/ui'
-import type { MonacoLanguage } from '@niuma/ui'
+import { RsLoading, RsMonacoEditor, useRsToast } from 'ensis-ui'
+import type { MonacoLanguage } from 'ensis-ui'
 import { computed, onMounted, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { sqliteApi } from '@/api/sqlite'

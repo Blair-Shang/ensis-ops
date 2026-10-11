@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { computed } from 'vue'
-import { RsButton, RsLoading, RsMonacoEditor } from '@niuma/ui'
+import { RsButton, RsLoading, RsMonacoEditor } from 'ensis-ui'
 import {
   ObjectScriptShell,
   sqlIdeToolbarIconButton,

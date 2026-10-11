@@ -1,3 +1,3 @@
-module niuma/pkg/buildinfo
+module ensis-ops/pkg/buildinfo
 
 go 1.22

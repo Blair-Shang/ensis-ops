@@ -1,4 +1,4 @@
-import type { RsContextMenuItem } from '@niuma/ui'
+import type { RsContextMenuItem } from 'ensis-ui'
 import type { ObjectScriptContextMenuLabels } from '../types/object-script'
 
 export interface ObjectScriptContextMenuState {

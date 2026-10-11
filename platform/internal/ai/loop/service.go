@@ -1,10 +1,10 @@
 package loop
 
 import (
-	"niuma/platform/internal/ai/host"
-	"niuma/platform/internal/ai/tool"
-	"niuma/platform/internal/idgen"
-	"niuma/platform/internal/store"
+	"ensis-ops/platform/internal/ai/host"
+	"ensis-ops/platform/internal/ai/tool"
+	"ensis-ops/platform/internal/idgen"
+	"ensis-ops/platform/internal/store"
 )
 
 // EventPublisher 向 Shell 扇出 Platform 事件。

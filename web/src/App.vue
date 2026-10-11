@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { RsConfigProvider, RsToaster, RsTooltipProvider, useRsToast } from '@niuma/ui'
+import { RsConfigProvider, RsToaster, RsTooltipProvider, useRsToast } from 'ensis-ui'
 import { useAppStore } from '@/stores/app'
 import { useSessionRegistry } from '@/stores/session-registry'
 import { SESSION_POLICY } from '@/modules/connection/session-policy'

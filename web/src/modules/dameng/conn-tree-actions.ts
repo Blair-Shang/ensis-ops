@@ -2,7 +2,7 @@
  * Dameng 连接树菜单 / 激活动作。
  * 禁止 import `@/modules/mysql/**` / `@/modules/sqlite/**` / `@/modules/vastbase/**`。
  */
-import { useRsToast } from '@niuma/ui'
+import { useRsToast } from 'ensis-ui'
 import { i18n } from '@/locale'
 import { useConnectionNavigation } from '@/modules/ops/composables/useConnectionNavigation'
 import type { ConnOpenContext, ConnResourcePath } from '@/modules/ops/conn-tree/types'

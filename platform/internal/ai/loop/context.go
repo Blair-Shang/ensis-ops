@@ -6,7 +6,7 @@ import (
 	"strings"
 	"unicode/utf8"
 
-	"niuma/platform/internal/ai/host"
+	"ensis-ops/platform/internal/ai/host"
 )
 
 const (

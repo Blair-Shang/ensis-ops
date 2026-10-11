@@ -1,7 +1,7 @@
 #Requires -Version 5.1
 <#
 .SYNOPSIS
-  可选 Authenticode 签名（Setup.exe / niuma.exe）。
+  可选 Authenticode 签名（Setup.exe / ensis-ops.exe）。
 
   环境变量：
     SIGNTOOL_PATH     - signtool.exe 路径（默认从 Windows SDK 查找）

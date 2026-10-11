@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { RsIcon, RsInput, RsLabel, RsTooltip, useRsToast } from '@niuma/ui'
+import { RsIcon, RsInput, RsLabel, RsTooltip, useRsToast } from 'ensis-ui'
 import { useI18n } from 'vue-i18n'
 import { dialogApi } from '@/api/dialog'
 import type { ConnectionFormState } from '@/modules/ops/connection-form/types'

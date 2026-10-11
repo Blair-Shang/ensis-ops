@@ -7,7 +7,7 @@ PKG_PATH="${1:-}"
 set -u
 
 if [[ -z "$PKG_PATH" || ! -f "$PKG_PATH" ]]; then
-  echo "usage: notarize-macos.sh <Setup.pkg|NiuMa.app.zip>" >&2
+  echo "usage: notarize-macos.sh <Setup.pkg|ensis-ops.app.zip>" >&2
   exit 1
 fi
 

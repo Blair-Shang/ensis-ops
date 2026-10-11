@@ -1,4 +1,4 @@
-import type { RsTreeNode } from '@niuma/ui'
+import type { RsTreeNode } from 'ensis-ui'
 import type { ComputedRef, Ref } from 'vue'
 import { nextTick } from 'vue'
 import { findNodeByKey, findPathToKey, mergeExpandedKeys } from '@/modules/ops/conn-tree/focus-utils'

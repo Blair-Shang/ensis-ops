@@ -78,7 +78,7 @@ Write-Host "Building ..."
 cmake --build $BuildDir --config $Configuration
 if ($LASTEXITCODE -ne 0) { throw 'cmake build failed' }
 
-$exeName = if ($Platform -eq 'windows') { 'niuma-oracle-service.exe' } else { 'niuma-oracle-service' }
+$exeName = if ($Platform -eq 'windows') { 'ensis-oracle-service.exe' } else { 'ensis-oracle-service' }
 $dest = Join-Path $TargetBinDir $exeName
 # 优先取本次 cmake 产物（含 NIUMA_SERVICES_BIN 平铺输出），勿先命中矩阵目录里的旧二进制，
 # 否则会把刚编好的 exe 用陈旧桩覆盖（曾表现为 oracle: not implemented (P1+)）。

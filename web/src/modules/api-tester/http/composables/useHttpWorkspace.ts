@@ -2,7 +2,7 @@
  * HTTP 工作台交互：环境切换、发送、取消、复制 curl。
  * 标脏仍走模块级 useApiRequestPersist，TCP 工作台共用那一个。
  */
-import { useRsToast, type RsSplitPaneItem } from '@niuma/ui'
+import { useRsToast, type RsSplitPaneItem } from 'ensis-ui'
 import { computed, type ComputedRef, type WritableComputedRef } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useApiRequestPersist } from '../../composables/useApiRequestPersist'

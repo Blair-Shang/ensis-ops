@@ -12,8 +12,8 @@ import (
 	"strings"
 	"sync"
 
-	"niuma/services/vastbase-service/internal/idgen"
-	"niuma/services/vastbase-service/internal/session"
+	"ensis-ops/services/vastbase-service/internal/idgen"
+	"ensis-ops/services/vastbase-service/internal/session"
 )
 
 // Emitter 上报工具任务事件。
@@ -303,7 +303,7 @@ func (m *Manager) scanLinesTo(taskID string, r io.Reader, buf *strings.Builder) 
 }
 
 func tempOutput(prefix, ext string) (string, error) {
-	f, err := os.CreateTemp("", "niuma-vast-"+prefix+"-*"+ext)
+	f, err := os.CreateTemp("", "ensis-vast-"+prefix+"-*"+ext)
 	if err != nil {
 		return "", err
 	}
@@ -314,7 +314,7 @@ func tempOutput(prefix, ext string) (string, error) {
 
 // tempDirOutput 为 directory 格式准备空目录路径：先占名再删除，由 vb_dump 创建目录。
 func tempDirOutput(prefix string) (string, error) {
-	dir, err := os.MkdirTemp("", "niuma-vast-"+prefix+"-*")
+	dir, err := os.MkdirTemp("", "ensis-vast-"+prefix+"-*")
 	if err != nil {
 		return "", err
 	}

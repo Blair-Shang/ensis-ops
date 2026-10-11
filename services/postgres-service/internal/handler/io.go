@@ -6,8 +6,8 @@ import (
 	"fmt"
 	"strings"
 
-	"niuma/services/postgres-service/internal/dataio"
-	"niuma/services/postgres-service/internal/session"
+	"ensis-ops/services/postgres-service/internal/dataio"
+	"ensis-ops/services/postgres-service/internal/session"
 )
 
 type ioCsvParams struct {

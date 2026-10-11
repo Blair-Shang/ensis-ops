@@ -2,7 +2,7 @@
  * 调试辅助结果区：跨方言复用的结果网格展示态（不绑定具体方言 API）。
  */
 
-import type { RsTableColumn } from '@niuma/ui'
+import type { RsTableColumn } from 'ensis-ui'
 
 /** 单个结果集（行至少含稳定 `__rowKey`） */
 export interface DebugResultGrid {

@@ -43,8 +43,8 @@ function mapUpdateError(e: unknown, fallbackKey: string): string {
   return fallbackKey
 }
 
-const SNOOZE_KEY = 'niuma.appUpdate.snooze'
-const READY_KEY = 'niuma.appUpdate.readyPack'
+const SNOOZE_KEY = 'ensis-ops.appUpdate.snooze'
+const READY_KEY = 'ensis-ops.appUpdate.readyPack'
 
 type Phase =
   | 'idle'
@@ -70,6 +70,8 @@ function mapPlatform(raw?: string | null): string {
 function updateChannel(platform: string): string {
   return platform === 'windows' ? 'stable' : 'beta'
 }
+
+const updateProduct = 'ensis-ops'
 
 function readSnooze(): { version: string; until: number } | null {
   try {
@@ -145,6 +147,7 @@ export const useAppUpdateStore = defineStore('appUpdate', () => {
       platform: mapPlatform(bridge.shellInfo?.platform),
       arch: (bridge.shellInfo?.arch || 'x64').toLowerCase(),
       current: bridge.shellVersion?.trim() || '',
+      product: updateProduct,
     }
   }
 
@@ -172,19 +175,19 @@ export const useAppUpdateStore = defineStore('appUpdate', () => {
     changelogRelease.value = null
     changelogItems.value = []
     changelogHasUpdate.value = false
-    const { platform, arch, current } = platformArch()
+    const { platform, arch, current, product } = platformArch()
     const channel = updateChannel(platform)
     try {
       const [items, checkRes] = await Promise.all([
-        fetchReleaseHistory({ platform, arch, channel, limit: 3 }).catch(async (e) => {
+        fetchReleaseHistory({ platform, arch, channel, product, limit: 3 }).catch(async (e) => {
           if (e instanceof CloudApiError && (e.status === 404 || e.code === 'not_found')) {
             return [] as UpdateRelease[]
           }
-          const one = await fetchLatestRelease({ platform, arch, channel }).catch(() => null)
+          const one = await fetchLatestRelease({ platform, arch, channel, product }).catch(() => null)
           return one ? [one] : Promise.reject(e)
         }),
         current
-          ? checkAppUpdate({ current, platform, arch, channel }).catch(() => null)
+          ? checkAppUpdate({ current, platform, arch, channel, product }).catch(() => null)
           : Promise.resolve(null),
       ])
       const cards = items.slice(0, 3)
@@ -192,7 +195,7 @@ export const useAppUpdateStore = defineStore('appUpdate', () => {
         cards.map((card) =>
           card.notesMd
             ? Promise.resolve(card)
-            : fetchPublishedRelease({ platform, arch, channel, version: card.version }).catch(
+            : fetchPublishedRelease({ platform, arch, channel, product, version: card.version }).catch(
                 () => card,
               ),
         ),
@@ -370,7 +373,13 @@ export const useAppUpdateStore = defineStore('appUpdate', () => {
     try {
       const platform = mapPlatform(bridge.shellInfo?.platform)
       const arch = (bridge.shellInfo?.arch || 'x64').toLowerCase()
-      const res = await checkAppUpdate({ current, platform, arch, channel: updateChannel(platform) })
+      const res = await checkAppUpdate({
+        current,
+        platform,
+        arch,
+        channel: updateChannel(platform),
+        product: updateProduct,
+      })
       if (!res.updateAvailable || !res.latest) {
         phase.value = 'idle'
         latest.value = null

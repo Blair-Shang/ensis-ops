@@ -1,4 +1,4 @@
-import type { RsCodeEditorLanguage } from '@niuma/ui'
+import type { RsCodeEditorLanguage } from 'ensis-ui'
 
 /** 按文件扩展名推断 CodeMirror 语言（未知扩展名回退 plaintext） */
 export function detectLanguageFromPath(path: string): RsCodeEditorLanguage {

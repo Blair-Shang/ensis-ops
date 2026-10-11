@@ -1,7 +1,7 @@
 import { componentsApi } from '@/api/components'
 
 /** MySQL 官方客户端工具组件包 ID。 */
-export const MYSQL_TOOLS_BUNDLE_ID = 'com.niuma.components.mysql-tools'
+export const MYSQL_TOOLS_BUNDLE_ID = 'com.ensisops.components.mysql-tools'
 
 function pathsFromBundle(bundle: { tools: { toolId: string; path?: string }[] }): Record<string, string> {
   const paths: Record<string, string> = {}

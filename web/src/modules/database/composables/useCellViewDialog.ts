@@ -4,7 +4,7 @@
  * - 二进制只显示摘要 + 短 hex 头，不把整段 base64 塞进编辑器
  * - 文案默认走 modules.database.cellView 多语言；方言可按需覆盖
  */
-import { copyTextToClipboard, type RsTableColumn } from '@niuma/ui'
+import { copyTextToClipboard, type RsTableColumn } from 'ensis-ui'
 import { ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import {

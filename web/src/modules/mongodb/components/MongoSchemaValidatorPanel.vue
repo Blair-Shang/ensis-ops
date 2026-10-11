@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { RsButton, RsConfirmDialog, RsMonacoEditor, useRsToast } from '@niuma/ui'
+import { RsButton, RsConfirmDialog, RsMonacoEditor, useRsToast } from 'ensis-ui'
 import { computed, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { mongodbApi } from '@/api'
