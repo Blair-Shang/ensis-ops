@@ -28,6 +28,8 @@ export interface DiffRow {
   kind: 'equal' | 'change' | 'delete' | 'insert'
   left: string
   right: string
+  /** 这行在另一侧原样出现，是移动而不是增删。 */
+  moved?: boolean
 }
 
 export interface ToolsRunParams {
@@ -36,6 +38,7 @@ export interface ToolsRunParams {
   input: string
   right?: string
   indent?: number
+  ignoreSpace?: boolean
 }
 
 export interface ToolsRunResult {

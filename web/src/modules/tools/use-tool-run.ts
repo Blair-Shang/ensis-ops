@@ -39,7 +39,7 @@ export function useToolRun(toolId: MaybeRefOrGetter<string>) {
 
   async function execute(
     action: ToolAction,
-    extra?: { right?: string; indent?: number },
+    extra?: { right?: string; indent?: number; ignoreSpace?: boolean },
   ): Promise<ToolsRunResult | null> {
     const id = toValue(toolId)
     if (!id || running.value) {
@@ -56,6 +56,7 @@ export function useToolRun(toolId: MaybeRefOrGetter<string>) {
         input: input.value,
         right: extra?.right,
         indent: extra?.indent,
+        ignoreSpace: extra?.ignoreSpace,
       })
       output.value = result.output ?? ''
       return result

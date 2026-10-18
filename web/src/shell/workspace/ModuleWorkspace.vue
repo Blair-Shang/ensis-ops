@@ -240,6 +240,7 @@ watch(
   flex: 1;
   min-height: 0;
   min-width: 0;
+  overflow: hidden;
   background: var(--nm-editor-bg);
 }
 

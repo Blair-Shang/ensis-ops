@@ -66,20 +66,22 @@ type ListResult struct {
 	Categories []CategoryGroup `json:"categories"`
 }
 
-// RunRequest 是 tools.run 的入参。Right 只给文本对比使用。
+// RunRequest 是 tools.run 的入参。Right 和 IgnoreSpace 只给文本对比使用。
 type RunRequest struct {
-	ID     string `json:"id"`
-	Action string `json:"action"`
-	Input  string `json:"input"`
-	Right  string `json:"right"`
-	Indent int    `json:"indent"`
+	ID          string `json:"id"`
+	Action      string `json:"action"`
+	Input       string `json:"input"`
+	Right       string `json:"right"`
+	Indent      int    `json:"indent"`
+	IgnoreSpace bool   `json:"ignoreSpace"`
 }
 
-// DiffRow 是并排对比的一行。
+// DiffRow 是并排对比的一行。Moved 表示这行在另一侧原样出现，是移动而不是改写。
 type DiffRow struct {
 	Kind  string `json:"kind"`
 	Left  string `json:"left"`
 	Right string `json:"right"`
+	Moved bool   `json:"moved,omitempty"`
 }
 
 // RunResult 是处理结果。格式化填 Output，对比填 Rows。

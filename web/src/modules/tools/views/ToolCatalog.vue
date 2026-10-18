@@ -197,7 +197,7 @@ watch(groups, (next) => {
   width: auto;
 }
 
-.nm-tool__search :deep(.rs-field) {
+.nm-tool__search .rs-field {
   width: 16rem;
 }
 

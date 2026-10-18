@@ -50,6 +50,15 @@ const editorOptions = computed(() => ({
     bracketPairs: true,
   },
 }))
+/** 没有正文时不画当前行，避免占位文字坐在一条高亮带上。 */
+const inputEditorOptions = computed(() => ({
+  ...editorOptions.value,
+  renderLineHighlight: input.value.length > 0 ? 'line' as const : 'none' as const,
+}))
+const outputEditorOptions = computed(() => ({
+  ...editorOptions.value,
+  renderLineHighlight: output.value.length > 0 ? 'line' as const : 'none' as const,
+}))
 
 const objectRoot = computed(() => {
   if (structureKind.value !== 'json' || !output.value) return undefined
@@ -212,7 +221,7 @@ watch([fault, faultText], paintError)
             embedded
             height="100%"
             :language="editorLanguage"
-            :options="editorOptions"
+            :options="inputEditorOptions"
             :placeholder="t('tools.placeholder')"
             @ready="paintError"
           />
@@ -259,7 +268,7 @@ watch([fault, faultText], paintError)
             readonly
             height="100%"
             :language="editorLanguage"
-            :options="editorOptions"
+            :options="outputEditorOptions"
           />
         </div>
       </section>

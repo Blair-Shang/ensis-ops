@@ -2,11 +2,18 @@
 .nm-tool {
   display: flex;
   flex-direction: column;
+  flex: 1 1 auto;
   height: 100%;
+  max-height: 100%;
   min-height: 0;
   overflow: hidden;
   background: var(--nm-editor-bg);
   color: var(--rs-text);
+}
+
+/* 页签内容区同时带 overflow:auto。这里压过它，避免对比正文把壳上的 Tab 顶出视口。 */
+.nm-workspace-view.nm-tool {
+  overflow: hidden;
 }
 
 .nm-tool__bar {
@@ -92,8 +99,8 @@
 }
 
 .nm-tool__segment-btn--on {
-  background: var(--nm-editor-bg);
-  color: var(--rs-text);
+  background: color-mix(in srgb, var(--rs-primary) 14%, var(--nm-editor-bg));
+  color: var(--rs-primary);
 }
 
 .nm-tool__segment-btn:disabled {
@@ -117,12 +124,30 @@
 .nm-tool__stage {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  flex: 1;
+  flex: 1 1 auto;
   min-height: 0;
+  overflow: hidden;
 }
 
 .nm-tool__stage--diff {
-  grid-template-rows: minmax(6.5rem, 28%) minmax(0, 1fr);
+  grid-template-rows: auto minmax(0, 1fr);
+}
+
+.nm-tool__stage--diff > .nm-tool__frame-bar:first-child,
+.nm-tool__stage--diff > .nm-tool__editor:first-of-type {
+  border-right: 1px solid var(--rs-border-subtle);
+}
+
+.nm-tool__stage--diff > .nm-tool__diff,
+.nm-tool__stage--diff > .nm-tool__result-empty {
+  grid-column: 1 / -1;
+  min-height: 0;
+  overflow: auto;
+}
+
+.nm-tool__stage--diff > .nm-tool__editor {
+  min-height: 0;
+  overflow: auto;
 }
 
 .nm-tool__frame {
@@ -145,7 +170,7 @@
   height: 1.45rem;
   padding: 0 0.45rem;
   border-bottom: 1px solid var(--rs-border-subtle);
-  background: color-mix(in srgb, var(--rs-text) 3.5%, var(--nm-editor-bg));
+  background: var(--nm-editor-bg);
   font-size: var(--nm-font-caption);
   font-weight: 600;
 }
@@ -192,12 +217,31 @@
   background: var(--nm-editor-bg);
 }
 
-.nm-tool__editor :deep(.rs-monaco) {
+.nm-tool__editor .rs-monaco {
   flex: 1;
   height: 100%;
   min-height: 0;
   border: 0;
   border-radius: 0;
+  background: var(--nm-editor-bg);
+  color: var(--rs-text);
+}
+
+/* 编辑器、行号槽和顶栏用同一块内容底，不另抬一层悬浮色。 */
+.nm-tool__editor .monaco-editor,
+.nm-tool__editor .monaco-editor .monaco-editor-background,
+.nm-tool__editor .monaco-editor .margin {
+  background-color: var(--nm-editor-bg);
+}
+
+.nm-tool__editor .monaco-editor .view-overlays .current-line,
+.nm-tool__editor .monaco-editor .margin-view-overlays .current-line-margin {
+  background-color: color-mix(in srgb, var(--rs-primary) 8%, transparent);
+  border-color: transparent;
+}
+
+.nm-tool__editor .monaco-editor .editorPlaceholder {
+  color: var(--rs-placeholder);
 }
 
 .nm-tool__editor .rs-field,
@@ -256,8 +300,41 @@
   color: var(--rs-warning);
 }
 
-.nm-tool__filter {
+.nm-tool__stat--move {
+  color: var(--rs-info);
+}
+
+.nm-tool__navs {
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
   margin-left: auto;
+}
+
+.nm-tool__nav {
+  height: 1.15rem;
+  padding: 0 0.35rem;
+  border: 1px solid var(--rs-border-subtle);
+  border-radius: var(--rs-radius);
+  background: transparent;
+  color: var(--rs-muted);
+  font: inherit;
+  font-size: var(--nm-font-caption);
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.nm-tool__nav:hover:not(:disabled) {
+  background: color-mix(in srgb, var(--rs-text) 6%, transparent);
+  color: var(--rs-text);
+}
+
+.nm-tool__nav:disabled {
+  opacity: 0.45;
+  cursor: default;
+}
+
+.nm-tool__filter {
   height: 1.15rem;
   padding: 0 0.35rem;
   border: 1px solid var(--rs-border-subtle);
@@ -288,62 +365,139 @@
 
 .nm-tool__diff {
   flex: 1;
+  height: 100%;
   min-height: 0;
   overflow: auto;
   font-family: var(--rs-font-mono);
   font-size: var(--nm-font-caption);
+  line-height: 1.45;
 }
 
-.nm-tool__diff-row {
+.nm-tool__diff-cols {
   display: grid;
-  grid-template-columns: 2.2rem minmax(0, 1fr) minmax(0, 1fr);
-}
-
-.nm-tool__gutter {
-  padding: 0 0.3rem 0 0;
-  border-right: 1px solid var(--rs-border-subtle);
+  grid-template-columns: 1fr 1fr;
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  border-bottom: 1px solid var(--rs-border-subtle);
+  background: var(--nm-editor-bg);
   color: var(--rs-muted);
-  text-align: right;
-  user-select: none;
+  font-family: var(--rs-font-sans, inherit);
+  font-size: var(--nm-font-caption);
+  font-weight: 600;
 }
 
-.nm-tool__diff-cell {
-  margin: 0;
-  padding: 0 0.4rem;
-  min-height: 1.2rem;
-  white-space: pre-wrap;
-  word-break: break-word;
+.nm-tool__diff-cols span {
+  padding: 0.15rem 0.45rem;
 }
 
-.nm-tool__diff-cell + .nm-tool__diff-cell {
+.nm-tool__diff-cols span + span {
   border-left: 1px solid var(--rs-border-subtle);
 }
 
-.nm-tool__mark {
-  display: inline-block;
-  width: 0.85rem;
-  color: var(--rs-muted);
+.nm-tool__pair {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
 }
 
-.nm-tool__diff-row--change {
-  background: var(--rs-warning-container);
-  box-shadow: inset 2px 0 0 var(--rs-warning);
+.nm-tool__pair--current {
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--rs-primary) 55%, transparent);
 }
 
-.nm-tool__diff-row--delete .nm-tool__diff-cell:first-of-type {
+.nm-tool__side {
+  display: grid;
+  grid-template-columns: 2.4rem 0.85rem minmax(0, 1fr);
+  min-height: 1.35rem;
+  align-items: start;
+}
+
+.nm-tool__side + .nm-tool__side {
+  border-left: 1px solid var(--rs-border-subtle);
+}
+
+.nm-tool__side--del {
   background: var(--rs-danger-container);
 }
 
-.nm-tool__diff-row--insert .nm-tool__diff-cell:last-child {
+.nm-tool__side--add {
   background: var(--rs-success-container);
 }
 
-.nm-tool__diff-row--delete {
-  box-shadow: inset 2px 0 0 var(--rs-danger);
+.nm-tool__side--move {
+  background: var(--rs-info-container);
 }
 
-.nm-tool__diff-row--insert {
-  box-shadow: inset 2px 0 0 var(--rs-success);
+.nm-tool__no,
+.nm-tool__sign {
+  user-select: none;
+  color: var(--rs-muted);
+}
+
+.nm-tool__no {
+  padding: 0 0.35rem 0 0;
+  text-align: right;
+}
+
+.nm-tool__side--del .nm-tool__no,
+.nm-tool__sign--del {
+  color: var(--rs-danger);
+}
+
+.nm-tool__side--add .nm-tool__no,
+.nm-tool__sign--add {
+  color: var(--rs-success);
+}
+
+.nm-tool__side--move .nm-tool__no,
+.nm-tool__sign--move {
+  color: var(--rs-info);
+}
+
+.nm-tool__sign {
+  text-align: center;
+  font-weight: 700;
+}
+
+.nm-tool__text {
+  margin: 0;
+  min-width: 0;
+  padding: 0 0.4rem 0 0;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+.nm-tool__hit {
+  border-radius: 2px;
+}
+
+.nm-tool__hit--del {
+  background: color-mix(in srgb, var(--rs-danger) 32%, transparent);
+}
+
+.nm-tool__hit--add {
+  background: color-mix(in srgb, var(--rs-success) 36%, transparent);
+}
+
+.nm-tool__fold {
+  display: flex;
+  width: 100%;
+  margin: 0;
+  padding: 0.15rem 0.55rem;
+  border: 0;
+  border-top: 1px solid var(--rs-border-subtle);
+  border-bottom: 1px solid var(--rs-border-subtle);
+  background: color-mix(in srgb, var(--rs-text) 4%, var(--nm-editor-bg));
+  color: var(--rs-muted);
+  font: inherit;
+  font-family: var(--rs-font-sans, inherit);
+  font-size: var(--nm-font-caption);
+  text-align: center;
+  cursor: pointer;
+}
+
+.nm-tool__fold:hover {
+  background: color-mix(in srgb, var(--rs-primary) 10%, var(--nm-editor-bg));
+  color: var(--rs-text);
 }
 
 @media (max-width: 860px) {
@@ -359,7 +513,9 @@
     border-bottom: 1px solid var(--rs-border-subtle);
   }
 
-  .nm-tool__result {
+  .nm-tool__result,
+  .nm-tool__stage--diff > .nm-tool__diff,
+  .nm-tool__stage--diff > .nm-tool__editor {
     min-height: 10rem;
   }
 }

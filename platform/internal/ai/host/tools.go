@@ -158,11 +158,18 @@ type toolsDiffRow struct {
 	Kind  string `json:"kind"`
 	Left  string `json:"left"`
 	Right string `json:"right"`
+	Moved bool   `json:"moved,omitempty"`
 }
 
 func presentToolsDiff(rows []toolsDiffRow) (string, error) {
-	added, removed, changed, equal := 0, 0, 0, 0
+	added, removed, changed, moved, equal := 0, 0, 0, 0, 0
 	for _, row := range rows {
+		if row.Moved {
+			if row.Kind == "delete" {
+				moved++
+			}
+			continue
+		}
 		switch row.Kind {
 		case "insert":
 			added++
@@ -181,6 +188,7 @@ func presentToolsDiff(rows []toolsDiffRow) (string, error) {
 			"added":     added,
 			"removed":   removed,
 			"changed":   changed,
+			"moved":     moved,
 			"equal":     equal,
 			"rows":      view,
 			"truncated": truncated,
