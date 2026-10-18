@@ -156,6 +156,16 @@ export const builtinModules: ModuleDescriptor[] = [
     load: () => import('@/modules/database/views/DbHome.vue'),
   },
   {
+    id: 'tools',
+    source: 'builtin',
+    labelKey: 'nav.tools',
+    icon: 'wrench',
+    routePath: '/tools',
+    order: 16,
+    category: 'tools',
+    load: () => import('@/modules/tools/views/ToolWorkbench.vue'),
+  },
+  {
     id: 'api',
     source: 'builtin',
     labelKey: 'nav.api',

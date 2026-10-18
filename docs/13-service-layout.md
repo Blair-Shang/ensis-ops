@@ -15,6 +15,7 @@ services/
 │   ├── platform-core.exe
 │   └── ftp-service.exe
 ├── api-service/            # API 管理（Go；P0 = TCP/UDP 套接字，见 docs/36）
+├── tools-service/          # 本机工具（格式化、文本对比；namespace tools）
 │   ├── go.mod
 │   ├── cmd/api-service/
 │   └── internal/             # handler · socket · codec · eventpub
@@ -78,6 +79,7 @@ packages/
 
 - `platform`
 - `services/api-service`
+- `services/tools-service`
 - `services/ftp-service`
 - `services/mongodb-service`
 - `services/vastbase-service`

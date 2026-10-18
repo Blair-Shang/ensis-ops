@@ -39,6 +39,7 @@ body,
   --nm-activity-explorer: #3b82f6;
   --nm-activity-data: #8b5cf6;
   --nm-activity-ops: #f59e0b;
+  --nm-activity-tools: #06b6d4;
   --nm-activity-devtools: #22c55e;
 
   /* 默认壳的极光是独立一套，不从 --rs-* 混合。新主题整包替换这些变量。 */
@@ -116,6 +117,7 @@ body,
   --nm-activity-explorer: inherit;
   --nm-activity-data: inherit;
   --nm-activity-ops: inherit;
+  --nm-activity-tools: inherit;
   --nm-activity-devtools: inherit;
   --rs-terminal-shell-bg: inherit;
   --rs-terminal-bg: inherit;

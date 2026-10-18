@@ -33,7 +33,7 @@ func IsMongoModule(kind string) bool {
 }
 
 // HostToolSpecs 按当前 workspace 模块挑选官方工具。
-// SSH / Redis / Mongo / SQL 页签只暴露本族；其它（含空）各族都给，避免无页签时丢能力。
+// SSH / Redis / Mongo / SQL / 工具页签只暴露本族；其它（含空）各族都给，避免无页签时丢能力。
 func HostToolSpecs(moduleID string) []ToolSpec {
 	if IsSSHModule(moduleID) {
 		return SSHToolSpecs()
@@ -47,10 +47,14 @@ func HostToolSpecs(moduleID string) []ToolSpec {
 	if IsSQLModule(moduleID) {
 		return SQLToolSpecs()
 	}
+	if IsToolsModule(moduleID) {
+		return ToolsToolSpecs()
+	}
 	out := append([]ToolSpec{}, SQLToolSpecs()...)
 	out = append(out, SSHToolSpecs()...)
 	out = append(out, RedisToolSpecs()...)
-	return append(out, MongoToolSpecs()...)
+	out = append(out, MongoToolSpecs()...)
+	return append(out, ToolsToolSpecs()...)
 }
 
 // SpecServerID 返回工具所属官方 server_id。
@@ -66,6 +70,9 @@ func SpecServerID(spec ToolSpec) string {
 	}
 	if IsMongoTool(spec.Name) {
 		return ServerIDMongo
+	}
+	if IsToolsTool(spec.Name) {
+		return ServerIDTools
 	}
 	return ServerIDSQL
 }

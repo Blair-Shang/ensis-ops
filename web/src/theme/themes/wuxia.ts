@@ -60,6 +60,7 @@ export const wuxiaTheme = defineHostTheme({
     '--nm-activity-explorer': '#c6a15b',
     '--nm-activity-data': '#c23b2e',
     '--nm-activity-ops': '#7d9a6a',
+    '--nm-activity-tools': '#8f6b4a',
     '--nm-activity-devtools': '#d4a24a',
     '--rs-radius-xs': '0.25rem',
     '--rs-radius-sm': '0.375rem',

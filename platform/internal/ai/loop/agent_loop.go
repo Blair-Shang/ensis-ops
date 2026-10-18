@@ -31,7 +31,7 @@ type boundTool struct {
 }
 
 // buildEnabledToolDefs 读取官方 host + 已启用 MCP 工具并生成 OpenAI tools + 名称映射。
-// moduleID 用于按当前页签挑选 sql_* / ssh_* / redis_*，避免跨族误暴露工具。
+// moduleID 用于按当前页签挑选 sql_* / ssh_* / redis_* / tools_*，避免跨族误暴露工具。
 func (s *Service) buildEnabledToolDefs(ctx context.Context, moduleID string) ([]ToolDef, map[string]boundTool, error) {
 	if s == nil {
 		return nil, nil, nil

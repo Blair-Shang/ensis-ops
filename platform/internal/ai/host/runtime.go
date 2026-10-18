@@ -124,7 +124,7 @@ func IsMongoTool(name string) bool {
 
 // IsHostTool 判断名称是否为任一官方 host 工具。
 func IsHostTool(name string) bool {
-	return IsSQLTool(name) || IsSSHTool(name) || IsRedisTool(name) || IsMongoTool(name)
+	return IsSQLTool(name) || IsSSHTool(name) || IsRedisTool(name) || IsMongoTool(name) || IsToolsTool(name)
 }
 
 // Call 执行官方 host 工具，结果为给模型看的 JSON 文本。
@@ -138,6 +138,8 @@ func Call(ctx context.Context, rt Runtime, name string, args map[string]any) (st
 		return CallRedis(ctx, rt, name, args)
 	case IsMongoTool(name):
 		return CallMongo(ctx, rt, name, args)
+	case IsToolsTool(name):
+		return CallTools(ctx, rt, name, args)
 	default:
 		return "", fmt.Errorf("unknown host tool: %s", name)
 	}

@@ -325,6 +325,8 @@ func workspaceGuide(moduleID, family string) string {
 		return workspaceRedisPrompt
 	case fam == "mongodb" || id == "mongodb":
 		return workspaceMongoPrompt
+	case host.IsToolsModule(fam) || host.IsToolsModule(id):
+		return workspaceToolsPrompt
 	default:
 		return ""
 	}

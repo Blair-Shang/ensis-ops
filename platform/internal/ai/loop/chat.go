@@ -22,8 +22,6 @@ const (
 
 	credentialServicePrefix = "ensis-ops/credential/"
 	credentialSecretAccount = "secret"
-	// chatHistoryLimit 入模时取会话最近 N 条消息（会话上下文窗口，非摘要压缩）。
-	chatHistoryLimit = 40
 )
 
 // StreamParams 是启动流式对话的入参。

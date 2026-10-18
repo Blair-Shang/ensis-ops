@@ -1,0 +1,24 @@
+id: com.ensisops.tools
+name: Tools Service
+version: 0.1.0
+bridge:
+  namespace: tools
+session:
+  inject_credentials: false
+  credential_methods: []
+runtime:
+  executable: bin/ensis-tools-service.exe
+  executable_windows: bin/ensis-tools-service.exe
+  executable_unix: bin/ensis-tools-service
+  lang: go
+ipc:
+  transport: named_pipe
+  transport_windows: named_pipe
+  transport_unix: unix_socket
+  address: '\\.\pipe\ensis-ops.tools'
+  address_windows: '\\.\pipe\ensis-ops.tools'
+  address_unix: '/tmp/ensis-ops.tools.sock'
+  protocol: length_prefixed_json
+lifecycle:
+  startup: lazy
+permissions: []

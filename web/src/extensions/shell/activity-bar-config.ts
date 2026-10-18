@@ -14,17 +14,18 @@ export interface ActivityBarItem {
 
 /**
  * 领域 → Activity Bar 图标（Lucide kebab-case / 自定义字标）。
- * 顺序：资源管理 → 数据库 → 运维工具 → API；彩色线框与领域语义对应。
+ * 顺序：资源管理 → 数据库 → 运维工具 → 工具 → API。
  */
 export const ACTIVITY_BAR_ITEMS: readonly ActivityBarItem[] = [
   { category: 'explorer', icon: 'folder', labelKey: 'nav.category.explorer', color: 'var(--nm-activity-explorer)' },
   { category: 'data', icon: 'database', labelKey: 'nav.category.data', color: 'var(--nm-activity-data)' },
   { category: 'ops', icon: 'server', labelKey: 'nav.category.ops', color: 'var(--nm-activity-ops)' },
+  { category: 'tools', icon: 'wrench', labelKey: 'nav.category.tools', color: 'var(--nm-activity-tools)' },
   { category: 'devtools', icon: 'api', labelKey: 'nav.category.api', color: 'var(--nm-activity-devtools)' },
 ] as const
 
 /**
- * 返回 Activity Bar 固定四项（不随模块挂载动态增减）。
+ * 返回 Activity Bar 固定五项（不随模块挂载动态增减）。
  */
 export function visibleActivityBarItems(
   _items: readonly ModuleNavItem[],

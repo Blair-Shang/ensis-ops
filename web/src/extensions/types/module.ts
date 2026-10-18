@@ -11,6 +11,7 @@ export type ModuleCategory =
   | 'explorer'
   | 'ops'
   | 'data'
+  | 'tools'
   | 'devtools'
   | 'ai'
   | 'media'
@@ -21,6 +22,7 @@ export const MODULE_CATEGORY_ORDER: readonly ModuleCategory[] = [
   'explorer',
   'data',
   'ops',
+  'tools',
   'devtools',
   'ai',
   'media',

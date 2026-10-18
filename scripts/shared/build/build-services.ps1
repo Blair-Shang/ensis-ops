@@ -254,6 +254,7 @@ function Build-RustService {
 
 $platformOut = Join-Path $TargetBinDir (Get-BinaryName -BaseName 'ensis-platform-core' -PlatformName $Platform)
 $apiOut = Join-Path $TargetBinDir (Get-BinaryName -BaseName 'ensis-api-service' -PlatformName $Platform)
+$toolsOut = Join-Path $TargetBinDir (Get-BinaryName -BaseName 'ensis-tools-service' -PlatformName $Platform)
 $ftpOut = Join-Path $TargetBinDir (Get-BinaryName -BaseName 'ensis-ftp-service' -PlatformName $Platform)
 $sshOut = Join-Path $TargetBinDir (Get-BinaryName -BaseName 'ensis-ssh-service' -PlatformName $Platform)
 $sftpOut = Join-Path $TargetBinDir (Get-BinaryName -BaseName 'ensis-sftp-service' -PlatformName $Platform)
@@ -288,6 +289,10 @@ Build-GoService -ModuleDir (Join-Path $Root 'platform') `
 Build-GoService -ModuleDir (Join-Path $Root 'services/api-service') `
     -Package './cmd/api-service' `
     -Output $apiOut
+
+Build-GoService -ModuleDir (Join-Path $Root 'services/tools-service') `
+    -Package './cmd/tools-service' `
+    -Output $toolsOut
 
 Build-GoService -ModuleDir (Join-Path $Root 'services/ftp-service') `
     -Package './cmd/ftp-service' `
@@ -376,6 +381,7 @@ if (-not $SkipOracle) {
 if (Should-SyncLegacyBin) {
     $legacyPlatformOut = Join-Path $BinDir 'ensis-platform-core.exe'
     $legacyApiOut = Join-Path $BinDir 'ensis-api-service.exe'
+    $legacyToolsOut = Join-Path $BinDir 'ensis-tools-service.exe'
     $legacyFtpOut = Join-Path $BinDir 'ensis-ftp-service.exe'
     $legacySshOut = Join-Path $BinDir 'ensis-ssh-service.exe'
     $legacySftpOut = Join-Path $BinDir 'ensis-sftp-service.exe'
@@ -393,6 +399,7 @@ if (Should-SyncLegacyBin) {
     $legacyOracleOut = Join-Path $BinDir 'ensis-oracle-service.exe'
     Copy-Item -Force $platformOut $legacyPlatformOut
     Copy-Item -Force $apiOut $legacyApiOut
+    Copy-Item -Force $toolsOut $legacyToolsOut
     Copy-Item -Force $ftpOut $legacyFtpOut
     Copy-Item -Force $mongoOut $legacyMongoOut
     Copy-Item -Force $vastbaseOut $legacyVastbaseOut

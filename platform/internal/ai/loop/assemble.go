@@ -27,19 +27,19 @@ const (
 
 // AssembleMessages 将历史消息与规范化 Context 装配为 LLM messages。
 //
-// 分轨：system 人设（+ Skill）→（可选）system Context Pack → 近 N 轮 user/assistant。
+// 分轨：system 人设（+ Skill）→（可选）system Context Pack → 更早轮次摘要 → 近几轮 user/assistant。
 // 用户消息若含 nm-img 标记，转为 Vision content parts；nm-txt 展开为正文附件块。
 func AssembleMessages(history []store.AIMessage, normalized NormalizedContext, skillPrompt string) []ChatMessage {
-	out := make([]ChatMessage, 0, len(history)+2)
+	note, kept := compactHistory(history)
+	out := make([]ChatMessage, 0, len(kept)+3)
 	out = append(out, ChatMessage{Role: MessageRoleSystem, Content: mergeSystemPrompt(skillPrompt)})
 	if block := strings.TrimSpace(normalized.PromptBlock); block != "" {
 		out = append(out, ChatMessage{Role: MessageRoleSystem, Content: block})
 	}
-	start := 0
-	if len(history) > chatHistoryLimit {
-		start = len(history) - chatHistoryLimit
+	if note != "" {
+		out = append(out, ChatMessage{Role: MessageRoleSystem, Content: note})
 	}
-	for _, m := range history[start:] {
+	for _, m := range kept {
 		role := m.MessageRole
 		if role != MessageRoleUser && role != MessageRoleAssistant && role != MessageRoleSystem {
 			continue

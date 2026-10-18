@@ -19,6 +19,7 @@ use (
 	./services/mysql-service
 	./services/postgres-service
 	./services/sqlite-service
+	./services/tools-service
 	./services/sqlserver-service
 	./services/vastbase-service
 )

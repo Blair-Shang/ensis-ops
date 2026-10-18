@@ -61,6 +61,7 @@ export const lantaiTheme = defineHostTheme({
     '--nm-activity-explorer': '#3ec6ff',
     '--nm-activity-data': '#7a5cff',
     '--nm-activity-ops': '#f5c451',
+    '--nm-activity-tools': '#2ec4d6',
     '--nm-activity-devtools': '#3dd68c',
     '--rs-radius-xs': '0.125rem',
     '--rs-radius-sm': '0.25rem',

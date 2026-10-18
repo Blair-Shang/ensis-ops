@@ -68,7 +68,7 @@ func TestHostToolSpecsByModule(t *testing.T) {
 		t.Fatal("missing sql_exec")
 	}
 	both := HostToolSpecs("")
-	if len(both) != 22 {
+	if len(both) != 26 {
 		t.Fatalf("both specs=%d", len(both))
 	}
 }

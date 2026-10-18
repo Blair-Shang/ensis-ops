@@ -60,6 +60,7 @@ export const yuegongTheme = defineHostTheme({
     '--nm-activity-explorer': '#3e4c5c',
     '--nm-activity-data': '#6a7c8e',
     '--nm-activity-ops': '#9a7040',
+    '--nm-activity-tools': '#4a7c8c',
     '--nm-activity-devtools': '#3d7a62',
     '--rs-radius-xs': '0.375rem',
     '--rs-radius-sm': '0.5rem',

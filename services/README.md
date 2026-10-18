@@ -8,6 +8,7 @@ services/
 ├── bin/                 # 编译产物
 │   └── runtime/         # 厂商 native 旁载（如 oracle Instant Client）
 ├── api-service/         # API 管理（P0：TCP/UDP，见 docs/36）
+├── tools-service/       # 本机工具：格式化、文本对比（懒拉起，namespace tools）
 ├── ftp-service/ …       # Go 能力服务
 ├── mysql-service/
 ├── sqlite-service/

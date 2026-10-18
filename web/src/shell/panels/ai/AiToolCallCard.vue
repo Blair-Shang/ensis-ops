@@ -122,7 +122,6 @@ const statusLabel = computed(() => {
 const riskLabel = computed(() => {
   const r = (props.risk || '').toLowerCase()
   if (r === 'write') return t('ai.toolRiskWrite')
-  if (r === 'dangerous') return t('ai.toolRiskDangerous')
   if (r === 'read') return t('ai.toolRiskRead')
   return ''
 })

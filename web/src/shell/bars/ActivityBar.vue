@@ -12,9 +12,19 @@ const { t } = useI18n()
 
 const activities = computed(() => visibleActivityBarItems(moduleStore.items))
 
-/** 点击领域图标：切换分类并展开/收起侧栏。API 入口按需加载，不在壳启动时拉集合 store。 */
+/** 点击领域图标：切换分类并展开/收起侧栏。API 与工具入口按需打开，不在壳启动时拉各自的 store。 */
 function onCategoryClick(category: (typeof activities.value)[number]['category']) {
   const switched = shellStore.activeCategory !== category
+  if (category === 'tools') {
+    if (switched) {
+      shellStore.selectCategory(category)
+    }
+    shellStore.sidebarVisible = false
+    void import('@/modules/tools/open-tool').then(({ openToolsHome }) => {
+      openToolsHome()
+    })
+    return
+  }
   shellStore.selectCategory(category)
   if (switched && category === 'devtools') {
     void import('@/modules/api-tester/stores/api-tester').then(({ useApiTesterStore }) => {

@@ -35,6 +35,14 @@ export type {
   SetPluginEnabledResult,
 } from './plugin'
 export type {
+  ToolAction,
+  ToolCategory,
+  ToolSpec,
+  ToolsListResult,
+  ToolsRunParams,
+  ToolsRunResult,
+} from './tools'
+export type {
   ComponentsDetectParams,
   ComponentsDetectResult,
   ComponentsGetDownloadParams,

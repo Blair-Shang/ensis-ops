@@ -230,7 +230,7 @@ flowchart TB
 
 | 级别 | Web UI | 后端 | 示例 |
 |------|--------|------|------|
-| L1 | 有 | 无 | 格式化、计算器 |
+| L1 | 有 | 无 | 计算器等纯前端 |
 | L2 | 有 | 独立进程 + JSON/Pipe | SSH、MySQL |
 | L3 | 有 | Native / 重量级进程 | Oracle、FFmpeg |
 
@@ -539,7 +539,8 @@ shell/
 | Oracle | C++ / Java | 按需 |
 | FFmpeg 媒体 | C++ | 按需 |
 | AI Agent | Python | 按需（stdio JSON-RPC） |
-| API 测试 / 格式化 | Go | 轻量 |
+| API 测试 | Go | 按需（api-service） |
+| 格式化 / 文本对比 | Go | 按需（tools-service） |
 
 每个服务提供 `service.yaml`：
 
@@ -573,7 +574,7 @@ plugins/<name>/
 
 | 级别 | Web UI | Native 后端 | 示例 |
 |------|--------|-------------|------|
-| L1 轻量 | 有 | 无 | API 测试、格式化 |
+| L1 轻量 | 有 | 无 | 计算器等纯前端 |
 | L2 标准 | 有 | IPC Worker | SSH、MySQL |
 | L3 重量 | 有 | Native DLL/独立进程 | Oracle、FFmpeg |
 

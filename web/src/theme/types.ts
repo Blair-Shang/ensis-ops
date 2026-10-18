@@ -22,6 +22,7 @@ export const HOST_TOKEN_KEYS = [
   '--nm-activity-explorer',
   '--nm-activity-data',
   '--nm-activity-ops',
+  '--nm-activity-tools',
   '--nm-activity-devtools',
   '--rs-radius-xs',
   '--rs-radius-sm',

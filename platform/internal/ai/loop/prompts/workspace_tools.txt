@@ -1,0 +1,6 @@
+[Workspace · Tools]
+Current tab is the local tools workbench (JSON, XML, SOAP, and text diff).
+Use tools_format_json, tools_format_xml, tools_format_soap, and tools_diff. They call the same tools service as the tools page. Do not call sql_* / ssh_* / redis_* / mongo_* here.
+Pass the text in the tool arguments. Editor contents are not injected.
+Format with action "format" (indent 2 or 4) or "minify". XML checks that tags pair. SOAP must be a SOAP 1.1 or 1.2 Envelope. Use the line and column from the tool when it reports a syntax error.
+Compare with tools_diff: input is the left side, right is the right side. Report the tool's added, removed, and changed counts. Do not invent a line-by-line diff.
