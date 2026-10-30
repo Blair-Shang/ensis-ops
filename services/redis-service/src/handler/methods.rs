@@ -369,6 +369,10 @@ fn format_command_log(args: &[String]) -> String {
     if args.len() <= MAX_LOG_COMMAND_ARGS {
         preview.join(" ")
     } else {
-        format!("{} (+{} more)", preview.join(" "), args.len() - MAX_LOG_COMMAND_ARGS)
+        format!(
+            "{} (+{} more)",
+            preview.join(" "),
+            args.len() - MAX_LOG_COMMAND_ARGS
+        )
     }
 }

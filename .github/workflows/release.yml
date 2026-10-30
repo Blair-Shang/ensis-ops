@@ -3,7 +3,8 @@
 # 托管 runner 覆盖：Windows x64、Linux x64、macOS arm64。
 # ARM64 Windows / ARM64 Linux / 麒麟需自建 runner，未纳入本矩阵。
 # 推送 main：package.json 版本还没有 v* 标签，且 CHANGELOG 有列表条目时才打包。
-# 成功后收成版本段、打标签、发 Release。手工 v* 标签同样发版。
+# 三个平台都打包成功后才收成版本段、打标签、发 Release。任一平台失败则不发布。
+# 手工 v* 标签同样发版。
 # workflow_dispatch 只上传 Artifact。GITHUB_TOKEN 推送的 [release notes] 不会再次触发本工作流。
 name: Pack and Release
 
@@ -337,7 +338,10 @@ jobs:
   publish:
     name: GitHub Release
     needs: [plan, pack]
-    if: ${{ always() && !cancelled() && needs.plan.outputs.should_publish == 'true' && needs.pack.result != 'skipped' }}
+    # pack 是矩阵。always() 会在某个平台失败时仍发布已成功的包。
+    # 必须三个平台都是 success 才打标签、发 GitHub Release、上传 ensis-cloud。
+    # 失败的那次修好后用 Re-run failed jobs，全部成功时本任务会接着发布。
+    if: ${{ !cancelled() && needs.plan.outputs.should_publish == 'true' && needs.pack.result == 'success' }}
     runs-on: ubuntu-22.04
     timeout-minutes: 90
     env:

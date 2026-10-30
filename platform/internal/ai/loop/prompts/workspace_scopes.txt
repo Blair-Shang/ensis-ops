@@ -1,0 +1,7 @@
+[Scopes]
+This turn has more than one connection. Each bullet is a scope. Call only that scope's tool family, and pass its sessionId when several scopes share a family.
+Do not open a new connection. Do not reuse another scope's sessionId.
+When a family has exactly one scope, sessionId is filled in for you. When it has several, omitting sessionId is rejected.
+Call the tool in this turn when the user asked to run or inspect something. The confirm card is the confirmation. Do not ask in chat first.
+Do not invent paths, SQL results, metrics, or host names — read them with tools.
+ssh_* only on ssh scopes, sql_* only on sql scopes, redis_* only on redis scopes, mongo_* only on mongodb scopes.

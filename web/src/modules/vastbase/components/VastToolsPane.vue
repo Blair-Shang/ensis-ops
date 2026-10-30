@@ -15,6 +15,8 @@ import type { RsSelectOptions, RsTabItem } from 'ensis-ui'
 import { computed, onMounted, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { connectionApi, dialogApi, fsApi, vastbaseApi } from '@/api'
+import SqlIdeToolbar from '@/modules/database/components/SqlIdeToolbar.vue'
+import type { SqlIdeToolbarItem } from '@/modules/database/types/sql-ide-toolbar'
 import type {
   VastToolsContentMode,
   VastToolsDetectResult,
@@ -92,6 +94,32 @@ watch(
 )
 
 const busy = computed(() => starting.value || !!activeTaskId.value)
+
+const toolsToolbar = computed((): SqlIdeToolbarItem[] => {
+  const items: SqlIdeToolbarItem[] = []
+  if (busy.value) {
+    items.push({
+      key: 'stop',
+      icon: 'square',
+      title: t('modules.vastbase.tools.stop'),
+      tone: 'danger',
+      loading: cancelling.value,
+    })
+  }
+  items.push({
+    key: 'refresh',
+    icon: 'refresh-cw',
+    title: t('modules.vastbase.tools.refresh'),
+    align: 'trail',
+    loading: loading.value,
+  })
+  return items
+})
+
+function onToolsToolbar(key: string): void {
+  if (key === 'stop') void stopActiveTask()
+  if (key === 'refresh') void refreshDetect()
+}
 
 const formatOptions = computed((): RsSelectOptions => [
   { value: 'c', label: t('modules.vastbase.tools.formatCustom') },
@@ -408,35 +436,18 @@ onMounted(() => {
 
 <template>
   <div class="nm-vast-tools">
-    <header class="nm-vast-tools__header">
-      <div class="nm-vast-tools__header-left">
-        <div class="nm-vast-tools__title-row">
-          <RsIcon name="wrench" :size="15" class="nm-vast-tools__title-icon" />
-          <h3 class="nm-vast-tools__title">{{ t('modules.vastbase.tools.title') }}</h3>
-          <RsBadge v-if="sessionLabel" variant="default">{{ sessionLabel }}</RsBadge>
-          <RsBadge v-if="!loading && toolRows.length" :variant="readyVariant">
-            {{ t('modules.vastbase.tools.readySummary', { n: availableCount, total: toolRows.length }) }}
-          </RsBadge>
-        </div>
-        <p class="nm-vast-tools__subtitle">{{ t('modules.vastbase.tools.hint') }}</p>
-      </div>
-      <div class="nm-vast-tools__header-actions">
-        <RsButton
-          v-if="busy"
-          size="sm"
-          variant="danger"
-          :loading="cancelling"
-          @click="stopActiveTask"
-        >
-          <RsIcon name="square" :size="12" />
-          {{ t('modules.vastbase.tools.stop') }}
-        </RsButton>
-        <RsButton size="sm" variant="ghost" :loading="loading" @click="refreshDetect">
-          <RsIcon name="refresh-cw" :size="13" />
-          {{ t('modules.vastbase.tools.refresh') }}
-        </RsButton>
-      </div>
-    </header>
+    <SqlIdeToolbar
+      :label="t('modules.vastbase.tools.title')"
+      identity-icon="wrench"
+      :identity="sessionLabel || t('modules.vastbase.tools.title')"
+      :identity-title="t('modules.vastbase.tools.hint')"
+      :items="toolsToolbar"
+      @action="onToolsToolbar"
+    />
+    <p class="nm-vast-tools__subtitle">{{ t('modules.vastbase.tools.hint') }}</p>
+    <p v-if="!loading && toolRows.length" class="nm-vast-tools__ready">
+      {{ t('modules.vastbase.tools.readySummary', { n: availableCount, total: toolRows.length }) }}
+    </p>
 
     <RsLoading
       v-if="loading"

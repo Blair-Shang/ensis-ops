@@ -50,6 +50,13 @@ const tone = computed(() => statusTone(props.exchange?.status ?? null, props.exc
 
 const errorText = computed(() => props.exchange?.error ?? '')
 
+const transportFailed = computed(() => {
+  const ex = props.exchange
+  return Boolean(ex && ex.error && ex.status == null)
+})
+
+const showViews = computed(() => Boolean(props.exchange) && !transportFailed.value)
+
 const statusLabel = computed(() => {
   const ex = props.exchange
   if (!ex) return ''
@@ -88,35 +95,35 @@ const editorLang = computed(() => {
 <template>
   <div class="nm-api-res">
     <div class="nm-api-res__status">
-      <span v-if="!exchange" class="nm-api-res__title">{{ t('modules.api.responseTitle') }}</span>
-      <RsTabs
-        v-else
-        v-model="view"
-        class="nm-api-res__views"
-        :items="items"
-        size="sm"
-        variant="line"
-        panelless
-        borderless
-        content-gap="none"
-      />
-      <div class="nm-api-res__metrics">
-        <template v-if="sending">
-          <span class="nm-api-res__pulse" />
-          <span class="nm-api-res__muted">{{ t('modules.api.sending') }}</span>
-        </template>
-        <template v-else-if="live || exchange">
-          <span v-if="live" class="nm-api-res__pulse" />
-          <span class="nm-api-res__code" :class="`nm-api-res__code--${tone}`">{{ statusLabel }}</span>
-          <span v-if="exchange" class="nm-api-res__meta">{{ formatDuration(exchange.durationMs) }}</span>
-          <span v-if="exchange" class="nm-api-res__meta">{{ formatBytes(exchange.sizeBytes) }}</span>
-          <span v-if="exchange" class="nm-api-res__meta">{{ exchange.protocol }}</span>
-        </template>
-      </div>
+      <span v-if="!exchange && !sending && !live" class="nm-api-res__title">{{ t('modules.api.responseTitle') }}</span>
+      <template v-else-if="sending && !exchange">
+        <span class="nm-api-res__pulse" />
+        <span class="nm-api-res__muted">{{ t('modules.api.sending') }}</span>
+      </template>
+      <template v-else>
+        <span v-if="live" class="nm-api-res__pulse" />
+        <span class="nm-api-res__code" :class="`nm-api-res__code--${tone}`">{{ statusLabel }}</span>
+        <span v-if="exchange" class="nm-api-res__metrics">
+          <span class="nm-api-res__chip">{{ formatDuration(exchange.durationMs) }}</span>
+          <span v-if="!transportFailed" class="nm-api-res__chip">{{ formatBytes(exchange.sizeBytes) }}</span>
+          <span v-if="exchange.status != null" class="nm-api-res__chip">{{ exchange.protocol }}</span>
+        </span>
+      </template>
     </div>
+    <RsTabs
+      v-if="showViews"
+      v-model="view"
+      class="nm-api-res__views"
+      :items="items"
+      size="sm"
+      variant="line"
+      panelless
+      borderless
+      content-gap="none"
+    />
 
     <p v-if="redirectText" class="nm-api-res__hint">{{ redirectText }}</p>
-    <p v-if="errorText" class="nm-api-res__error">{{ errorText }}</p>
+    <p v-if="errorText && !transportFailed" class="nm-api-res__error">{{ errorText }}</p>
     <ul v-if="exchange?.checks?.length" class="nm-api-res__checks">
       <li
         v-for="(check, index) in exchange.checks"
@@ -128,11 +135,13 @@ const editorLang = computed(() => {
     </ul>
     <p v-if="exchange && largeBody" class="nm-api-res__hint">{{ t('modules.api.largePayload') }}</p>
 
-    <RsEmpty
-      v-if="!exchange && !sending && !live"
-      fill
-      :description="t('modules.api.emptyResponse')"
-    />
+    <div v-if="!exchange && !sending && !live" class="nm-api-res__idle">
+      <RsEmpty fill :description="t('modules.api.emptyResponse')" />
+    </div>
+    <div v-else-if="transportFailed" class="nm-api-res__failure">
+      <p class="nm-api-res__failure-title">{{ t('modules.api.connectionClosed') }}</p>
+      <p class="nm-api-res__failure-detail">{{ errorText }}</p>
+    </div>
     <RsCodeEditor
       v-else-if="exchange"
       :model-value="editorText"
@@ -152,30 +161,72 @@ const editorLang = computed(() => {
   flex-direction: column;
   height: 100%;
   min-height: 0;
-  background: var(--rs-surface);
+  background: color-mix(in srgb, var(--rs-text) 2.5%, var(--rs-surface));
 }
 
 .nm-api-res__status {
   display: flex;
   align-items: center;
-  gap: var(--rs-space-sm);
-  min-height: 2rem;
-  padding-inline-end: var(--rs-space-sm);
+  gap: var(--rs-space-md);
+  min-height: 2.25rem;
+  padding-inline: var(--rs-space-md);
   border-bottom: 1px solid var(--rs-border-subtle);
   font-size: var(--rs-font-size-xs);
   flex-shrink: 0;
   overflow: hidden;
 }
 
-.nm-api-res__title {
-  padding-inline-start: var(--rs-space-md);
-  font-weight: var(--rs-font-weight-medium);
-  color: var(--rs-muted);
+.nm-api-res__views {
+  flex-shrink: 0;
+  padding-inline: var(--rs-space-sm);
+  border-bottom: 1px solid var(--rs-border-subtle);
 }
 
-.nm-api-res__views {
+.nm-api-res__idle {
+  display: flex;
   flex: 1;
-  min-width: 0;
+  min-height: 0;
+  background:
+    radial-gradient(ellipse at center, color-mix(in srgb, var(--rs-primary) 12%, transparent), transparent 68%),
+    linear-gradient(color-mix(in srgb, var(--rs-text) 4%, transparent) 1px, transparent 1px),
+    linear-gradient(90deg, color-mix(in srgb, var(--rs-text) 4%, transparent) 1px, transparent 1px);
+  background-size: auto, 22px 22px, 22px 22px;
+}
+
+.nm-api-res__failure {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  justify-content: center;
+  gap: var(--rs-space-sm);
+  min-height: 0;
+  margin: var(--rs-space-lg);
+  padding: var(--rs-space-lg);
+  border: 1px solid color-mix(in srgb, var(--rs-danger) 35%, transparent);
+  border-radius: var(--rs-radius);
+  background: color-mix(in srgb, var(--rs-danger) 8%, var(--rs-surface));
+}
+
+.nm-api-res__failure-title {
+  margin: 0;
+  color: var(--rs-text);
+  font-size: var(--rs-font-size-sm);
+  font-weight: var(--rs-font-weight-medium);
+}
+
+.nm-api-res__failure-detail {
+  margin: 0;
+  max-width: 42rem;
+  color: var(--rs-danger);
+  font-family: var(--rs-font-mono);
+  font-size: var(--rs-font-size-xs);
+  line-height: var(--rs-line-height-normal);
+  overflow-wrap: anywhere;
+}
+
+.nm-api-res__title {
+  font-weight: var(--rs-font-weight-medium);
+  color: var(--rs-muted);
 }
 
 .nm-api-res__metrics {
@@ -188,15 +239,26 @@ const editorLang = computed(() => {
 }
 
 .nm-api-res__code {
-  max-width: 12rem;
+  max-width: 18rem;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
   font-family: var(--rs-font-mono);
+  font-size: var(--rs-font-size-sm);
   font-weight: var(--rs-font-weight-semibold);
-  padding: 0 var(--rs-space-xs);
-  border-radius: var(--rs-radius-sm);
-  background: color-mix(in srgb, currentColor 12%, transparent);
+  letter-spacing: 0.02em;
+  padding: 0.12rem 0.5rem;
+  border-radius: 999px;
+  background: color-mix(in srgb, currentColor 14%, transparent);
+}
+
+.nm-api-res__chip {
+  padding: 0.08rem 0.45rem;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--rs-text) 7%, transparent);
+  color: var(--rs-text);
+  font-family: var(--rs-font-mono);
+  font-variant-numeric: tabular-nums;
 }
 
 .nm-api-res__code--success {
@@ -240,6 +302,9 @@ const editorLang = computed(() => {
 }
 
 .nm-api-res__checks {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.3rem;
   margin: 0;
   padding: var(--rs-space-xs) var(--rs-space-md);
   list-style: none;
@@ -248,12 +313,20 @@ const editorLang = computed(() => {
   flex-shrink: 0;
 }
 
+.nm-api-res__check--ok,
+.nm-api-res__check--bad {
+  padding: 0.05rem 0.4rem;
+  border-radius: 999px;
+}
+
 .nm-api-res__check--ok {
   color: var(--rs-success);
+  background: color-mix(in srgb, var(--rs-success) 12%, transparent);
 }
 
 .nm-api-res__check--bad {
   color: var(--rs-danger);
+  background: color-mix(in srgb, var(--rs-danger) 12%, transparent);
 }
 
 .nm-api-res__hint {

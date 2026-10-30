@@ -1,25 +1,34 @@
 <script setup lang="ts">
 /**
  * AI 消息列表：空态 / 加载 / 错误 / 消息流；贴底自动滚动。
+ * 有消息时走虚拟列表，只挂视口附近的行，滚出后卸掉 Markdown / 图表 DOM。
  */
-import { RsButton, RsIcon } from 'ensis-ui'
-import { computed, nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue'
+import { RsButton, RsIcon, RsVirtualList } from 'ensis-ui'
+import type { RsVirtualListInstance } from 'ensis-ui'
+import {
+  computed,
+  nextTick,
+  onBeforeUnmount,
+  onMounted,
+  ref,
+  watch,
+  type ComponentPublicInstance,
+} from 'vue'
 import { useI18n } from 'vue-i18n'
 import type { AiLiveToolInvocation } from '@/api/types/ai'
 import { useAccountStore } from '@/stores/account'
 import { useAiStore } from '@/stores/ai'
+import { useAppStore } from '@/stores/app'
 import { useTabStore } from '@/stores/tab'
 import { isSystemAiProvider } from './system-provider'
 import AiMessageItem from './AiMessageItem.vue'
 import AiToolConfirmActions from './AiToolConfirmActions.vue'
-import { extractAttachmentMarkers } from './context-pack'
 import { extractWorkspaceMarker, openTargetFromDraft, type AiOpenTarget } from './workspace-marker'
-import { extractImageMarkers, extractTextMarkers } from './attachment-utils'
-import { parseAssistantContent } from './parse-assistant-content'
 import { partitionAiTools } from './attach-tools'
 
 const { t } = useI18n()
 const aiStore = useAiStore()
+const appStore = useAppStore()
 const tabStore = useTabStore()
 const accountStore = useAccountStore()
 
@@ -39,7 +48,8 @@ const showLoginPrompt = computed(
     !aiStore.streamingText,
 )
 
-const listEl = ref<HTMLElement | null>(null)
+const listRef = ref<RsVirtualListInstance | null>(null)
+const fallbackEl = ref<HTMLElement | null>(null)
 /** 用户是否贴近底部；上翻阅读时不强制抢走滚动。 */
 const stickToBottom = ref(true)
 /** 列表内待确认卡片是否还在视口里；滚走后改用底部固定条。 */
@@ -47,8 +57,15 @@ const pendingCardInView = ref(true)
 const decidingId = ref('')
 let pendingObserver: IntersectionObserver | null = null
 let revealTimer = 0
+let pinFrame = 0
+let pinAttempt = 0
+let pendingObserveFrame = 0
 
 const NEAR_BOTTOM_PX = 96
+/** 未测量前的行高。只影响滚动条总长，看见后改用实测。 */
+const ESTIMATE_ROW_PX = 148
+/** 视口外多留的行数。每行都是高亮 DOM，不宜过大。 */
+const ROW_OVERSCAN = 2
 
 const showEmpty = computed(
   () =>
@@ -59,74 +76,82 @@ const showEmpty = computed(
     !aiStore.streamingText,
 )
 
-const displayMessages = computed(() => {
-  let turnTarget: AiOpenTarget | null = null
-  return aiStore.messages.map((m) => {
-    if (m.messageRole === 'user') {
-      const marked = extractWorkspaceMarker(m.messageContent)
-      turnTarget = openTargetFromDraft(marked.context)
-      const withImages = extractImageMarkers(marked.text)
-      const withFiles = extractTextMarkers(withImages.text)
-      const extracted = extractAttachmentMarkers(withFiles.text)
-      return {
-        messageId: m.messageId,
-        messageRole: m.messageRole,
-        messageContent: extracted.text,
-        attachments: extracted.attachments,
-        images: withImages.images,
-        files: withFiles.files,
-        createdAt: m.createdAt,
-        parsed: null,
-        openTarget: turnTarget,
-      }
-    }
-    return {
-      messageId: m.messageId,
-      messageRole: m.messageRole,
-      messageContent: m.messageContent,
-      attachments: [] as ReturnType<typeof extractAttachmentMarkers>['attachments'],
-      images: [] as string[],
-      files: [] as ReturnType<typeof extractTextMarkers>['files'],
-      createdAt: m.createdAt,
-      parsed: m.messageRole === 'assistant' ? parseAssistantContent(m.messageContent) : null,
-      openTarget: turnTarget,
-    }
-  })
-})
-
-const streamingOpenTarget = computed(() => {
-  const list = displayMessages.value
-  for (let i = list.length - 1; i >= 0; i -= 1) {
-    if (list[i]?.messageRole === 'user') {
-      return list[i]?.openTarget ?? null
-    }
-  }
-  return null
-})
-
-const streamingParsed = computed(() => parseAssistantContent(aiStore.streamingText))
 const showCancelled = computed(() => aiStore.runStatus === 'cancelled')
 const showCompare = computed(() => Boolean(aiStore.previousAssistantContent && aiStore.isStreaming))
+const errorText = computed(() => aiStore.runError || aiStore.error || '')
+
+type MessageFeedRow = {
+  kind: 'message'
+  key: string
+  messageId: string
+  speaker: string
+  content: string
+  createdAt: string
+  openTarget: AiOpenTarget | null
+  toolsBefore: AiLiveToolInvocation[]
+  toolsAfter: AiLiveToolInvocation[]
+}
+
+type FeedRow =
+  | MessageFeedRow
+  | { kind: 'compare'; key: 'compare' }
+  | { kind: 'streaming'; key: 'streaming' }
+  | { kind: 'cancelled'; key: 'cancelled' }
+  | { kind: 'error'; key: 'error'; text: string }
+
+const COMPARE_ROW = { kind: 'compare', key: 'compare' } as const
+const STREAMING_ROW = { kind: 'streaming', key: 'streaming' } as const
+const CANCELLED_ROW = { kind: 'cancelled', key: 'cancelled' } as const
+const EMPTY_TOOLS: AiLiveToolInvocation[] = []
 
 /**
  * 工具挂到所属轮次：有助手文字则留在那段前后。
  * 还没有助手文字的当前工具才进流式气泡，画在尚未落库的正文之前。
  */
 const toolPartition = computed(() =>
-  partitionAiTools(displayMessages.value, aiStore.displayTools, {
-    streaming: aiStore.isStreaming,
-    activeRunId: aiStore.runId,
-    liveIds: new Set(aiStore.liveTools.map((t) => t.invocationId)),
-  }),
+  partitionAiTools(
+    aiStore.messages.map((m) => ({
+      messageId: m.messageId,
+      messageRole: m.messageRole,
+      createdAt: m.createdAt,
+    })),
+    aiStore.displayTools,
+    {
+      streaming: aiStore.isStreaming,
+      activeRunId: aiStore.runId,
+      liveIds: new Set(aiStore.liveTools.map((t) => t.invocationId)),
+    },
+  ),
 )
-
-const toolsByMessageId = computed(() => toolPartition.value.byMessageId)
 
 const streamingTools = computed(() => toolPartition.value.streaming)
 
+/** 只保留打开 SQL 要用的连接和工具挂载点，正文解析留到可见行。 */
+const messageRows = computed((): MessageFeedRow[] => {
+  const byId = toolPartition.value.byMessageId
+  let turnTarget: AiOpenTarget | null = null
+  return aiStore.messages.map((m) => {
+    if (m.messageRole === 'user') {
+      turnTarget = openTargetFromDraft(extractWorkspaceMarker(m.messageContent).context)
+    }
+    const placement = byId.get(m.messageId)
+    return {
+      kind: 'message',
+      key: m.messageId,
+      messageId: m.messageId,
+      speaker: m.messageRole,
+      content: m.messageContent,
+      createdAt: m.createdAt,
+      openTarget: turnTarget,
+      toolsBefore: placement?.before ?? EMPTY_TOOLS,
+      toolsAfter: placement?.after ?? EMPTY_TOOLS,
+    }
+  })
+})
+
 const streamingContinued = computed(() => {
-  const last = displayMessages.value[displayMessages.value.length - 1]
-  return last?.messageRole === 'assistant'
+  const last = messageRows.value[messageRows.value.length - 1]
+  return last?.speaker === 'assistant'
 })
 
 const showStreamingBubble = computed(() => {
@@ -137,20 +162,101 @@ const showStreamingBubble = computed(() => {
     return false
   }
   // 助手正文已落库（token 缓冲已清空）时不再叠一个空流式气泡
-  const last = displayMessages.value[displayMessages.value.length - 1]
+  const last = aiStore.messages[aiStore.messages.length - 1]
   return last?.messageRole !== 'assistant'
 })
 
-const emptyPlacement = { before: [] as AiLiveToolInvocation[], after: [] as AiLiveToolInvocation[] }
+const streamingOpenTarget = computed(() => {
+  const list = messageRows.value
+  for (let i = list.length - 1; i >= 0; i -= 1) {
+    if (list[i]?.speaker === 'user') {
+      return list[i]?.openTarget ?? null
+    }
+  }
+  return null
+})
 
-function placementFor(messageId: string): { before: AiLiveToolInvocation[]; after: AiLiveToolInvocation[] } {
-  return toolsByMessageId.value.get(messageId) ?? emptyPlacement
+const showTranscript = computed(
+  () => messageRows.value.length > 0 || showStreamingBubble.value || showCompare.value,
+)
+
+const rows = computed((): FeedRow[] => {
+  if (!showTranscript.value) {
+    return []
+  }
+  const out: FeedRow[] = messageRows.value.slice()
+  if (showCompare.value) {
+    out.push(COMPARE_ROW)
+  }
+  if (showStreamingBubble.value) {
+    out.push(STREAMING_ROW)
+  }
+  if (showCancelled.value) {
+    out.push(CANCELLED_ROW)
+  }
+  if (errorText.value) {
+    out.push({ kind: 'error', key: 'error', text: errorText.value })
+  }
+  return out
+})
+
+/** 行高按 key 记。虚拟列表按索引锁高，内容变化要靠这里把新高度交回去。 */
+const rowHeights = new Map<string, number>()
+const rowEls = new Map<string, HTMLElement>()
+const keyByEl = new WeakMap<Element, string>()
+/** 与 Vue `VNodeRef` 回调对齐：参数要能接住元素或组件实例。 */
+type RowRef = (el: Element | ComponentPublicInstance | null) => void
+
+const rowRefBinders = new Map<string, RowRef>()
+const sizeEpoch = ref(0)
+let rowObserver: ResizeObserver | null = null
+let widthObserver: ResizeObserver | null = null
+let viewportWidth = 0
+
+function rowKey(item: FeedRow): string {
+  return item.key
+}
+
+/** 同一行复用同一个 ref 回调，避免流式重绘时先解绑再绑定。 */
+function rowRef(key: string): RowRef {
+  let bind = rowRefBinders.get(key)
+  if (!bind) {
+    bind = (el) => bindRow(key, el instanceof Element ? el : null)
+    rowRefBinders.set(key, bind)
+  }
+  return bind
+}
+
+function rowSize(index: number): number {
+  void sizeEpoch.value
+  const row = rows.value[index]
+  if (!row) {
+    return ESTIMATE_ROW_PX
+  }
+  return rowHeights.get(row.key) ?? ESTIMATE_ROW_PX
 }
 
 function continuesAssistant(index: number): boolean {
-  const current = displayMessages.value[index]
-  const previous = displayMessages.value[index - 1]
-  return current?.messageRole === 'assistant' && previous?.messageRole === 'assistant'
+  const current = rows.value[index]
+  const previous = rows.value[index - 1]
+  return (
+    current?.kind === 'message' &&
+    previous?.kind === 'message' &&
+    current.speaker === 'assistant' &&
+    previous.speaker === 'assistant'
+  )
+}
+
+function tightBelow(index: number): boolean {
+  const current = rows.value[index]
+  const next = rows.value[index + 1]
+  if (current?.kind !== 'message' || current.speaker !== 'assistant') {
+    return false
+  }
+  if (next?.kind === 'message') {
+    return next.speaker === 'assistant'
+  }
+  return next?.kind === 'streaming' && streamingContinued.value
 }
 
 const pendingTools = computed(() => aiStore.displayTools.filter((x) => x.status === 'pending'))
@@ -162,9 +268,13 @@ function disconnectPendingObserver(): void {
   pendingObserver = null
 }
 
+function viewport(): HTMLElement | null {
+  return listRef.value?.getViewport() ?? fallbackEl.value
+}
+
 function observePendingCards(): void {
   disconnectPendingObserver()
-  const root = listEl.value
+  const root = viewport()
   if (!root || !pendingTools.value.length) {
     pendingCardInView.value = true
     return
@@ -186,38 +296,30 @@ function observePendingCards(): void {
   targets.forEach((node) => pendingObserver?.observe(node))
 }
 
-/** 只滚消息列表，避免 scrollIntoView 带动外层容器。 */
-function scrollChildIntoList(child: HTMLElement, align: 'nearest' | 'end'): void {
-  const el = listEl.value
-  if (!el) {
-    return
+function pendingRowIndex(): number {
+  const id = pendingTools.value[0]?.invocationId
+  if (!id) {
+    return -1
   }
-  const listRect = el.getBoundingClientRect()
-  const childRect = child.getBoundingClientRect()
-  const visible =
-    childRect.top >= listRect.top && childRect.bottom <= listRect.bottom
-  if (align === 'nearest' && visible) {
-    return
-  }
-  const nextTop =
-    align === 'end'
-      ? el.scrollTop + (childRect.bottom - listRect.bottom) + 12
-      : el.scrollTop + (childRect.top - listRect.top) - 8
-  el.scrollTop = Math.max(0, nextTop)
+  return rows.value.findIndex((row) => {
+    if (row.kind === 'streaming') {
+      return streamingTools.value.some((tool) => tool.invocationId === id)
+    }
+    if (row.kind !== 'message') {
+      return false
+    }
+    return (
+      row.toolsBefore.some((tool) => tool.invocationId === id) ||
+      row.toolsAfter.some((tool) => tool.invocationId === id)
+    )
+  })
 }
 
 function scrollPendingIntoView(): void {
-  const el = listEl.value
-  if (!el) {
-    return
+  const index = pendingRowIndex()
+  if (index >= 0) {
+    listRef.value?.scrollToIndex(index, 'end')
   }
-  const actions = el.querySelector<HTMLElement>('[data-ai-pending-actions]')
-  const card = el.querySelector<HTMLElement>('.nm-ai-tool--pending')
-  const target = actions || card
-  if (!target) {
-    return
-  }
-  scrollChildIntoList(target, 'end')
   requestAnimationFrame(() => observePendingCards())
 }
 
@@ -232,14 +334,14 @@ function scheduleRevealPending(): void {
       return
     }
     const ready = Boolean(
-      listEl.value?.querySelector('[data-ai-pending-actions], .nm-ai-tool--pending'),
+      viewport()?.querySelector('[data-ai-pending-actions], .nm-ai-tool--pending'),
     )
     if (ready) {
       scrollPendingIntoView()
       observePendingCards()
       return
     }
-    // 卡片尚未挂上（异步组件）时先露出底部条，避免确认按钮消失
+    // 卡片尚未挂上（异步组件或还在窗口外）时先露出底部条，避免确认按钮消失
     pendingCardInView.value = false
     if (attempt < 10) {
       attempt += 1
@@ -249,59 +351,197 @@ function scheduleRevealPending(): void {
   void nextTick(run)
 }
 
-let scrollRaf = 0
-
 function isNearBottom(el: HTMLElement): boolean {
   return el.scrollHeight - el.scrollTop - el.clientHeight <= NEAR_BOTTOM_PX
 }
 
-function onListScroll(): void {
-  const el = listEl.value
-  if (!el) {
+function schedulePendingObserve(): void {
+  if (pendingObserveFrame) {
     return
   }
-  stickToBottom.value = isNearBottom(el)
-}
-
-/** 滚到最新输出；force 用于用户刚发送时。待确认期间改为钉住确认区，避免被后续正文顶走。 */
-function scrollToBottom(force = false): void {
-  if (pendingTools.value.length && !force) {
-    return
-  }
-  if (!force && !stickToBottom.value) {
-    return
-  }
-  if (scrollRaf) {
-    cancelAnimationFrame(scrollRaf)
-  }
-  scrollRaf = requestAnimationFrame(() => {
-    scrollRaf = 0
-    if (pendingTools.value.length && !force) {
-      return
+  pendingObserveFrame = requestAnimationFrame(() => {
+    pendingObserveFrame = 0
+    if (pendingTools.value.length) {
+      observePendingCards()
     }
-    const el = listEl.value
-    if (!el) {
-      return
-    }
-    // 只动消息列表自己的 scrollTop。scrollIntoView 会把滚动冒到 window，关掉其它面板的右键。
-    el.scrollTop = el.scrollHeight
-    requestAnimationFrame(() => {
-      if (pendingTools.value.length && !force) {
-        return
-      }
-      if (!force && !stickToBottom.value) {
-        return
-      }
-      if (listEl.value) {
-        listEl.value.scrollTop = listEl.value.scrollHeight
-      }
-    })
   })
 }
 
-async function scrollToBottomAfterPaint(force = false): Promise<void> {
-  await nextTick()
-  scrollToBottom(force)
+function onListScroll(event: Event): void {
+  const el = event.target
+  if (!(el instanceof HTMLElement)) {
+    return
+  }
+  stickToBottom.value = isNearBottom(el)
+  if (pendingTools.value.length) {
+    schedulePendingObserve()
+  }
+}
+
+function readBlockSize(entry: ResizeObserverEntry): number {
+  const box = entry.borderBoxSize?.[0]?.blockSize
+  if (box && box > 0) {
+    return box
+  }
+  return entry.contentRect.height
+}
+
+function ensureRowObserver(): void {
+  if (rowObserver || typeof ResizeObserver === 'undefined') {
+    return
+  }
+  rowObserver = new ResizeObserver((entries) => {
+    const root = viewport()
+    const rootTop = root?.getBoundingClientRect().top ?? 0
+    let changed = false
+    let stickAdjust = 0
+    for (const entry of entries) {
+      const key = keyByEl.get(entry.target)
+      if (!key) {
+        continue
+      }
+      const next = Math.ceil(readBlockSize(entry))
+      if (next <= 0) {
+        continue
+      }
+      const prev = rowHeights.get(key)
+      const baseline = prev ?? ESTIMATE_ROW_PX
+      if (prev != null && Math.abs(prev - next) < 1) {
+        continue
+      }
+      rowHeights.set(key, next)
+      changed = true
+      if (!stickToBottom.value && root && entry.target instanceof Element) {
+        const bottom = entry.target.getBoundingClientRect().bottom
+        if (bottom <= rootTop + 1) {
+          stickAdjust += next - baseline
+        }
+      }
+    }
+    if (stickAdjust !== 0 && root) {
+      root.scrollTop += stickAdjust
+    }
+    if (changed) {
+      sizeEpoch.value += 1
+    }
+  })
+}
+
+/**
+ * 面板拉宽、页面缩放后，视口外的行还记着旧高度，滚动条会空出一段。
+ * 卸掉这些缓存，滚到时再按新宽度重测。正在显示的行留给行观察器。
+ */
+function dropOffscreenHeights(): void {
+  const root = viewport()
+  const scroll = root?.scrollTop ?? 0
+  let offset = 0
+  let deltaAbove = 0
+  const stale: string[] = []
+  for (const row of rows.value) {
+    const known = rowHeights.get(row.key)
+    const height = known ?? ESTIMATE_ROW_PX
+    if (known != null && !rowEls.has(row.key)) {
+      if (offset + height <= scroll + 1) {
+        deltaAbove += ESTIMATE_ROW_PX - height
+      }
+      stale.push(row.key)
+    }
+    offset += height
+  }
+  if (!stale.length) {
+    return
+  }
+  for (const key of stale) {
+    rowHeights.delete(key)
+  }
+  sizeEpoch.value += 1
+  if (root && deltaAbove !== 0 && !stickToBottom.value) {
+    const nextTop = root.scrollTop + deltaAbove
+    void nextTick(() => {
+      const el = viewport()
+      if (!el || stickToBottom.value) {
+        return
+      }
+      el.scrollTop = Math.max(0, nextTop)
+    })
+  }
+}
+
+function bindViewportWidth(): void {
+  const el = viewport()
+  if (!el || typeof ResizeObserver === 'undefined') {
+    return
+  }
+  widthObserver?.disconnect()
+  viewportWidth = el.clientWidth
+  widthObserver = new ResizeObserver(() => {
+    const next = el.clientWidth
+    if (next <= 0 || Math.abs(next - viewportWidth) < 1) {
+      return
+    }
+    viewportWidth = next
+    dropOffscreenHeights()
+  })
+  widthObserver.observe(el)
+}
+
+function bindRow(key: string, el: Element | null): void {
+  const prev = rowEls.get(key)
+  if (!(el instanceof HTMLElement)) {
+    if (prev) {
+      rowObserver?.unobserve(prev)
+      rowEls.delete(key)
+    }
+    return
+  }
+  if (prev === el) {
+    return
+  }
+  if (prev) {
+    rowObserver?.unobserve(prev)
+  }
+  rowEls.set(key, el)
+  keyByEl.set(el, key)
+  ensureRowObserver()
+  rowObserver?.observe(el)
+}
+
+/** 滚到最新输出。只改列表自己的 scrollTop，避免 scrollIntoView 冒到外层。 */
+function pinToBottom(force = false): void {
+  if (pinFrame) {
+    cancelAnimationFrame(pinFrame)
+    pinFrame = 0
+  }
+  pinAttempt = 0
+  const step = (): void => {
+    pinFrame = 0
+    if (pendingTools.value.length && !force) {
+      return
+    }
+    if (!force && !stickToBottom.value) {
+      return
+    }
+    const el = viewport()
+    if (!el || el.clientHeight <= 0) {
+      if (pinAttempt < 10) {
+        pinAttempt += 1
+        pinFrame = requestAnimationFrame(step)
+      }
+      return
+    }
+    const max = Math.max(0, el.scrollHeight - el.clientHeight)
+    const gap = max - el.scrollTop
+    if (gap > 2) {
+      el.scrollTop = max
+    }
+    if (gap > 2 && pinAttempt < 8) {
+      pinAttempt += 1
+      pinFrame = requestAnimationFrame(step)
+    }
+  }
+  void nextTick(() => {
+    pinFrame = requestAnimationFrame(step)
+  })
 }
 
 watch(
@@ -312,16 +552,65 @@ watch(
       return
     }
     stickToBottom.value = true
-    void scrollToBottomAfterPaint(true)
+    pinToBottom(true)
+  },
+)
+
+watch(
+  () => aiStore.activeConversationId,
+  () => {
+    rowHeights.clear()
+    rowRefBinders.clear()
+    sizeEpoch.value += 1
+    stickToBottom.value = true
+    pinToBottom(true)
+    void nextTick(() => bindViewportWidth())
   },
 )
 
 watch(
   () => [aiStore.streamingText.length, aiStore.displayTools.length, aiStore.isStreaming] as const,
   () => {
-    void scrollToBottomAfterPaint(false)
+    pinToBottom(false)
   },
 )
+
+watch(sizeEpoch, () => {
+  if (stickToBottom.value) {
+    pinToBottom(false)
+  }
+})
+
+watch(
+  () => [appStore.themeId, appStore.theme] as const,
+  () => {
+    dropOffscreenHeights()
+  },
+)
+
+watch(showTranscript, (shown) => {
+  if (!shown) {
+    widthObserver?.disconnect()
+    widthObserver = null
+    viewportWidth = 0
+    return
+  }
+  void nextTick(() => bindViewportWidth())
+}, { immediate: true })
+
+watch(rows, (list) => {
+  const live = new Set(list.map((row) => row.key))
+  for (const key of rowHeights.keys()) {
+    if (!live.has(key)) {
+      rowHeights.delete(key)
+    }
+  }
+  for (const key of rowRefBinders.keys()) {
+    if (!live.has(key)) {
+      rowRefBinders.delete(key)
+    }
+  }
+})
 
 watch(
   () => aiStore.runStatus,
@@ -331,7 +620,7 @@ watch(
         void nextTick(() => scrollPendingIntoView())
         return
       }
-      void scrollToBottomAfterPaint(true)
+      pinToBottom(true)
     }
   },
 )
@@ -366,21 +655,32 @@ async function onPendingDecide(
 }
 
 onMounted(() => {
-  listEl.value?.addEventListener('scroll', onListScroll, { passive: true })
   if (pendingKey.value) {
     observePendingCards()
+  }
+  if (showTranscript.value) {
+    pinToBottom(true)
   }
 })
 
 onBeforeUnmount(() => {
-  listEl.value?.removeEventListener('scroll', onListScroll)
   disconnectPendingObserver()
+  rowObserver?.disconnect()
+  rowObserver = null
+  widthObserver?.disconnect()
+  widthObserver = null
+  rowEls.clear()
   if (revealTimer) {
     window.clearTimeout(revealTimer)
     revealTimer = 0
   }
-  if (scrollRaf) {
-    cancelAnimationFrame(scrollRaf)
+  if (pinFrame) {
+    cancelAnimationFrame(pinFrame)
+    pinFrame = 0
+  }
+  if (pendingObserveFrame) {
+    cancelAnimationFrame(pendingObserveFrame)
+    pendingObserveFrame = 0
   }
 })
 
@@ -405,7 +705,12 @@ function focusAttachment(id: string): void {
 
 <template>
   <div class="nm-ai-messages-wrap">
-  <div ref="listEl" class="nm-ai-messages rs-native-scrollbar">
+  <div
+    v-if="!showTranscript"
+    ref="fallbackEl"
+    class="nm-ai-messages nm-ai-messages--plain rs-native-scrollbar"
+    @scroll="onListScroll"
+  >
     <div v-if="aiStore.loading && !aiStore.messages.length" class="nm-ai-messages__welcome">
       <span class="nm-ai-messages__spinner" aria-hidden="true" />
       <p class="nm-ai-messages__welcome-desc">{{ t('ai.loading') }}</p>
@@ -446,65 +751,89 @@ function focusAttachment(id: string): void {
       <p class="nm-ai-messages__welcome-desc">{{ t('ai.empty') }}</p>
     </div>
 
-    <template v-else>
-      <AiMessageItem
-        v-for="(m, index) in displayMessages"
-        :key="m.messageId"
-        class="nm-ai-messages__item"
-        :class="{ 'nm-ai-messages__item--continued': continuesAssistant(index) }"
-        :message-id="m.messageId"
-        :speaker="m.messageRole"
-        :content="m.messageContent"
-        :attachments="m.attachments"
-        :images="m.images"
-        :files="m.files"
-        :created-at="m.createdAt"
-        :parsed="m.parsed"
-        :continued="continuesAssistant(index)"
-        :tools-before="placementFor(m.messageId).before"
-        :tools-after="placementFor(m.messageId).after"
-        :open-target="m.openTarget"
-        @focus-attachment="focusAttachment"
-      />
-
-      <details v-if="showCompare" class="nm-ai-messages__compare">
-        <summary>{{ t('ai.comparePrevious') }}</summary>
-        <AiMessageItem
-          speaker="assistant"
-          :content="aiStore.previousAssistantContent || ''"
-          :parsed="parseAssistantContent(aiStore.previousAssistantContent || '')"
-          :open-target="streamingOpenTarget"
-        />
-      </details>
-
-      <AiMessageItem
-        v-if="showStreamingBubble"
-        class="nm-ai-messages__item"
-        :class="{ 'nm-ai-messages__item--continued': streamingContinued }"
-        speaker="assistant"
-        :content="aiStore.streamingText"
-        :parsed="streamingParsed"
-        :continued="streamingContinued"
-        :tools-before="streamingTools"
-        :open-target="streamingOpenTarget"
-        streaming
-      />
-
-    </template>
-
     <div v-if="showCancelled" class="nm-ai-messages__status" role="status">
       <RsIcon name="ban" :size="14" />
       <span>{{ t('ai.cancelled') }}</span>
     </div>
 
-    <div v-if="aiStore.runError || aiStore.error" class="nm-ai-messages__error" role="alert">
+    <div v-if="errorText" class="nm-ai-messages__error" role="alert">
       <RsIcon name="circle-alert" :size="14" />
       <details class="nm-ai-messages__error-details">
         <summary>{{ t('ai.errorTitle') }}</summary>
-        <pre>{{ aiStore.runError || aiStore.error }}</pre>
+        <pre>{{ errorText }}</pre>
       </details>
     </div>
   </div>
+
+  <RsVirtualList
+    v-else
+    ref="listRef"
+    :key="aiStore.activeConversationId ?? 'draft'"
+    class="nm-ai-messages rs-native-scrollbar"
+    :items="rows"
+    :item-size="rowSize"
+    :height="0"
+    :overscan="ROW_OVERSCAN"
+    :bordered="false"
+    radius="none"
+    :item-key="rowKey"
+    :aria-label="t('ai.title')"
+    @scroll="onListScroll"
+  >
+    <template #default="{ item, index }">
+      <div
+        :ref="rowRef(item.key)"
+        class="nm-ai-row"
+        :class="{ 'nm-ai-row--tight': tightBelow(index) }"
+        @click.stop
+      >
+        <AiMessageItem
+          v-if="item.kind === 'message'"
+          :message-id="item.messageId"
+          :speaker="item.speaker"
+          :content="item.content"
+          :created-at="item.createdAt"
+          :continued="continuesAssistant(index)"
+          :tools-before="item.toolsBefore"
+          :tools-after="item.toolsAfter"
+          :open-target="item.openTarget"
+          @focus-attachment="focusAttachment"
+        />
+
+        <details v-else-if="item.kind === 'compare'" class="nm-ai-messages__compare">
+          <summary>{{ t('ai.comparePrevious') }}</summary>
+          <AiMessageItem
+            speaker="assistant"
+            :content="aiStore.previousAssistantContent || ''"
+            :open-target="streamingOpenTarget"
+          />
+        </details>
+
+        <AiMessageItem
+          v-else-if="item.kind === 'streaming'"
+          speaker="assistant"
+          :content="aiStore.streamingText"
+          :continued="streamingContinued"
+          :tools-before="streamingTools"
+          :open-target="streamingOpenTarget"
+          streaming
+        />
+
+        <div v-else-if="item.kind === 'cancelled'" class="nm-ai-messages__status" role="status">
+          <RsIcon name="ban" :size="14" />
+          <span>{{ t('ai.cancelled') }}</span>
+        </div>
+
+        <div v-else-if="item.kind === 'error'" class="nm-ai-messages__error" role="alert">
+          <RsIcon name="circle-alert" :size="14" />
+          <details class="nm-ai-messages__error-details">
+            <summary>{{ t('ai.errorTitle') }}</summary>
+            <pre>{{ item.text }}</pre>
+          </details>
+        </div>
+      </div>
+    </template>
+  </RsVirtualList>
 
   <aside v-if="showPendingBar" class="nm-ai-pending-bar" :aria-label="t('ai.toolPending')">
     <div
@@ -533,9 +862,11 @@ function focusAttachment(id: string): void {
   min-height: 0;
   display: flex;
   flex-direction: column;
+  background: var(--nm-editor-bg);
+  color: var(--rs-text);
 }
 
-.nm-ai-messages {
+.nm-ai-messages--plain {
   flex: 1;
   min-height: 0;
   overflow: auto;
@@ -544,10 +875,30 @@ function focusAttachment(id: string): void {
   flex-direction: column;
   gap: 22px;
   scroll-behavior: auto;
+  background: var(--nm-editor-bg);
+  color: var(--rs-text);
 }
 
-.nm-ai-messages__item--continued {
-  margin-top: -12px;
+.nm-ai-messages-wrap :deep(.rs-virtual-list.nm-ai-messages) {
+  padding: 18px 16px 8px;
+  overflow-anchor: none;
+  background: var(--nm-editor-bg);
+  color: var(--rs-text);
+  --rs-virtual-list-bg: var(--nm-editor-bg);
+  --rs-virtual-list-fg: var(--rs-text);
+  --rs-virtual-list-border: transparent;
+  --rs-virtual-list-active-bg: transparent;
+  --rs-virtual-list-accent-width: 0;
+}
+
+.nm-ai-row {
+  box-sizing: border-box;
+  min-width: 0;
+  padding-bottom: 22px;
+}
+
+.nm-ai-row--tight {
+  padding-bottom: 10px;
 }
 
 .nm-ai-pending-bar {

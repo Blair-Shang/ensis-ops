@@ -83,6 +83,26 @@ const displayName = computed(
 const displayStatus = computed((): AiToolStatus => {
   return props.status || parsed.value?.status || 'ok'
 })
+
+/** 停止/拒绝写进 error 的内部词，不直接摆到卡片上。 */
+function toolSentinel(raw: string): 'cancelled' | 'rejected' | 'stale' | null {
+  const text = raw.trim().toLowerCase()
+  if (text === 'cancelled' || text === 'canceled') return 'cancelled'
+  if (text === 'rejected') return 'rejected'
+  if (text === 'stale pending') return 'stale'
+  return null
+}
+
+const sentinel = computed(() => toolSentinel(props.error || parsed.value?.error || ''))
+
+const tone = computed(() => (sentinel.value === 'cancelled' ? 'stopped' : displayStatus.value))
+
+const toolIcon = computed(() => {
+  if (sentinel.value === 'cancelled') return 'ban'
+  if (displayStatus.value === 'running') return 'loader-circle'
+  if (displayStatus.value === 'error' || displayStatus.value === 'pending') return 'circle-alert'
+  return 'wrench'
+})
 const argsText = computed(() => {
   if (props.argsSummary) {
     return props.argsSummary
@@ -96,6 +116,9 @@ const argsText = computed(() => {
   return props.source && !parsed.value ? props.source : ''
 })
 const resultText = computed(() => {
+  if (sentinel.value === 'cancelled') return t('ai.toolStopped')
+  if (sentinel.value === 'rejected') return t('ai.toolRejected')
+  if (sentinel.value === 'stale') return ''
   if (props.error || parsed.value?.error) {
     return props.error || parsed.value?.error || ''
   }
@@ -112,6 +135,8 @@ const resultText = computed(() => {
 })
 
 const statusLabel = computed(() => {
+  if (sentinel.value === 'cancelled') return t('ai.toolStopped')
+  if (sentinel.value === 'rejected') return t('ai.toolRejected')
   const s = displayStatus.value
   if (s === 'running') return t('ai.toolRunning')
   if (s === 'error') return t('ai.toolFailed')
@@ -130,11 +155,24 @@ const showConfirm = computed(
   () => props.confirmable && displayStatus.value === 'pending',
 )
 
+const SCOPE_MARK = ' · '
+
+/** 摘要以「连接名 · 参数」开头时，连接名单独放在工具名旁边。 */
+const scopedArgs = computed(() => {
+  const raw = argsText.value.replace(/\s+/g, ' ').trim()
+  const mark = raw.indexOf(SCOPE_MARK)
+  if (mark > 0 && mark <= 48 && !raw.startsWith('{') && !raw.startsWith('[')) {
+    return { scope: raw.slice(0, mark), body: raw.slice(mark + SCOPE_MARK.length) }
+  }
+  return { scope: '', body: raw }
+})
+
 /** 收起时放在标题右侧的一行摘要：失败看错误，其余看参数。 */
 const lineHint = computed(() => {
-  const raw = (displayStatus.value === 'error' ? resultText.value : argsText.value)
-    .replace(/\s+/g, ' ')
-    .trim()
+  if (sentinel.value) return ''
+  const raw = (
+    displayStatus.value === 'error' ? resultText.value.replace(/\s+/g, ' ').trim() : scopedArgs.value.body
+  ).trim()
   if (!raw) {
     return ''
   }
@@ -153,24 +191,17 @@ async function onReject(): Promise<void> {
 </script>
 
 <template>
-  <div class="nm-ai-tool" :class="`nm-ai-tool--${displayStatus}`">
+  <div class="nm-ai-tool" :class="`nm-ai-tool--${tone}`">
     <button type="button" class="nm-ai-tool__head" @click="open = !open">
       <span class="nm-ai-tool__icon" aria-hidden="true">
         <RsIcon
-          :name="
-            displayStatus === 'running'
-              ? 'loader-circle'
-              : displayStatus === 'error'
-                ? 'circle-alert'
-                : displayStatus === 'pending'
-                  ? 'circle-alert'
-                  : 'wrench'
-          "
+          :name="toolIcon"
           :size="13"
           :class="{ 'is-spin': displayStatus === 'running' }"
         />
       </span>
       <span class="nm-ai-tool__title">{{ displayName }}</span>
+      <span v-if="scopedArgs.scope" class="nm-ai-tool__scope">{{ scopedArgs.scope }}</span>
       <span v-if="!open && lineHint" class="nm-ai-tool__line">{{ lineHint }}</span>
       <span v-if="riskLabel" class="nm-ai-tool__risk">{{ riskLabel }}</span>
       <span class="nm-ai-tool__status">{{ statusLabel }}</span>
@@ -179,9 +210,9 @@ async function onReject(): Promise<void> {
     <div v-if="open" class="nm-ai-tool__body">
       <div v-if="argsText" class="nm-ai-tool__section">
         <div class="nm-ai-tool__label">{{ t('ai.toolArgs') }}</div>
-        <pre>{{ argsText }}</pre>
+        <pre>{{ scopedArgs.body || argsText }}</pre>
       </div>
-      <div v-if="resultText" class="nm-ai-tool__section">
+      <div v-if="resultText && !sentinel" class="nm-ai-tool__section">
         <div class="nm-ai-tool__label">
           {{ displayStatus === 'error' ? t('ai.toolError') : t('ai.toolResult') }}
         </div>
@@ -210,6 +241,10 @@ async function onReject(): Promise<void> {
 
 .nm-ai-tool--error {
   border-color: color-mix(in srgb, var(--rs-danger) 35%, var(--rs-border-subtle));
+}
+
+.nm-ai-tool--stopped {
+  border-color: var(--rs-border-subtle);
 }
 
 .nm-ai-tool--pending {
@@ -266,9 +301,9 @@ async function onReject(): Promise<void> {
 }
 
 .nm-ai-tool__title {
-  flex: 1;
+  flex: 0 1 auto;
   min-width: 4.5rem;
-  max-width: 100%;
+  max-width: 46%;
   font-size: var(--nm-font-caption);
   font-weight: var(--rs-font-weight-semibold);
   overflow: hidden;
@@ -276,8 +311,19 @@ async function onReject(): Promise<void> {
   white-space: nowrap;
 }
 
+.nm-ai-tool__scope {
+  flex: 0 1 auto;
+  min-width: 0;
+  max-width: 34%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: var(--nm-font-caption);
+  color: var(--rs-text-secondary);
+}
+
 .nm-ai-tool__line {
-  flex: 2;
+  flex: 1;
   min-width: 0;
   overflow: hidden;
   text-overflow: ellipsis;

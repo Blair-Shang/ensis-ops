@@ -9,6 +9,7 @@ import { materializeVariableValue } from '../../utils/variable-dynamic'
 import type { ApiVariableScope } from '../../utils/folder-tree'
 import { encodeGraphQL } from '../graphql/body'
 import { applyAuthHeaders, authQueryParam } from './http-auth'
+import { splitRequestUrl } from './query-params'
 
 const ENV_TOKEN = /\{\{\s*([a-zA-Z0-9_]+)\s*\}\}/g
 
@@ -184,8 +185,14 @@ export function resolveRequest(
   const interpolate = (text: string) => interpolateVariables(text, values)
 
   let url = interpolate(req.url.trim())
-  for (const row of enabledKv(req.params)) {
-    url = appendQuery(url, row.key, interpolate(row.value))
+  const paramRows = enabledKv(req.params)
+  if (paramRows.length) {
+    const parts = splitRequestUrl(url)
+    url = parts.base
+    for (const row of paramRows) {
+      url = appendQuery(url, row.key, interpolate(row.value))
+    }
+    url += parts.hash
   }
   const authQuery = authQueryParam(req, interpolate)
   if (authQuery) {

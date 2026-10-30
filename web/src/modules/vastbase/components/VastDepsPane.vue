@@ -1,22 +1,16 @@
 <script setup lang="ts">
-import {
-  RsButton,
-  RsEmpty,
-  RsLoading,
-  RsTable,
-  RsTabs,
-  useRsToast,
-} from 'ensis-ui'
+import { RsEmpty, RsLoading, RsTable, RsTabs, useRsToast } from 'ensis-ui'
 import type { RsContextMenuItem, RsTabItem, RsTableColumn } from 'ensis-ui'
-import { computed, inject, ref, watch } from 'vue'
+import { computed, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { connectionApi, vastbaseApi } from '@/api'
+import SqlIdeToolbar from '@/modules/database/components/SqlIdeToolbar.vue'
+import type { SqlIdeToolbarItem } from '@/modules/database/types/sql-ide-toolbar'
 import type { VastDependencyInfo } from '@/api/types/vastbase'
 import { useConnectionNavigation } from '@/modules/ops/composables/useConnectionNavigation'
 import type { ConnResourcePath } from '@/modules/ops/conn-tree/types'
 import type { ConnItem } from '@/modules/ops/types'
 import type { VastSessionTab } from '@/modules/vastbase/pane-registry'
-import { VAST_SESSION_HEADER_ACTIONS_KEY } from '@/modules/vastbase/session-chrome'
 import { qualifiedName } from '@/modules/vastbase/sql-seed'
 
 const props = defineProps<{
@@ -29,6 +23,7 @@ const props = defineProps<{
   routineKind?: 'function' | 'procedure'
   args?: string
   oid?: number
+  sessionLabel?: string
   active: boolean
 }>()
 
@@ -36,8 +31,18 @@ const { t } = useI18n()
 const toast = useRsToast()
 const nav = useConnectionNavigation()
 
-const headerActionsEl = inject(VAST_SESSION_HEADER_ACTIONS_KEY, ref<HTMLElement | null>(null))
-const actionsHost = computed(() => headerActionsEl.value)
+const depsToolbar = computed(
+  (): SqlIdeToolbarItem[] => [
+    {
+      key: 'refresh',
+      icon: 'refresh-cw',
+      title: t('modules.vastbase.structure.refresh'),
+      align: 'trail',
+      loading: loading.value,
+      disabled: !scopeOk.value,
+    },
+  ],
+)
 
 const loading = ref(false)
 const deps = ref<VastDependencyInfo[]>([])
@@ -399,18 +404,14 @@ watch(
 
 <template>
   <div class="nm-vast-deps">
-    <Teleport v-if="actionsHost" :to="actionsHost">
-      <RsButton
-        variant="ghost"
-        size="sm"
-        icon="refresh-cw"
-        :loading="loading"
-        :disabled="!scopeOk"
-        @click="loadDeps"
-      >
-        {{ t('modules.vastbase.structure.refresh') }}
-      </RsButton>
-    </Teleport>
+    <SqlIdeToolbar
+      :label="t('modules.vastbase.session.tabDeps')"
+      identity-icon="git-fork"
+      :identity="scopeLabel || sessionLabel || t('modules.vastbase.session.tabDeps')"
+      :identity-title="sessionLabel"
+      :items="depsToolbar"
+      @action="loadDeps"
+    />
 
     <div class="nm-vast-deps__toolbar">
       <RsTabs

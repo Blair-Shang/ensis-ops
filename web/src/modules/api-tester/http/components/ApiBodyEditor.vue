@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { RsCodeEditor, RsTabs, type RsTabItem } from 'ensis-ui'
+import { RsCodeEditor, RsSelect, type RsSelectOption } from 'ensis-ui'
 import { computed } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useAppStore } from '@/stores/app'
@@ -15,7 +15,7 @@ const props = defineProps<{
 const { t } = useI18n()
 const appStore = useAppStore()
 
-const modeOptions = computed<RsTabItem[]>(() => [
+const modeOptions = computed<RsSelectOption[]>(() => [
   { value: 'none', label: t('modules.api.bodyNone') },
   { value: 'json', label: 'JSON' },
   { value: 'text', label: 'Text' },
@@ -58,18 +58,21 @@ const editorLanguage = computed(() => {
 
 <template>
   <div class="nm-api-body">
-    <RsTabs
-      v-model="bodyMode"
-      class="nm-api-body__mode"
-      :items="modeOptions"
-      size="sm"
-      variant="segmented"
-      panelless
-      borderless
-      content-gap="none"
-    />
+    <div class="nm-api-body__bar">
+      <RsSelect
+        v-model="bodyMode"
+        class="nm-api-body__mode"
+        :options="modeOptions"
+        size="sm"
+        radius="sm"
+        :searchable="false"
+        :clearable="false"
+        :filter-option="false"
+        :aria-label="t('modules.api.body')"
+      />
+    </div>
 
-    <div v-if="bodyMode === 'none'" class="nm-api-body__empty">{{ t('modules.api.bodyNoneHint') }}</div>
+    <div v-if="bodyMode === 'none'" class="nm-api-body__idle">{{ t('modules.api.bodyNoneHint') }}</div>
 
     <ApiKvEditor
       v-else-if="bodyMode === 'urlencoded'"
@@ -108,15 +111,37 @@ const editorLanguage = computed(() => {
   overflow: hidden;
 }
 
-.nm-api-body__mode {
+.nm-api-body__bar {
+  display: flex;
   flex-shrink: 0;
-  padding: var(--rs-space-sm) var(--rs-space-md) 0;
+  align-items: center;
+  min-height: 2.25rem;
+  padding-inline: var(--rs-space-md);
+  border-bottom: 1px solid var(--rs-border-subtle);
+}
+
+.nm-api-body__mode {
+  width: 11rem;
 }
 
 .nm-api-body__empty {
   padding: var(--rs-space-md);
   color: var(--rs-muted);
   font-size: var(--rs-font-size-xs);
+}
+
+.nm-api-body__idle {
+  display: flex;
+  flex: 1;
+  align-items: center;
+  justify-content: center;
+  color: var(--rs-muted);
+  font-size: var(--rs-font-size-xs);
+  background:
+    radial-gradient(ellipse at center, color-mix(in srgb, var(--rs-primary) 10%, transparent), transparent 70%),
+    linear-gradient(color-mix(in srgb, var(--rs-text) 4%, transparent) 1px, transparent 1px),
+    linear-gradient(90deg, color-mix(in srgb, var(--rs-text) 4%, transparent) 1px, transparent 1px);
+  background-size: auto, 22px 22px, 22px 22px;
 }
 
 .nm-api-body :deep(.rs-code-editor) {

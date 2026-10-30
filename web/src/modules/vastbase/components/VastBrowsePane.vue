@@ -6,12 +6,8 @@ import {
   RsCodeEditor,
   RsConfirmDialog,
   RsEmpty,
-  RsIcon,
   RsLoading,
-  RsPagination,
   RsPopover,
-  RsTable,
-  RsToolbar,
   useRsToast,
 } from 'ensis-ui'
 import type { RsContextMenuItem, RsCodeEditorSqlConfig, RsTableColumn } from 'ensis-ui'
@@ -36,14 +32,16 @@ import {
 } from '@/modules/vastbase/utils/browse-io'
 import {
   alignForValueType,
-  BrowseCellEditorDialog,
+  BrowseDataGrid,
+  BrowseDataShell,
+  BrowseIoMenu,
   formatBrowseCellValue,
   formatRowsAsTsv,
   isBrowseFilterCompletionOpen,
   mapPasteToColumnRecords,
   parseClipboardMatrix,
   resolveSqlValueType,
-  useCellViewDialog,
+  type BrowseDataShellLabels,
 } from '@/modules/database'
 import { parseEditValue, toSqlLiteral } from '@/modules/vastbase/utils/sql-literal'
 import { openVastbaseDataTask } from '@/modules/vastbase/data-tasks'
@@ -62,15 +60,6 @@ const props = defineProps<{
 const { t } = useI18n()
 const toast = useRsToast()
 const nav = useConnectionNavigation()
-
-const {
-  open: cellViewOpen,
-  draft: cellViewDraft,
-  title: cellViewTitle,
-  labels: cellViewLabels,
-  openCell: openCellView,
-  copyFull: copyCellFull,
-} = useCellViewDialog()
 
 const page = ref(1)
 const pageSize = ref(100)
@@ -117,11 +106,6 @@ const canInsert = computed(() => tableColumns.value.length > 0)
 const scopeLabel = computed(() => {
   const parts = [props.database, props.schema, props.table].filter(Boolean)
   return parts.length ? parts.join('.') : t('modules.vastbase.session.connectionRoot')
-})
-
-const identityTitle = computed(() => {
-  const bits = [props.sessionLabel, scopeLabel.value].filter(Boolean)
-  return bits.join(' · ')
 })
 
 const scopeKey = computed(() =>
@@ -1223,6 +1207,79 @@ async function exportFullTableCsv(): Promise<void> {
   })
 }
 
+const shellLabels = computed(
+  (): BrowseDataShellLabels => ({
+    toolbarLabel: t('modules.vastbase.browse.toolbarLabel'),
+    featureLabel: t('modules.vastbase.session.tabBrowse'),
+    insert: t('modules.vastbase.browse.insertRow'),
+    insertTooltip: t('modules.vastbase.browse.insertRowTooltip'),
+    delete: t('modules.vastbase.browse.deleteRows'),
+    deleteTooltip: t('modules.vastbase.browse.deleteRows'),
+    import: t('modules.vastbase.browse.import'),
+    importTooltip: t('modules.vastbase.browse.importTooltip'),
+    export: t('modules.vastbase.browse.export'),
+    exportTooltip: t('modules.vastbase.browse.exportTooltip'),
+    filter: t('modules.vastbase.browse.filter'),
+    filterToggle: t('modules.vastbase.browse.filterToggle'),
+    refresh: t('modules.vastbase.structure.refresh'),
+    needTable: t('modules.vastbase.structure.needTable'),
+    empty: t('modules.vastbase.browse.empty'),
+  }),
+)
+
+const importMenuItems = computed(() =>
+  ioFormats.map((fmt) => ({
+    key: fmt,
+    label: formatLabel(fmt),
+    icon: formatIcon(fmt),
+    disabled: !canInsert.value || saving.value,
+  })),
+)
+
+const exportMenuItems = computed(() => [
+  ...ioFormats.map((fmt) => ({
+    key: fmt,
+    label: formatLabel(fmt),
+    icon: formatIcon(fmt),
+    disabled: rawRows.value.length === 0 || saving.value,
+  })),
+  {
+    key: 'fullCsv',
+    label: t('modules.vastbase.browse.formatCsvFull'),
+    icon: 'database',
+    disabled: !props.profileId || !props.database || !props.schema || !props.table || saving.value,
+  },
+])
+
+function onImportMenuSelect(key: string): void {
+  if (ioFormats.includes(key as BrowseDataFormat)) void triggerImport(key as BrowseDataFormat)
+}
+
+function onExportMenuSelect(key: string): void {
+  if (key === 'fullCsv') {
+    void exportFullTableCsv()
+    return
+  }
+  if (ioFormats.includes(key as BrowseDataFormat)) void exportData(key as BrowseDataFormat)
+}
+
+const statusHint = computed(() => {
+  if (!lastResult.value) return ''
+  if (canEdit.value || hasNewRow.value) return t('modules.vastbase.browse.editHint')
+  return t('modules.vastbase.browse.noPk')
+})
+
+const importDisabled = computed(() => !canInsert.value || saving.value)
+const exportDisabled = computed(
+  () => !props.profileId && (!lastResult.value || rawRows.value.length === 0),
+)
+const statusWarn = computed(
+  () => Boolean(lastResult.value) && !canEdit.value && !hasNewRow.value,
+)
+const deleteCount = computed(
+  () => selectedRowKeys.value.filter((k) => !String(k).startsWith('new-')).length || 1,
+)
+
 watch(
   () => scopeKey.value,
   () => {
@@ -1289,443 +1346,172 @@ watch(ddlMenuOpen, (open) => {
 </script>
 
 <template>
-  <div class="nm-vast-browse" tabindex="-1" @keydown="onBrowseKeydown">
-    <RsToolbar
-      class="nm-vast-browse__toolbar"
-      size="md"
-      elevated
-      :label="t('modules.vastbase.browse.toolbarLabel')"
-    >
-      <template #left>
-        <div class="nm-vast-browse__identity" :title="identityTitle">
-          <RsIcon name="vastbase" :size="15" class="nm-vast-browse__brand" />
-          <span v-if="sessionLabel" class="nm-vast-browse__session">{{ sessionLabel }}</span>
-          <span class="nm-vast-browse__scope">{{ scopeLabel }}</span>
-          <span class="nm-vast-browse__feature">
-            <RsIcon name="table" :size="12" />
-            {{ t('modules.vastbase.session.tabBrowse') }}
-          </span>
-        </div>
-      </template>
-      <template #right>
+  <BrowseDataShell
+    v-model:page="page"
+    v-model:page-size="pageSize"
+    v-model:filter-open="filterOpen"
+    v-model:import-menu-open="importMenuOpen"
+    v-model:export-menu-open="exportMenuOpen"
+    class="nm-vast-browse"
+    :labels="shellLabels"
+    brand-icon="vastbase"
+    :session-label="sessionLabel || 'Vastbase'"
+    :scope-label="scopeLabel"
+    :loading="loading"
+    :saving="saving"
+    :can-insert="canInsert"
+    :can-delete="canDeleteSelection"
+    :import-disabled="importDisabled"
+    :export-disabled="exportDisabled"
+    :has-active-filter="Boolean(appliedWhereSql)"
+    :has-scope="scopeOk"
+    :has-result="Boolean(lastResult)"
+    :page-size-options="pageSizeOptions"
+    :total-rows="totalRows"
+    :last-data-sql="lastDataSql"
+    :status-meta="statusMeta"
+    :status-hint="statusHint"
+    :status-warn="statusWarn"
+    @insert="openInsert"
+    @delete="requestDelete"
+    @refresh="refresh"
+    @keydown="onBrowseKeydown"
+  >
+    <template #import-menu>
+      <BrowseIoMenu :items="importMenuItems" @select="onImportMenuSelect" />
+    </template>
+    <template #export-menu>
+      <BrowseIoMenu :items="exportMenuItems" @select="onExportMenuSelect" />
+    </template>
+
+    <template #toolbar-extra>
+      <RsPopover v-model:open="ddlMenuOpen" side="bottom" align="end" :side-offset="4" width="auto">
         <RsButton
           variant="ghost"
           size="sm"
-          icon="plus"
-          :disabled="!canInsert || saving"
-          :tooltip="t('modules.vastbase.browse.insertRowTooltip')"
-          @click="openInsert"
+          icon="file-code"
+          :disabled="!schema || !table || !sessionId"
+          :tooltip="t('modules.vastbase.browse.ddlTooltip')"
         >
-          {{ t('modules.vastbase.browse.insertRow') }}
+          {{ t('modules.vastbase.browse.ddl') }}
         </RsButton>
-        <RsButton
-          variant="ghost"
-          size="sm"
-          icon="trash-2"
-          :disabled="!canDeleteSelection || saving"
-          :tooltip="t('modules.vastbase.browse.deleteRows')"
-          @click="requestDelete"
-        >
-          {{ t('modules.vastbase.browse.deleteRows') }}
-        </RsButton>
-        <RsPopover
-          v-model:open="importMenuOpen"
-          side="bottom"
-          align="end"
-          :side-offset="4"
-          width="auto"
-        >
-          <RsButton
-            variant="ghost"
-            size="sm"
-            icon="upload"
-            :disabled="!canInsert || saving"
-            :tooltip="t('modules.vastbase.browse.importTooltip')"
-          >
-            {{ t('modules.vastbase.browse.import') }}
-          </RsButton>
-          <template #content>
-            <div class="nm-vast-browse__io-menu">
-              <button
-                v-for="fmt in ioFormats"
-                :key="`import-${fmt}`"
-                type="button"
-                class="nm-vast-browse__io-item"
-                :disabled="!canInsert || saving"
-                @pointerdown.stop.prevent="void triggerImport(fmt)"
-              >
-                <RsIcon :name="formatIcon(fmt)" :size="14" />
-                <span>{{ formatLabel(fmt) }}</span>
-              </button>
-            </div>
-          </template>
-        </RsPopover>
-        <RsPopover
-          v-model:open="exportMenuOpen"
-          side="bottom"
-          align="end"
-          :side-offset="4"
-          width="auto"
-        >
-          <RsButton
-            variant="ghost"
-            size="sm"
-            icon="download"
-            :disabled="!props.profileId && (!lastResult || rawRows.length === 0)"
-            :tooltip="t('modules.vastbase.browse.exportTooltip')"
-          >
-            {{ t('modules.vastbase.browse.export') }}
-          </RsButton>
-          <template #content>
-            <div class="nm-vast-browse__io-menu">
-              <button
-                v-for="fmt in ioFormats"
-                :key="`export-${fmt}`"
-                type="button"
-                class="nm-vast-browse__io-item"
-                :disabled="rawRows.length === 0"
-                @pointerdown.stop.prevent="void exportData(fmt)"
-              >
-                <RsIcon :name="formatIcon(fmt)" :size="14" />
-                <span>{{ formatLabel(fmt) }}</span>
-              </button>
-              <button
-                type="button"
-                class="nm-vast-browse__io-item"
-                :disabled="!props.profileId || !props.database || !props.schema || !props.table"
-                @pointerdown.stop.prevent="void exportFullTableCsv()"
-              >
-                <RsIcon name="database" :size="14" />
-                <span>{{ t('modules.vastbase.browse.formatCsvFull') }}</span>
-              </button>
-            </div>
-          </template>
-        </RsPopover>
-        <RsPopover
-          v-model:open="ddlMenuOpen"
-          side="bottom"
-          align="end"
-          :side-offset="4"
-          width="auto"
-        >
-          <RsButton
-            variant="ghost"
-            size="sm"
-            icon="file-code"
-            :disabled="!schema || !table || !sessionId"
-            :tooltip="t('modules.vastbase.browse.ddlTooltip')"
-          >
-            {{ t('modules.vastbase.browse.ddl') }}
-          </RsButton>
-          <template #content>
-            <div class="nm-vast-browse__ddl-pop">
-              <div class="nm-vast-browse__ddl-head">
-                <div class="nm-vast-browse__ddl-title">
-                  <span>{{ t('modules.vastbase.session.tabDdl') }}</span>
-                  <span v-if="ddlObjectType" class="nm-vast-browse__ddl-type">{{ ddlObjectType }}</span>
-                </div>
-                <div class="nm-vast-browse__ddl-actions">
-                  <RsButton
-                    variant="ghost"
-                    size="sm"
-                    icon="copy"
-                    :disabled="!ddlText || ddlLoading"
-                    :tooltip="t('modules.vastbase.ddl.copy')"
-                    @click="copyBrowseDdl"
-                  >
-                    {{ t('modules.vastbase.ddl.copy') }}
-                  </RsButton>
-                  <RsButton
-                    v-if="canOpenDesign"
-                    variant="ghost"
-                    size="sm"
-                    icon="pencil"
-                    :disabled="!schema || !table || !profileId"
-                    :tooltip="t('modules.vastbase.browse.openDesignTooltip')"
-                    @click="openDesignTable"
-                  >
-                    {{ t('modules.vastbase.browse.openDesign') }}
-                  </RsButton>
-                  <RsButton
-                    variant="ghost"
-                    size="sm"
-                    icon="external-link"
-                    :disabled="!schema || !table || !profileId"
-                    :tooltip="t('modules.vastbase.browse.openDdlTooltip')"
-                    @click="openDdlTab"
-                  >
-                    {{ t('modules.vastbase.browse.openDdl') }}
-                  </RsButton>
-                </div>
+        <template #content>
+          <div class="nm-vast-browse__ddl-pop">
+            <div class="nm-vast-browse__ddl-head">
+              <div class="nm-vast-browse__ddl-title">
+                <span>{{ t('modules.vastbase.session.tabDdl') }}</span>
+                <span v-if="ddlObjectType" class="nm-vast-browse__ddl-type">{{ ddlObjectType }}</span>
               </div>
-              <RsLoading v-if="ddlLoading && !ddlText" block class="nm-vast-browse__ddl-loading" />
-              <RsEmpty
-                v-else-if="!ddlText"
-                class="nm-vast-browse__ddl-empty"
-                icon="file-code"
-                :description="t('modules.vastbase.ddl.empty')"
-              />
-              <RsCodeEditor
-                v-else
-                v-model="ddlText"
-                class="nm-vast-browse__ddl-editor"
-                language="sql"
-                readonly
-                :show-toolbar="false"
-                height="100%"
-              />
+              <div class="nm-vast-browse__ddl-actions">
+                <RsButton
+                  variant="ghost"
+                  size="sm"
+                  icon="copy"
+                  :disabled="!ddlText || ddlLoading"
+                  :tooltip="t('modules.vastbase.ddl.copy')"
+                  @click="copyBrowseDdl"
+                >
+                  {{ t('modules.vastbase.ddl.copy') }}
+                </RsButton>
+                <RsButton
+                  v-if="canOpenDesign"
+                  variant="ghost"
+                  size="sm"
+                  icon="pencil"
+                  :disabled="!schema || !table || !profileId"
+                  :tooltip="t('modules.vastbase.browse.openDesignTooltip')"
+                  @click="openDesignTable"
+                >
+                  {{ t('modules.vastbase.browse.openDesign') }}
+                </RsButton>
+                <RsButton
+                  variant="ghost"
+                  size="sm"
+                  icon="external-link"
+                  :disabled="!schema || !table || !profileId"
+                  :tooltip="t('modules.vastbase.browse.openDdlTooltip')"
+                  @click="openDdlTab"
+                >
+                  {{ t('modules.vastbase.browse.openDdl') }}
+                </RsButton>
+              </div>
             </div>
-          </template>
-        </RsPopover>
-        <RsButton
-          variant="ghost"
-          size="sm"
-          icon="funnel"
-          :tooltip="t('modules.vastbase.browse.filterToggle')"
-          :class="{ 'nm-vast-browse__filter-toggle--on': filterOpen }"
-          @click="toggleFilterPane"
-        >
-          {{ t('modules.vastbase.browse.filter') }}
-          <span v-if="appliedWhereSql" class="nm-vast-browse__filter-badge">•</span>
-        </RsButton>
-        <RsButton
-          variant="primary"
-          size="sm"
-          icon="refresh-cw"
-          :loading="loading || saving"
-          :tooltip="t('modules.vastbase.structure.refresh')"
-          @click="refresh"
-        >
-          {{ t('modules.vastbase.structure.refresh') }}
-        </RsButton>
-      </template>
-    </RsToolbar>
+            <RsLoading v-if="ddlLoading && !ddlText" block class="nm-vast-browse__ddl-loading" />
+            <RsEmpty
+              v-else-if="!ddlText"
+              class="nm-vast-browse__ddl-empty"
+              icon="file-code"
+              :description="t('modules.vastbase.ddl.empty')"
+            />
+            <RsCodeEditor
+              v-else
+              v-model="ddlText"
+              class="nm-vast-browse__ddl-editor"
+              language="sql"
+              readonly
+              embedded
+              :rounded="false"
+              :show-toolbar="false"
+              height="100%"
+            />
+          </div>
+        </template>
+      </RsPopover>
+    </template>
 
-    <div
-      v-if="filterOpen"
-      class="nm-vast-browse__filter-bar"
-      @keydown.capture="onFilterKeydown"
-    >
-      <RsCodeEditor
-        v-model="filterDraft"
-        language="sql"
-        embedded
-        :rounded="false"
-        :fold-gutter="false"
-        :gutter-width="BROWSE_GUTTER_WIDTH"
-        :show-toolbar="false"
-        height="100%"
-        :sql-config="filterSqlConfig"
-        :placeholder="t('modules.vastbase.browse.filterEditorPlaceholder')"
-      />
-    </div>
-
-    <div class="nm-vast-browse__body">
-      <RsLoading v-if="loading && !lastResult" block class="nm-vast-browse__loading" />
-      <RsEmpty
-        v-else-if="!schema || !table"
-        fill
-        icon="table"
-        :description="t('modules.vastbase.structure.needTable')"
-      />
-      <RsEmpty
-        v-else-if="!lastResult"
-        fill
-        icon="table"
-        :description="t('modules.vastbase.browse.empty')"
-      />
-      <div v-else class="nm-vast-browse__table-wrap">
-        <RsTable
-          v-model:selected-row-keys="selectedRowKeys"
-          :columns="resultColumns"
-          :data="resultRows"
-          row-key="__rowKey"
-          size="sm"
-          striped
-          fill
-          bordered
-          column-bordered
+    <template #filter>
+      <div class="nm-vast-browse__filter" @keydown.capture="onFilterKeydown">
+        <RsCodeEditor
+          v-model="filterDraft"
+          language="sql"
+          embedded
           :rounded="false"
-          show-index
-          :index-width="BROWSE_GUTTER_WIDTH"
-          :edit-gutter-width="BROWSE_GUTTER_WIDTH"
-          resizable
-          column-layout="fixed"
-          cell-tooltip
-          highlight-row
-          selectable
-          selection-type="row"
-          :editable="tableEditable"
-          :allow-null="tableEditable"
-          edit-trigger="dblclick"
-          :row-pending="isBrowseRowPending"
-          :context-menu-items="contextMenuItems"
-          :loading="loading"
-          :virtual="true"
-          :virtual-auto-threshold="40"
-          :virtual-columns-auto-threshold="40"
-          :layout-active="active"
-          @cell-edit-commit="onCellEditCommit"
-          @cell-view="openCellView"
-          @row-edit-commit="onBrowseRowEditCommit"
-          @row-edit-rollback="onBrowseRowEditRollback"
-          @context-menu-select="onContextMenuSelect"
-        >
-          <template #empty>
-            {{ t('modules.vastbase.browse.empty') }}
-          </template>
-        </RsTable>
-
-        <BrowseCellEditorDialog
-          v-model:open="cellViewOpen"
-          v-model:draft="cellViewDraft"
-          :title="cellViewTitle"
-          readonly
-          :cancel-label="cellViewLabels().close"
-          :show-copy-full="true"
-          :copy-full-label="cellViewLabels().copyFull"
-          :copied-label="cellViewLabels().copied"
-          @copy-full="copyCellFull"
+          :fold-gutter="false"
+          :gutter-width="BROWSE_GUTTER_WIDTH"
+          :show-toolbar="false"
+          height="100%"
+          :sql-config="filterSqlConfig"
+          :placeholder="t('modules.vastbase.browse.filterEditorPlaceholder')"
         />
       </div>
-    </div>
+    </template>
 
-    <footer class="nm-vast-browse__status">
-      <RsPagination
-        v-model:page="page"
-        v-model:page-size="pageSize"
-        class="nm-vast-browse__pager"
-        size="sm"
-        :total="totalRows"
-        show-summary
-        show-page-size
-        :page-size-options="pageSizeOptions"
-        :disabled="loading"
-      />
-      <div
-        v-if="lastDataSql"
-        class="nm-vast-browse__status-sql"
-        :title="lastDataSql"
-      >
-        <span class="nm-vast-browse__status-sql-label">SQL</span>
-        <code class="nm-vast-browse__status-sql-text">{{ lastDataSql }}</code>
-      </div>
-      <span
-        v-if="statusMeta || lastResult"
-        class="nm-vast-browse__status-meta"
-        :class="{ 'nm-vast-browse__status-meta--warn': lastResult && !canEdit && !hasNewRow }"
-      >
-        <template v-if="statusMeta">{{ statusMeta }} · </template>
-        {{
-          canEdit || hasNewRow
-            ? t('modules.vastbase.browse.editHint')
-            : t('modules.vastbase.browse.noPk')
-        }}
-      </span>
-    </footer>
-
-    <RsConfirmDialog
-      v-model:open="deleteConfirm"
-      :title="t('modules.vastbase.browse.deleteTitle')"
-      :description="
-        t('modules.vastbase.browse.deleteDesc', { count: selectedRowKeys.filter((k) => !String(k).startsWith('new-')).length || 1 })
-      "
-      tone="danger"
-      confirm-variant="danger"
-      @confirm="confirmDelete"
+    <BrowseDataGrid
+      v-model:selected-row-keys="selectedRowKeys"
+      :columns="resultColumns"
+      :data="resultRows"
+      :loading="loading"
+      :editable="tableEditable"
+      :allow-null="tableEditable"
+      :row-pending="isBrowseRowPending"
+      :context-menu-items="contextMenuItems"
+      :layout-active="active"
+      :gutter-width="BROWSE_GUTTER_WIDTH"
+      :empty-text="t('modules.vastbase.browse.empty')"
+      @cell-edit-commit="onCellEditCommit"
+      @row-edit-commit="onBrowseRowEditCommit"
+      @row-edit-rollback="onBrowseRowEditRollback"
+      @context-menu-select="onContextMenuSelect"
     />
-  </div>
+
+    <template #dialogs>
+      <RsConfirmDialog
+        v-model:open="deleteConfirm"
+        :title="t('modules.vastbase.browse.deleteTitle')"
+        :description="t('modules.vastbase.browse.deleteDesc', { count: deleteCount })"
+        tone="danger"
+        confirm-variant="danger"
+        @confirm="confirmDelete"
+      />
+    </template>
+  </BrowseDataShell>
 </template>
 
 <style scoped>
-.nm-vast-browse {
-  display: flex;
-  flex-direction: column;
-  height: 100%;
-  min-height: 0;
-  background: var(--rs-surface);
-}
-
-.nm-vast-browse__toolbar {
-  flex-shrink: 0;
-}
-
-.nm-vast-browse__identity {
-  display: flex;
-  align-items: center;
-  gap: var(--rs-space-xs);
-  min-width: 0;
-  overflow: hidden;
-  font-size: var(--rs-font-size-sm);
-  font-weight: 600;
-}
-
-.nm-vast-browse__brand {
-  flex-shrink: 0;
-  color: var(--rs-accent, #3b82f6);
-}
-
-.nm-vast-browse__session {
-  flex-shrink: 0;
-  max-width: 9rem;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.nm-vast-browse__scope {
-  color: var(--rs-muted);
-  font-weight: 400;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  min-width: 0;
-}
-
-.nm-vast-browse__feature {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.25rem;
-  flex-shrink: 0;
-  margin-left: 2px;
-  padding: 0.1rem 0.45rem;
-  border-radius: var(--rs-radius-sm);
-  background: var(--rs-bg-muted, rgba(127, 127, 127, 0.12));
-  color: var(--rs-muted);
-  font-size: var(--rs-font-size-xs);
-  font-weight: 500;
-}
-
-.nm-vast-browse__filter-toggle--on {
-  color: var(--rs-accent, #3b82f6);
-}
-
-.nm-vast-browse__filter-badge {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  min-width: 1rem;
-  height: 1rem;
-  padding: 0 0.3rem;
-  margin-left: 0.15rem;
-  border-radius: 999px;
-  background: color-mix(in srgb, var(--rs-accent, #3b82f6) 18%, transparent);
-  font-size: 10px;
-  font-family: var(--rs-font-mono);
-  line-height: 1;
-}
-
-.nm-vast-browse__filter-bar {
-  position: relative;
+.nm-vast-browse__filter {
   display: block;
   width: 100%;
-  flex-shrink: 0;
-  height: 5.5rem;
-  min-height: 5.5rem;
-  padding: 0;
-  border-bottom: 1px solid var(--rs-border-subtle);
-  background: var(--rs-surface);
-  overflow: hidden;
+  height: 100%;
 }
 
 .nm-vast-browse__ddl-pop {
@@ -1775,137 +1561,5 @@ watch(ddlMenuOpen, (open) => {
 .nm-vast-browse__ddl-editor {
   flex: 1;
   min-height: 0;
-}
-
-.nm-vast-browse__ddl-editor :deep(.rs-code-editor),
-.nm-vast-browse__ddl-editor :deep(.rs-code-editor__body),
-.nm-vast-browse__ddl-editor :deep(.rs-code-editor__surface) {
-  height: 100%;
-  min-height: 0;
-}
-
-.nm-vast-browse__io-menu {
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-  padding: 2px;
-  min-width: 11rem;
-}
-
-.nm-vast-browse__io-item {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  width: 100%;
-  padding: 0.4rem 0.55rem;
-  border: 0;
-  border-radius: var(--rs-radius-sm);
-  background: transparent;
-  color: var(--rs-text);
-  font-size: var(--rs-font-size-sm);
-  text-align: left;
-  cursor: pointer;
-  white-space: nowrap;
-}
-
-.nm-vast-browse__io-item > span {
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-.nm-vast-browse__io-item:hover:not(:disabled) {
-  background: var(--rs-bg-muted, rgba(127, 127, 127, 0.12));
-}
-
-.nm-vast-browse__io-item:disabled {
-  opacity: 0.45;
-  cursor: not-allowed;
-}
-
-.nm-vast-browse__body {
-  flex: 1;
-  min-height: 0;
-  display: flex;
-  flex-direction: column;
-  position: relative;
-}
-
-.nm-vast-browse__loading {
-  flex: 1;
-}
-
-.nm-vast-browse__table-wrap {
-  flex: 1;
-  min-height: 0;
-  display: flex;
-  flex-direction: column;
-  overflow: hidden;
-}
-
-.nm-vast-browse__status {
-  display: flex;
-  flex-wrap: nowrap;
-  align-items: center;
-  gap: var(--rs-space-sm);
-  flex-shrink: 0;
-  min-height: 2rem;
-  height: 2rem;
-  padding: 0 var(--rs-space-sm);
-  border-top: 1px solid var(--rs-border-subtle);
-  background: var(--rs-surface-subtle, var(--rs-surface));
-  overflow: hidden;
-}
-
-.nm-vast-browse__pager {
-  flex: 0 0 auto;
-  min-width: 0;
-}
-
-.nm-vast-browse__pager :deep(.rs-pagination) {
-  flex-wrap: nowrap;
-  white-space: nowrap;
-}
-
-.nm-vast-browse__status-sql {
-  display: flex;
-  align-items: center;
-  gap: var(--rs-space-xs);
-  flex: 1 1 auto;
-  min-width: 0;
-  font-size: 11px;
-  line-height: 1.2;
-  overflow: hidden;
-}
-
-.nm-vast-browse__status-sql-label {
-  flex-shrink: 0;
-  font-weight: 600;
-  color: var(--rs-muted);
-  font-family: var(--rs-font-mono);
-}
-
-.nm-vast-browse__status-sql-text {
-  min-width: 0;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  font-family: var(--rs-font-mono);
-  color: var(--rs-text);
-  user-select: text;
-  font-style: normal;
-}
-
-.nm-vast-browse__status-meta {
-  flex: 0 1 auto;
-  max-width: 22%;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  font-size: 11px;
-  color: var(--rs-muted);
-}
-
-.nm-vast-browse__status-meta--warn {
-  color: var(--rs-warning, #d97706);
 }
 </style>

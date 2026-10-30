@@ -31,8 +31,8 @@ type boundTool struct {
 }
 
 // buildEnabledToolDefs 读取官方 host + 已启用 MCP 工具并生成 OpenAI tools + 名称映射。
-// moduleID 用于按当前页签挑选 sql_* / ssh_* / redis_* / tools_*。local 只在用户点明「这台电脑」时出现。
-func (s *Service) buildEnabledToolDefs(ctx context.Context, moduleID string) ([]ToolDef, map[string]boundTool, error) {
+// moduleIDs 是这一轮带入的连接族；空则与无页签相同。local 只在用户点明「这台电脑」时出现。
+func (s *Service) buildEnabledToolDefs(ctx context.Context, moduleIDs []string) ([]ToolDef, map[string]boundTool, error) {
 	if s == nil {
 		return nil, nil, nil
 	}
@@ -40,7 +40,7 @@ func (s *Service) buildEnabledToolDefs(ctx context.Context, moduleID string) ([]
 	bound := make(map[string]boundTool)
 
 	if s.host != nil {
-		for _, spec := range host.HostToolSpecs(moduleID) {
+		for _, spec := range host.HostToolSpecsForModules(moduleIDs) {
 			serverID := host.SpecServerID(spec)
 			defs = append(defs, ToolDef{
 				Type: "function",
@@ -157,11 +157,7 @@ func (s *Service) runChatStream(
 	defer s.runs.remove(runID)
 
 	messages := AssembleMessages(history, normalized, skillPrompt)
-	moduleID := ""
-	if normalized.Workspace != nil {
-		moduleID = normalized.Workspace.ModuleID
-	}
-	toolDefs, bound, err := s.buildEnabledToolDefs(ctx, moduleID)
+	toolDefs, bound, err := s.buildEnabledToolDefs(ctx, toolModuleIDs(normalized.Workspace, normalized.Scopes))
 	if err != nil {
 		s.publishRunError(runID, conversationID, err)
 		return
@@ -284,8 +280,15 @@ func (s *Service) invokeBoundTool(
 	if !ok {
 		return "", fmt.Errorf("unknown tool %q", tc.Function.Name)
 	}
-	args := mergeWorkspaceArgs(tc.Function.Arguments, normalized)
-	argsSummary := truncateUTF8(string(args), 200)
+	bindName := ""
+	if b.HostName != "" {
+		bindName = b.HostName
+	}
+	args, bindErr := mergeWorkspaceArgs(tc.Function.Arguments, normalized, bindName)
+	if bindErr != nil {
+		return "", bindErr
+	}
+	argsSummary := FormatToolArgsSummary(string(args))
 	risk := tool.ResolveToolRisk(b.Tool.RiskLevel, b.Tool.ToolName)
 
 	invocationID, err := s.ids.NextString()
@@ -372,6 +375,7 @@ func (s *Service) invokeBoundTool(
 		if err := json.Unmarshal(args, &argMap); err != nil {
 			argMap = map[string]any{}
 		}
+		delete(argMap, "scope")
 		result, callErr = host.Call(ctx, s.host, b.HostName, argMap)
 	} else {
 		bearer := s.mcpBearerToken(b.Server.CredentialID)
@@ -441,39 +445,44 @@ func (s *Service) cancelledTool(runID, conversationID, invocationID string) (str
 	return result, context.Canceled
 }
 
-func mergeWorkspaceArgs(rawArgs string, normalized NormalizedContext) json.RawMessage {
-	rawArgs = strings.TrimSpace(rawArgs)
-	if rawArgs == "" {
-		rawArgs = "{}"
+func mergeWorkspaceArgs(rawArgs string, normalized NormalizedContext, toolName string) (json.RawMessage, error) {
+	family := host.ToolFamily(strings.TrimSpace(toolName))
+	if family == "sql" || family == "ssh" || family == "redis" || family == "mongo" {
+		return bindToolArgs(rawArgs, normalized.Scopes, toolName)
 	}
-	var obj map[string]any
-	if err := json.Unmarshal([]byte(rawArgs), &obj); err != nil || obj == nil {
-		obj = map[string]any{}
+	if family == "local" || family == "tools" {
+		return marshalArgs(parseArgObject(rawArgs))
 	}
-	if normalized.Workspace != nil {
-		if _, ok := obj["profileId"]; !ok && normalized.Workspace.ProfileID != "" {
-			obj["profileId"] = normalized.Workspace.ProfileID
+	return fillFromWorkspace(rawArgs, normalized.Workspace), nil
+}
+
+// fillFromWorkspace 给未分族的调用（MCP）补上当前工作区。官方连接工具走 bindToolArgs。
+func fillFromWorkspace(rawArgs string, ws *ContextWorkspace) json.RawMessage {
+	obj := parseArgObject(rawArgs)
+	if ws != nil {
+		if _, ok := obj["profileId"]; !ok && ws.ProfileID != "" {
+			obj["profileId"] = ws.ProfileID
 		}
-		if _, ok := obj["sessionId"]; !ok && normalized.Workspace.SessionID != "" {
-			obj["sessionId"] = normalized.Workspace.SessionID
+		if _, ok := obj["sessionId"]; !ok && ws.SessionID != "" {
+			obj["sessionId"] = ws.SessionID
 		}
-		if _, ok := obj["moduleId"]; !ok && normalized.Workspace.ModuleID != "" {
-			obj["moduleId"] = normalized.Workspace.ModuleID
+		if _, ok := obj["moduleId"]; !ok && ws.ModuleID != "" {
+			obj["moduleId"] = ws.ModuleID
 		}
-		if _, ok := obj["database"]; !ok && normalized.Workspace.Database != "" {
-			obj["database"] = normalized.Workspace.Database
+		if _, ok := obj["database"]; !ok && ws.Database != "" {
+			obj["database"] = ws.Database
 		}
-		if _, ok := obj["collection"]; !ok && normalized.Workspace.Collection != "" {
-			obj["collection"] = normalized.Workspace.Collection
+		if _, ok := obj["collection"]; !ok && ws.Collection != "" {
+			obj["collection"] = ws.Collection
 		}
 		if _, ok := obj["schema"]; !ok {
-			if normalized.Workspace.Schema != "" {
-				obj["schema"] = normalized.Workspace.Schema
-			} else if db := normalized.Workspace.Database; db != "" && host.UsesDatabaseAsSchema(normalized.Workspace.ModuleID) {
+			if ws.Schema != "" {
+				obj["schema"] = ws.Schema
+			} else if db := ws.Database; db != "" && host.UsesDatabaseAsSchema(ws.ModuleID) {
 				obj["schema"] = db
 			}
 		}
-		if cwd := strings.TrimSpace(normalized.Workspace.Cwd); cwd != "" {
+		if cwd := strings.TrimSpace(ws.Cwd); cwd != "" {
 			if _, ok := obj["cwd"]; !ok {
 				obj["cwd"] = cwd
 			}

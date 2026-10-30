@@ -210,6 +210,7 @@ async function importEnvironment(): Promise<void> {
 
 .nm-api-env-view__nav-item--active {
   background: color-mix(in srgb, var(--rs-primary) 12%, transparent);
+  box-shadow: inset 2px 0 0 var(--rs-primary);
 }
 
 .nm-api-env-view__nav-icon {

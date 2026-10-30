@@ -76,4 +76,26 @@ describe('request-resolve', () => {
     expect(resolved.headers.get('authorization')).toBe('Bearer abc')
     expect(resolved.headers.get('accept')).toBe('application/json')
   })
+
+  it('uses params once when the url already contains that query', () => {
+    const req: ApiRequest = {
+      id: 'r1',
+      name: 'Hit',
+      method: 'GET',
+      url: '{{baseUrl}}/items?limit=20#part',
+      params: [newKvRow('limit', '20')],
+      headers: [],
+      auth: { type: 'none' },
+      bodyMode: 'none',
+      body: '',
+      bodyForm: [],
+    }
+    const resolved = resolveRequest(req, {
+      id: 'e1',
+      name: 'Dev',
+      baseUrl: 'http://127.0.0.1:8080',
+      vars: { baseUrl: 'http://127.0.0.1:8080' },
+    })
+    expect(resolved.url).toBe('http://127.0.0.1:8080/items?limit=20#part')
+  })
 })

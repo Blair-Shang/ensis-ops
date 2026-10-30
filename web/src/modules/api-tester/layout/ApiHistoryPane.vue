@@ -148,10 +148,14 @@ function dayLabel(day: string): string {
 .nm-api-hist__status {
   flex-shrink: 0;
   min-width: 1.75rem;
+  padding: 0 0.3rem;
+  border-radius: 999px;
+  background: color-mix(in srgb, currentColor 12%, transparent);
+  font-family: var(--rs-font-mono);
   font-size: 11px;
-  font-weight: 600;
+  font-weight: 700;
   font-variant-numeric: tabular-nums;
-  text-align: right;
+  text-align: center;
 }
 
 .nm-api-hist__status--success {

@@ -104,12 +104,27 @@ function tabDatabaseText(raw: unknown): string | undefined {
   return undefined
 }
 
+function dialectForTab(tab: WorkspaceTab, sessionId?: string) {
+  const sessionRegistry = useSessionRegistry()
+  const moduleKind = (
+    tab.moduleId && SQL_DIALECT_MODULES.has(tab.moduleId) ? tab.moduleId : undefined
+  ) as ConnKind | undefined
+  return (
+    (sessionId ? sessionRegistry.getDialectForSession(sessionId) : null) ??
+    (typeof tab.props.profileId === 'string'
+      ? sessionRegistry.getDialectForProfile(tab.props.profileId, moduleKind)
+      : null) ??
+    (moduleKind ? defaultProfileForFamily(moduleKind) : null)
+  )
+}
+
 /** 从工作区页签构造 @ 引用（拖入 AI / @ 列表共用）。 */
 export function attachmentFromTab(tab: WorkspaceTab): AiContextAttachment {
   const sessionRegistry = useSessionRegistry()
   const profileId = typeof tab.props.profileId === 'string' ? tab.props.profileId : undefined
   const sessionId = sessionRegistry.getSessionIdForTab(tab.tabId) ?? undefined
   const cwd = typeof tab.props.remotePath === 'string' ? tab.props.remotePath.trim() : ''
+  const dialect = dialectForTab(tab, sessionId)
   return {
     id: `tab:${tab.tabId}`,
     kind: 'tab',
@@ -124,8 +139,30 @@ export function attachmentFromTab(tab: WorkspaceTab): AiContextAttachment {
       schema: catalogSchemaOf(tab.moduleId, tab.props.database, tab.props.schema),
       collection: tabCollectionText(tab),
       path: tab.moduleId === 'ssh' && cwd ? cwd : undefined,
+      dialectFamily: dialect?.family,
+      capabilities: dialect?.capabilities,
+      dialectRules: dialect ? buildAiDialectRules(dialect) : undefined,
     },
   }
+}
+
+function payloadText(payload: Record<string, unknown>, key: string): string {
+  const value = payload[key]
+  return typeof value === 'string' ? value.trim() : ''
+}
+
+/** 本地预览用的引用行。入模以后端 Normalize 为准，这里把会话号带上，避免只看见标题。 */
+function attachmentPreviewLine(attachment: AiContextAttachment): string {
+  const head = `[${attachment.kind}] ${attachment.label}${attachment.detail ? ` (${attachment.detail})` : ''}`
+  if (attachment.kind !== 'tab' && attachment.kind !== 'connection') {
+    return head
+  }
+  const extra = [
+    payloadText(attachment.payload, 'moduleId') && `module=${payloadText(attachment.payload, 'moduleId')}`,
+    payloadText(attachment.payload, 'sessionId') && `session=${payloadText(attachment.payload, 'sessionId')}`,
+    payloadText(attachment.payload, 'profileId') && `profile=${payloadText(attachment.payload, 'profileId')}`,
+  ].filter(Boolean)
+  return extra.length ? `${head} ${extra.join(' ')}` : head
 }
 
 /** 当前工作区激活页签的 @ 引用；无页签时为 null。 */
@@ -328,14 +365,22 @@ export function listMentionCandidates(): AiContextAttachment[] {
   const active = tabStore.activeTab
   if (active) {
     const profileId = typeof active.props.profileId === 'string' ? active.props.profileId : undefined
-    out.push(attachmentFromTab(active))
+    const activeAttachment = attachmentFromTab(active)
+    out.push(activeAttachment)
     if (profileId) {
       out.push({
         id: `conn:${profileId}`,
         kind: 'connection',
         label: String(active.title || profileId),
         detail: 'connection',
-        payload: { profileId, moduleId: active.moduleId },
+        payload: {
+          profileId,
+          moduleId: active.moduleId,
+          sessionId: activeAttachment.payload.sessionId,
+          database: activeAttachment.payload.database,
+          schema: activeAttachment.payload.schema,
+          collection: activeAttachment.payload.collection,
+        },
       })
     }
     const treeHint = schemaHintFromTreeFocus(useConnTreeSyncStore().aiFocus)
@@ -430,16 +475,7 @@ export function buildContextPack(
       : null,
   )
   const sessionId = active ? sessionRegistry.getSessionIdForTab(active.tabId) ?? undefined : undefined
-  // 优先会话探测结果；无 lease 时按当前模块方言回退（非永久禁令）
-  const moduleKind = (active?.moduleId && SQL_DIALECT_MODULES.has(active.moduleId)
-    ? active.moduleId
-    : undefined) as ConnKind | undefined
-  const dialect =
-    (sessionId ? sessionRegistry.getDialectForSession(sessionId) : null) ??
-    (typeof active?.props.profileId === 'string'
-      ? sessionRegistry.getDialectForProfile(active.props.profileId, moduleKind)
-      : null) ??
-    (moduleKind ? defaultProfileForFamily(moduleKind) : null)
+  const dialect = active ? dialectForTab(active, sessionId) : null
   const workspace = {
     tabId: active?.tabId,
     moduleId: active?.moduleId,
@@ -509,7 +545,7 @@ export function buildContextPack(
       lines.push(`[object_hint] ${a.label} path=${pathText} db=${db} schema=${sch} table=${tbl} collection=${coll}`)
       continue
     }
-    lines.push(`[${a.kind}] ${a.label}${a.detail ? ` (${a.detail})` : ''}`)
+    lines.push(attachmentPreviewLine(a))
   }
 
   return {

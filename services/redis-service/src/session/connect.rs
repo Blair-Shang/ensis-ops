@@ -51,7 +51,11 @@ pub struct ConnectOptions {
     /// "standalone" | "sentinel" | "cluster"，默认为 standalone。
     #[serde(default = "default_topology")]
     pub topology: String,
-    #[serde(rename = "timeout_seconds", alias = "timeoutSeconds", default = "default_timeout_seconds")]
+    #[serde(
+        rename = "timeout_seconds",
+        alias = "timeoutSeconds",
+        default = "default_timeout_seconds"
+    )]
     pub timeout_seconds: u64,
     /// sentinel 拓扑下的主节点名（对应 `SENTINEL GET-MASTER-ADDR-BY-NAME`）。
     #[serde(rename = "sentinel_master_name", alias = "sentinelMasterName", default)]
@@ -127,6 +131,15 @@ impl ConnectParams {
         }
         info
     }
+
+    /// 探测哨兵时使用的认证信息。
+    ///
+    /// 哨兵开启 `requirepass` 或 ACL 时，`SENTINEL` 命令之前必须先 `AUTH`，否则返回
+    /// `NOAUTH`。表单上的用户名和密码同时用于哨兵和解析出的主节点。逻辑库只在连上
+    /// 主节点后选择，这里固定为 0，避免对哨兵发送 `SELECT`。
+    fn sentinel_probe_info(&self) -> RedisConnectionInfo {
+        self.redis_connection_info(0)
+    }
 }
 
 /// split_host_port 把 `host:port` 拆分为 `(host, port)`；缺省端口回落到 Redis 默认端口。
@@ -181,7 +194,11 @@ impl RedisBackend {
     /// exec_raw 执行一条任意 Redis 命令并返回原始 `redis::Value`。
     ///
     /// `args` 为已切分好的二进制安全参数（不做命令行解析/引号处理，由调用方负责切分）。
-    pub async fn exec_raw(&mut self, name: &str, args: &[Vec<u8>]) -> redis::RedisResult<redis::Value> {
+    pub async fn exec_raw(
+        &mut self,
+        name: &str,
+        args: &[Vec<u8>],
+    ) -> redis::RedisResult<redis::Value> {
         let mut cmd = redis::cmd(name);
         for arg in args {
             cmd.arg(arg);
@@ -212,7 +229,11 @@ pub struct Connected {
     pub node_info: Option<ConnectionInfo>,
 }
 
-fn build_connection_info(host: &str, port: u16, redis_info: RedisConnectionInfo) -> Result<ConnectionInfo, ConnectError> {
+fn build_connection_info(
+    host: &str,
+    port: u16,
+    redis_info: RedisConnectionInfo,
+) -> Result<ConnectionInfo, ConnectError> {
     let info = ConnectionAddr::Tcp(host.to_string(), port)
         .into_connection_info()?
         .set_redis_settings(redis_info);
@@ -246,7 +267,16 @@ pub async fn connect_redis(params: &ConnectParams) -> Result<Connected, ConnectE
         return connect_standalone(params, &local_host, local_port, None, Some(guard)).await;
     }
     match params.options.topology.as_str() {
-        "standalone" | "" => connect_standalone(params, &params.host_address, params.port_or_default(), None, None).await,
+        "standalone" | "" => {
+            connect_standalone(
+                params,
+                &params.host_address,
+                params.port_or_default(),
+                None,
+                None,
+            )
+            .await
+        }
         "sentinel" => connect_sentinel(params).await,
         "cluster" => connect_cluster(params).await,
         other => Err(ConnectError::UnsupportedTopology(other.to_string())),
@@ -320,6 +350,7 @@ async fn connect_cluster(params: &ConnectParams) -> Result<Connected, ConnectErr
 ///
 /// 不依赖 `redis` crate 的 `sentinel` feature：`SENTINEL GET-MASTER-ADDR-BY-NAME` 是一条
 /// 普通命令，通过任意一个哨兵节点的 standalone 连接即可发出，减少一个可选 feature 的编译面。
+/// 探测时带上与主节点相同的用户名和密码。
 async fn connect_sentinel(params: &ConnectParams) -> Result<Connected, ConnectError> {
     if params.options.sentinel_master_name.is_empty() {
         return Err(ConnectError::Sentinel(
@@ -327,8 +358,16 @@ async fn connect_sentinel(params: &ConnectParams) -> Result<Connected, ConnectEr
         ));
     }
     let mut last_error = ConnectError::Sentinel("no sentinel node reachable".to_string());
+    let auth = params.sentinel_probe_info();
     for (host, port) in params.seed_nodes() {
-        match probe_sentinel_master(&host, port, &params.options.sentinel_master_name).await {
+        match probe_sentinel_master(
+            &host,
+            port,
+            &params.options.sentinel_master_name,
+            auth.clone(),
+        )
+        .await
+        {
             Ok((master_host, master_port)) => {
                 return connect_standalone(params, &master_host, master_port, None, None).await;
             }
@@ -339,12 +378,15 @@ async fn connect_sentinel(params: &ConnectParams) -> Result<Connected, ConnectEr
 }
 
 /// probe_sentinel_master 向单个哨兵节点查询主节点地址。
+///
+/// `auth` 在建连阶段发出 `AUTH`（用户名为空时只带密码）。哨兵未设置访问控制时 `auth` 不含密码。
 async fn probe_sentinel_master(
     host: &str,
     port: u16,
     master_name: &str,
+    auth: RedisConnectionInfo,
 ) -> Result<(String, u16), ConnectError> {
-    let info = build_connection_info(host, port, RedisConnectionInfo::default())?;
+    let info = build_connection_info(host, port, auth)?;
     let client = redis::Client::open(info)?;
     let connect_fut = client.get_multiplexed_async_connection();
     let mut conn = tokio::time::timeout(
@@ -352,7 +394,8 @@ async fn probe_sentinel_master(
         connect_fut,
     )
     .await
-    .map_err(|_| ConnectError::Sentinel(format!("probe {host}:{port} timed out")))??;
+    .map_err(|_| ConnectError::Sentinel(format!("probe {host}:{port} timed out")))?
+    .map_err(|e| ConnectError::Sentinel(format!("{host}:{port}: {e}")))?;
 
     let reply: Vec<String> = redis::cmd("SENTINEL")
         .arg("GET-MASTER-ADDR-BY-NAME")
@@ -366,8 +409,59 @@ async fn probe_sentinel_master(
         )));
     }
     let master_host = reply[0].clone();
-    let master_port: u16 = reply[1]
-        .parse()
-        .map_err(|_| ConnectError::Sentinel(format!("{host}:{port}: invalid master port {:?}", reply[1])))?;
+    let master_port: u16 = reply[1].parse().map_err(|_| {
+        ConnectError::Sentinel(format!("{host}:{port}: invalid master port {:?}", reply[1]))
+    })?;
     Ok((master_host, master_port))
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    fn sentinel_params(username: &str, secret: &str, database: i64) -> ConnectParams {
+        ConnectParams {
+            host_address: "192.168.0.5".to_string(),
+            port_number: 63791,
+            username: username.to_string(),
+            secret: secret.to_string(),
+            options: ConnectOptions {
+                database,
+                topology: "sentinel".to_string(),
+                sentinel_master_name: "mymaster".to_string(),
+                nodes: vec![
+                    "192.168.0.16:26379".to_string(),
+                    "192.168.0.5:26379".to_string(),
+                ],
+                ..ConnectOptions::default()
+            },
+        }
+    }
+
+    #[test]
+    fn sentinel_probe_sends_password_and_skips_database_select() {
+        let params = sentinel_params("", "s3cret", 2);
+        let info = params.sentinel_probe_info();
+        assert_eq!(info.username(), None);
+        assert_eq!(info.password(), Some("s3cret"));
+        assert_eq!(info.db(), 0);
+
+        let master = params.redis_connection_info(params.options.database);
+        assert_eq!(master.password(), Some("s3cret"));
+        assert_eq!(master.db(), 2);
+    }
+
+    #[test]
+    fn sentinel_probe_forwards_acl_username() {
+        let info = sentinel_params("app", "s3cret", 0).sentinel_probe_info();
+        assert_eq!(info.username(), Some("app"));
+        assert_eq!(info.password(), Some("s3cret"));
+    }
+
+    #[test]
+    fn sentinel_probe_omits_auth_when_secret_empty() {
+        let info = sentinel_params("", "", 0).sentinel_probe_info();
+        assert_eq!(info.username(), None);
+        assert_eq!(info.password(), None);
+    }
 }

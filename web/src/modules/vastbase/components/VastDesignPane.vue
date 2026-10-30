@@ -1,17 +1,16 @@
 <script setup lang="ts">
-import {
-  RsButton,
-  RsEmpty,
-  RsInput,
-  RsLoading,
-  RsTable,
-  RsTabs,
-  useRsToast,
-} from 'ensis-ui'
+import { RsButton, RsEmpty, RsInput, RsTable, useRsToast } from 'ensis-ui'
 import type { RsSelectOptions, RsTabItem, RsTableColumn } from 'ensis-ui'
 import { computed, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { vastbaseApi } from '@/api'
+import {
+  TableDesignPreviewPopover,
+  TableDesignShell,
+  type TableDesignSection,
+  type TableDesignSectionItem,
+  type TableDesignShellLabels,
+} from '@/modules/database'
 import type {
   VastColumnInfo,
   VastConstraintInfo,
@@ -56,6 +55,7 @@ const props = defineProps<{
   schema?: string
   table?: string
   designMode?: 'create' | 'alter'
+  sessionLabel?: string
   active: boolean
 }>()
 
@@ -75,6 +75,7 @@ const indexes = ref<DesignIndexDraft[]>([])
 const foreignKeys = ref<DesignForeignKeyDraft[]>([])
 const checks = ref<DesignCheckDraft[]>([])
 const previewSQL = ref<string[]>([])
+const previewOpen = ref(false)
 const draftTableName = ref(props.table?.trim() || 'new_table')
 const tableComment = ref('')
 const tableCommentSnapshot = ref('')
@@ -579,6 +580,16 @@ const displayChecks = computed((): ChkRow[] =>
     })),
 )
 
+const shellLabels = computed(
+  (): TableDesignShellLabels => ({
+    reload: t('modules.vastbase.structure.refresh'),
+    preview: t('modules.vastbase.design.preview'),
+    create: t('modules.vastbase.design.createTable'),
+    apply: t('modules.vastbase.design.apply'),
+    previewTitle: t('modules.vastbase.design.previewTitle'),
+  }),
+)
+
 const sectionItems = computed((): RsTabItem[] => [
   {
     value: 'columns',
@@ -605,6 +616,18 @@ const sectionItems = computed((): RsTabItem[] => [
     badge: displayChecks.value.length || undefined,
   },
 ])
+
+const designSections = computed((): TableDesignSectionItem[] =>
+  sectionItems.value.map((item) => ({
+    id: item.value,
+    label: item.label,
+    count: typeof item.badge === 'number' ? item.badge : undefined,
+  })),
+)
+
+function onDesignSection(id: TableDesignSection): void {
+  activeSection.value = id
+}
 
 const scopeOk = computed(() => {
   if (!props.sessionId || !props.schema) return false
@@ -966,6 +989,16 @@ function alterOps() {
   })
 }
 
+async function onPreviewOpenChange(open: boolean): Promise<void> {
+  if (!open) {
+    previewOpen.value = false
+    return
+  }
+  previewOpen.value = true
+  await preview()
+  if (previewSQL.value.length === 0) previewOpen.value = false
+}
+
 async function preview(): Promise<void> {
   if (!props.schema || !scopeOk.value) return
   try {
@@ -1141,12 +1174,50 @@ watch(
 </script>
 
 <template>
-  <div class="nm-vast-design">
-    <div
-      class="nm-vast-design__meta"
-      :title="modeCreate ? t('modules.vastbase.design.hintCreate') : t('modules.vastbase.design.hint')"
-    >
-      <div class="nm-vast-design__meta-item">
+  <TableDesignShell
+    class="nm-vast-design"
+    :labels="shellLabels"
+    :title="sessionLabel || t('modules.vastbase.session.tabDesign')"
+    :mode="modeCreate ? 'create' : 'alter'"
+    :scope-label="scopeLabel"
+    :loading="loading && rows.length === 0"
+    :saving="applying"
+    :can-preview="scopeOk"
+    :can-apply="scopeOk"
+    :show-reload="!modeCreate"
+    :show-editor="false"
+    :sections="designSections"
+    :active-section="activeSection"
+    @reload="loadDesign"
+    @apply="apply"
+    @update:active-section="onDesignSection"
+  >
+    <template #preview>
+      <TableDesignPreviewPopover
+        :open="previewOpen"
+        :sql="previewSQL"
+        :title="t('modules.vastbase.design.previewTitle')"
+        :empty-label="t('modules.vastbase.design.noChanges')"
+        @update:open="onPreviewOpenChange"
+      >
+        <RsButton size="sm" variant="ghost" icon="eye" :disabled="!scopeOk">
+          {{ t('modules.vastbase.design.preview') }}
+        </RsButton>
+      </TableDesignPreviewPopover>
+    </template>
+    <template #toolbar-extra>
+      <RsButton variant="ghost" size="sm" icon="plus" :disabled="!scopeOk" @click="onAdd">
+        {{ addButtonLabel }}
+      </RsButton>
+      <RsButton variant="ghost" size="sm" icon="terminal" :disabled="!scopeOk" @click="openInQuery">
+        {{ t('modules.vastbase.design.openInQuery') }}
+      </RsButton>
+    </template>
+    <template #meta>
+      <div
+        class="nm-vast-design__meta-item"
+        :title="modeCreate ? t('modules.vastbase.design.hintCreate') : t('modules.vastbase.design.hint')"
+      >
         <span class="nm-vast-design__meta-label">{{ t('modules.vastbase.design.metaName') }}</span>
         <RsInput
           v-if="modeCreate"
@@ -1164,56 +1235,18 @@ watch(
           :placeholder="t('modules.vastbase.design.tableCommentPh')"
         />
       </div>
-      <div class="nm-vast-design__meta-actions">
-        <RsButton variant="ghost" size="sm" icon="plus" :disabled="!scopeOk" @click="onAdd">
-          {{ addButtonLabel }}
-        </RsButton>
-        <RsButton variant="ghost" size="sm" icon="eye" :disabled="!scopeOk" @click="preview">
-          {{ t('modules.vastbase.design.preview') }}
-        </RsButton>
-        <RsButton
-          variant="primary"
-          size="sm"
-          :icon="modeCreate ? 'plus' : 'check'"
-          :loading="applying"
-          :disabled="!scopeOk"
-          @click="apply"
-        >
-          {{ modeCreate ? t('modules.vastbase.design.createTable') : t('modules.vastbase.design.apply') }}
-        </RsButton>
-        <RsButton variant="ghost" size="sm" icon="terminal" :disabled="!scopeOk" @click="openInQuery">
-          {{ t('modules.vastbase.design.openInQuery') }}
-        </RsButton>
-        <RsButton
-          v-if="!modeCreate"
-          variant="ghost"
-          size="sm"
-          icon="refresh-cw"
-          :loading="loading"
-          @click="loadDesign"
-        >
-          {{ t('modules.vastbase.structure.refresh') }}
-        </RsButton>
-      </div>
-    </div>
-
-    <RsLoading v-if="loading && rows.length === 0" class="nm-vast-design__loading" />
-    <RsEmpty
-      v-else-if="!schema || (!modeCreate && !tableName)"
-      fill
-      icon="table"
-      :description="t('modules.vastbase.structure.needTable')"
-    />
-    <RsTabs
-      v-else
-      v-model="activeSection"
-      :items="sectionItems"
-      size="sm"
-      variant="line"
-      class="nm-vast-design__tabs"
-    >
-      <template #columns>
-        <div class="nm-vast-design__panel">
+    </template>
+    <template #list>
+      <RsEmpty
+        v-if="!schema || (!modeCreate && !tableName)"
+        fill
+        icon="table"
+        :description="t('modules.vastbase.structure.needTable')"
+      />
+      <div
+        v-show="Boolean(schema) && (modeCreate || tableName) && activeSection === 'columns'"
+        class="nm-vast-design__panel"
+      >
           <RsTable
             class="nm-vast-design__grid"
             :columns="columnColumns"
@@ -1247,10 +1280,10 @@ watch(
             "
           />
         </div>
-      </template>
-
-      <template #indexes>
-        <div class="nm-vast-design__panel">
+      <div
+        v-show="Boolean(schema) && (modeCreate || tableName) && activeSection === 'indexes'"
+        class="nm-vast-design__panel"
+      >
           <RsTable
             class="nm-vast-design__grid"
             :columns="indexColumns"
@@ -1286,10 +1319,10 @@ watch(
             "
           />
         </div>
-      </template>
-
-      <template #foreignKeys>
-        <div class="nm-vast-design__panel">
+      <div
+        v-show="Boolean(schema) && (modeCreate || tableName) && activeSection === 'foreignKeys'"
+        class="nm-vast-design__panel"
+      >
           <RsTable
             class="nm-vast-design__grid"
             :columns="fkColumns"
@@ -1326,10 +1359,10 @@ watch(
             "
           />
         </div>
-      </template>
-
-      <template #checks>
-        <div class="nm-vast-design__panel">
+      <div
+        v-show="Boolean(schema) && (modeCreate || tableName) && activeSection === 'checks'"
+        class="nm-vast-design__panel"
+      >
           <RsTable
             class="nm-vast-design__grid"
             :columns="checkColumns"
@@ -1365,17 +1398,8 @@ watch(
             "
           />
         </div>
-      </template>
-    </RsTabs>
-
-    <div v-if="previewSQL.length" class="nm-vast-design__preview">
-      <div class="nm-vast-design__preview-head">
-        <h4>{{ t('modules.vastbase.design.previewTitle') }}</h4>
-        <span class="nm-vast-design__preview-count">{{ previewSQL.length }}</span>
-      </div>
-      <pre>{{ previewSQL.join(';\n') }};</pre>
-    </div>
-  </div>
+    </template>
+  </TableDesignShell>
 </template>
 
 <style scoped>

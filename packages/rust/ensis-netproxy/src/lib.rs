@@ -127,7 +127,9 @@ async fn dial_http_proxy(proxy: &Options, host: &str, port: u16) -> Result<TcpSt
     let mut one = [0_u8; 1];
     while !buf.ends_with(b"\r\n\r\n") {
         if buf.len() >= HTTP_CONNECT_READ_LIMIT {
-            return Err(Error::Protocol("http CONNECT response too large".to_string()));
+            return Err(Error::Protocol(
+                "http CONNECT response too large".to_string(),
+            ));
         }
         let n = stream.read(&mut one).await?;
         if n == 0 {
@@ -171,7 +173,12 @@ fn base64_encode(input: &[u8]) -> String {
     out
 }
 
-async fn dial_socks4_proxy(proxy: &Options, host: &str, port: u16, remote_dns: bool) -> Result<TcpStream, Error> {
+async fn dial_socks4_proxy(
+    proxy: &Options,
+    host: &str,
+    port: u16,
+    remote_dns: bool,
+) -> Result<TcpStream, Error> {
     let mut stream = TcpStream::connect((proxy.host.as_str(), proxy.port_or_default())).await?;
     let mut req = Vec::with_capacity(10 + proxy.username.len() + host.len());
     req.push(0x04);
@@ -193,7 +200,10 @@ async fn dial_socks4_proxy(proxy: &Options, host: &str, port: u16, remote_dns: b
     let mut resp = [0_u8; 8];
     stream.read_exact(&mut resp).await?;
     if resp[1] != 0x5a {
-        return Err(Error::Protocol(format!("SOCKS4 connect failed: {}", resp[1])));
+        return Err(Error::Protocol(format!(
+            "SOCKS4 connect failed: {}",
+            resp[1]
+        )));
     }
     Ok(stream)
 }
@@ -208,7 +218,9 @@ async fn resolve_socks4_ipv4(host: &str, port: u16) -> Result<Ipv4Addr, Error> {
             return Ok(*v4.ip());
         }
     }
-    Err(Error::Protocol("SOCKS4 requires an IPv4 target; use SOCKS4a for remote DNS".to_string()))
+    Err(Error::Protocol(
+        "SOCKS4 requires an IPv4 target; use SOCKS4a for remote DNS".to_string(),
+    ))
 }
 
 async fn dial_socks5_proxy(proxy: &Options, host: &str, port: u16) -> Result<TcpStream, Error> {
@@ -227,13 +239,23 @@ async fn dial_socks5_proxy(proxy: &Options, host: &str, port: u16) -> Result<Tcp
     match method[1] {
         0x00 => {}
         0x02 => socks5_auth(&mut stream, &proxy.username, &proxy.password).await?,
-        0xff => return Err(Error::Protocol("SOCKS5 proxy rejected auth methods".to_string())),
-        other => return Err(Error::Protocol(format!("unsupported SOCKS5 auth method {other}"))),
+        0xff => {
+            return Err(Error::Protocol(
+                "SOCKS5 proxy rejected auth methods".to_string(),
+            ))
+        }
+        other => {
+            return Err(Error::Protocol(format!(
+                "unsupported SOCKS5 auth method {other}"
+            )))
+        }
     }
 
     let host_bytes = host.as_bytes();
     if host_bytes.len() > u8::MAX as usize {
-        return Err(Error::Protocol("SOCKS5 target host is too long".to_string()));
+        return Err(Error::Protocol(
+            "SOCKS5 target host is too long".to_string(),
+        ));
     }
     let mut req = Vec::with_capacity(host_bytes.len() + 7);
     req.extend_from_slice(&[0x05, 0x01, 0x00, 0x03, host_bytes.len() as u8]);
@@ -244,10 +266,15 @@ async fn dial_socks5_proxy(proxy: &Options, host: &str, port: u16) -> Result<Tcp
     let mut head = [0_u8; 4];
     stream.read_exact(&mut head).await?;
     if head[0] != 0x05 {
-        return Err(Error::Protocol("invalid SOCKS5 response version".to_string()));
+        return Err(Error::Protocol(
+            "invalid SOCKS5 response version".to_string(),
+        ));
     }
     if head[1] != 0x00 {
-        return Err(Error::Protocol(format!("SOCKS5 connect failed: {}", head[1])));
+        return Err(Error::Protocol(format!(
+            "SOCKS5 connect failed: {}",
+            head[1]
+        )));
     }
     consume_socks5_bound_address(&mut stream, head[3]).await?;
     Ok(stream)
@@ -257,7 +284,9 @@ async fn socks5_auth(stream: &mut TcpStream, username: &str, password: &str) -> 
     let user = username.as_bytes();
     let pass = password.as_bytes();
     if user.len() > u8::MAX as usize || pass.len() > u8::MAX as usize {
-        return Err(Error::Protocol("SOCKS5 username or password is too long".to_string()));
+        return Err(Error::Protocol(
+            "SOCKS5 username or password is too long".to_string(),
+        ));
     }
     let mut req = Vec::with_capacity(user.len() + pass.len() + 3);
     req.push(0x01);
@@ -270,7 +299,9 @@ async fn socks5_auth(stream: &mut TcpStream, username: &str, password: &str) -> 
     let mut resp = [0_u8; 2];
     stream.read_exact(&mut resp).await?;
     if resp != [0x01, 0x00] {
-        return Err(Error::Protocol("SOCKS5 username/password auth failed".to_string()));
+        return Err(Error::Protocol(
+            "SOCKS5 username/password auth failed".to_string(),
+        ));
     }
     Ok(())
 }
@@ -291,7 +322,11 @@ async fn consume_socks5_bound_address(stream: &mut TcpStream, atyp: u8) -> Resul
             let mut rest = [0_u8; 18];
             stream.read_exact(&mut rest).await?;
         }
-        other => return Err(Error::Protocol(format!("unsupported SOCKS5 address type {other}"))),
+        other => {
+            return Err(Error::Protocol(format!(
+                "unsupported SOCKS5 address type {other}"
+            )))
+        }
     }
     Ok(())
 }

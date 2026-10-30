@@ -9,9 +9,9 @@
  *   · 连接根「工具 / 备份脚本」等同理，经 initialTab 或 openVastbaseDataTask 分流
  * - Tab 导航（conn-nav-strategy）决定「打开的是哪个」→ Tab props 携带
  *   profileId / database / schema / table / routine / initialTab / initialSql
- * - VastSession 只是会话壳（租约 + 顶栏 + 重连），按 initialTab 查本注册表
- *   懒加载渲染唯一面板；embedsChrome 的面板（query/call/browse/debug/monitor/overview/tools）
- *   自带顶栏，Session 不再叠第二行 header
+ * - VastSession 只是会话壳（租约 + 重连），按 initialTab 查本注册表
+ *   懒加载渲染唯一面板。各面板自带顶栏（查询壳 / 浏览壳 / 表设计壳 /
+ *   DDL 壳 / 对象脚本壳 / SqlIdeToolbar），Session 不再叠第二行 header
  *
  * 新增功能面板：在此追加一个条目 + conn-tree-provider 加菜单项即可，
  * 无需改 VastSession / OpsConnectionPanel / useConnectionNavigation。
@@ -75,6 +75,7 @@ function relationProps(ctx: VastPaneContext): Record<string, unknown> {
     database: ctx.database,
     schema: ctx.schema,
     table: ctx.table,
+    sessionLabel: ctx.sessionLabel,
     active: true,
   }
 }
@@ -91,6 +92,7 @@ function depsProps(ctx: VastPaneContext): Record<string, unknown> {
     routineKind: ctx.routineKind,
     args: ctx.args,
     oid: ctx.oid,
+    sessionLabel: ctx.sessionLabel,
     active: true,
   }
 }
@@ -141,6 +143,7 @@ function routineProps(ctx: VastPaneContext): Record<string, unknown> {
     routineKind: ctx.routineKind,
     args: ctx.args,
     oid: ctx.oid,
+    sessionLabel: ctx.sessionLabel,
     active: true,
   }
 }

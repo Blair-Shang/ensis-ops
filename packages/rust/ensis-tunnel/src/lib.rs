@@ -119,7 +119,10 @@ pub async fn start_ssh_tunnel(
     default_target_host: &str,
     default_target_port: u16,
 ) -> Result<(String, u16, TunnelGuard), TunnelError> {
-    let profile = tunnel.ssh_profile.as_ref().ok_or(TunnelError::MissingProfile)?;
+    let profile = tunnel
+        .ssh_profile
+        .as_ref()
+        .ok_or(TunnelError::MissingProfile)?;
     if profile.host_address.trim().is_empty() {
         return Err(TunnelError::MissingHost);
     }
@@ -157,7 +160,9 @@ pub async fn start_ssh_tunnel(
     Ok(("127.0.0.1".to_string(), local_port, TunnelGuard { task }))
 }
 
-async fn connect_ssh(profile: &SshTunnelProfile) -> Result<client::Handle<SshClientHandler>, TunnelError> {
+async fn connect_ssh(
+    profile: &SshTunnelProfile,
+) -> Result<client::Handle<SshClientHandler>, TunnelError> {
     let config = Arc::new(client::Config::default());
     let host = profile.host_address.clone();
     let port = if profile.port_number == 0 {
@@ -170,7 +175,9 @@ async fn connect_ssh(profile: &SshTunnelProfile) -> Result<client::Handle<SshCli
         ensis_netproxy::dial_tcp(&profile.options.proxy, &host, port),
     )
     .await
-    .map_err(|_| std::io::Error::new(std::io::ErrorKind::TimedOut, "ssh tunnel connect timed out"))??;
+    .map_err(|_| {
+        std::io::Error::new(std::io::ErrorKind::TimedOut, "ssh tunnel connect timed out")
+    })??;
     let mut handle = client::connect_stream(config, socket, SshClientHandler).await?;
     let user = profile.login_account.clone();
     let auth_ok = authenticate(&mut handle, &user, profile).await?;

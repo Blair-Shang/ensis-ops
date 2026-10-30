@@ -43,3 +43,6 @@ func IsSystemProviderID(id string) bool { return loop.IsSystemProviderID(id) }
 
 // IsSystemProvider 判断库中的 Provider 是否由云端系统模型托管。
 func IsSystemProvider(p *store.AIProvider) bool { return loop.IsSystemProvider(p) }
+
+// FormatToolArgsSummary 把工具参数收成面板上的一行，连接名在前。
+func FormatToolArgsSummary(raw string) string { return loop.FormatToolArgsSummary(raw) }

@@ -39,7 +39,10 @@ async fn run() -> Result<(), Box<dyn std::error::Error + Send + Sync>> {
     });
 
     let id_gen = Arc::new(idgen::Snowflake::new(0)?);
-    let dispatcher = Arc::new(handler::Dispatcher::new(id_gen, eventpub::AsyncPublisher::new()));
+    let dispatcher = Arc::new(handler::Dispatcher::new(
+        id_gen,
+        eventpub::AsyncPublisher::new(),
+    ));
     let addr = ipc_address();
     info!(
         addr,

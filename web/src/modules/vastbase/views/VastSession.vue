@@ -44,7 +44,7 @@ const toast = useRsToast()
 const feature = normalizeVastFeature(props.initialTab)
 const featureDef = vastPaneRegistry[feature]
 
-/** 自带顶栏的面板，避免与 Session header 叠成两行 */
+/** 面板自带顶栏时不再画 Session header，避免叠成两行 */
 const embedsChrome =
   feature === 'query' ||
   feature === 'call' ||
@@ -52,7 +52,11 @@ const embedsChrome =
   feature === 'debug' ||
   feature === 'monitor' ||
   feature === 'overview' ||
-  feature === 'tools'
+  feature === 'tools' ||
+  feature === 'ddl' ||
+  feature === 'design' ||
+  feature === 'source' ||
+  feature === 'deps'
 
 /** 子面板（如 DDL）经 Teleport 挂工具按钮到顶栏右侧 */
 const headerActionsEl = ref<HTMLElement | null>(null)

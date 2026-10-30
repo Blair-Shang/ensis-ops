@@ -113,7 +113,11 @@ fn parse_subcommands(v: &redis::Value) -> Vec<DynSubcommand> {
         .filter_map(|(full_name, doc)| {
             // Redis names subcommands "parent|sub" (e.g. "config|get") inside COMMAND DOCS;
             // keep only the part after the separator.
-            let short_name = full_name.rsplit('|').next().unwrap_or(&full_name).to_string();
+            let short_name = full_name
+                .rsplit('|')
+                .next()
+                .unwrap_or(&full_name)
+                .to_string();
             parse_subcommand_doc(&short_name, &doc)
         })
         .collect()
@@ -206,9 +210,17 @@ fn parse_single_arg(v: &redis::Value, depth: usize) -> Option<RawArg> {
 
 fn render_arg(arg: &RawArg) -> String {
     let core = if arg.kind.eq_ignore_ascii_case("oneof") {
-        arg.nested.iter().map(render_arg).collect::<Vec<_>>().join("|")
+        arg.nested
+            .iter()
+            .map(render_arg)
+            .collect::<Vec<_>>()
+            .join("|")
     } else if arg.kind.eq_ignore_ascii_case("block") {
-        arg.nested.iter().map(render_arg).collect::<Vec<_>>().join(" ")
+        arg.nested
+            .iter()
+            .map(render_arg)
+            .collect::<Vec<_>>()
+            .join(" ")
     } else if arg.kind.eq_ignore_ascii_case("pure-token") {
         arg.token.clone().unwrap_or_else(|| arg.display.clone())
     } else if let Some(token) = &arg.token {
@@ -259,7 +271,10 @@ mod tests {
             ("group", bulk("string")),
             (
                 "arguments",
-                Value::Array(vec![pairs_value(vec![("name", bulk("key")), ("type", bulk("key"))])]),
+                Value::Array(vec![pairs_value(vec![
+                    ("name", bulk("key")),
+                    ("type", bulk("key")),
+                ])]),
             ),
         ]);
         let reply = pairs_value(vec![("get", doc)]);
@@ -296,7 +311,10 @@ mod tests {
         ]);
         let reply = pairs_value(vec![("set", doc)]);
         let commands = parse_command_docs(&reply);
-        assert_eq!(commands[0].arguments, "key value [EX seconds|PX milliseconds]");
+        assert_eq!(
+            commands[0].arguments,
+            "key value [EX seconds|PX milliseconds]"
+        );
     }
 
     #[test]
@@ -313,12 +331,18 @@ mod tests {
             ),
         ]);
         let subcommands = pairs_value(vec![("config|get", get_sub)]);
-        let doc = pairs_value(vec![("summary", bulk("配置管理")), ("subcommands", subcommands)]);
+        let doc = pairs_value(vec![
+            ("summary", bulk("配置管理")),
+            ("subcommands", subcommands),
+        ]);
         let reply = pairs_value(vec![("config", doc)]);
         let commands = parse_command_docs(&reply);
         assert_eq!(commands[0].subcommands.len(), 1);
         assert_eq!(commands[0].subcommands[0].name, "GET");
-        assert_eq!(commands[0].subcommands[0].arguments, "parameter [parameter ...]");
+        assert_eq!(
+            commands[0].subcommands[0].arguments,
+            "parameter [parameter ...]"
+        );
     }
 
     #[test]

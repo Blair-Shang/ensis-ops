@@ -9,9 +9,9 @@
 
 .nm-api-ws__chrome {
   flex-shrink: 0;
-  padding: 0.55rem 0.75rem 0.45rem;
+  padding: 0.35rem 0.5rem 0.4rem;
   border-bottom: 1px solid var(--rs-border-subtle);
-  background: color-mix(in srgb, var(--rs-text) 3%, var(--rs-surface));
+  background: color-mix(in srgb, var(--rs-text) 4.5%, var(--rs-surface));
 }
 
 .nm-api-ws__toolbar,
@@ -23,11 +23,18 @@
 }
 
 .nm-api-ws__badge {
+  display: inline-flex;
+  align-items: center;
   flex-shrink: 0;
-  font-family: var(--rs-font-mono);
-  font-size: var(--rs-font-size-xs);
-  font-weight: var(--rs-font-weight-semibold);
+  height: 1.35rem;
+  padding: 0 0.45rem;
+  border-radius: 4px;
+  background: color-mix(in srgb, var(--rs-primary) 16%, transparent);
   color: var(--rs-primary);
+  font-family: var(--rs-font-mono);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
 }
 
 .nm-api-ws__url,
@@ -53,17 +60,26 @@
 }
 
 .nm-api-ws__status {
+  display: inline-flex;
+  align-items: center;
+  width: fit-content;
   margin: 0.35rem 0 0;
+  padding: 0.08rem 0.5rem;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--rs-text) 6%, transparent);
   color: var(--rs-muted);
+  font-family: var(--rs-font-mono);
   font-size: var(--rs-font-size-xs);
 }
 
 .nm-api-ws__status--on {
   color: var(--rs-success);
+  background: color-mix(in srgb, var(--rs-success) 14%, transparent);
 }
 
 .nm-api-ws__status--err {
   color: var(--rs-danger);
+  background: color-mix(in srgb, var(--rs-danger) 12%, transparent);
 }
 
 .nm-api-ws__headers {
@@ -143,7 +159,11 @@
 }
 
 .nm-api-ws__frame {
-  margin: 0 0 0.55rem;
+  margin: 0 0 0.45rem;
+  padding: 0.4rem 0.55rem;
+  border: 1px solid var(--rs-border-subtle);
+  border-radius: 8px;
+  background: color-mix(in srgb, var(--rs-text) 3%, var(--rs-surface));
 }
 
 .nm-api-ws__frame header {

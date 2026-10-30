@@ -73,6 +73,31 @@ func TestHostToolSpecsByModule(t *testing.T) {
 	}
 }
 
+func TestHostToolSpecsForModules(t *testing.T) {
+	specs := HostToolSpecsForModules([]string{"ssh", "mysql"})
+	var ssh, sql, redis bool
+	for _, spec := range specs {
+		if IsSSHTool(spec.Name) {
+			ssh = true
+		}
+		if IsSQLTool(spec.Name) {
+			sql = true
+		}
+		if IsRedisTool(spec.Name) {
+			redis = true
+		}
+	}
+	if !ssh || !sql || redis {
+		t.Fatalf("ssh=%v sql=%v redis=%v len=%d", ssh, sql, redis, len(specs))
+	}
+	if len(HostToolSpecsForModules(nil)) != len(HostToolSpecs("")) {
+		t.Fatal("empty module list")
+	}
+	if len(HostToolSpecsForModules([]string{"ssh"})) != len(HostToolSpecs("ssh")) {
+		t.Fatal("single module")
+	}
+}
+
 func TestCallSSHListDir(t *testing.T) {
 	rt := &sshStubRuntime{}
 	text, err := CallSSH(context.Background(), rt, ToolSSHListDir, map[string]any{

@@ -52,7 +52,9 @@ impl Dispatcher {
             method::MONITOR_METRICS => methods::monitor_metrics(&self.sessions, id, params).await,
             method::MONITOR_SLOWLOG => methods::monitor_slowlog(&self.sessions, id, params).await,
             method::MONITOR_STREAM_START => self.monitor_stream_start(id, params).await,
-            method::MONITOR_STREAM_STOP => methods::monitor_stream_stop(&self.sessions, id, params).await,
+            method::MONITOR_STREAM_STOP => {
+                methods::monitor_stream_stop(&self.sessions, id, params).await
+            }
             method::KEYSPACE_SCAN => methods::keyspace_scan(&self.sessions, id, params).await,
             method::TREE_DATABASES => methods::tree_databases(id, params).await,
             other => Response::err(id, format!("method not found: {other}")),
@@ -129,8 +131,14 @@ impl Dispatcher {
         };
         match connect_redis(&params).await {
             Ok(mut connected) => match connected.backend.ping().await {
-                Ok(()) => Response::ok(id, &serde_json::json!({ "ok": true, "message": "connected" })),
-                Err(e) => Response::ok(id, &serde_json::json!({ "ok": false, "message": e.to_string() })),
+                Ok(()) => Response::ok(
+                    id,
+                    &serde_json::json!({ "ok": true, "message": "connected" }),
+                ),
+                Err(e) => Response::ok(
+                    id,
+                    &serde_json::json!({ "ok": false, "message": e.to_string() }),
+                ),
             },
             Err(e) => {
                 warn!(
@@ -140,7 +148,10 @@ impl Dispatcher {
                     %e,
                     "session.test"
                 );
-                Response::ok(id, &serde_json::json!({ "ok": false, "message": e.to_string() }))
+                Response::ok(
+                    id,
+                    &serde_json::json!({ "ok": false, "message": e.to_string() }),
+                )
             }
         }
     }
@@ -154,7 +165,11 @@ impl Dispatcher {
             Ok(value) => value,
             Err(err) => return Response::err(id, err.to_string()),
         };
-        match self.sessions.start_monitor(&session_id, monitor_id.clone()).await {
+        match self
+            .sessions
+            .start_monitor(&session_id, monitor_id.clone())
+            .await
+        {
             Ok(()) => {
                 info!(session = %session_id, monitor = %monitor_id, "monitor.stream.start");
                 Response::ok(id, &serde_json::json!({ "monitorId": monitor_id }))

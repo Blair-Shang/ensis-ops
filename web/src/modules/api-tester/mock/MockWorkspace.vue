@@ -180,8 +180,10 @@ function blankRoute(): ApiMockRoute {
       <RsButton v-else size="sm" variant="text" tone="danger" icon="square" :disabled="busy" @click="stop">
         {{ t('modules.api.mockStop') }}
       </RsButton>
-      <span v-if="listening" class="nm-api-mock__listen">{{ t('modules.api.mockListening', { addr: listening }) }}</span>
-      <span v-else class="nm-api-mock__listen">{{ t('modules.api.mockIdle') }}</span>
+      <span class="nm-api-mock__listen" :class="{ 'nm-api-mock__listen--on': listening }">
+        <span class="nm-api-mock__dot" :class="{ 'nm-api-mock__dot--on': listening }" />
+        {{ listening ? t('modules.api.mockListening', { addr: listening }) : t('modules.api.mockIdle') }}
+      </span>
     </header>
 
     <div v-if="server" class="nm-api-mock__tools">
@@ -201,7 +203,12 @@ function blankRoute(): ApiMockRoute {
 
     <div class="nm-api-mock__body">
       <section class="nm-api-mock__routes">
-        <article v-for="route in server?.routes ?? []" :key="route.id" class="nm-api-mock__route">
+        <article
+          v-for="route in server?.routes ?? []"
+          :key="route.id"
+          class="nm-api-mock__route"
+          :class="`nm-api-mock__route--${String(route.method).toLowerCase()}`"
+        >
           <div class="nm-api-mock__route-bar">
             <RsSelect v-model="route.method" :options="methodOptions" size="sm" radius="sm" :searchable="false" :clearable="false" />
             <RsInput v-model="route.path" size="sm" :placeholder="t('modules.api.mockPath')" />
@@ -215,8 +222,10 @@ function blankRoute(): ApiMockRoute {
       </section>
       <aside v-if="listening" class="nm-api-mock__hits">
         <h3>{{ t('modules.api.mockHits') }}</h3>
-        <p v-for="(hit, index) in hits" :key="`${hit.at}-${index}`">
-          {{ hit.method }} {{ hit.path }} · {{ hit.matched ? hit.status : t('modules.api.mockMiss') }}
+        <p v-for="(hit, index) in hits" :key="`${hit.at}-${index}`" class="nm-api-mock__hit">
+          <span class="nm-api-mock__hit-method">{{ hit.method }}</span>
+          <span class="nm-api-mock__hit-path">{{ hit.path }}</span>
+          <span>{{ hit.matched ? hit.status : t('modules.api.mockMiss') }}</span>
         </p>
       </aside>
     </div>
@@ -248,9 +257,33 @@ function blankRoute(): ApiMockRoute {
 }
 
 .nm-api-mock__listen {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
   margin-inline-start: auto;
+  padding: 0.08rem 0.45rem;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--rs-text) 6%, transparent);
   color: var(--rs-muted);
+  font-family: var(--rs-font-mono);
   font-size: var(--rs-font-size-xs);
+}
+
+.nm-api-mock__listen--on {
+  background: color-mix(in srgb, var(--rs-success) 14%, transparent);
+  color: var(--rs-success);
+}
+
+.nm-api-mock__dot {
+  width: 0.4rem;
+  height: 0.4rem;
+  border-radius: 999px;
+  background: var(--rs-muted);
+}
+
+.nm-api-mock__dot--on {
+  background: var(--rs-success);
+  animation: nm-api-mock-pulse 1s ease-in-out infinite;
 }
 
 .nm-api-mock__body {
@@ -271,9 +304,29 @@ function blankRoute(): ApiMockRoute {
   flex-direction: column;
   gap: var(--rs-space-xs);
   margin-bottom: var(--rs-space-sm);
-  padding: var(--rs-space-xs);
+  padding: var(--rs-space-sm);
   border: 1px solid var(--rs-border-subtle);
-  border-radius: var(--rs-radius-sm);
+  border-radius: var(--rs-radius);
+  background: color-mix(in srgb, var(--rs-text) 2%, var(--rs-surface));
+  box-shadow: inset 3px 0 0 var(--nm-method, var(--rs-border));
+}
+
+.nm-api-mock__route--get,
+.nm-api-mock__route--head {
+  --nm-method: var(--rs-success);
+}
+
+.nm-api-mock__route--post {
+  --nm-method: var(--rs-primary);
+}
+
+.nm-api-mock__route--put,
+.nm-api-mock__route--patch {
+  --nm-method: var(--rs-warning);
+}
+
+.nm-api-mock__route--delete {
+  --nm-method: var(--rs-danger);
 }
 
 .nm-api-mock__route-bar {
@@ -318,7 +371,35 @@ function blankRoute(): ApiMockRoute {
   font-weight: 600;
 }
 
-.nm-api-mock__hits p {
+.nm-api-mock__hit {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
   margin: 0 0 var(--rs-space-xs);
+  font-family: var(--rs-font-mono);
+}
+
+.nm-api-mock__hit-method {
+  flex-shrink: 0;
+  color: var(--rs-primary);
+  font-weight: 700;
+}
+
+.nm-api-mock__hit-path {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: var(--rs-text);
+}
+
+@keyframes nm-api-mock-pulse {
+  0%,
+  100% {
+    opacity: 0.35;
+  }
+  50% {
+    opacity: 1;
+  }
 }
 </style>

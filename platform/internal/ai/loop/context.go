@@ -56,6 +56,8 @@ type ContextAttachment struct {
 type NormalizedContext struct {
 	Workspace   *ContextWorkspace
 	Attachments []ContextAttachment
+	// Scopes 是这一轮可执行的连接。工具按族绑到其中一条，而不是总绑工作区页签。
+	Scopes []ToolScope
 	// PromptBlock 供 Assemble 注入（可空表示无有效上下文）。
 	PromptBlock string
 	Truncated   bool
@@ -143,7 +145,8 @@ func NormalizeContext(draft *ContextDraft) NormalizedContext {
 		fillSQLCatalogScope(out.Workspace)
 	}
 
-	block, truncated := formatContextPrompt(out.Workspace, out.Attachments)
+	out.Scopes = collectScopes(out.Workspace, out.Attachments)
+	block, truncated := formatContextPrompt(out.Workspace, out.Attachments, out.Scopes)
 	if truncated {
 		out.Truncated = true
 	}
@@ -177,7 +180,7 @@ func sanitizePayload(in map[string]any) (map[string]any, bool) {
 		}
 		switch t := v.(type) {
 		case string:
-			if strings.EqualFold(k, "text") || strings.EqualFold(k, "sql") || strings.EqualFold(k, "snippet") {
+			if strings.EqualFold(k, "text") || strings.EqualFold(k, "sql") || strings.EqualFold(k, "snippet") || strings.EqualFold(k, "dialectRules") {
 				s, cut := truncateBytes(t, maxSelectionBytes)
 				if cut {
 					truncated = true
@@ -212,30 +215,51 @@ func sanitizePayload(in map[string]any) (map[string]any, bool) {
 	return out, truncated
 }
 
-func formatContextPrompt(ws *ContextWorkspace, attachments []ContextAttachment) (string, bool) {
+func formatContextPrompt(ws *ContextWorkspace, attachments []ContextAttachment, scopes []ToolScope) (string, bool) {
 	if ws == nil && len(attachments) == 0 {
 		return "", false
 	}
 	var b strings.Builder
 	b.WriteString("[Context Pack]\n")
+	multi := len(scopes) > 1 || len(toolModuleIDs(ws, scopes)) > 1
 	if ws != nil {
 		b.WriteString(fmt.Sprintf(
 			"workspace: module=%s profile=%s session=%s db=%s collection=%s tab=%s cwd=%s\n",
 			dash(ws.ModuleID), dash(ws.ProfileID), dash(ws.SessionID), dash(ws.Database), dash(ws.Collection), dash(ws.Title), dash(ws.Cwd),
 		))
-		if rules := strings.TrimSpace(ws.DialectRules); rules != "" {
-			b.WriteString(rules)
-			b.WriteByte('\n')
-		} else if dialect := moduleDialectPrompt(ws.ModuleID, ws.DialectFamily, ws.Capabilities); dialect != "" {
-			b.WriteString(dialect)
-			b.WriteByte('\n')
+		// 多连接时方言写在各自的 scope 下，避免只套用当前页签的「不要调用别的工具」。
+		if !multi {
+			if rules := strings.TrimSpace(ws.DialectRules); rules != "" {
+				b.WriteString(rules)
+				b.WriteByte('\n')
+			} else if dialect := moduleDialectPrompt(ws.ModuleID, ws.DialectFamily, ws.Capabilities); dialect != "" {
+				b.WriteString(dialect)
+				b.WriteByte('\n')
+			}
+			if guide := workspaceGuide(ws.ModuleID, ws.DialectFamily); guide != "" {
+				b.WriteString(guide)
+				b.WriteByte('\n')
+			}
 		}
-		if guide := workspaceGuide(ws.ModuleID, ws.DialectFamily); guide != "" {
-			b.WriteString(guide)
-			b.WriteByte('\n')
+	}
+	if multi {
+		if block := formatScopesBlock(scopes); block != "" {
+			b.WriteString(block)
+			if !strings.HasSuffix(block, "\n") {
+				b.WriteByte('\n')
+			}
+		}
+		if ws != nil {
+			fam := host.ModuleFamily(ws.ModuleID)
+			if fam != "" && !scopeFamilyPresent(scopes, fam) {
+				b.WriteString(fmt.Sprintf("%s %q has no session; connect that tab before calling its tools.\n", fam, dash(ws.Title)))
+			}
 		}
 	}
 	for _, a := range attachments {
+		if multi && attachmentFoldedIntoScope(a) {
+			continue
+		}
 		detail := a.Detail
 		if detail != "" {
 			b.WriteString(fmt.Sprintf("[%s] %s (%s)\n", a.Kind, a.Label, detail))

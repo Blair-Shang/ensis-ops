@@ -314,7 +314,14 @@ function openClearHistory(): void {
 }
 
 .nm-api-sidenav__tone {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   flex-shrink: 0;
+  width: 1.15rem;
+  height: 1.15rem;
+  border-radius: 4px;
+  background: color-mix(in srgb, currentColor 16%, transparent);
 }
 
 .nm-api-sidenav__jump {

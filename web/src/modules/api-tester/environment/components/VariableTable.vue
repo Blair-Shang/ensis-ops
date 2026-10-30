@@ -69,7 +69,7 @@ function onKindChange(row: ApiVarRow, raw: unknown): void {
     </div>
     <div class="nm-api-var__body">
       <div v-if="rows.length === 0" class="nm-api-var__empty">{{ t('modules.api.noKv') }}</div>
-      <div v-for="row in rows" :key="row.id" class="nm-api-var__row">
+      <div v-for="row in rows" :key="row.id" class="nm-api-var__row" :class="{ 'nm-api-var__row--off': !row.enabled }">
         <RsCheckbox v-model="row.enabled" size="sm" :aria-label="t('modules.api.enabled')" />
         <RsSelect
           :model-value="row.kind"
@@ -121,8 +121,9 @@ function onKindChange(row: ApiVarRow, raw: unknown): void {
   z-index: 1;
   height: var(--rs-control-height-lg);
   padding: 0 var(--rs-space-md) 0 var(--rs-space-sm);
-  font-size: var(--rs-font-size-xs);
-  font-weight: var(--rs-font-weight-medium, 500);
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
   color: var(--rs-muted);
   background: var(--rs-surface-elevated);
   border-bottom: 1px solid var(--rs-border-subtle);
@@ -138,8 +139,16 @@ function onKindChange(row: ApiVarRow, raw: unknown): void {
   border-bottom: 1px solid var(--rs-border-subtle);
 }
 
+.nm-api-var__row:nth-child(even) {
+  background: color-mix(in srgb, var(--rs-text) 2.5%, transparent);
+}
+
 .nm-api-var__row:hover {
   background: var(--rs-item-hover);
+}
+
+.nm-api-var__row--off {
+  opacity: 0.42;
 }
 
 .nm-api-var__row :deep(.rs-input) {

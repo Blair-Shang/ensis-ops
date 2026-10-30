@@ -28,7 +28,9 @@ fn get_i64(kv: &HashMap<String, String>, key: &str) -> i64 {
 }
 
 fn get_f64(kv: &HashMap<String, String>, key: &str) -> f64 {
-    kv.get(key).and_then(|s| s.parse::<f64>().ok()).unwrap_or(0.0)
+    kv.get(key)
+        .and_then(|s| s.parse::<f64>().ok())
+        .unwrap_or(0.0)
 }
 
 fn get_str<'a>(kv: &'a HashMap<String, String>, key: &str) -> &'a str {
@@ -107,11 +109,12 @@ pub fn keyspace_db_keys_from_info(text: &str) -> Vec<(i64, i64)> {
 }
 
 /// Reads `CONFIG GET databases` reply; falls back to 16 when unavailable.
-pub async fn parse_config_databases(
-    backend: &mut crate::session::connect::RedisBackend,
-) -> i64 {
+pub async fn parse_config_databases(backend: &mut crate::session::connect::RedisBackend) -> i64 {
     const DEFAULT_DATABASE_COUNT: i64 = 16;
-    let reply = match backend.exec_raw("CONFIG", &[b"GET".to_vec(), b"databases".to_vec()]).await {
+    let reply = match backend
+        .exec_raw("CONFIG", &[b"GET".to_vec(), b"databases".to_vec()])
+        .await
+    {
         Ok(value) => value,
         Err(_) => return DEFAULT_DATABASE_COUNT,
     };
@@ -278,8 +281,9 @@ mod tests {
 
     #[test]
     fn parses_basic_monitor_line() {
-        let parsed = parse_monitor_line(r#"1620000000.123456 [0 127.0.0.1:52341] "SET" "key" "value""#)
-            .expect("line should parse");
+        let parsed =
+            parse_monitor_line(r#"1620000000.123456 [0 127.0.0.1:52341] "SET" "key" "value""#)
+                .expect("line should parse");
         assert_eq!(parsed["db"], 0);
         assert_eq!(parsed["client"], "127.0.0.1:52341");
         assert_eq!(parsed["command"], json!(["SET", "key", "value"]));
@@ -287,7 +291,8 @@ mod tests {
 
     #[test]
     fn parses_escaped_quotes_in_monitor_line() {
-        let parsed = parse_monitor_line(r#"1620000000.0 [0 lua] "SET" "k" "va\"lue""#).expect("should parse");
+        let parsed = parse_monitor_line(r#"1620000000.0 [0 lua] "SET" "k" "va\"lue""#)
+            .expect("should parse");
         assert_eq!(parsed["command"], json!(["SET", "k", "va\"lue"]));
     }
 

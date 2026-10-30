@@ -2,10 +2,10 @@
 //!
 //! 目录优先级：`ENSIS_LOG_DIR` > `ENSIS_LOG_ROOT` > 仓库根 `logs/`。
 
-mod resolve;
-mod rotate;
 mod crash;
 mod observe;
+mod resolve;
+mod rotate;
 
 use std::io;
 use std::sync::Arc;
@@ -15,8 +15,8 @@ use tracing_subscriber::layer::SubscriberExt;
 use tracing_subscriber::util::SubscriberInitExt;
 use tracing_subscriber::EnvFilter;
 
-pub use rotate::MAX_FILE_BYTES;
 pub use observe::observe_ipc;
+pub use rotate::MAX_FILE_BYTES;
 
 /// InitError 表示日志初始化失败。
 #[derive(Debug, thiserror::Error)]
@@ -60,7 +60,10 @@ pub fn init(service_name: &str) -> Result<(), InitError> {
         .with(filter)
         .with(tracing_subscriber::fmt::layer())
         .init();
-    tracing::warn!(service = service_name, "file logging unavailable, using stderr");
+    tracing::warn!(
+        service = service_name,
+        "file logging unavailable, using stderr"
+    );
     crash::install_crash_dump(service_name);
     Ok(())
 }

@@ -10,10 +10,10 @@ import { useAiStore } from '@/stores/ai'
 import AiMarkdown from './AiMarkdown.vue'
 import AiMediaLightbox from './AiMediaLightbox.vue'
 import AiToolCallList from './AiToolCallList.vue'
-import type { AiContextAttachment } from './context-pack'
-import type { AiOpenTarget } from './workspace-marker'
-import type { ExtractedTextFile } from './attachment-utils'
-import type { ParsedAssistantContent } from './parse-assistant-content'
+import { extractAttachmentMarkers, type AiContextAttachment } from './context-pack'
+import { extractWorkspaceMarker, type AiOpenTarget } from './workspace-marker'
+import { extractImageMarkers, extractTextMarkers, type ExtractedTextFile } from './attachment-utils'
+import { parseAssistantContent, type ParsedAssistantContent } from './parse-assistant-content'
 
 const props = withDefaults(
   defineProps<{
@@ -87,14 +87,47 @@ const timeLabel = computed(() => {
   }
 })
 
-const copyPayload = computed(() => {
-  if (isAssistant.value && props.parsed) {
-    return props.parsed.body || props.content
+/** 用户消息在挂载时再剥标记。滚出视口后这份副本可以回收。 */
+const userView = computed(() => {
+  if (!isUser.value) {
+    return null
   }
-  return props.content
+  const marked = extractWorkspaceMarker(props.content)
+  const withImages = extractImageMarkers(marked.text)
+  const withFiles = extractTextMarkers(withImages.text)
+  const extracted = extractAttachmentMarkers(withFiles.text)
+  return {
+    text: extracted.text,
+    attachments: extracted.attachments,
+    images: withImages.images,
+    files: withFiles.files,
+  }
 })
 
-const segments = computed(() => props.parsed?.segments ?? [])
+const viewText = computed(() => userView.value?.text ?? props.content)
+const viewAttachments = computed(() => userView.value?.attachments ?? props.attachments)
+const viewImages = computed(() => userView.value?.images ?? props.images)
+const viewFiles = computed(() => userView.value?.files ?? props.files)
+
+/** 助手正文在挂载时解析。未传入 parsed 时不在列表层为全部历史各留一份。 */
+const resolvedParsed = computed(() => {
+  if (props.parsed) {
+    return props.parsed
+  }
+  if (!isAssistant.value || !props.content) {
+    return null
+  }
+  return parseAssistantContent(props.content)
+})
+
+const copyPayload = computed(() => {
+  if (isAssistant.value && resolvedParsed.value) {
+    return resolvedParsed.value.body || viewText.value
+  }
+  return viewText.value
+})
+
+const segments = computed(() => resolvedParsed.value?.segments ?? [])
 
 /** 末尾未闭合的思考就是当前步骤，不再在它下面画光标。 */
 const openThinkAtEnd = computed(() => {
@@ -176,7 +209,7 @@ function onEdit(): void {
   if (!canEdit.value || !props.messageId) {
     return
   }
-  aiStore.editUserMessage(props.messageId, props.content)
+  aiStore.editUserMessage(props.messageId, viewText.value)
 }
 
 async function onBranch(): Promise<void> {
@@ -203,9 +236,9 @@ async function onBranch(): Promise<void> {
         </div>
       </div>
 
-      <div v-if="attachments.length" class="nm-ai-msg__chips rs-native-scrollbar" role="list">
+      <div v-if="viewAttachments.length" class="nm-ai-msg__chips rs-native-scrollbar" role="list">
         <button
-          v-for="a in attachments"
+          v-for="a in viewAttachments"
           :key="a.id"
           type="button"
           class="nm-ai-msg__chip"
@@ -218,7 +251,7 @@ async function onBranch(): Promise<void> {
         </button>
       </div>
 
-      <template v-if="isAssistant && parsed">
+      <template v-if="isAssistant && resolvedParsed">
         <AiToolCallList v-if="toolsBefore.length" :tools="toolsBefore" />
         <template v-for="(segment, index) in segments" :key="index">
           <details
@@ -253,9 +286,9 @@ async function onBranch(): Promise<void> {
         <AiToolCallList v-if="toolsAfter.length" :tools="toolsAfter" />
       </template>
 
-      <div v-if="images.length" class="nm-ai-msg__images">
+      <div v-if="viewImages.length" class="nm-ai-msg__images">
         <button
-          v-for="(src, i) in images"
+          v-for="(src, i) in viewImages"
           :key="i"
           type="button"
           class="nm-ai-msg__image-link"
@@ -268,8 +301,8 @@ async function onBranch(): Promise<void> {
 
       <AiMediaLightbox v-model:open="previewOpen" :image-src="previewSrc" />
 
-      <div v-if="files.length" class="nm-ai-msg__files">
-        <details v-for="(f, i) in files" :key="i" class="nm-ai-msg__file">
+      <div v-if="viewFiles.length" class="nm-ai-msg__files">
+        <details v-for="(f, i) in viewFiles" :key="i" class="nm-ai-msg__file">
           <summary class="nm-ai-msg__file-summary">
             <RsIcon name="file-text" :size="12" />
             <span class="nm-ai-msg__file-name">{{ f.name }}</span>
@@ -279,9 +312,9 @@ async function onBranch(): Promise<void> {
       </div>
 
       <div v-if="isUser" class="nm-ai-msg__body nm-ai-msg__body--md nm-ai-msg__body--user">
-        <AiMarkdown v-if="content" :source="content" :open-target="openTarget" lite />
+        <AiMarkdown v-if="viewText" :source="viewText" :open-target="openTarget" lite />
       </div>
-      <div v-else-if="!isAssistant" class="nm-ai-msg__body">{{ content }}</div>
+      <div v-else-if="!isAssistant" class="nm-ai-msg__body">{{ viewText }}</div>
       <AiToolCallList v-if="isUser && toolsAfter.length" :tools="toolsAfter" />
 
       <div v-if="!streaming" class="nm-ai-msg__actions">

@@ -140,6 +140,8 @@ export default {
     toolRunning: 'Running',
     toolOk: 'Done',
     toolFailed: 'Failed',
+    toolStopped: 'Stopped',
+    toolRejected: 'Rejected',
     toolPending: 'Pending',
     toolApprove: 'Approve',
     toolApproveMore: 'More approval options',

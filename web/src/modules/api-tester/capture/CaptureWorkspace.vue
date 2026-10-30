@@ -7,6 +7,7 @@ import { onBeforeUnmount, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { apiCaptureApi, type ApiCaptureEntry } from '@/api/api-capture'
 import { useApiTesterStore } from '../stores/api-tester'
+import ApiMethodBadge from '../layout/ApiMethodBadge.vue'
 import { minimalRequest } from '../utils/collection-io'
 
 const { t } = useI18n()
@@ -67,13 +68,16 @@ onBeforeUnmount(() => {
       <RsButton v-else size="sm" variant="text" tone="danger" icon="square" @click="stop">
         {{ t('modules.api.captureStop') }}
       </RsButton>
-      <span v-if="listening" class="nm-api-cap__addr">{{ listening }}</span>
+      <span v-if="listening" class="nm-api-cap__addr nm-api-cap__addr--live">
+        <span class="nm-api-cap__dot" />
+        {{ listening }}
+      </span>
     </header>
     <p class="nm-api-cap__hint">{{ t('modules.api.captureHint') }}</p>
     <p v-if="!entries.length" class="nm-api-cap__hint">{{ t('modules.api.captureEmpty') }}</p>
     <ul class="nm-api-cap__list">
       <li v-for="entry in entries" :key="entry.id" class="nm-api-cap__item">
-        <span class="nm-api-cap__method">{{ entry.method }}</span>
+        <ApiMethodBadge :method="entry.method" compact />
         <span class="nm-api-cap__url">{{ entry.url }}</span>
         <RsButton size="sm" variant="ghost" @click="save(entry)">{{ t('modules.api.captureSave') }}</RsButton>
       </li>
@@ -110,6 +114,26 @@ onBeforeUnmount(() => {
   font-size: var(--rs-font-size-xs);
 }
 
+.nm-api-cap__addr--live {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  margin-inline-start: auto;
+  padding: 0.08rem 0.45rem;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--rs-success) 14%, transparent);
+  color: var(--rs-success);
+  font-family: var(--rs-font-mono);
+}
+
+.nm-api-cap__dot {
+  width: 0.4rem;
+  height: 0.4rem;
+  border-radius: 999px;
+  background: var(--rs-success);
+  animation: nm-api-cap-pulse 1s ease-in-out infinite;
+}
+
 .nm-api-cap__hint {
   padding: var(--rs-space-xs) var(--rs-space-md);
 }
@@ -125,10 +149,14 @@ onBeforeUnmount(() => {
   display: flex;
   align-items: center;
   gap: var(--rs-space-sm);
-  min-height: 1.75rem;
+  min-height: 2rem;
   padding: 0 var(--rs-space-md);
   border-bottom: 1px solid var(--rs-border-subtle);
   font-size: var(--rs-font-size-sm);
+}
+
+.nm-api-cap__item:hover {
+  background: var(--rs-item-hover);
 }
 
 .nm-api-cap__url {
@@ -137,5 +165,17 @@ onBeforeUnmount(() => {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+  font-family: var(--rs-font-mono);
+  font-size: var(--rs-font-size-xs);
+}
+
+@keyframes nm-api-cap-pulse {
+  0%,
+  100% {
+    opacity: 0.35;
+  }
+  50% {
+    opacity: 1;
+  }
 }
 </style>

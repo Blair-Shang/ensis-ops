@@ -4,19 +4,18 @@ import {
   RsConfirmDialog,
   RsDialog,
   RsEmpty,
-  RsIcon,
   RsInput,
   RsLoading,
   RsSelect,
   RsTable,
-  RsTabs,
-  RsToolbar,
   useRsToast,
 } from 'ensis-ui'
-import type { RsContextMenuItem, RsSelectOptions, RsTabItem, RsTableColumn } from 'ensis-ui'
+import type { RsContextMenuItem, RsSelectOptions, RsTableColumn } from 'ensis-ui'
 import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { vastbaseApi } from '@/api'
+import SqlIdeToolbar from '@/modules/database/components/SqlIdeToolbar.vue'
+import type { SqlIdeToolbarItem } from '@/modules/database/types/sql-ide-toolbar'
 import type {
   VastActivitySession,
   VastLockBlockingEdge,
@@ -130,19 +129,59 @@ const blockerByBlocked = computed(() => {
   return map
 })
 
-const tabItems = computed((): RsTabItem[] => [
-  { value: 'instance', label: t('modules.vastbase.monitor.tabInstance') },
+const toolbarItems = computed((): SqlIdeToolbarItem[] => [
   {
-    value: 'sessions',
-    label: t('modules.vastbase.monitor.tabSessions'),
-    badge: filteredSessions.value.length || undefined,
+    key: 'instance',
+    icon: 'server',
+    label: t('modules.vastbase.monitor.tabInstance'),
+    title: t('modules.vastbase.monitor.tabInstance'),
+    active: section.value === 'instance',
   },
   {
-    value: 'locks',
+    key: 'sessions',
+    icon: 'users',
+    label: t('modules.vastbase.monitor.tabSessions'),
+    title: t('modules.vastbase.monitor.tabSessions'),
+    active: section.value === 'sessions',
+  },
+  {
+    key: 'locks',
+    icon: 'lock',
     label: t('modules.vastbase.monitor.tabLocks'),
-    badge: filteredLocks.value.length || undefined,
+    title: t('modules.vastbase.monitor.tabLocks'),
+    active: section.value === 'locks',
+  },
+  { key: 'sep-monitor', sep: true },
+  {
+    key: 'interval',
+    kind: 'modes',
+    label: t('modules.vastbase.monitor.autoRefresh'),
+    value: autoRefreshSecs.value,
+    align: 'trail',
+    options: intervalOptions.value.flatMap((opt) =>
+      'options' in opt ? [] : [{ key: String(opt.value), label: opt.label }],
+    ),
+  },
+  {
+    key: 'refresh',
+    icon: 'refresh-cw',
+    title: t('modules.vastbase.structure.refresh'),
+    align: 'trail',
+    loading: loading.value,
   },
 ])
+
+function onMonitorAction(key: string): void {
+  if (key === 'instance' || key === 'sessions' || key === 'locks') {
+    section.value = key
+    return
+  }
+  if (key === 'refresh') void loadAll()
+}
+
+function onMonitorMode(_itemKey: string, value: string): void {
+  autoRefreshSecs.value = value
+}
 
 const intervalOptions = computed((): RsSelectOptions => [
   { value: '0', label: t('modules.vastbase.monitor.autoOff') },
@@ -617,37 +656,15 @@ onBeforeUnmount(() => clearRefreshTimer())
   <div class="nm-vast-monitor">
     <div ref="dialogHostEl" class="nm-vast-monitor__dialog-mount" />
 
-    <RsToolbar size="sm" compact border="bottom" :label="t('modules.vastbase.session.tabMonitor')">
-      <template #left>
-        <div class="nm-vast-monitor__identity" :title="sessionLabel || undefined">
-          <RsIcon name="vastbase" :size="15" />
-          <span v-if="sessionLabel" class="nm-vast-monitor__session">{{ sessionLabel }}</span>
-          <span class="nm-vast-monitor__feature">
-            <RsIcon name="activity" :size="12" />
-            {{ t('modules.vastbase.session.tabMonitor') }}
-          </span>
-        </div>
-        <RsTabs
-          v-model="section"
-          :items="tabItems"
-          size="sm"
-          panelless
-          class="nm-vast-monitor__tabs"
-        />
-      </template>
-      <template #right>
-        <RsSelect
-          v-model="autoRefreshSecs"
-          size="sm"
-          :options="intervalOptions"
-          class="nm-vast-monitor__interval"
-          :aria-label="t('modules.vastbase.monitor.autoRefresh')"
-        />
-        <RsButton variant="ghost" size="sm" icon="refresh-cw" :loading="loading" @click="loadAll()">
-          {{ t('modules.vastbase.structure.refresh') }}
-        </RsButton>
-      </template>
-    </RsToolbar>
+    <SqlIdeToolbar
+      :label="t('modules.vastbase.session.tabMonitor')"
+      identity-icon="activity"
+      :identity="sessionLabel || t('modules.vastbase.session.tabMonitor')"
+      :identity-title="sessionLabel || undefined"
+      :items="toolbarItems"
+      @action="onMonitorAction"
+      @mode="onMonitorMode"
+    />
 
     <div
       v-if="section === 'sessions' && scopeOk"

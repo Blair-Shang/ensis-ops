@@ -30,9 +30,9 @@ pub fn redis_value_to_json(value: redis::Value) -> JsonValue {
             }
             JsonValue::Object(obj)
         }
-        redis::Value::Double(d) => {
-            serde_json::Number::from_f64(d).map(JsonValue::Number).unwrap_or(JsonValue::Null)
-        }
+        redis::Value::Double(d) => serde_json::Number::from_f64(d)
+            .map(JsonValue::Number)
+            .unwrap_or(JsonValue::Null),
         redis::Value::Boolean(b) => JsonValue::Bool(b),
         redis::Value::VerbatimString { text, .. } => JsonValue::from(text),
         redis::Value::BigNumber(digits) => JsonValue::from(digits.to_string()),
@@ -58,7 +58,11 @@ fn redis_map_key_to_string(key: redis::Value) -> String {
 fn bulk_string_to_json(bytes: Vec<u8>) -> JsonValue {
     let byte_length = bytes.len();
     let truncated = byte_length > MAX_VALUE_PREVIEW_BYTES;
-    let slice: &[u8] = if truncated { &bytes[..MAX_VALUE_PREVIEW_BYTES] } else { &bytes };
+    let slice: &[u8] = if truncated {
+        &bytes[..MAX_VALUE_PREVIEW_BYTES]
+    } else {
+        &bytes
+    };
     let is_utf8 = std::str::from_utf8(slice).is_ok();
     let text = String::from_utf8_lossy(slice).into_owned();
     if truncated || !is_utf8 {

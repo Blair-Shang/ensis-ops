@@ -56,7 +56,8 @@ function onPressEnter(): void {
 <template>
   <div class="nm-api-bar">
     <div class="nm-api-bar__lead">
-    <div class="nm-api-bar__address">
+    <div class="nm-api-bar__compose">
+    <div class="nm-api-bar__address" :class="`nm-api-bar__address--${request.method.toLowerCase()}`">
       <div class="nm-api-bar__method" :class="`nm-api-bar__method--${request.method.toLowerCase()}`">
         <RsSelect
           v-model="methodModel"
@@ -81,40 +82,31 @@ function onPressEnter(): void {
       </div>
     </div>
     <RsButton
-      variant="text"
-      size="sm"
-      radius="sm"
-      icon="play"
-      icon-only
-      tone="success"
-      :disabled="sending || !request.url.trim()"
-      :tooltip="t('modules.api.send')"
-      :aria-label="t('modules.api.send')"
-      @click="emit('send')"
-    />
-    <RsButton
-      v-if="sending"
-      variant="text"
+      v-if="sending || live"
+      class="nm-api-bar__send nm-api-bar__send--stop"
+      variant="primary"
       size="sm"
       radius="sm"
       icon="square"
-      icon-only
       tone="danger"
-      :tooltip="t('modules.api.cancel')"
-      :aria-label="t('modules.api.cancel')"
-      @click="emit('cancel')"
-    />
+      @click="sending ? emit('cancel') : emit('close')"
+    >
+      {{ t('modules.api.stop') }}
+    </RsButton>
     <RsButton
-      v-else-if="live"
-      variant="text"
+      v-else
+      class="nm-api-bar__send"
+      variant="primary"
       size="sm"
       radius="sm"
-      icon="x"
-      icon-only
-      :tooltip="t('modules.api.closeSocket')"
-      :aria-label="t('modules.api.closeSocket')"
-      @click="emit('close')"
-    />
+      icon="play"
+      tone="success"
+      :disabled="!request.url.trim()"
+      @click="emit('send')"
+    >
+      {{ t('modules.api.send') }}
+    </RsButton>
+    </div>
     </div>
     <div class="nm-api-bar__trail">
     <RsSelect
@@ -203,6 +195,19 @@ function onPressEnter(): void {
   flex: 1;
 }
 
+.nm-api-bar__compose {
+  display: flex;
+  flex: 1;
+  align-items: stretch;
+  min-width: 0;
+  height: var(--rs-control-height-sm);
+}
+
+.nm-api-bar__compose:focus-within {
+  border-radius: var(--rs-radius-sm);
+  box-shadow: 0 0 0 var(--rs-focus-ring-width, 2px) var(--rs-focus-ring);
+}
+
 .nm-api-bar__trail {
   flex-shrink: 0;
   margin-inline-start: auto;
@@ -213,18 +218,43 @@ function onPressEnter(): void {
   flex: 1;
   align-items: stretch;
   box-sizing: border-box;
-  height: var(--rs-control-height-sm);
+  height: 100%;
   min-width: 0;
   padding: 0;
   border: 1px solid var(--rs-border);
-  border-radius: var(--rs-radius-sm);
+  border-start-start-radius: var(--rs-radius-sm);
+  border-end-start-radius: var(--rs-radius-sm);
+  border-start-end-radius: 0;
+  border-end-end-radius: 0;
+  border-inline-end: 0;
   background: var(--rs-surface);
+  box-shadow: inset 3px 0 0 var(--nm-method, var(--rs-border));
   overflow: hidden;
 }
 
-.nm-api-bar__address:focus-within {
-  border-color: var(--rs-focus-border, var(--rs-primary));
-  box-shadow: 0 0 0 var(--rs-focus-ring-width, 2px) var(--rs-focus-ring);
+.nm-api-bar__address--get,
+.nm-api-bar__address--head {
+  --nm-method: var(--rs-success);
+}
+
+.nm-api-bar__address--post {
+  --nm-method: var(--rs-primary);
+}
+
+.nm-api-bar__address--put,
+.nm-api-bar__address--patch {
+  --nm-method: var(--rs-warning);
+}
+
+.nm-api-bar__address--delete {
+  --nm-method: var(--rs-danger);
+}
+
+.nm-api-bar__send {
+  flex-shrink: 0;
+  height: 100%;
+  border-start-start-radius: 0;
+  border-end-start-radius: 0;
 }
 
 .nm-api-bar__method {
@@ -232,7 +262,7 @@ function onPressEnter(): void {
   width: 5.5rem;
   flex-shrink: 0;
   border-inline-end: 1px solid var(--rs-border-subtle);
-  background: color-mix(in srgb, var(--rs-text) 4%, var(--rs-surface));
+  background: color-mix(in srgb, var(--nm-method, var(--rs-text)) 14%, var(--rs-surface));
 }
 
 .nm-api-bar__url {
@@ -279,6 +309,7 @@ function onPressEnter(): void {
   font-family: var(--rs-font-mono);
   font-size: var(--rs-font-size-xs);
   font-weight: var(--rs-font-weight-semibold);
+  letter-spacing: 0.04em;
 }
 
 .nm-api-bar__method--get :deep(.rs-select__single-label) {

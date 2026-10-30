@@ -1,17 +1,14 @@
 <script setup lang="ts">
-import {
-  RsButton,
-  RsEmpty,
-  RsIcon,
-  RsLoading,
-  RsMonacoEditor,
-  useRsToast,
-} from 'ensis-ui'
-import { computed, inject, ref, watch } from 'vue'
+import { RsButton, RsLoading, RsMonacoEditor, useRsToast } from 'ensis-ui'
+import { computed, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { vastbaseApi } from '@/api'
+import {
+  ObjectScriptShell,
+  sqlIdeToolbarIconButton,
+  type ObjectScriptShellLabels,
+} from '@/modules/database'
 import { useVastSqlEditor } from '@/modules/vastbase/composables/useVastSqlEditor'
-import { VAST_SESSION_HEADER_ACTIONS_KEY } from '@/modules/vastbase/session-chrome'
 import {
   Cap,
   defaultVastbaseProfile,
@@ -31,14 +28,36 @@ const props = defineProps<{
   routineKind?: 'function' | 'procedure'
   args?: string
   oid?: number
+  sessionLabel?: string
   active: boolean
 }>()
 
 const { t } = useI18n()
 const toast = useRsToast()
 
-const headerActionsEl = inject(VAST_SESSION_HEADER_ACTIONS_KEY, ref<HTMLElement | null>(null))
-const actionsHost = computed(() => headerActionsEl.value)
+const scriptLabels = computed(
+  (): ObjectScriptShellLabels => ({
+    format: t('modules.vastbase.session.format'),
+    formatTooltip: t('modules.vastbase.session.formatTooltip'),
+    copy: t('modules.vastbase.ddl.copy'),
+    refresh: t('modules.vastbase.structure.refresh'),
+    create: t('modules.vastbase.source.apply'),
+    save: t('modules.vastbase.source.apply'),
+    needObject: t('modules.vastbase.source.needRoutine'),
+    modeCreate: t('modules.vastbase.source.apply'),
+  }),
+)
+
+const scopeLabel = computed(() => {
+  const name = props.args ? `${props.routine}(${props.args})` : props.routine
+  return [props.database, props.schema, name].filter(Boolean).join('.')
+})
+
+const typeLabel = computed(() =>
+  props.routineKind === 'procedure'
+    ? t('modules.vastbase.session.tabProcedure')
+    : t('modules.vastbase.session.tabFunction'),
+)
 
 const loading = ref(false)
 const saving = ref(false)
@@ -48,10 +67,6 @@ const draft = ref('')
 const dirty = computed(() => draft.value !== definition.value)
 const canSave = computed(
   () => !!props.sessionId && !!draft.value.trim() && dirty.value && !loading.value && !saving.value,
-)
-
-const showEditor = computed(
-  () => !!props.schema && !!props.routine && (!!definition.value || !!draft.value),
 )
 
 async function applySource(): Promise<void> {
@@ -172,125 +187,73 @@ watch(
 </script>
 
 <template>
-  <div class="nm-vast-source">
-    <!-- 对象名已在 Session 顶栏 scope 展示，此处只挂工具按钮，避免重复 -->
-    <Teleport v-if="actionsHost" :to="actionsHost">
+  <ObjectScriptShell
+    :labels="scriptLabels"
+    icon="square-function"
+    :session-label="sessionLabel || 'Vastbase'"
+    :scope-label="scopeLabel"
+    :type-label="typeLabel"
+    mode="alter"
+    :loading="loading"
+    :saving="saving"
+    :has-object="Boolean(schema && routine)"
+    :can-copy="Boolean(draft)"
+    :can-apply="canSave"
+    :can-format="Boolean(draft) && !saving && !loading"
+    :message="!definition && !loading && schema && routine ? t('modules.vastbase.source.empty') : null"
+    message-tone="ok"
+    @format="formatSql"
+    @copy="copySource"
+    @refresh="loadSource"
+    @apply="applySource"
+  >
+    <template #toolbar-end>
       <RsButton
-        variant="ghost"
-        size="sm"
-        :disabled="!draft || saving || loading"
-        :tooltip="t('modules.vastbase.session.formatTooltip')"
-        @click="formatSql"
-      >
-        <RsIcon name="braces" :size="13" />
-        {{ t('modules.vastbase.session.format') }}
-      </RsButton>
-      <RsButton
-        variant="ghost"
-        size="sm"
-        icon="save"
-        :disabled="!canSave"
-        :loading="saving"
-        :tooltip="t('modules.vastbase.source.applyHint')"
-        @click="applySource"
-      >
-        {{ t('modules.vastbase.source.apply') }}
-      </RsButton>
-      <RsButton
-        variant="ghost"
-        size="sm"
-        :disabled="!dirty || saving"
-        @click="discardEdits"
-      >
-        {{ t('modules.vastbase.source.discard') }}
-      </RsButton>
-      <RsButton variant="ghost" size="sm" icon="copy" :disabled="!draft" @click="copySource">
-        {{ t('modules.vastbase.ddl.copy') }}
-      </RsButton>
-      <RsButton
-        variant="ghost"
-        size="sm"
-        icon="refresh-cw"
-        :loading="loading"
+        v-if="dirty"
+        v-bind="sqlIdeToolbarIconButton"
+        icon="undo-2"
         :disabled="saving"
-        @click="loadSource"
-      >
-        {{ t('modules.vastbase.structure.refresh') }}
-      </RsButton>
-    </Teleport>
-
-    <RsLoading v-if="loading && !definition" class="nm-vast-source__loading" />
-    <RsEmpty
-      v-else-if="!schema || !routine"
-      fill
-      icon="square-function"
-      :description="t('modules.vastbase.source.needRoutine')"
-    />
-    <RsEmpty
-      v-else-if="!definition && !loading"
-      fill
-      icon="square-function"
-      :description="t('modules.vastbase.source.empty')"
-    />
-    <div v-else-if="showEditor" class="nm-vast-source__editor">
+        :tooltip="t('modules.vastbase.source.discard')"
+        @click="discardEdits"
+      />
+    </template>
+    <template #editor>
+      <RsLoading v-if="loading && !definition" block class="nm-vast-source__boot" />
       <RsMonacoEditor
-        v-if="languageReady"
+        v-else-if="languageReady"
         ref="editorRef"
         v-model="draft"
+        embedded
         :language="sqlLanguage"
         height="100%"
         class="nm-vast-source__monaco"
+        :options="{ automaticLayout: active !== false, minimap: { enabled: false }, wordWrap: 'on' }"
       />
-      <div v-else class="nm-vast-source__editor-boot">
+      <div v-else class="nm-vast-source__boot">
         <RsLoading size="sm" />
       </div>
-    </div>
-  </div>
+    </template>
+  </ObjectScriptShell>
 </template>
 
 <style scoped>
-.nm-vast-source {
-  display: flex;
-  flex-direction: column;
-  height: 100%;
-  min-height: 0;
-  padding: 0;
-  gap: 0;
-}
-
-.nm-vast-source__loading,
-.nm-vast-source__editor-boot {
+.nm-vast-source__boot {
   flex: 1;
+  min-height: 0;
   display: flex;
   align-items: center;
   justify-content: center;
-  min-height: 0;
-}
-
-.nm-vast-source__editor {
-  flex: 1;
-  min-height: 0;
-  display: flex;
-  flex-direction: column;
-  border-radius: 0;
 }
 
 .nm-vast-source__monaco {
   flex: 1;
   min-height: 0;
   height: 100%;
-  border-radius: 0;
 }
 
-/* 贴满父容器：直角、无边框留白（对齐查询结果区编辑器） */
 .nm-vast-source__monaco :deep(.rs-monaco) {
   height: 100%;
   border: none;
-  border-radius: 0;
-}
-
-.nm-vast-source__monaco :deep(.monaco-editor),
-.nm-vast-source__monaco :deep(.monaco-editor .overflow-guard) {
   border-radius: 0;
 }
 </style>

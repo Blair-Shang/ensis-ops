@@ -24,6 +24,7 @@ var (
 	workspaceSQLPrompt    string
 	workspaceToolsPrompt  string
 	workspaceLocalPrompt  string
+	workspaceScopesPrompt string
 	currentTurnPrompt     string
 	handoffNudgePrompt    string
 )
@@ -40,6 +41,7 @@ func init() {
 	workspaceSQLPrompt = mustPrompt("prompts/workspace_sql.txt")
 	workspaceToolsPrompt = mustPrompt("prompts/workspace_tools.txt")
 	workspaceLocalPrompt = mustPrompt("prompts/workspace_local.txt")
+	workspaceScopesPrompt = mustPrompt("prompts/workspace_scopes.txt")
 	currentTurnPrompt = mustPrompt("prompts/current_turn.txt")
 	handoffNudgePrompt = mustPrompt("prompts/handoff_nudge.txt")
 }

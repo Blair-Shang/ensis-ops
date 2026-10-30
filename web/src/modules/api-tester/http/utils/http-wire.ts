@@ -6,8 +6,8 @@
 import type { ApiKvRow } from '../../types'
 import type { ResolvedRequest } from './request-resolve'
 
-const USER_AGENT = 'ensis-ops'
-const ACCEPT_ENCODING = 'gzip, deflate'
+export const USER_AGENT = 'ensis-ops'
+export const ACCEPT_ENCODING = 'gzip, deflate'
 const HEADER_TOKEN = /^[-!#$%&'*+.^_`|~0-9A-Za-z]+$/
 
 /** 把已解析请求编成 HTTP/1.1 明文（经 api-service TCP 发出）。 */

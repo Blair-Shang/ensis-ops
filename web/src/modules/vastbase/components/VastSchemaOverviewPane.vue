@@ -1,9 +1,11 @@
 <script setup lang="ts">
-import { RsButton, RsEmpty, RsIcon, RsLoading, RsTable, RsToolbar, useRsToast } from 'ensis-ui'
+import { RsEmpty, RsLoading, RsTable, useRsToast } from 'ensis-ui'
 import type { RsTableColumn } from 'ensis-ui'
 import { computed, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { vastbaseApi } from '@/api'
+import SqlIdeToolbar from '@/modules/database/components/SqlIdeToolbar.vue'
+import type { SqlIdeToolbarIdentityPart, SqlIdeToolbarItem } from '@/modules/database/types/sql-ide-toolbar'
 import type {
   VastMetaDatabaseOverviewResult,
   VastMetaSchemaOverviewResult,
@@ -34,6 +36,28 @@ const scopeOk = computed(
   () =>
     !!(props.sessionId || props.profileId) &&
     (isSchemaMode.value ? !!props.schema : !!props.database),
+)
+
+const overviewIdentity = computed((): SqlIdeToolbarIdentityPart[] => {
+  const parts: SqlIdeToolbarIdentityPart[] = []
+  if (props.sessionLabel) parts.push({ text: props.sessionLabel, icon: 'vastbase' })
+  if (scopeLabel.value) parts.push({ text: scopeLabel.value, icon: 'layout-grid' })
+  if (parts.length === 0) {
+    parts.push({ text: t('modules.vastbase.session.tabOverview'), icon: 'layout-grid' })
+  }
+  return parts
+})
+
+const overviewToolbar = computed(
+  (): SqlIdeToolbarItem[] => [
+    {
+      key: 'refresh',
+      icon: 'refresh-cw',
+      title: t('modules.vastbase.structure.refresh'),
+      align: 'trail',
+      loading: loading.value,
+    },
+  ],
 )
 
 const scopeLabel = computed(() => {
@@ -140,30 +164,12 @@ watch(
 
 <template>
   <div class="nm-vast-overview">
-    <RsToolbar size="sm" compact border="bottom" :label="t('modules.vastbase.session.tabOverview')">
-      <template #left>
-        <div class="nm-vast-overview__identity" :title="sessionLabel || undefined">
-          <RsIcon name="vastbase" :size="15" />
-          <span v-if="sessionLabel" class="nm-vast-overview__session">{{ sessionLabel }}</span>
-          <span v-if="scopeLabel" class="nm-vast-overview__scope">{{ scopeLabel }}</span>
-          <span class="nm-vast-overview__feature">
-            <RsIcon name="layout-grid" :size="12" />
-            {{ t('modules.vastbase.session.tabOverview') }}
-          </span>
-        </div>
-      </template>
-      <template #right>
-        <RsButton
-          variant="ghost"
-          size="sm"
-          icon="refresh-cw"
-          :loading="loading"
-          @click="loadOverview"
-        >
-          {{ t('modules.vastbase.structure.refresh') }}
-        </RsButton>
-      </template>
-    </RsToolbar>
+    <SqlIdeToolbar
+      :label="t('modules.vastbase.session.tabOverview')"
+      :identity-parts="overviewIdentity"
+      :items="overviewToolbar"
+      @action="loadOverview"
+    />
 
     <div class="nm-vast-overview__body">
     <RsLoading v-if="loading && !hasData" class="nm-vast-overview__loader" />

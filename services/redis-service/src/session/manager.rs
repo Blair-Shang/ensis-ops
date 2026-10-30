@@ -253,7 +253,10 @@ impl SessionManager {
         let backend = self.backend_ref(session_id).await?;
         let mut backend = backend.lock().await;
         let reply = backend
-            .exec_raw("SLOWLOG", &[b"GET".to_vec(), bounded_count.to_string().into_bytes()])
+            .exec_raw(
+                "SLOWLOG",
+                &[b"GET".to_vec(), bounded_count.to_string().into_bytes()],
+            )
             .await
             .map_err(|e| format!("redis: SLOWLOG GET: {e}"))?;
         drop(backend);
@@ -377,7 +380,8 @@ impl SessionManager {
                 .ok_or_else(|| "MONITOR is not supported for cluster sessions".to_string())?
         };
 
-        let client = redis::Client::open(node_info).map_err(|e| format!("redis: monitor open: {e}"))?;
+        let client =
+            redis::Client::open(node_info).map_err(|e| format!("redis: monitor open: {e}"))?;
         let monitor = client
             .get_async_monitor()
             .await
@@ -396,7 +400,15 @@ impl SessionManager {
         let events = self.events.clone();
         let session_id_owned = session_id.to_string();
         tokio::spawn(async move {
-            run_monitor_task(monitors, events, session_id_owned, monitor_id, monitor, stop_rx).await;
+            run_monitor_task(
+                monitors,
+                events,
+                session_id_owned,
+                monitor_id,
+                monitor,
+                stop_rx,
+            )
+            .await;
         });
         Ok(())
     }
@@ -490,9 +502,7 @@ async fn run_monitor_task(
 fn format_scan_error(err: redis::RedisError) -> String {
     let msg = err.to_string();
     if msg.contains("Replica can't interact with the keyspace") || msg.contains("READONLY") {
-        return format!(
-            "redis: SCAN: {msg} (当前连接为只读副本，键空间扫描需要在主节点执行)"
-        );
+        return format!("redis: SCAN: {msg} (当前连接为只读副本，键空间扫描需要在主节点执行)");
     }
     format!("redis: SCAN: {msg}")
 }

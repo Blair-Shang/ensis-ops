@@ -150,12 +150,17 @@ function needsTarget(kind: ApiCheckKind): boolean {
   gap: var(--rs-space-sm);
   color: var(--rs-text);
   font-size: var(--rs-font-size-sm);
+  font-weight: 600;
 }
 
 .nm-api-script__block {
   display: flex;
   flex-direction: column;
   gap: var(--rs-space-xs);
+  padding: var(--rs-space-sm);
+  border: 1px solid var(--rs-border-subtle);
+  border-radius: var(--rs-radius);
+  background: color-mix(in srgb, var(--rs-text) 2.5%, var(--rs-surface));
 }
 
 .nm-api-script__row {
@@ -183,7 +188,8 @@ function needsTarget(kind: ApiCheckKind): boolean {
   border-radius: var(--rs-radius-sm);
   background: var(--rs-surface);
   color: var(--rs-text);
-  font: inherit;
+  font-family: var(--rs-font-mono);
+  font-size: var(--rs-font-size-xs);
   padding: var(--rs-space-xs);
 }
 

@@ -27,13 +27,6 @@ const folderOptions = computed<RsSelectOption[]>(() => [
   ...api.folders.map((folder) => ({ value: folder.id, label: folder.name })),
 ])
 
-const summary = computed(() => {
-  const current = report.value
-  if (!current) return ''
-  const counts = `${t('modules.api.runPassed', { n: current.passed })} · ${t('modules.api.runFailed', { n: current.failed })}`
-  return current.stopped ? `${counts} · ${t('modules.api.runStopped')}` : counts
-})
-
 const flowOptions = computed(() => api.folders.flatMap((folder) => folder.requests.filter((req) => req.method !== 'TCP' && req.method !== 'UDP' && req.method !== 'WS').map((req) => ({
   id: req.id,
   label: `${req.method} ${req.name}`,
@@ -148,10 +141,19 @@ onBeforeUnmount(() => {
     <div class="nm-api-run__flow">
       <RsInput v-model="monitorSec" size="sm" :placeholder="t('modules.api.runMonitor')" @change="armMonitor" />
     </div>
-    <p v-if="summary" class="nm-api-run__summary">{{ summary }}</p>
+    <div v-if="report && (report.items.length || report.stopped)" class="nm-api-run__summary">
+      <span class="nm-api-run__stat nm-api-run__stat--ok">{{ t('modules.api.runPassed', { n: report.passed }) }}</span>
+      <span class="nm-api-run__stat nm-api-run__stat--bad">{{ t('modules.api.runFailed', { n: report.failed }) }}</span>
+      <span v-if="report.stopped" class="nm-api-run__stat">{{ t('modules.api.runStopped') }}</span>
+    </div>
     <p v-else-if="report && !report.items.length" class="nm-api-run__summary">{{ t('modules.api.runEmpty') }}</p>
     <ul class="nm-api-run__list">
-      <li v-for="(item, index) in report?.items ?? []" :key="`${item.iteration}-${item.requestId}-${index}`" class="nm-api-run__item">
+      <li
+        v-for="(item, index) in report?.items ?? []"
+        :key="`${item.iteration}-${item.requestId}-${index}`"
+        class="nm-api-run__item"
+        :class="item.ok ? 'nm-api-run__item--ok' : 'nm-api-run__item--bad'"
+      >
         <span class="nm-api-run__mark" :class="item.ok ? 'nm-api-run__mark--ok' : 'nm-api-run__mark--bad'">
           {{ item.ok ? t('modules.api.runPass') : t('modules.api.runFail') }}
         </span>
@@ -188,19 +190,40 @@ onBeforeUnmount(() => {
 }
 
 .nm-api-run__summary {
+  display: flex;
+  align-items: center;
+  gap: var(--rs-space-xs);
   margin: 0;
   padding: var(--rs-space-xs) var(--rs-space-md);
   color: var(--rs-muted);
   font-size: var(--rs-font-size-xs);
 }
 
+.nm-api-run__stat {
+  padding: 0.08rem 0.45rem;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--rs-text) 6%, transparent);
+  font-variant-numeric: tabular-nums;
+}
+
+.nm-api-run__stat--ok {
+  color: var(--rs-success);
+  background: color-mix(in srgb, var(--rs-success) 12%, transparent);
+}
+
+.nm-api-run__stat--bad {
+  color: var(--rs-danger);
+  background: color-mix(in srgb, var(--rs-danger) 12%, transparent);
+}
+
 .nm-api-run__data {
   margin: var(--rs-space-xs) var(--rs-space-md);
   border: 1px solid var(--rs-border-subtle);
   border-radius: var(--rs-radius-sm);
-  background: var(--rs-surface);
+  background: color-mix(in srgb, var(--rs-text) 3%, var(--rs-surface));
   color: var(--rs-text);
-  font: inherit;
+  font-family: var(--rs-font-mono);
+  font-size: var(--rs-font-size-xs);
   padding: var(--rs-space-xs);
 }
 
@@ -216,14 +239,18 @@ onBeforeUnmount(() => {
 
 .nm-api-run__chip {
   border: 1px solid var(--rs-border-subtle);
-  border-radius: var(--rs-radius-sm);
+  border-radius: 999px;
   background: transparent;
   color: var(--rs-text);
+  font-family: var(--rs-font-mono);
+  font-size: 11px;
   cursor: pointer;
 }
 
 .nm-api-run__chip--on {
-  border-color: var(--rs-accent);
+  border-color: color-mix(in srgb, var(--rs-primary) 55%, var(--rs-border));
+  background: color-mix(in srgb, var(--rs-primary) 12%, transparent);
+  color: var(--rs-primary);
 }
 
 .nm-api-run__list {
@@ -237,10 +264,18 @@ onBeforeUnmount(() => {
   display: flex;
   align-items: center;
   gap: var(--rs-space-sm);
-  min-height: 1.75rem;
+  min-height: 2rem;
   padding: 0 var(--rs-space-md);
   border-bottom: 1px solid var(--rs-border-subtle);
   font-size: var(--rs-font-size-sm);
+}
+
+.nm-api-run__item--ok {
+  box-shadow: inset 3px 0 0 var(--rs-success);
+}
+
+.nm-api-run__item--bad {
+  box-shadow: inset 3px 0 0 var(--rs-danger);
 }
 
 .nm-api-run__name {
@@ -252,7 +287,12 @@ onBeforeUnmount(() => {
 }
 
 .nm-api-run__meta {
+  padding: 0.05rem 0.35rem;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--rs-text) 6%, transparent);
   color: var(--rs-muted);
+  font-family: var(--rs-font-mono);
+  font-size: 11px;
   font-variant-numeric: tabular-nums;
 }
 

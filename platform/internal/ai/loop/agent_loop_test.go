@@ -22,7 +22,10 @@ func TestMergeWorkspaceArgs(t *testing.T) {
 	n := NormalizeContext(&ContextDraft{
 		Workspace: &ContextWorkspace{ProfileID: "p1", SessionID: "s1"},
 	})
-	raw := mergeWorkspaceArgs(`{"schema":"public"}`, n)
+	raw, err := mergeWorkspaceArgs(`{"schema":"public"}`, n, "")
+	if err != nil {
+		t.Fatal(err)
+	}
 	var obj map[string]any
 	if err := json.Unmarshal(raw, &obj); err != nil {
 		t.Fatal(err)
@@ -44,7 +47,10 @@ func TestMergeWorkspaceArgsMySQLSchemaFromDatabase(t *testing.T) {
 	if n.Workspace == nil || n.Workspace.Schema != "ai_coding" {
 		t.Fatalf("schema=%v", n.Workspace)
 	}
-	raw := mergeWorkspaceArgs(`{}`, n)
+	raw, err := mergeWorkspaceArgs(`{}`, n, "")
+	if err != nil {
+		t.Fatal(err)
+	}
 	var obj map[string]any
 	if err := json.Unmarshal(raw, &obj); err != nil {
 		t.Fatal(err)
@@ -58,7 +64,10 @@ func TestMergeWorkspaceArgsInjectsCollection(t *testing.T) {
 	n := NormalizeContext(&ContextDraft{
 		Workspace: &ContextWorkspace{ProfileID: "p1", SessionID: "s1", Collection: "users"},
 	})
-	raw := mergeWorkspaceArgs(`{}`, n)
+	raw, err := mergeWorkspaceArgs(`{}`, n, "")
+	if err != nil {
+		t.Fatal(err)
+	}
 	var obj map[string]any
 	if err := json.Unmarshal(raw, &obj); err != nil {
 		t.Fatal(err)
@@ -72,7 +81,10 @@ func TestMergeWorkspaceArgsInjectsCwd(t *testing.T) {
 	n := NormalizeContext(&ContextDraft{
 		Workspace: &ContextWorkspace{ProfileID: "p1", SessionID: "s1", Cwd: "/var/log"},
 	})
-	raw := mergeWorkspaceArgs(`{}`, n)
+	raw, err := mergeWorkspaceArgs(`{}`, n, "")
+	if err != nil {
+		t.Fatal(err)
+	}
 	var obj map[string]any
 	if err := json.Unmarshal(raw, &obj); err != nil {
 		t.Fatal(err)
@@ -96,7 +108,7 @@ func TestSanitizeToolPrefix(t *testing.T) {
 
 func TestBuildEnabledToolDefsIncludesHostSQL(t *testing.T) {
 	s := New(Deps{Host: stubHostRuntime{}})
-	defs, bound, err := s.buildEnabledToolDefs(context.Background(), "vastbase")
+	defs, bound, err := s.buildEnabledToolDefs(context.Background(), []string{"vastbase"})
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -111,7 +123,7 @@ func TestBuildEnabledToolDefsIncludesHostSQL(t *testing.T) {
 
 func TestBuildEnabledToolDefsIncludesHostRedis(t *testing.T) {
 	s := New(Deps{Host: stubHostRuntime{}})
-	defs, bound, err := s.buildEnabledToolDefs(context.Background(), "redis")
+	defs, bound, err := s.buildEnabledToolDefs(context.Background(), []string{"redis"})
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -126,7 +138,7 @@ func TestBuildEnabledToolDefsIncludesHostRedis(t *testing.T) {
 
 func TestBuildEnabledToolDefsIncludesHostMongo(t *testing.T) {
 	s := New(Deps{Host: stubHostRuntime{}})
-	defs, bound, err := s.buildEnabledToolDefs(context.Background(), "mongodb")
+	defs, bound, err := s.buildEnabledToolDefs(context.Background(), []string{"mongodb"})
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -141,7 +153,7 @@ func TestBuildEnabledToolDefsIncludesHostMongo(t *testing.T) {
 
 func TestBuildEnabledToolDefsIncludesHostSSH(t *testing.T) {
 	s := New(Deps{Host: stubHostRuntime{}})
-	defs, bound, err := s.buildEnabledToolDefs(context.Background(), "ssh")
+	defs, bound, err := s.buildEnabledToolDefs(context.Background(), []string{"ssh"})
 	if err != nil {
 		t.Fatal(err)
 	}

@@ -81,10 +81,7 @@ func toAIMessageView(m store.AIMessage) aiMessageView {
 
 // toAIToolInvocationView 将工具调用流水转为 Bridge 视图（截断参数摘要）。
 func toAIToolInvocationView(inv store.AIToolInvocation) aiToolInvocationView {
-	args := inv.ArgumentsJSON
-	if len(args) > 200 {
-		args = args[:200] + "…"
-	}
+	args := ai.FormatToolArgsSummary(inv.ArgumentsJSON)
 	status := inv.InvokeStatus
 	switch status {
 	case "done", "ok", "success":

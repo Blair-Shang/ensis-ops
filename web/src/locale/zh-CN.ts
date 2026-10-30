@@ -140,6 +140,8 @@ export default {
     toolRunning: '执行中',
     toolOk: '完成',
     toolFailed: '失败',
+    toolStopped: '已停止',
+    toolRejected: '已拒绝',
     toolPending: '待确认',
     toolApprove: '允许执行',
     toolApproveMore: '更多允许范围',

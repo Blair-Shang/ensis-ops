@@ -140,7 +140,8 @@ mod tests {
         let path = PathBuf::from(env!("CARGO_MANIFEST_DIR"))
             .join("../../go/serviceipc/envelope/golden")
             .join(name);
-        let raw = fs::read_to_string(&path).unwrap_or_else(|e| panic!("read {}: {e}", path.display()));
+        let raw =
+            fs::read_to_string(&path).unwrap_or_else(|e| panic!("read {}: {e}", path.display()));
         serde_json::from_str(raw.trim()).expect("golden json")
     }
 
@@ -168,7 +169,9 @@ mod tests {
         );
         assert_eq!(to_value(&resp), golden("fail-engine_mismatch-v1.json"));
         assert_eq!(
-            infer_error_code("postgres: server is not PostgreSQL; use the matching connection kind"),
+            infer_error_code(
+                "postgres: server is not PostgreSQL; use the matching connection kind"
+            ),
             "engine_mismatch"
         );
     }

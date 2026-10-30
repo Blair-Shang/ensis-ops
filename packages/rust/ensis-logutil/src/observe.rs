@@ -42,8 +42,10 @@ pub fn set_service_name(name: &str) {
 
 /// observe_ipc 把一次 IPC 往返写成 observe.jsonl。诊断方法自身不记录。
 pub fn observe_ipc(req_json: &[u8], resp_json: &[u8], d: Duration) {
-    let req: serde_json::Value = serde_json::from_slice(req_json).unwrap_or(serde_json::Value::Null);
-    let resp: serde_json::Value = serde_json::from_slice(resp_json).unwrap_or(serde_json::Value::Null);
+    let req: serde_json::Value =
+        serde_json::from_slice(req_json).unwrap_or(serde_json::Value::Null);
+    let resp: serde_json::Value =
+        serde_json::from_slice(resp_json).unwrap_or(serde_json::Value::Null);
     let method = req.get("method").and_then(|v| v.as_str()).unwrap_or("");
     if method.is_empty() || method.starts_with(DIAG_PREFIX) {
         return;

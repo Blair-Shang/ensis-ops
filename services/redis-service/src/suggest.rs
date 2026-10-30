@@ -213,7 +213,9 @@ fn suggest_generic<C: CommandTable>(input: &str, table: &[C]) -> Value {
     }
     let sub_name = sub_word.to_ascii_uppercase();
     match spec.subcommands().iter().find(|s| s.name() == sub_name) {
-        Some(sub) => json!({ "suggestions": [subcommand_to_json_with_hint(spec, sub, after_sub, ends_with_space)] }),
+        Some(sub) => {
+            json!({ "suggestions": [subcommand_to_json_with_hint(spec, sub, after_sub, ends_with_space)] })
+        }
         None => json!({ "suggestions": Vec::<Value>::new() }),
     }
 }
@@ -236,14 +238,21 @@ fn split_first_word(s: &str) -> (&str, &str) {
 }
 
 fn suggest_top_level<C: CommandTable>(table: &[C], prefix: &str) -> Value {
-    let mut matches: Vec<&C> = table.iter().filter(|c| c.name().starts_with(prefix)).collect();
+    let mut matches: Vec<&C> = table
+        .iter()
+        .filter(|c| c.name().starts_with(prefix))
+        .collect();
     matches.sort_by(|a, b| a.name().cmp(b.name()));
     matches.truncate(MAX_SUGGESTIONS);
     json!({ "suggestions": matches.into_iter().map(command_to_json).collect::<Vec<_>>() })
 }
 
 fn suggest_subcommands<C: CommandTable>(parent: &C, prefix: &str) -> Value {
-    let mut matches: Vec<&C::Sub> = parent.subcommands().iter().filter(|s| s.name().starts_with(prefix)).collect();
+    let mut matches: Vec<&C::Sub> = parent
+        .subcommands()
+        .iter()
+        .filter(|s| s.name().starts_with(prefix))
+        .collect();
     matches.sort_by(|a, b| a.name().cmp(b.name()));
     matches.truncate(MAX_SUGGESTIONS);
     json!({ "suggestions": matches.into_iter().map(|s| subcommand_to_json(parent, s)).collect::<Vec<_>>() })
@@ -260,9 +269,17 @@ fn command_to_json<C: CommandTable>(spec: &C) -> Value {
 }
 
 /// command_to_json_with_hint 在 `command_to_json` 基础上附加 `remainingArguments`。
-fn command_to_json_with_hint<C: CommandTable>(spec: &C, typed_rest: &str, ends_with_space: bool) -> Value {
+fn command_to_json_with_hint<C: CommandTable>(
+    spec: &C,
+    typed_rest: &str,
+    ends_with_space: bool,
+) -> Value {
     let mut v = command_to_json(spec);
-    v["remainingArguments"] = json!(remaining_arguments(spec.arguments(), typed_rest, ends_with_space));
+    v["remainingArguments"] = json!(remaining_arguments(
+        spec.arguments(),
+        typed_rest,
+        ends_with_space
+    ));
     v
 }
 
@@ -287,7 +304,11 @@ fn subcommand_to_json_with_hint<C: CommandTable>(
     ends_with_space: bool,
 ) -> Value {
     let mut v = subcommand_to_json(parent, sub);
-    v["remainingArguments"] = json!(remaining_arguments(sub.arguments(), typed_rest, ends_with_space));
+    v["remainingArguments"] = json!(remaining_arguments(
+        sub.arguments(),
+        typed_rest,
+        ends_with_space
+    ));
     v
 }
 
@@ -410,49 +431,124 @@ macro_rules! sub {
 }
 
 const CONFIG_SUBCOMMANDS: &[SubcommandSpec] = &[
-    sub!("GET", "获取配置项当前值", "parameter [parameter ...]", "2.0.0"),
-    sub!("SET", "修改配置项", "parameter value [parameter value ...]", "2.0.0"),
+    sub!(
+        "GET",
+        "获取配置项当前值",
+        "parameter [parameter ...]",
+        "2.0.0"
+    ),
+    sub!(
+        "SET",
+        "修改配置项",
+        "parameter value [parameter value ...]",
+        "2.0.0"
+    ),
     sub!("REWRITE", "将当前配置写回配置文件", "", "2.8.0"),
     sub!("RESETSTAT", "重置 INFO 中的统计计数器", "", "2.0.0"),
 ];
 
 const CLIENT_SUBCOMMANDS: &[SubcommandSpec] = &[
-    sub!("LIST", "列出所有已连接客户端", "[TYPE normal|master|replica|pubsub] [ID client-id [client-id ...]]", "2.4.0"),
-    sub!("KILL", "关闭指定客户端连接", "[ID client-id] [ADDR ip:port] [LADDR ip:port] [SKIPME yes|no] [MAXAGE seconds]", "2.4.0"),
+    sub!(
+        "LIST",
+        "列出所有已连接客户端",
+        "[TYPE normal|master|replica|pubsub] [ID client-id [client-id ...]]",
+        "2.4.0"
+    ),
+    sub!(
+        "KILL",
+        "关闭指定客户端连接",
+        "[ID client-id] [ADDR ip:port] [LADDR ip:port] [SKIPME yes|no] [MAXAGE seconds]",
+        "2.4.0"
+    ),
     sub!("GETNAME", "获取当前连接名称", "", "2.6.9"),
     sub!("SETNAME", "设置当前连接名称", "connection-name", "2.6.9"),
     sub!("ID", "获取当前连接 ID", "", "5.0.0"),
     sub!("INFO", "获取当前连接的详细信息", "", "6.2.0"),
-    sub!("PAUSE", "暂停处理客户端命令", "timeout [WRITE|ALL]", "3.0.0"),
+    sub!(
+        "PAUSE",
+        "暂停处理客户端命令",
+        "timeout [WRITE|ALL]",
+        "3.0.0"
+    ),
     sub!("UNPAUSE", "恢复处理客户端命令", "", "6.2.0"),
     sub!("REPLY", "控制服务器是否返回回复", "ON|OFF|SKIP", "3.2.0"),
     sub!("NO-EVICT", "为当前连接开关内存驱逐豁免", "ON|OFF", "7.0.0"),
-    sub!("NO-TOUCH", "为当前连接开关 key 访问时间更新", "ON|OFF", "7.2.0"),
-    sub!("UNBLOCK", "解除指定客户端的阻塞状态", "client-id [TIMEOUT|ERROR]", "5.0.0"),
-    sub!("SETINFO", "设置连接的库名/版本等元信息", "attr value", "7.2.0"),
-    sub!("CACHING", "控制客户端缓存追踪的开关（OPTIN/OPTOUT 模式下）", "YES|NO", "6.0.0"),
-    sub!("TRACKING", "开启/关闭客户端缓存失效追踪", "ON|OFF [REDIRECT client-id] [PREFIX prefix ...] [BCAST] [OPTIN] [OPTOUT] [NOLOOP]", "6.0.0"),
+    sub!(
+        "NO-TOUCH",
+        "为当前连接开关 key 访问时间更新",
+        "ON|OFF",
+        "7.2.0"
+    ),
+    sub!(
+        "UNBLOCK",
+        "解除指定客户端的阻塞状态",
+        "client-id [TIMEOUT|ERROR]",
+        "5.0.0"
+    ),
+    sub!(
+        "SETINFO",
+        "设置连接的库名/版本等元信息",
+        "attr value",
+        "7.2.0"
+    ),
+    sub!(
+        "CACHING",
+        "控制客户端缓存追踪的开关（OPTIN/OPTOUT 模式下）",
+        "YES|NO",
+        "6.0.0"
+    ),
+    sub!(
+        "TRACKING",
+        "开启/关闭客户端缓存失效追踪",
+        "ON|OFF [REDIRECT client-id] [PREFIX prefix ...] [BCAST] [OPTIN] [OPTOUT] [NOLOOP]",
+        "6.0.0"
+    ),
     sub!("TRACKINGINFO", "查看当前连接的追踪状态", "", "6.2.0"),
     sub!("GETREDIR", "查看当前连接失效通知的重定向目标", "", "6.0.0"),
 ];
 
 const ACL_SUBCOMMANDS: &[SubcommandSpec] = &[
-    sub!("CAT", "列出权限分类（或分类下的命令）", "[categoryname]", "6.0.0"),
-    sub!("DELUSER", "删除一个或多个用户", "username [username ...]", "6.0.0"),
-    sub!("DRYRUN", "模拟检查用户是否有权限执行某命令", "username command [arg ...]", "7.0.0"),
+    sub!(
+        "CAT",
+        "列出权限分类（或分类下的命令）",
+        "[categoryname]",
+        "6.0.0"
+    ),
+    sub!(
+        "DELUSER",
+        "删除一个或多个用户",
+        "username [username ...]",
+        "6.0.0"
+    ),
+    sub!(
+        "DRYRUN",
+        "模拟检查用户是否有权限执行某命令",
+        "username command [arg ...]",
+        "7.0.0"
+    ),
     sub!("GENPASS", "生成随机密码", "[bits]", "6.0.0"),
     sub!("GETUSER", "查看用户的权限规则", "username", "6.0.0"),
     sub!("LIST", "列出所有用户及其规则", "", "6.0.0"),
     sub!("LOAD", "从 ACL 配置文件重新加载规则", "", "6.0.0"),
     sub!("LOG", "查看/清空权限拒绝日志", "[count|RESET]", "6.0.0"),
     sub!("SAVE", "将当前规则保存到 ACL 配置文件", "", "6.0.0"),
-    sub!("SETUSER", "创建或修改用户规则", "username [rule ...]", "6.0.0"),
+    sub!(
+        "SETUSER",
+        "创建或修改用户规则",
+        "username [rule ...]",
+        "6.0.0"
+    ),
     sub!("USERS", "列出所有用户名", "", "6.0.0"),
     sub!("WHOAMI", "查看当前连接使用的用户名", "", "6.0.0"),
 ];
 
 const MEMORY_SUBCOMMANDS: &[SubcommandSpec] = &[
-    sub!("USAGE", "估算 key 占用的内存字节数", "key [SAMPLES count]", "4.0.0"),
+    sub!(
+        "USAGE",
+        "估算 key 占用的内存字节数",
+        "key [SAMPLES count]",
+        "4.0.0"
+    ),
     sub!("STATS", "查看内存分配详细统计", "", "4.0.0"),
     sub!("DOCTOR", "给出内存使用的诊断建议", "", "4.0.0"),
     sub!("PURGE", "尝试让分配器归还空闲内存", "", "4.0.0"),
@@ -460,15 +556,40 @@ const MEMORY_SUBCOMMANDS: &[SubcommandSpec] = &[
 ];
 
 const XGROUP_SUBCOMMANDS: &[SubcommandSpec] = &[
-    sub!("CREATE", "创建消费者组", "key group id|$ [MKSTREAM] [ENTRIESREAD entries-read]", "5.0.0"),
-    sub!("SETID", "设置消费者组的最后投递 ID", "key group id|$ [ENTRIESREAD entries-read]", "5.0.0"),
+    sub!(
+        "CREATE",
+        "创建消费者组",
+        "key group id|$ [MKSTREAM] [ENTRIESREAD entries-read]",
+        "5.0.0"
+    ),
+    sub!(
+        "SETID",
+        "设置消费者组的最后投递 ID",
+        "key group id|$ [ENTRIESREAD entries-read]",
+        "5.0.0"
+    ),
     sub!("DESTROY", "删除消费者组", "key group", "5.0.0"),
-    sub!("CREATECONSUMER", "在组内创建消费者", "key group consumer", "6.2.0"),
-    sub!("DELCONSUMER", "删除组内消费者", "key group consumer", "5.0.0"),
+    sub!(
+        "CREATECONSUMER",
+        "在组内创建消费者",
+        "key group consumer",
+        "6.2.0"
+    ),
+    sub!(
+        "DELCONSUMER",
+        "删除组内消费者",
+        "key group consumer",
+        "5.0.0"
+    ),
 ];
 
 const XINFO_SUBCOMMANDS: &[SubcommandSpec] = &[
-    sub!("STREAM", "查看流的详细信息", "key [FULL [COUNT count]]", "5.0.0"),
+    sub!(
+        "STREAM",
+        "查看流的详细信息",
+        "key [FULL [COUNT count]]",
+        "5.0.0"
+    ),
     sub!("GROUPS", "查看流上的消费者组", "key", "5.0.0"),
     sub!("CONSUMERS", "查看消费者组内的消费者", "key group", "5.0.0"),
 ];
@@ -488,36 +609,91 @@ const SCRIPT_SUBCOMMANDS: &[SubcommandSpec] = &[
 
 const OBJECT_SUBCOMMANDS: &[SubcommandSpec] = &[
     sub!("ENCODING", "查看 key 的底层编码方式", "key", "2.2.3"),
-    sub!("FREQ", "查看 key 的访问频率计数（需 LFU 淘汰策略）", "key", "4.0.0"),
+    sub!(
+        "FREQ",
+        "查看 key 的访问频率计数（需 LFU 淘汰策略）",
+        "key",
+        "4.0.0"
+    ),
     sub!("IDLETIME", "查看 key 的空闲时间（秒）", "key", "2.2.3"),
     sub!("REFCOUNT", "查看 key 值的引用计数", "key", "2.2.3"),
 ];
 
 const DEBUG_SUBCOMMANDS: &[SubcommandSpec] = &[
     sub!("OBJECT", "查看 key 的内部调试信息", "key", "1.0.0"),
-    sub!("SLEEP", "使服务器阻塞指定秒数（仅用于排障）", "seconds", "1.0.0"),
+    sub!(
+        "SLEEP",
+        "使服务器阻塞指定秒数（仅用于排障）",
+        "seconds",
+        "1.0.0"
+    ),
     sub!("SET-ACTIVE-EXPIRE", "开关后台主动过期扫描", "0|1", "1.0.0"),
     sub!("JSON", "查看 JSON 兼容性调试信息", "key", "4.0.0"),
     sub!("RELOAD", "从磁盘重新加载 RDB", "", "1.0.0"),
     sub!("FLUSHALL", "清空所有数据库（跳过 AOF/复制）", "", "1.0.0"),
     sub!("DIGEST", "计算整个数据集的摘要", "", "1.0.0"),
-    sub!("DIGEST-VALUE", "计算指定 key 的摘要", "key [key ...]", "1.0.0"),
-    sub!("QUICKLIST-PACKED-THRESHOLD", "设置 quicklist 大节点阈值", "size", "3.2.0"),
-    sub!("STRINGMATCH-LEN", "测试 glob 匹配（调试用）", "pattern value", "1.0.0"),
+    sub!(
+        "DIGEST-VALUE",
+        "计算指定 key 的摘要",
+        "key [key ...]",
+        "1.0.0"
+    ),
+    sub!(
+        "QUICKLIST-PACKED-THRESHOLD",
+        "设置 quicklist 大节点阈值",
+        "size",
+        "3.2.0"
+    ),
+    sub!(
+        "STRINGMATCH-LEN",
+        "测试 glob 匹配（调试用）",
+        "pattern value",
+        "1.0.0"
+    ),
     sub!("CHANGE-REPL-ID", "更换复制 ID", "", "5.0.0"),
 ];
 
 const COMMAND_SUBCOMMANDS: &[SubcommandSpec] = &[
     sub!("COUNT", "获取服务器支持的命令总数", "", "2.8.13"),
-    sub!("DOCS", "获取命令的详细文档", "[command-name [command-name ...]]", "7.0.0"),
-    sub!("GETKEYS", "从一条命令中提取涉及的 key 名", "command [arg ...]", "2.8.13"),
-    sub!("GETKEYSANDFLAGS", "提取 key 名及其访问标志", "command [arg ...]", "7.0.0"),
-    sub!("INFO", "获取指定命令的元数据", "[command-name [command-name ...]]", "2.8.13"),
-    sub!("LIST", "列出所有命令名", "[FILTERBY MODULE module-name|ACLCAT category|PATTERN pattern]", "7.0.0"),
+    sub!(
+        "DOCS",
+        "获取命令的详细文档",
+        "[command-name [command-name ...]]",
+        "7.0.0"
+    ),
+    sub!(
+        "GETKEYS",
+        "从一条命令中提取涉及的 key 名",
+        "command [arg ...]",
+        "2.8.13"
+    ),
+    sub!(
+        "GETKEYSANDFLAGS",
+        "提取 key 名及其访问标志",
+        "command [arg ...]",
+        "7.0.0"
+    ),
+    sub!(
+        "INFO",
+        "获取指定命令的元数据",
+        "[command-name [command-name ...]]",
+        "2.8.13"
+    ),
+    sub!(
+        "LIST",
+        "列出所有命令名",
+        "[FILTERBY MODULE module-name|ACLCAT category|PATTERN pattern]",
+        "7.0.0"
+    ),
 ];
 
 const LATENCY_SUBCOMMANDS: &[SubcommandSpec] = &[
-    sub!("HISTORY", "查看指定事件的延迟采样历史", "event-name", "2.8.13"),
+    sub!(
+        "HISTORY",
+        "查看指定事件的延迟采样历史",
+        "event-name",
+        "2.8.13"
+    ),
     sub!("LATEST", "查看所有事件的最新延迟采样", "", "2.8.13"),
     sub!("RESET", "重置延迟监控数据", "[event-name ...]", "2.8.13"),
     sub!("GRAPH", "以图表形式查看延迟采样", "event-name", "2.8.13"),
@@ -528,8 +704,18 @@ const PUBSUB_SUBCOMMANDS: &[SubcommandSpec] = &[
     sub!("CHANNELS", "列出当前有订阅者的频道", "[pattern]", "2.8.0"),
     sub!("NUMSUB", "查看频道的订阅者数量", "[channel ...]", "2.8.0"),
     sub!("NUMPAT", "查看按模式订阅的数量", "", "2.8.0"),
-    sub!("SHARDCHANNELS", "列出当前有订阅者的分片频道", "[pattern]", "7.0.0"),
-    sub!("SHARDNUMSUB", "查看分片频道的订阅者数量", "[shardchannel ...]", "7.0.0"),
+    sub!(
+        "SHARDCHANNELS",
+        "列出当前有订阅者的分片频道",
+        "[pattern]",
+        "7.0.0"
+    ),
+    sub!(
+        "SHARDNUMSUB",
+        "查看分片频道的订阅者数量",
+        "[shardchannel ...]",
+        "7.0.0"
+    ),
 ];
 
 const CLUSTER_SUBCOMMANDS: &[SubcommandSpec] = &[
@@ -540,19 +726,59 @@ const CLUSTER_SUBCOMMANDS: &[SubcommandSpec] = &[
     sub!("MYID", "查看当前节点 ID", "", "3.0.0"),
     sub!("KEYSLOT", "计算 key 所属的槽位编号", "key", "3.0.0"),
     sub!("COUNTKEYSINSLOT", "统计槽位内的 key 数量", "slot", "3.0.0"),
-    sub!("GETKEYSINSLOT", "获取槽位内的 key 列表", "slot count", "3.0.0"),
-    sub!("MEET", "让节点加入集群", "ip port [cluster-bus-port]", "3.0.0"),
+    sub!(
+        "GETKEYSINSLOT",
+        "获取槽位内的 key 列表",
+        "slot count",
+        "3.0.0"
+    ),
+    sub!(
+        "MEET",
+        "让节点加入集群",
+        "ip port [cluster-bus-port]",
+        "3.0.0"
+    ),
     sub!("FORGET", "从集群视图中移除节点", "node-id", "3.0.0"),
-    sub!("REPLICATE", "将当前节点设为指定节点的副本", "node-id", "3.0.0"),
-    sub!("FAILOVER", "在副本上手动触发故障转移", "[FORCE|TAKEOVER]", "3.0.0"),
+    sub!(
+        "REPLICATE",
+        "将当前节点设为指定节点的副本",
+        "node-id",
+        "3.0.0"
+    ),
+    sub!(
+        "FAILOVER",
+        "在副本上手动触发故障转移",
+        "[FORCE|TAKEOVER]",
+        "3.0.0"
+    ),
     sub!("RESET", "重置节点的集群配置", "[HARD|SOFT]", "3.0.0"),
-    sub!("SET-CONFIG-EPOCH", "为新节点设置配置纪元", "config-epoch", "3.0.0"),
+    sub!(
+        "SET-CONFIG-EPOCH",
+        "为新节点设置配置纪元",
+        "config-epoch",
+        "3.0.0"
+    ),
     sub!("BUMPEPOCH", "递增节点的配置纪元", "", "3.0.0"),
     sub!("ADDSLOTS", "为节点分配槽位", "slot [slot ...]", "3.0.0"),
     sub!("DELSLOTS", "移除节点的槽位", "slot [slot ...]", "3.0.0"),
-    sub!("ADDSLOTSRANGE", "按区间批量分配槽位", "start-slot end-slot [start-slot end-slot ...]", "7.0.0"),
-    sub!("DELSLOTSRANGE", "按区间批量移除槽位", "start-slot end-slot [start-slot end-slot ...]", "7.0.0"),
-    sub!("SETSLOT", "变更单个槽位的迁移状态", "slot IMPORTING|MIGRATING|STABLE|NODE node-id", "3.0.0"),
+    sub!(
+        "ADDSLOTSRANGE",
+        "按区间批量分配槽位",
+        "start-slot end-slot [start-slot end-slot ...]",
+        "7.0.0"
+    ),
+    sub!(
+        "DELSLOTSRANGE",
+        "按区间批量移除槽位",
+        "start-slot end-slot [start-slot end-slot ...]",
+        "7.0.0"
+    ),
+    sub!(
+        "SETSLOT",
+        "变更单个槽位的迁移状态",
+        "slot IMPORTING|MIGRATING|STABLE|NODE node-id",
+        "3.0.0"
+    ),
     sub!("SAVECONFIG", "将集群配置强制写入磁盘", "", "3.0.0"),
     sub!("LINKS", "查看集群总线连接状态", "", "7.0.0"),
 ];
@@ -561,9 +787,19 @@ const FUNCTION_SUBCOMMANDS: &[SubcommandSpec] = &[
     sub!("LOAD", "加载函数库", "[REPLACE] function-code", "7.0.0"),
     sub!("DELETE", "删除函数库", "library-name", "7.0.0"),
     sub!("FLUSH", "删除所有函数库", "[ASYNC|SYNC]", "7.0.0"),
-    sub!("LIST", "列出已加载的函数库", "[LIBRARYNAME library-name] [WITHCODE]", "7.0.0"),
+    sub!(
+        "LIST",
+        "列出已加载的函数库",
+        "[LIBRARYNAME library-name] [WITHCODE]",
+        "7.0.0"
+    ),
     sub!("DUMP", "序列化所有函数库", "", "7.0.0"),
-    sub!("RESTORE", "从序列化数据恢复函数库", "serialized-payload [FLUSH|APPEND|REPLACE]", "7.0.0"),
+    sub!(
+        "RESTORE",
+        "从序列化数据恢复函数库",
+        "serialized-payload [FLUSH|APPEND|REPLACE]",
+        "7.0.0"
+    ),
     sub!("STATS", "查看函数执行统计与运行中脚本", "", "7.0.0"),
     sub!("KILL", "终止正在执行的函数", "", "7.0.0"),
 ];
@@ -849,7 +1085,10 @@ mod tests {
     fn filters_subcommands_by_prefix() {
         let result = suggest("CLUSTER IN");
         let suggestions = result["suggestions"].as_array().unwrap();
-        let names: Vec<&str> = suggestions.iter().map(|v| v["name"].as_str().unwrap()).collect();
+        let names: Vec<&str> = suggestions
+            .iter()
+            .map(|v| v["name"].as_str().unwrap())
+            .collect();
         assert!(names.contains(&"CLUSTER INFO"));
         assert!(!names.contains(&"CLUSTER NODES"));
     }
@@ -923,7 +1162,10 @@ mod tests {
     fn remaining_arguments_narrows_for_subcommands_too() {
         let result = suggest("CONFIG SET foo ");
         let suggestions = result["suggestions"].as_array().unwrap();
-        assert_eq!(suggestions[0]["remainingArguments"], "value [parameter value ...]");
+        assert_eq!(
+            suggestions[0]["remainingArguments"],
+            "value [parameter value ...]"
+        );
     }
 
     #[test]

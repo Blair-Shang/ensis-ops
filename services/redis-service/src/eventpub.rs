@@ -86,7 +86,8 @@ async fn publish_event(event: Value) -> Result<(), Box<dyn std::error::Error + S
             }
         }
         let mut stream = stream.ok_or_else(|| {
-            last_err.map(|e| Box::new(e) as Box<dyn std::error::Error + Send + Sync>)
+            last_err
+                .map(|e| Box::new(e) as Box<dyn std::error::Error + Send + Sync>)
                 .unwrap_or_else(|| "unix eventin connect failed".into())
         })?;
         write_frame(&mut stream, &payload).await?;

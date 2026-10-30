@@ -427,20 +427,28 @@ async function exchangeCode() {
 <style scoped>
 .nm-api-auth {
   display: flex;
+  flex: 1;
   flex-direction: column;
-  gap: var(--rs-space-md);
-  align-items: flex-start;
+  gap: var(--rs-space-lg);
+  align-items: stretch;
+  box-sizing: border-box;
+  width: 100%;
+  height: 100%;
+  min-width: 0;
+  min-height: 0;
   padding: var(--rs-space-md) var(--rs-space-lg);
   overflow: auto;
+  color: var(--rs-text);
+  background: var(--rs-surface);
 }
 
 .nm-api-auth__type,
-.nm-api-auth__fields {
-  width: min(100%, 22rem);
-}
-
-.nm-api-auth__fields:has(.nm-api-auth__actions) {
-  width: min(100%, 28rem);
+.nm-api-auth__fields,
+.nm-api-auth__field :deep(.rs-select),
+.nm-api-auth__field :deep(.rs-input),
+.nm-api-auth__field :deep(.rs-input-field) {
+  width: 100%;
+  max-width: none;
 }
 
 .nm-api-auth__type,
@@ -459,7 +467,7 @@ async function exchangeCode() {
 
 .nm-api-auth__hint {
   margin: 0;
-  color: var(--rs-muted);
+  color: var(--rs-text-secondary, var(--rs-muted));
   font-size: var(--rs-font-size-xs);
   line-height: var(--rs-line-height-normal);
 }

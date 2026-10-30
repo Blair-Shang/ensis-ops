@@ -15,8 +15,9 @@ import {
   listMentionCandidates,
   type AiContextAttachment,
 } from './context-pack'
-import { mergeActiveTabAttachment } from './merge-tab-attachment'
+import { mergeActiveTabAttachment, retainDisplacedTab } from './merge-tab-attachment'
 import { isLocalMachineAttachment, localMachineAttachment } from './local-machine'
+import { mentionAtCaret, stripMentionAtCaret } from './mention-token'
 import { capturedTabAfterDismiss, nextCapturedTabId, resolveWorkspaceTabId } from './pin-composer-tab'
 import { encodeWorkspaceMarker } from './workspace-marker'
 import { acceptDroppedTab } from './drop-tab'
@@ -54,6 +55,7 @@ const files = ref<AiComposerFile[]>([])
 const capturedTabId = ref<string | null>(null)
 const mentionOpen = ref(false)
 const mentionQuery = ref('')
+const inputEl = ref<HTMLTextAreaElement | null>(null)
 const attachError = ref<string | null>(null)
 /** 每个会话自己的未发送草稿，切换时换回这一份。 */
 const composerCache = new Map<
@@ -478,15 +480,16 @@ function closeMention(): void {
   if (!shouldStripAt) {
     return
   }
-  // 去掉草稿末尾未完成的 @query，避免残留
-  draft.value = draft.value.replace(/(?:^|\s)@[^\s@]*$/, (m) => (m.startsWith(' ') ? ' ' : ''))
+  const caret = inputEl.value?.selectionStart ?? draft.value.length
+  draft.value = stripMentionAtCaret(draft.value, caret)
 }
 
 function addAttachment(item: AiContextAttachment): void {
-  if (attachments.value.some((a) => a.id === item.id)) {
+  const next = retainDisplacedTab(attachments.value, item, autoTabAttachment.value)
+  if (next === attachments.value) {
     return
   }
-  attachments.value = [...attachments.value, item]
+  attachments.value = next
   closeMention()
 }
 
@@ -680,15 +683,17 @@ function onKeydown(e: KeyboardEvent): void {
   }
 }
 
-function onInput(): void {
-  const m = /(?:^|\s)@([^\s@]*)$/.exec(draft.value)
-  if (m) {
+function onInput(event: Event): void {
+  const el = event.target instanceof HTMLTextAreaElement ? event.target : inputEl.value
+  const caret = el?.selectionStart ?? draft.value.length
+  const hit = mentionAtCaret(draft.value, caret)
+  if (hit) {
     mentionOpen.value = true
-    mentionQuery.value = m[1] ?? ''
-  } else if (!draft.value.includes('@')) {
-    mentionOpen.value = false
-    mentionQuery.value = ''
+    mentionQuery.value = hit.query
+    return
   }
+  mentionOpen.value = false
+  mentionQuery.value = ''
 }
 
 function onModelSelect(value: RsSelectModelValue): void {
@@ -799,6 +804,7 @@ function cancelEditing(): void {
       <div class="nm-ai-composer__input-wrap">
         <textarea
           id="nm-ai-composer-input"
+          ref="inputEl"
           v-model="draft"
           class="nm-ai-composer__input rs-native-scrollbar"
           rows="2"

@@ -1,27 +1,40 @@
 <script setup lang="ts">
-import { RsButton, RsCodeEditor, RsEmpty, RsLoading, useRsToast } from 'ensis-ui'
-import { computed, inject, ref, watch } from 'vue'
+import { RsCodeEditor, useRsToast } from 'ensis-ui'
+import { computed, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { vastbaseApi } from '@/api'
-import { VAST_SESSION_HEADER_ACTIONS_KEY } from '@/modules/vastbase/session-chrome'
+import { DdlShell, type DdlShellLabels } from '@/modules/database'
 
 const props = defineProps<{
   sessionId: string | null
+  profileId?: string
   database?: string
   schema?: string
   table?: string
+  sessionLabel?: string
   active: boolean
 }>()
 
 const { t } = useI18n()
 const toast = useRsToast()
 
-const headerActionsEl = inject(VAST_SESSION_HEADER_ACTIONS_KEY, ref<HTMLElement | null>(null))
-const actionsHost = computed(() => headerActionsEl.value)
-
 const loading = ref(false)
 const ddl = ref('')
 const objectType = ref('')
+
+const labels = computed(
+  (): DdlShellLabels => ({
+    copy: t('modules.vastbase.ddl.copy'),
+    refresh: t('modules.vastbase.structure.refresh'),
+    needScope: t('modules.vastbase.structure.needTable'),
+    empty: t('modules.vastbase.ddl.empty'),
+  }),
+)
+
+const scopeLabel = computed(() =>
+  [props.database, props.schema, props.table].filter(Boolean).join('.'),
+)
+const hasScope = computed(() => Boolean(props.schema && props.table))
 
 async function loadDDL(): Promise<void> {
   if (!props.sessionId || !props.schema || !props.table) return
@@ -79,75 +92,37 @@ watch(
 </script>
 
 <template>
-  <div class="nm-vast-ddl">
-    <Teleport v-if="actionsHost" :to="actionsHost">
-      <span v-if="objectType" class="nm-vast-ddl__type">{{ objectType }}</span>
-      <RsButton variant="ghost" size="sm" icon="copy" :disabled="!ddl" @click="copyDDL">
-        {{ t('modules.vastbase.ddl.copy') }}
-      </RsButton>
-      <RsButton
-        variant="ghost"
-        size="sm"
-        icon="refresh-cw"
-        :loading="loading"
-        @click="loadDDL"
-      >
-        {{ t('modules.vastbase.structure.refresh') }}
-      </RsButton>
-    </Teleport>
-
-    <RsLoading v-if="loading && !ddl" block class="nm-vast-ddl__loading" />
-    <RsEmpty
-      v-else-if="!schema || !table"
-      fill
-      icon="file-code"
-      :description="t('modules.vastbase.structure.needTable')"
-    />
-    <RsEmpty
-      v-else-if="!ddl"
-      fill
-      icon="file-code"
-      :description="t('modules.vastbase.ddl.empty')"
-    />
+  <DdlShell
+    :labels="labels"
+    icon="vastbase"
+    :session-label="sessionLabel || 'Vastbase'"
+    :scope-label="scopeLabel"
+    :type-label="objectType"
+    :loading="loading"
+    :has-scope="hasScope"
+    :has-ddl="Boolean(ddl)"
+    :can-copy="Boolean(ddl)"
+    @copy="copyDDL"
+    @refresh="loadDDL"
+  >
     <RsCodeEditor
-      v-else
       v-model="ddl"
       class="nm-vast-ddl__editor"
       language="sql"
       readonly
+      embedded
+      :rounded="false"
       :show-toolbar="false"
       height="100%"
     />
-  </div>
+  </DdlShell>
 </template>
 
 <style scoped>
-.nm-vast-ddl {
-  display: flex;
-  flex-direction: column;
-  height: 100%;
-  min-height: 0;
-}
-
-.nm-vast-ddl__type {
-  font-size: var(--rs-font-size-xs);
-  color: var(--rs-muted);
-  text-transform: uppercase;
-  letter-spacing: 0.04em;
-  margin-right: var(--rs-space-xs);
-}
-
-.nm-vast-ddl__loading {
-  flex: 1;
-  min-height: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
 .nm-vast-ddl__editor {
   flex: 1;
   min-height: 0;
+  height: 100%;
   border: none;
   border-radius: 0;
 }

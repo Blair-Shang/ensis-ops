@@ -67,10 +67,7 @@ impl Write for LogWriter {
 }
 
 fn open_file(inner: &mut Inner, path: &Path) -> io::Result<()> {
-    let file = OpenOptions::new()
-        .create(true)
-        .append(true)
-        .open(path)?;
+    let file = OpenOptions::new().create(true).append(true).open(path)?;
     let size = file.metadata()?.len();
     inner.file = Some(file);
     inner.size = size;

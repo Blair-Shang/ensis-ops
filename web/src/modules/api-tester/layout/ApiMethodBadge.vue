@@ -31,9 +31,10 @@ const tone = computed(() => methodTone(props.method))
   border-radius: var(--rs-radius-xs);
   font-family: ui-monospace, 'SF Mono', 'Cascadia Code', Menlo, monospace;
   font-size: 10px;
-  font-weight: 600;
+  font-weight: 700;
   letter-spacing: 0.04em;
-  line-height: 1.4;
+  line-height: 1.45;
+  border: 1px solid color-mix(in srgb, currentColor 32%, transparent);
 }
 
 .nm-api-method--compact {

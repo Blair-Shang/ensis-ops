@@ -44,7 +44,8 @@ where
         let handler = Arc::clone(&handler);
         tokio::spawn(async move {
             if let Err(err) = handle_conn(server, handler).await {
-                if !matches!(err, FrameError::Io(ref e) if e.kind() == std::io::ErrorKind::UnexpectedEof) {
+                if !matches!(err, FrameError::Io(ref e) if e.kind() == std::io::ErrorKind::UnexpectedEof)
+                {
                     error!(%err, "connection error");
                 }
             }
@@ -67,7 +68,8 @@ where
         let handler = Arc::clone(&handler);
         tokio::spawn(async move {
             if let Err(err) = handle_conn(stream, handler).await {
-                if !matches!(err, FrameError::Io(ref e) if e.kind() == std::io::ErrorKind::UnexpectedEof) {
+                if !matches!(err, FrameError::Io(ref e) if e.kind() == std::io::ErrorKind::UnexpectedEof)
+                {
                     error!(%err, "connection error");
                 }
             }
