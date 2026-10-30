@@ -11,6 +11,7 @@ import AiMarkdown from './AiMarkdown.vue'
 import AiMediaLightbox from './AiMediaLightbox.vue'
 import AiToolCallList from './AiToolCallList.vue'
 import type { AiContextAttachment } from './context-pack'
+import type { AiOpenTarget } from './workspace-marker'
 import type { ExtractedTextFile } from './attachment-utils'
 import type { ParsedAssistantContent } from './parse-assistant-content'
 
@@ -31,6 +32,8 @@ const props = withDefaults(
     toolsBefore?: AiLiveToolInvocation[]
     /** 这段文字之后、下一段文字之前的工具。 */
     toolsAfter?: AiLiveToolInvocation[]
+    /** 这条回答所属连接；打开 SQL 时用它，不跟当前页签。 */
+    openTarget?: AiOpenTarget | null
   }>(),
   {
     messageId: '',
@@ -43,6 +46,7 @@ const props = withDefaults(
     continued: false,
     toolsBefore: () => [],
     toolsAfter: () => [],
+    openTarget: null,
   },
 )
 
@@ -143,6 +147,7 @@ function chipIcon(kind: AiContextAttachment['kind']): string {
   if (kind === 'connection') return 'plug-zap'
   if (kind === 'selection') return 'type'
   if (kind === 'schema') return 'database'
+  if (kind === 'machine') return 'monitor'
   return 'circle-alert'
 }
 
@@ -229,11 +234,11 @@ async function onBranch(): Promise<void> {
               </span>
             </summary>
             <div v-if="segment.text" class="nm-ai-msg__think-body">
-              <AiMarkdown :source="segment.text" lite />
+              <AiMarkdown :source="segment.text" :open-target="openTarget" lite />
             </div>
           </details>
           <div v-else class="nm-ai-msg__body nm-ai-msg__body--md">
-            <AiMarkdown :source="segment.text" :streaming="streaming && index === caretIndex" />
+            <AiMarkdown :source="segment.text" :streaming="streaming && index === caretIndex" :open-target="openTarget" />
             <span v-if="index === caretIndex" class="nm-ai-msg__caret" aria-hidden="true" />
           </div>
         </template>
@@ -274,7 +279,7 @@ async function onBranch(): Promise<void> {
       </div>
 
       <div v-if="isUser" class="nm-ai-msg__body nm-ai-msg__body--md nm-ai-msg__body--user">
-        <AiMarkdown v-if="content" :source="content" lite />
+        <AiMarkdown v-if="content" :source="content" :open-target="openTarget" lite />
       </div>
       <div v-else-if="!isAssistant" class="nm-ai-msg__body">{{ content }}</div>
       <AiToolCallList v-if="isUser && toolsAfter.length" :tools="toolsAfter" />

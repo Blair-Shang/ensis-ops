@@ -1,220 +1,167 @@
-# ensis-ops — 全能 AI 运维平台
+# ensis-ops
 
-从 **2.0.0** 起，仓库与安装包名称是 ensis-ops。壳层进程是 `ensis-ops.exe`，用户数据目录是 `%LOCALAPPDATA%\ensis-ops`。官网仍是 [niuma007.com](https://www.niuma007.com)。
+Desktop operations console for Windows (primary), with build scripts for Linux, Kylin, and macOS. It connects to remote machines and databases: SSH, SFTP, FTP, RDP, and SQL/NoSQL/API clients. The window is a C++ CEF shell, the UI is Vue 3, and each capability runs as its own process. Day-to-day development docs below are in Chinese.
 
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](./LICENSE)
 
-桌面端：**自封装 CEF + C++ 壳层 + Vue 3 Web + 多语言可插拔后端**。
+桌面运维控制台。在一个窗口里管理远程主机和数据库：SSH 终端、SFTP / FTP 文件、RDP 远程桌面，以及 MySQL、PostgreSQL、Oracle、SQL Server、SQLite、Redis、MongoDB、ClickHouse、达梦、人大金仓、Vastbase 和 API 调试。官网 [niuma007.com](https://www.niuma007.com)。版本以根目录 `package.json` 为准，变更见 [CHANGELOG.md](./CHANGELOG.md)。
+
+壳层进程是 `ensis-ops.exe`，用户数据在 `%LOCALAPPDATA%\ensis-ops`。界面必须跑在 CEF 里（`cefQuery`）。`pnpm dev:web` 只调 Vue，不是桌面应用。
 
 ## 快速开始
 
+当前桌面开发目标是 **Windows x64**。Linux / 麒麟 / macOS 在对应系统上构建，脚本不支持交叉打包，见 [scripts/README.md](./scripts/README.md)。
+
 ```powershell
 pnpm install
-pnpm setup:desktop    # 首次：准备 C++ / CEF 环境（见下文）
-pnpm dev              # 构建并启动 ensis-ops.exe（真实 CEF 桌面窗口）
+pnpm setup:desktop    # 首次：CMake、MSVC、Rust、CEF
+pnpm dev              # 编译并打开 ensis-ops.exe
 ```
 
-| 场景 | 命令 | 说明 |
+第一次 `pnpm dev` 会编译全部能力服务。其中 RDP 若还没有本地 OpenSSL 静态库，会多花几十分钟，只此一次。见下方常见问题。
+
+成功时出现 CEF 窗口，加载 `app://ensis-ops/`，状态栏显示 **CEF Shell**。
+
+## 常用命令
+
+| 场景 | 命令 |
+|------|------|
+| 桌面应用 | `pnpm dev` |
+| 改 Vue 时热更新 | `pnpm dev:hot` |
+| 只编后端服务 | `pnpm build:services` |
+| 只编壳 | `pnpm build:shell` |
+| 绿色目录 | `pnpm pack:win` → `output/windows-x64/dir/` |
+| 安装程序 | `pnpm pack:win:setup` |
+| 一键发布（构建 + 绿色目录 + Setup） | `pnpm release:win` |
+| 组件库 Playground | `pnpm dev:ui`（端口 5180） |
+| Web 单元测试 | `pnpm test:web` |
+| UI 单元测试 | `pnpm test:ui` |
+
+其它平台的 `build:*` / `pack:*` / `release:*`，以及 GitHub Actions「Pack and Release」，见 [scripts/README.md](./scripts/README.md)。推送 `main` 且 changelog 有未发布条目时会自动发版，也可以推 `v*` tag 或手动运行。
+
+## 环境
+
+| 工具 | 版本 | 谁用 |
 |------|------|------|
-| 桌面应用（推荐） | `pnpm dev` | 构建 Web + Shell，启动 `ensis-ops.exe` |
-| Web 热更新 + CEF | `pnpm dev:hot` | CEF 加载 `http://localhost:5173` |
-| UI 组件 Playground | `pnpm dev:ui` | `packages/ui`，端口 5180 |
-| 仅 Web（非桌面） | `pnpm dev:web` | Vite 开发服，端口 5173 |
-| UI 单元测试 | `pnpm test:ui` | Vitest，500+ 用例 |
-| 仅构建壳 | `pnpm build:shell` | 不启动，产出 `ensis-ops.exe` |
-| Windows 打包（绿色目录） | `pnpm pack:win` | 输出 `output/windows-x64/dir/` |
-| Windows 安装程序 | `pnpm pack:win:setup` | 输出 `output/windows-x64/setup/ensis-ops-*-windows-x64-Setup.exe` |
-| Windows 一键发布 | `pnpm release:win` | 构建 + 绿色目录 + Setup 安装程序 |
-| 跨平台矩阵 | 见 [scripts/README.md](./scripts/README.md) | `release:<platform>` 含向导式安装程序 |
-| GitHub 自动打包 | Actions：**Pack and Release** | 推送 `main` 且 changelog 有未发布条目时自动发版；也可推送 `v*` tag 或手动运行。详见 scripts/README.md |
+| Node.js | ≥ 24（`package.json` 的 `engines`） | 前端与 pnpm 脚本。[nodejs.org](https://nodejs.org/) |
+| pnpm | 9.15（`packageManager`） | `corepack enable` 后 `corepack prepare pnpm@9.15.0 --activate` |
+| PowerShell | 5.1+ | Windows 脚本入口 |
+| Visual Studio 2022 | 带 **C++ 桌面开发** 或 **Build Tools + VC 工具链** | 壳、Oracle、RDP。[Build Tools](https://visualstudio.microsoft.com/visual-cpp-build-tools/) |
+| CMake | ≥ 3.20 | 壳与 C++ 服务。[cmake.org](https://cmake.org/download/) |
+| Go | 1.25.x | `platform/` 与各 Go 服务。[go.dev/dl](https://go.dev/dl/) |
+| Rust | stable（根目录 `rust-toolchain.toml`） | SSH、SFTP、Redis。[rustup.rs](https://rustup.rs/) |
+| Git for Windows | 默认目录 `C:\Program Files\Git` | 克隆仓库；其中的 `perl.exe` 只在第一次为 RDP 编译 OpenSSL 时用到 |
+| winget | 可选 | `pnpm setup:desktop` 用来装 CMake、MSVC、Rust |
 
-> 主应用必须在 CEF 中运行（`cefQuery` 桥接）。`pnpm dev:web` 仅用于调试 Web 层，**不是**桌面应用。
+前端依赖版本在 `pnpm-workspace.yaml` 的 catalog（Vue 3.5、Vite 8 等）。CEF 标准包由脚本下载到 `third_party/cef/`，约 200MB。
 
-## 环境要求
+OpenSSL 不用单独安装。RDP 第一次构建会把 **OpenSSL 3.5.4** 静态编到 `services/rdp-service/third_party/openssl`（不进 git）。Oracle、RDP 缺少工具链时可以跳过，见常见问题。
 
-当前仓库以 **Windows x64** 为桌面开发目标。
+## 第一次准备
 
-### 通用（前端 / 脚本）
-
-| 工具 | 版本 | 用途 | 官网 / 下载 |
-|------|------|------|-------------|
-| Node.js | ≥ 24 | 前端构建、pnpm 脚本 | [nodejs.org](https://nodejs.org/) |
-| pnpm | ≥ 9（推荐 `corepack enable` 锁定 9.15） | Monorepo 包管理 | [pnpm.io](https://pnpm.io/installation) |
-| PowerShell | 5.1+ | `scripts/*.ps1` 入口 | 系统自带；跨平台见 [PowerShell](https://github.com/PowerShell/PowerShell) |
-| winget | 可选 | `setup:desktop` 自动安装 CMake / MSVC | [winget 文档](https://learn.microsoft.com/windows/package-manager/winget/) |
-
-前端依赖版本在 `pnpm-workspace.yaml` 的 **catalog** 中统一维护（Vue 3.5、Vite 8、Tailwind 4 等），`web` 与 `packages/ui` 通过 `catalog:` 引用，升级时改一处即可。
-
-### 桌面壳（Layer 3，C++ / CEF）
-
-| 工具 | 版本 | 用途 | 官网 / 下载 |
-|------|------|------|-------------|
-| Visual Studio 2022 | **C++ 桌面开发** 或 **Build Tools + VC 工具链** | 编译 `shell/` | [VS 下载](https://visualstudio.microsoft.com/downloads/) / [Build Tools](https://visualstudio.microsoft.com/visual-cpp-build-tools/) |
-| CMake | ≥ 3.20 | 对接官方 CEF CMake 工程 | [cmake.org/download](https://cmake.org/download/) |
-| CEF Standard Binary | 自动下载 | `third_party/cef/`（约 200MB） | [CEF 官网](https://bitbucket.org/chromiumembedded/cef) / [构建索引](https://cef-builds.spotifycdn.com/index.json) |
-
-说明：
-
-- 仅有 VS Community **未勾选 C++ 工作负载** 时无法编译；`setup:desktop` 会尝试通过 winget 安装 **VS 2022 Build Tools**。
-- 构建脚本使用 `vswhere` 查找带 `VC.Tools.x86.x64` 的 VS 实例，生成器优先 **Visual Studio 17 2022**。
-- CEF 从 [cef-builds.spotifycdn.com](https://cef-builds.spotifycdn.com/index.json) 拉取 stable / windows64 标准包；升级时对照索引中的版本号与 `scripts` 下载逻辑。
-
-### 后端（规划中）
-
-| 组件 | 技术 | 状态 |
-|------|------|------|
-| Platform Core | Go | 占位，`platform/` |
-| FTP Service | Go | 已接入，`services/ftp-service/` |
-| SSH Service | Rust | 开发中，`services/ssh-service/` |
-| SFTP Service | Rust | 独立 SFTP（无 shell），`services/sftp-service/` |
-| Rust 公共包 | Rust workspace | `packages/rust/` |
-
-后端开发额外依赖：
-
-| 工具 | 版本 | 用途 | 官网 / 下载 |
-|------|------|------|-------------|
-| Go | 1.25.x | `platform/`、`ftp-service/`、共享 Go 包 | [go.dev/dl](https://go.dev/dl/) |
-| Rustup | stable | 安装 / 管理 Rust toolchain | [rustup.rs](https://rustup.rs/) |
-| Rust | stable（当前固定 `1.96.x`） | `ssh-service`、`sftp-service`、`packages/rust/` | [rust-lang.org](https://www.rust-lang.org/tools/install) / [发布说明](https://github.com/rust-lang/rust/releases) |
-
-说明：
-
-- 仓库根存在 `rust-toolchain.toml`，进入仓库后会强制使用 `stable` toolchain。
-- Rust 公共能力放在 `packages/rust/`，当前包含 `ensis-logutil` 与 `ensis-serviceipc` 两个 crate。
-- `scripts/shared/build/build-services.ps1` 会同时构建 Go 服务与 Rust 的 `ensis-ssh-service`、`ensis-sftp-service`；日常使用仍建议通过 `pnpm build:services` 或 `scripts/entry/build.ps1 -Target services` 进入。
-- 升级校对：以本表「版本」列为仓库基线，对照各官网下载页 / Releases 确认是否有安全补丁或破坏性变更，再改版本约束与脚本。
-
-## 环境准备（首次）
-
-### 1. 安装 Node 与 pnpm
+### 1. Node 与依赖
 
 ```powershell
-node -v    # 需 >= 20
+node -v    # >= 24
 corepack enable
 corepack prepare pnpm@9.15.0 --activate
-pnpm -v
-```
-
-### 2. 安装前端依赖
-
-```powershell
 pnpm install
 ```
 
-### 3. 准备桌面编译环境
+### 2. 桌面工具链
 
 ```powershell
 pnpm setup:desktop
 ```
 
-该脚本依次执行：
+脚本会检查并在缺失时安装：CMake、VS 2022 Build Tools（C++）、Rust stable，然后下载 CEF 到 `third_party/cef/`。结束后若提示找不到 Git perl，安装 [Git for Windows](https://git-scm.com/download/win) 到默认目录。
 
-1. **CMake** — 未安装时 `winget install Kitware.CMake`
-2. **MSVC** — 未检测到 VC 工具链时安装 VS 2022 Build Tools（C++ 工作负载）
-3. **Rust** — 未检测到 `cargo` 时安装 `rustup` 并切到 `stable`
-4. **CEF** — 下载并解压到 `third_party/cef/`
+只重下 CEF：删掉 `third_party/cef/` 再执行 `pnpm cef:download`。
 
-也可分步执行：
+已准备好环境时，`pnpm dev -- -SkipSetup` 可跳过这次检查。
+
+### 3. 确认 Go 与 Rust
+
+`setup:desktop` 会装 Rust，不会装 Go。
 
 ```powershell
-pnpm cef:download          # 仅下载 CEF
-pnpm setup:desktop         # 检查工具链 + 下载 CEF
+go version       # 1.25.x
+cargo --version
 ```
 
-重新下载 CEF：删除 `third_party/cef/` 后再次运行 `pnpm cef:download`。
-
-### 4. 验证桌面启动
+### 4. 启动
 
 ```powershell
 pnpm dev
 ```
 
-成功时应出现 CEF 窗口，加载 `app://ensis-ops/`，状态栏显示 **CEF Shell**。
-
-`pnpm dev` 在缺少 CEF 时会自动调用 `setup:desktop`；已准备好环境时可用 `pnpm dev -- -SkipSetup` 跳过检查（PowerShell 透传参数）。
-
-### 5. 准备后端工具链（Go / Rust）
-
-```powershell
-go version      # 需 1.25.x
-rustup --version
-rustc --version
-cargo --version
-```
-
-首次安装 Rust（Windows）：
-
-```powershell
-winget install Rustlang.Rustup --accept-package-agreements --accept-source-agreements
-rustup toolchain install stable
-rustup default stable
-```
-
-构建全部后端服务（默认当前 Windows 开发机目标为 `windows/x64`）：
-
-```powershell
-pnpm build:services
-```
-
-如需显式指定目标矩阵：
-
-```powershell
-powershell -ExecutionPolicy Bypass -File scripts/entry/build.ps1 -Target services -Platform windows -Arch x64
-bash scripts/entry/build.sh --target services --platform linux --arch x64
-```
-
-成功时会产出：
-
-- 矩阵产物目录：`services/bin/<platform>-<arch>/`
-- 当前 Windows 主机为了兼容现有开发链路，仍会同步一份到 `services/bin/*.exe`
-
-### 6. 热更新模式（可选）
+热更新（Vite 5173，CEF 直接加载开发服，改 `web/` 保存即刷新）：
 
 ```powershell
 pnpm dev:hot
 ```
 
-后台启动 Vite（5173），并设置环境变量 `ENSIS_DEV_URL=http://localhost:5173`，CEF 窗口直接加载开发服（**跳过 web 生产构建**，改 `web/` 保存即热更新）。
+## 改哪一块
 
-## 本地路径约定
+每项能力是独立进程，清单在 `services/manifests/`。改行为前先读 [docs/README.md](docs/README.md) 里对应模块文档。
+
+| 要改的东西 | 目录 |
+|------------|------|
+| 界面、连接表单、会话 | `web/` |
+| 窗口与 CEF，不含业务 | `shell/` |
+| 凭据、SQLite、拉起服务 | `platform/` |
+| 某一项远程或数据库能力 | `services/<name>-service/` |
+| 公共库 | `packages/cpp`、`packages/go`、`packages/rust`、`packages/ui` |
+| 构建与打包入口 | `scripts/entry/`（实现在 `scripts/shared/`、`scripts/platforms/`） |
+
+`pnpm build:services` 默认编入 Go 服务、Rust 的 SSH / SFTP / Redis，以及 C++ 的 Oracle、RDP。本机 Windows 产物在 `services/bin/windows-x64/`，并同步一份到 `services/bin/*.exe`。
+
+暂时不编 C++ 服务（界面入口还在，对应 exe 缺失就连不上）：
+
+```powershell
+powershell -ExecutionPolicy Bypass -File scripts/shared/build/build-services.ps1 -SkipOracle -SkipRdp
+```
+
+## 本地路径
 
 | 内容 | 路径 |
 |------|------|
-| CEF 二进制 | `third_party/cef/` |
-| CEF 下载缓存 | `third_party/.cache/` |
-| Web 构建产物 | `web/dist/` |
-| Shell 构建产物（矩阵） | `build/shell-windows-x64/Release/ensis-ops.exe` |
-| Shell 构建产物（兼容） | `build/shell/Release/ensis-ops.exe`（本机 windows/x64 自动同步） |
-| 运行时 Web 资源 | `build/shell-windows-x64/Release/resources/web/`（由构建脚本从 `web/dist` 复制） |
-| 用户 SQLite 库 | `%LOCALAPPDATA%\ensis-ops\data\ensis-ops.db` |
-| Go / Rust 服务产物（矩阵） | `services/bin/<platform>-<arch>/` |
-| Go / Rust 服务产物（兼容） | `services/bin/*.exe`（本机 windows/x64 自动同步） |
-| Rust 公共 workspace | `packages/rust/` |
-| 打包输出 | `output/windows-x64/dir/`（绿色目录） |
-| 安装程序 | `output/windows-x64/setup/ensis-ops-<version>-windows-x64-Setup.exe` |
+| 壳 | `build/shell-windows-x64/Release/ensis-ops.exe` |
+| 壳加载的 Web | `build/shell-windows-x64/Release/resources/web/` |
+| 服务二进制 | `services/bin/windows-x64/`（兼容目录 `services/bin/*.exe`） |
+| CEF | `third_party/cef/` |
+| RDP 的 OpenSSL（本机生成） | `services/rdp-service/third_party/openssl/` |
+| 用户数据库 | `%LOCALAPPDATA%\ensis-ops\data\ensis-ops.db` |
+| 绿色包 / 安装包 | `output/windows-x64/dir/` 、 `output/windows-x64/setup/` |
 
 ## 常见问题
 
 **`cmake not found`**  
-安装 CMake 并确保在 PATH 中，或重新打开终端后执行 `pnpm setup:desktop`。
+安装 CMake 并保证在 PATH 中，或新开终端后执行 `pnpm setup:desktop`。
 
-**`MSVC not found` / cmake 找不到 VS**  
-打开 Visual Studio Installer，为已安装实例添加 **「使用 C++ 的桌面开发」** 或 **VC++ x64/x86 生成工具**，然后重试 `pnpm build:shell`。
+**`MSVC not found`**  
+用 Visual Studio Installer 加上 **「使用 C++ 的桌面开发」** 或 **VC++ x64/x86 生成工具**。脚本通过 `vswhere` 找带 `VC.Tools.x86.x64` 的 VS 2022。
 
-**CEF 已存在但版本不对**  
-删除 `third_party/cef/` 目录，执行 `pnpm cef:download`。
+**CEF 版本不对**  
+删除 `third_party/cef/`，执行 `pnpm cef:download`。
 
 **窗口空白或秒退**  
-查看 `build/shell/Release/debug.log`；确认 `resources/web/index.html` 存在（先 `pnpm build:web` 或 `pnpm dev` 完整构建）。
+看 `build/shell/Release/debug.log`，并确认 `resources/web/index.html` 存在（先 `pnpm dev` 或 `pnpm build:web`）。
 
 **`cefQuery unavailable`**  
-说明当前在浏览器而非 CEF 中打开，请使用 `pnpm dev` 启动桌面应用。
+页面开在了普通浏览器里。用 `pnpm dev` 启动桌面窗口。
+
+**第一次停在 `Building OpenSSL`，或 RDP 编译很久**  
+正常。只在 `services/rdp-service/third_party/openssl/lib/libcrypto.lib` 还不存在时编译 OpenSSL 3.5.4。编完会跳过。不要删这个目录，除非打算重编。
+
+**`perl not found`，路径是 `C:\Program Files\Git\usr\bin\perl.exe`**  
+Git for Windows 要装在默认目录。装在其它盘符时脚本认不到。可以先 `-SkipRdp`。
 
 **`cargo not found`**  
-说明 Rust 未安装或 `~/.cargo/bin` 未进入 PATH。重新打开终端后执行 `cargo --version`；若仍失败，先安装 `Rustlang.Rustup` 再执行 `rustup toolchain install stable`。
+安装 Rustup，并让 `%USERPROFILE%\.cargo\bin` 进入 PATH。`pnpm setup:desktop` 会装 stable。
 
 **`Missing manifest in toolchain 'stable-x86_64-pc-windows-msvc'`**  
-这是本机 Rust toolchain 损坏或未完成安装的典型报错。建议依次执行：
+本机 Rust toolchain 不完整。依次执行：
 
 ```powershell
 rustup self uninstall -y
@@ -227,61 +174,47 @@ rustup default stable
 cargo --version
 ```
 
-若 `winget install Rustlang.Rustup` 长时间无响应，先结束残留 `winget` / `rustup-init` 进程后再重试。
+`winget install` 若一直无输出，先结束残留的 `winget` / `rustup-init` 再重试。
 
-## 变更记录
+## 参与
 
-功能变更见 [CHANGELOG.md](./CHANGELOG.md)，当前版本 **2.0.0**。只记功能，不记技术栈。
-
-## 文档
-
-- [设计文档索引](docs/README.md)
-- [总体架构](docs/01-architecture-overview.md)
-- [CEF Shell（C++）](docs/02-shell-cpp-cef.md)
-- [Web 层总览](docs/07-web-overview.md)
-- [脚本平台分层方案](docs/17-script-platform-layout.md)
-- [发布包目录布局](docs/pack-output-layout.md)
-- [数据库规范](docs/database-schema.md)
+1. 先看 [docs/README.md](docs/README.md) 里和你要改的模块对应的那篇，再改代码。架构图在 [docs/architecture.md](docs/architecture.md)。
+2. 用户能感知的变化写进 [CHANGELOG.md](./CHANGELOG.md) 的 `[Unreleased]`，只记功能。
+3. 用本仓库的 Issue / Pull Request。构建必须在目标操作系统上执行。
+4. 第三方组件许可证见 [docs/compliance/NOTICES.txt](./docs/compliance/NOTICES.txt)。
 
 ## 仓库结构
 
 ```
 ensis-ops/
-├── docs/                      # 架构与设计文档
+├── docs/                 # 设计文档索引：docs/README.md
 ├── scripts/
-│   ├── setup-desktop.ps1      # 首次环境：CMake / MSVC / CEF
-│   ├── build-shell.ps1        # 构建 CEF 壳 + 复制 web/dist
-│   ├── dev.ps1                # 启动 ensis-ops.exe
-│   ├── download-cef.ps1
-│   └── pack/                  # 打包脚本
-├── scripts/sql/sqlite/        # SQL 迁移源脚本
-├── third_party/cef/           # CEF 二进制（setup 后生成）
-├── build/shell-<platform>-<arch>/  # CMake 壳层矩阵构建
-├── build/shell/               # Windows 本机兼容同步目录
-├── output/                    # 打包输出（如 output/windows-x64/dir/）
-├── shell/                     # C++ CEF 壳层（Layer 3）
-├── web/                       # Vue 3 主 Web 应用（Layer 4）
-├── packages/rust/             # Rust 公共 crate（日志 / IPC 等）
-├── packages/ui/               # ensis-ui 组件库 + playground
-├── platform/                  # Platform Core（Go）
-├── services/ssh-service/      # SSH（终端 / exec / 会话内 SFTP）
-├── services/sftp-service/     # 独立 SFTP（仅子系统，无 shell）
-├── services/manifests/
-├── plugins/
-└── proto/                     # 非当前契约（见 proto/README.md）
+│   ├── entry/            # pnpm 调用的入口
+│   ├── shared/           # 服务构建、打包拼装
+│   ├── platforms/        # Windows / Linux / 麒麟 / macOS
+│   └── sql/sqlite/       # SQLite 迁移
+├── shell/                # C++ CEF 壳
+├── web/                  # Vue 3
+├── platform/             # Platform Core（Go）
+├── services/             # 每项能力一个进程 + manifests/
+├── packages/             # cpp / go / rust / ui
+├── third_party/cef/      # setup 后生成
+├── build/                # 壳的构建目录
+└── output/               # 打包结果
 ```
 
-## 架构概要
+## 架构
 
 ```
-Vue 3 Web  ──① CEF IPC──>  C++ Shell  ──② Named Pipe/UDS + JSON──>  Platform / Services
- app://ensis-ops/              ensis-ops.exe
+Vue 3  ── CEF IPC ──>  C++ Shell  ── Named Pipe / UDS + JSON ──>  Platform Core ──> 各能力进程
 ```
+
+壳不定业务 TCP 端口。进程间契约见 [docs/03-ipc-protocol.md](docs/03-ipc-protocol.md)。
 
 ## 许可证
 
 本仓库源码以及发行包中由 ensis-ops 编写的部分，按 [Apache License 2.0](./LICENSE) 授权。版权与署名见 [NOTICE](./NOTICE)。
 
-第三方组件（含捆绑的 Chromium Embedded Framework 等）按其自身许可证分发，清单见 [docs/compliance/NOTICES.txt](./docs/compliance/NOTICES.txt)。名称与图标为商标，Apache 2.0 **不授予**商标权。
+第三方组件（含捆绑的 Chromium Embedded Framework、FreeRDP 等）按其自身许可证分发，清单见 [docs/compliance/NOTICES.txt](./docs/compliance/NOTICES.txt)。名称与图标为商标，Apache 2.0 **不授予**商标权。
 
 官方免责见 [docs/legal/DISCLAIMER.zh-CN.txt](./docs/legal/DISCLAIMER.zh-CN.txt)：在法律允许范围内，开发者对使用后果不承担责任；免费获得时责任上限为零。安装向导附加声明不得缩小该范围，也不削减 Apache 2.0 已授予的复制、修改与再分发权利。

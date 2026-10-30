@@ -50,6 +50,10 @@ func HostToolSpecs(moduleID string) []ToolSpec {
 	if IsToolsModule(moduleID) {
 		return ToolsToolSpecs()
 	}
+	// 「这台电脑」要用户在输入框里点明。空白页签不带本机工具。
+	if IsLocalModule(moduleID) {
+		return LocalToolSpecs()
+	}
 	out := append([]ToolSpec{}, SQLToolSpecs()...)
 	out = append(out, SSHToolSpecs()...)
 	out = append(out, RedisToolSpecs()...)
@@ -73,6 +77,9 @@ func SpecServerID(spec ToolSpec) string {
 	}
 	if IsToolsTool(spec.Name) {
 		return ServerIDTools
+	}
+	if IsLocalTool(spec.Name) {
+		return ServerIDLocal
 	}
 	return ServerIDSQL
 }

@@ -9,13 +9,16 @@ import { useI18n } from 'vue-i18n'
 import { useAiStore } from '@/stores/ai'
 import { useTabStore } from '@/stores/tab'
 import {
-  activeTabAttachment,
+  attachmentFromTab,
   buildContextPack,
   encodeAttachmentMarkers,
   listMentionCandidates,
   type AiContextAttachment,
 } from './context-pack'
 import { mergeActiveTabAttachment } from './merge-tab-attachment'
+import { isLocalMachineAttachment, localMachineAttachment } from './local-machine'
+import { capturedTabAfterDismiss, nextCapturedTabId, resolveWorkspaceTabId } from './pin-composer-tab'
+import { encodeWorkspaceMarker } from './workspace-marker'
 import { acceptDroppedTab } from './drop-tab'
 import { isNiumaTabDrag } from '@/shell/workspace/tab-dnd'
 import {
@@ -44,20 +47,23 @@ const { t } = useI18n()
 const aiStore = useAiStore()
 const tabStore = useTabStore()
 
-const inputPlaceholder = computed(() =>
-  tabStore.activeTab?.moduleId === 'ssh' ? t('ai.inputPlaceholderSsh') : t('ai.inputPlaceholder'),
-)
-
 const draft = ref('')
 const attachments = ref<AiContextAttachment[]>([])
 const files = ref<AiComposerFile[]>([])
+/** 草稿或文件还在时钉住的页签；空了才跟着当前页签。 */
+const capturedTabId = ref<string | null>(null)
 const mentionOpen = ref(false)
 const mentionQuery = ref('')
 const attachError = ref<string | null>(null)
 /** 每个会话自己的未发送草稿，切换时换回这一份。 */
 const composerCache = new Map<
   string,
-  { draft: string; attachments: AiContextAttachment[]; files: AiComposerFile[] }
+  {
+    draft: string
+    attachments: AiContextAttachment[]
+    files: AiComposerFile[]
+    capturedTabId: string | null
+  }
 >()
 
 const composerCacheLimit = 8
@@ -72,6 +78,7 @@ function rememberComposer(id: string): void {
       draft: draft.value,
       attachments: [...attachments.value],
       files: [...files.value],
+      capturedTabId: capturedTabId.value,
     })
   }
   const alive = new Set(aiStore.conversations.map((c) => c.conversationId))
@@ -122,6 +129,7 @@ watch(
       rememberComposer(prev)
     }
     const saved = id ? composerCache.get(id) : undefined
+    capturedTabId.value = saved?.capturedTabId ?? null
     draft.value = saved?.draft ?? ''
     attachments.value = saved?.attachments ? [...saved.attachments] : []
     files.value = saved?.files ? [...saved.files] : []
@@ -131,14 +139,56 @@ watch(
   },
   { flush: 'sync' },
 )
-/** 用户关掉当前页签的自动引用后，换页签再恢复。 */
+/** 用户关掉自动引用后松开钉子；换页签再跟着新页签。 */
 const dismissedAutoTabId = ref<string | null>(null)
 
+function explicitWorkspaceTabId(): string | null {
+  for (let i = attachments.value.length - 1; i >= 0; i -= 1) {
+    const item = attachments.value[i]
+    if (!item || item.kind !== 'tab') {
+      continue
+    }
+    const id = item.payload.tabId
+    if (typeof id === 'string' && id.trim()) {
+      return id.trim()
+    }
+  }
+  return null
+}
+
+const composerDirty = computed(
+  () => draft.value.trim().length > 0 || files.value.length > 0,
+)
+
+const workspaceTabId = computed(() =>
+  resolveWorkspaceTabId({
+    explicitTabId: explicitWorkspaceTabId(),
+    capturedTabId: capturedTabId.value,
+  }),
+)
+
+const scopeTab = computed(() => {
+  const id = workspaceTabId.value
+  if (!id) {
+    return tabStore.activeTab
+  }
+  return tabStore.allTabs.find((tab) => tab.tabId === id) ?? null
+})
+
+const inputPlaceholder = computed(() => {
+  if (attachments.value.some((item) => isLocalMachineAttachment(item))) {
+    return t('ai.inputPlaceholderLocal')
+  }
+  return scopeTab.value?.moduleId === 'ssh' ? t('ai.inputPlaceholderSsh') : t('ai.inputPlaceholder')
+})
+
 const autoTabAttachment = computed((): AiContextAttachment | null => {
-  const active = activeTabAttachment()
-  if (!active) {
+  const id = workspaceTabId.value ?? tabStore.activeTabId
+  const tab = id ? tabStore.allTabs.find((item) => item.tabId === id) : null
+  if (!tab) {
     return null
   }
+  const active = attachmentFromTab(tab)
   if (dismissedAutoTabId.value === active.id) {
     return null
   }
@@ -148,6 +198,14 @@ const autoTabAttachment = computed((): AiContextAttachment | null => {
   return active
 })
 
+watch(composerDirty, (dirty) => {
+  capturedTabId.value = nextCapturedTabId({
+    capturedTabId: capturedTabId.value,
+    dirty,
+    activeTabId: tabStore.activeTabId,
+  })
+})
+
 const composerAttachments = computed((): AiContextAttachment[] =>
   mergeActiveTabAttachment(attachments.value, autoTabAttachment.value),
 )
@@ -155,6 +213,9 @@ const composerAttachments = computed((): AiContextAttachment[] =>
 watch(
   () => tabStore.activeTabId,
   () => {
+    if (workspaceTabId.value) {
+      return
+    }
     dismissedAutoTabId.value = null
   },
 )
@@ -207,6 +268,22 @@ type MentionEntry =
   | { type: 'ctx'; id: string; attachment: AiContextAttachment }
   | { type: 'skill'; id: string; skillCode: string; label: string; detail?: string }
 
+type MentionGroupId = 'skill' | 'machine' | 'tab' | 'connection' | 'schema' | 'selection' | 'diagnostic'
+
+const MENTION_GROUP_ORDER: MentionGroupId[] = [
+  'skill',
+  'machine',
+  'tab',
+  'connection',
+  'schema',
+  'selection',
+  'diagnostic',
+]
+
+const MENTION_GROUP_CAP = 8
+
+const collapsedMentionGroups = ref(new Set<MentionGroupId>(['skill']))
+
 const selectedSkill = computed(() => {
   const code = aiStore.selectedSkillCode
   if (!code) {
@@ -223,32 +300,76 @@ const selectedSkillLabel = computed(() => {
   return s.skillScope ? `${s.skillName} · ${s.skillScope}` : s.skillName
 })
 
-const kindLabel = (kind: AiContextAttachment['kind']): string => {
-  if (kind === 'tab') return t('ai.mentionKindTab')
-  if (kind === 'connection') return t('ai.mentionKindConn')
-  if (kind === 'selection') return t('ai.mentionKindSel')
-  if (kind === 'schema') return t('ai.mentionKindSchema')
-  return t('ai.mentionKindDiag')
-}
-
 const kindIcon = (kind: AiContextAttachment['kind']): string => {
   if (kind === 'tab') return 'file-text'
   if (kind === 'connection') return 'plug-zap'
   if (kind === 'selection') return 'type'
   if (kind === 'schema') return 'database'
+  if (kind === 'machine') return 'monitor'
   return 'circle-alert'
 }
 
-/** @ 弹出：Skill 在前，上下文附件在后。 */
-const mentionEntries = computed((): MentionEntry[] => {
+function mentionGroupId(entry: MentionEntry): MentionGroupId {
+  if (entry.type === 'skill') {
+    return 'skill'
+  }
+  switch (entry.attachment.kind) {
+    case 'machine':
+      return 'machine'
+    case 'tab':
+      return 'tab'
+    case 'connection':
+      return 'connection'
+    case 'schema':
+      return 'schema'
+    case 'selection':
+      return 'selection'
+    default:
+      return 'diagnostic'
+  }
+}
+
+function mentionGroupLabel(id: MentionGroupId): string {
+  if (id === 'skill') return t('ai.mentionKindSkill')
+  if (id === 'machine') return t('ai.mentionKindMachine')
+  if (id === 'tab') return t('ai.mentionKindTab')
+  if (id === 'connection') return t('ai.mentionKindConn')
+  if (id === 'schema') return t('ai.mentionKindSchema')
+  if (id === 'selection') return t('ai.mentionKindSel')
+  return t('ai.mentionKindDiag')
+}
+
+/** 分组标题已经说明类别时，行内不再重复「连接 / schema / local」。 */
+function mentionDetail(entry: MentionEntry): string {
+  if (entry.type === 'skill') {
+    return entry.detail?.trim() ?? ''
+  }
+  const detail = entry.attachment.detail?.trim() ?? ''
+  if (!detail || detail === 'local' || detail === 'connection' || detail === 'schema') {
+    return ''
+  }
+  return detail
+}
+
+/** @ 弹出：按 Skill、这台电脑、页签等分组。没有命中的分组不显示。 */
+const mentionGroups = computed(() => {
   const q = mentionQuery.value.trim().toLowerCase()
-  const out: MentionEntry[] = []
+  const buckets = new Map<MentionGroupId, MentionEntry[]>()
+  const push = (entry: MentionEntry) => {
+    const id = mentionGroupId(entry)
+    const list = buckets.get(id) ?? []
+    if (list.length >= MENTION_GROUP_CAP) {
+      return
+    }
+    list.push(entry)
+    buckets.set(id, list)
+  }
 
   for (const s of aiStore.skills) {
     const label = s.skillScope ? `${s.skillName} · ${s.skillScope}` : s.skillName
     const hay = `${s.skillName} ${s.skillCode} ${s.skillScope ?? ''} skill`.toLowerCase()
     if (!q || hay.includes(q)) {
-      out.push({
+      push({
         type: 'skill',
         id: `skill:${s.skillCode}`,
         skillCode: s.skillCode,
@@ -258,22 +379,48 @@ const mentionEntries = computed((): MentionEntry[] => {
     }
   }
 
-  const ctx = listMentionCandidates().filter((c) => !composerAttachments.value.some((a) => a.id === c.id))
+  const machine = localMachineAttachment(t('ai.thisComputer'), t('ai.thisComputerDetail'))
+  const ctx = [machine, ...listMentionCandidates()].filter(
+    (c) => !composerAttachments.value.some((a) => a.id === c.id),
+  )
   for (const c of ctx) {
-    if (
-      !q ||
-      c.label.toLowerCase().includes(q) ||
-      c.kind.includes(q) ||
-      (c.detail ?? '').toLowerCase().includes(q)
-    ) {
-      out.push({ type: 'ctx', id: c.id, attachment: c })
+    const hay = `${c.label} ${c.kind} ${c.detail ?? ''} ${c.id}`.toLowerCase()
+    if (!q || hay.includes(q)) {
+      push({ type: 'ctx', id: c.id, attachment: c })
     }
   }
 
-  return out.slice(0, 12)
+  return MENTION_GROUP_ORDER.filter((id) => (buckets.get(id)?.length ?? 0) > 0).map((id) => ({
+    id,
+    label: mentionGroupLabel(id),
+    entries: buckets.get(id) ?? [],
+  }))
 })
 
-const mentionVisible = computed(() => mentionOpen.value && mentionEntries.value.length > 0)
+function mentionGroupOpen(id: MentionGroupId): boolean {
+  if (mentionQuery.value.trim()) {
+    return true
+  }
+  return !collapsedMentionGroups.value.has(id)
+}
+
+function toggleMentionGroup(id: MentionGroupId): void {
+  const next = new Set(collapsedMentionGroups.value)
+  if (next.has(id)) {
+    next.delete(id)
+  } else {
+    next.add(id)
+  }
+  collapsedMentionGroups.value = next
+}
+
+const mentionEntries = computed(() =>
+  mentionGroups.value
+    .filter((group) => mentionGroupOpen(group.id))
+    .flatMap((group) => group.entries),
+)
+
+const mentionVisible = computed(() => mentionOpen.value && mentionGroups.value.length > 0)
 
 watch(
   modelSelectOptions,
@@ -344,8 +491,11 @@ function addAttachment(item: AiContextAttachment): void {
 }
 
 function removeAttachment(id: string): void {
-  if (autoTabAttachment.value?.id === id) {
+  const auto = autoTabAttachment.value
+  if (auto?.id === id) {
     dismissedAutoTabId.value = id
+    const tabId = typeof auto.payload.tabId === 'string' ? auto.payload.tabId : ''
+    capturedTabId.value = capturedTabAfterDismiss(capturedTabId.value, tabId || null)
     return
   }
   attachments.value = attachments.value.filter((a) => a.id !== id)
@@ -376,20 +526,20 @@ async function onSend(): Promise<void> {
   // 发送前若未显式 @ 选区，但当前页签仍有选区，自动并入 Context
   const { selectionAttachmentFromWorkspace } = await import('./context-pack')
   const { editorSelectionBelongsToTab, latestDiagnosticForTab } = await import('./workspace-context')
-  const activeTabId = tabStore.activeTabId
+  const scopeTabId = workspaceTabId.value ?? tabStore.activeTabId
   let nextAttachments = [...attachments.value]
   if (autoTabAttachment.value) {
     nextAttachments = mergeActiveTabAttachment(nextAttachments, autoTabAttachment.value)
   }
-  if (!nextAttachments.some((a) => a.kind === 'selection') && editorSelectionBelongsToTab(activeTabId)) {
+  if (!nextAttachments.some((a) => a.kind === 'selection') && editorSelectionBelongsToTab(scopeTabId)) {
     const sel = selectionAttachmentFromWorkspace()
     if (sel) {
       nextAttachments = [...nextAttachments, sel]
     }
   }
-  // 若未 @ 诊断，只自动附带当前激活页签的查询/Explain 等诊断，不带后台 SSH 页签的过期项
+  // 若未 @ 诊断，只自动附带钉住页签的查询/Explain 等诊断，不带切走之后页签的过期项
   if (!nextAttachments.some((a) => a.kind === 'diagnostic')) {
-    const diag = latestDiagnosticForTab(activeTabId)
+    const diag = latestDiagnosticForTab(scopeTabId)
     if (diag) {
       nextAttachments = [
         ...nextAttachments,
@@ -403,9 +553,11 @@ async function onSend(): Promise<void> {
       ]
     }
   }
-  const pack = buildContextPack(nextAttachments)
+  const pack = buildContextPack(nextAttachments, { workspaceTabId: workspaceTabId.value })
   const markers =
-    encodeAttachmentMarkers(nextAttachments) + encodeFileMarkers(files.value)
+    encodeWorkspaceMarker({ workspace: pack.workspace, attachments: pack.attachments }) +
+    encodeAttachmentMarkers(nextAttachments) +
+    encodeFileMarkers(files.value)
   const sendText =
     text.trim() || (files.value.length ? t('ai.attachOnlyPrompt') : '')
   draft.value = ''
@@ -658,49 +810,54 @@ function cancelEditing(): void {
           @paste="onPaste"
         />
         <div v-if="mentionVisible" class="nm-ai-mention rs-native-scrollbar">
-          <div class="nm-ai-mention__head">{{ t('ai.mentionHint') }}</div>
-          <ul class="nm-ai-mention__list">
-            <li v-for="entry in mentionEntries" :key="entry.id">
-              <button
-                type="button"
-                class="nm-ai-mention__item"
-                :class="{
-                  'nm-ai-mention__item--active':
-                    entry.type === 'skill' && entry.skillCode === aiStore.selectedSkillCode,
-                }"
-                :aria-current="
-                  entry.type === 'skill' && entry.skillCode === aiStore.selectedSkillCode
-                    ? 'true'
-                    : undefined
-                "
-                @click="pickMention(entry)"
-              >
-                <span class="nm-ai-mention__badge">
-                  <RsIcon
-                    :name="entry.type === 'skill' ? 'sparkles' : kindIcon(entry.attachment.kind)"
-                    :size="12"
-                  />
-                </span>
-                <span class="nm-ai-mention__text">
-                  <span class="nm-ai-mention__label">
-                    {{ entry.type === 'skill' ? entry.label : entry.attachment.label }}
+          <section v-for="group in mentionGroups" :key="group.id" class="nm-ai-mention__group">
+            <button
+              type="button"
+              class="nm-ai-mention__head"
+              :aria-expanded="mentionGroupOpen(group.id)"
+              @click="toggleMentionGroup(group.id)"
+            >
+              <RsIcon
+                :name="mentionGroupOpen(group.id) ? 'chevron-down' : 'chevron-right'"
+                :size="12"
+              />
+              <span class="nm-ai-mention__head-label">{{ group.label }}</span>
+              <span class="nm-ai-mention__count">{{ group.entries.length }}</span>
+            </button>
+            <ul v-show="mentionGroupOpen(group.id)" class="nm-ai-mention__list">
+              <li v-for="entry in group.entries" :key="entry.id">
+                <button
+                  type="button"
+                  class="nm-ai-mention__item"
+                  :class="{
+                    'nm-ai-mention__item--active':
+                      entry.type === 'skill' && entry.skillCode === aiStore.selectedSkillCode,
+                  }"
+                  :aria-current="
+                    entry.type === 'skill' && entry.skillCode === aiStore.selectedSkillCode
+                      ? 'true'
+                      : undefined
+                  "
+                  @click="pickMention(entry)"
+                >
+                  <span class="nm-ai-mention__badge">
+                    <RsIcon
+                      :name="entry.type === 'skill' ? 'sparkles' : kindIcon(entry.attachment.kind)"
+                      :size="12"
+                    />
                   </span>
-                  <span class="nm-ai-mention__meta">
-                    <template v-if="entry.type === 'skill'">
-                      {{ t('ai.mentionKindSkill')
-                      }}<template v-if="entry.detail"> · {{ entry.detail }}</template>
-                    </template>
-                    <template v-else>
-                      {{ kindLabel(entry.attachment.kind)
-                      }}<template v-if="entry.attachment.detail">
-                        · {{ entry.attachment.detail }}</template
-                      >
-                    </template>
+                  <span class="nm-ai-mention__text">
+                    <span class="nm-ai-mention__label">
+                      {{ entry.type === 'skill' ? entry.label : entry.attachment.label }}
+                    </span>
+                    <span v-if="mentionDetail(entry)" class="nm-ai-mention__meta">
+                      {{ mentionDetail(entry) }}
+                    </span>
                   </span>
-                </span>
-              </button>
-            </li>
-          </ul>
+                </button>
+              </li>
+            </ul>
+          </section>
         </div>
       </div>
 
@@ -973,7 +1130,7 @@ function cancelEditing(): void {
   right: 0;
   bottom: calc(100% + 6px);
   z-index: 20;
-  max-height: 14rem;
+  max-height: 18rem;
   overflow: auto;
   border-radius: var(--rs-radius);
   border: 1px solid var(--rs-border-subtle);
@@ -982,17 +1139,46 @@ function cancelEditing(): void {
   scrollbar-width: thin;
 }
 
+.nm-ai-mention__group + .nm-ai-mention__group {
+  margin-top: 2px;
+  border-top: 1px solid var(--rs-border-subtle);
+}
+
 .nm-ai-mention__head {
-  padding: 8px 12px 4px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  width: 100%;
+  padding: 6px 10px 4px;
+  border: none;
+  background: transparent;
   font-size: var(--nm-font-caption);
   font-weight: var(--rs-font-weight-semibold);
   color: var(--rs-muted);
   letter-spacing: var(--nm-letter-spacing);
+  text-align: left;
+  cursor: pointer;
+}
+
+.nm-ai-mention__head:hover {
+  color: var(--rs-text);
+}
+
+.nm-ai-mention__head-label {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.nm-ai-mention__count {
+  margin-left: auto;
+  font-weight: var(--rs-font-weight-regular);
 }
 
 .nm-ai-mention__list {
   margin: 0;
-  padding: 0 0 6px;
+  padding: 0 0 4px;
   list-style: none;
 }
 
@@ -1059,6 +1245,9 @@ function cancelEditing(): void {
   align-items: center;
   gap: 6px;
   min-width: 0;
+  height: 28px;
+  padding: 0 4px;
+  --rs-control-height-sm: 28px;
 }
 
 .nm-ai-composer__at {
@@ -1101,6 +1290,7 @@ function cancelEditing(): void {
 
 .nm-ai-composer__model-select {
   min-width: 0;
+  align-self: center;
 }
 
 .nm-ai-composer__model-select :deep(.rs-select) {
@@ -1117,8 +1307,8 @@ function cancelEditing(): void {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 30px;
-  height: 30px;
+  width: 28px;
+  height: 28px;
   border: none;
   border-radius: var(--rs-radius-full);
   background: color-mix(in srgb, var(--rs-text) 88%, transparent);

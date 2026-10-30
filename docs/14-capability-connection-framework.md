@@ -44,7 +44,7 @@ Web cefQuery
 | `sqlserver.session.open` | `sqlserver` | `session.open` |
 | `com.ensis-ops.db-pg.query.exec` | `com.ensis-ops.db-pg` | `query.exec` |
 
-常见 `connection_kind` / `bridge.namespace`：`ftp` · `ssh` · `sftp` · `mongodb` · `vastbase` · `mysql` · `sqlite` · `dameng` · `oracle` · `clickhouse` · `kingbase` · `postgres` · `sqlserver`（详见各模块文档与 `services/manifests/*.yaml`）。`api` 只有 namespace、没有 `connection_kind`（套接字按请求打开，见 [36](./36-api-module.md)）。`sftp` 是独立能力服务：只开 SFTP 子系统，不申请 shell（账号可以没有 SSH 终端权限）。
+常见 `connection_kind` / `bridge.namespace`：`ftp` · `ssh` · `rdp` · `sftp` · `mongodb` · `vastbase` · `mysql` · `sqlite` · `dameng` · `oracle` · `clickhouse` · `kingbase` · `postgres` · `sqlserver`（详见各模块文档与 `services/manifests/*.yaml`）。`api` 只有 namespace、没有 `connection_kind`（套接字按请求打开，见 [36](./36-api-module.md)）。`sftp` 是独立能力服务：只开 SFTP 子系统，不申请 shell（账号可以没有 SSH 终端权限）。`rdp` 是远程桌面：控制面走 JSON，画面走本机 WebSocket（见 [40](./40-rdp-module.md)）。
 
 凭据注入：manifest `session.inject_credentials: true` 时，`session.open` / `session.test`（可配置）由 platform 从 Vault 解密后注入转发。
 
@@ -160,7 +160,7 @@ manifest `session.inject_credentials: true` 时，Web 通常只传 `{ profileId 
 
 - `password`：密码认证时为密码；`auth_type=private_key` 时为 **Vault 中的私钥 PEM 内容**（历史字段名，非 FTP 语义）。
 - 内联测试（新建站点未保存）可传 `hostAddress` + `options` / `connectionOptions`（二者等价，`options` 优先）。
-- 内联 `portNumber <= 0` 时 platform **不**强行默认 21，由各服务按 `connection_kind` 回退（FTP 21、SSH 22、Redis 6379）。
+- 内联 `portNumber <= 0` 时 platform **不**强行默认 21，由各服务按 `connection_kind` 回退（FTP 21、SSH 22、RDP 3389、Redis 6379）。
 
 ### 9.4 测试连接 vs 正式会话
 

@@ -173,7 +173,7 @@ sequenceDiagram
 | 类型 | 关编辑器 Tab | 切换 Tab（保活 UI） | 显式断开 |
 |------|--------------|---------------------|----------|
 | **MongoDB / Redis 等数据库** | 释放借用，**不立即断物理连接** | 保持连接 | 连接树「断开」或空闲超时 |
-| **SSH / SFTP / FTP** | **立即释放会话** | 保持连接（切走不关） | 关 Tab 即断 |
+| **SSH / SFTP / FTP / RDP** | **立即释放会话** | 保持连接（切走不关） | 关 Tab 即断 |
 
 ---
 
@@ -466,6 +466,7 @@ mongodb-service / ssh-service 在 `session.close` 内会级联清理子资源；
 | [18 — 运维连接树](./18-ops-connection-tree.md) | 去重、Redis DB Tab、树聚焦 |
 | [12 — FTP](./12-ftp-module.md) | 关 Tab 断 FTP 控制连接 |
 | [16 — SSH / SFTP](./16-ssh-sftp-module.md) | 关 Tab 断 SSH 通道 |
+| [40 — RDP](./40-rdp-module.md) | 关 Tab 断远程桌面 |
 | [19 — MongoDB](./19-mongodb-module.md) | 共享连接、Shell/Stream 子资源 |
 
 ---

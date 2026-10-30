@@ -85,6 +85,25 @@ func TestNormalizeContext_sshWorkspace(t *testing.T) {
 	}
 }
 
+func TestNormalizeContext_localWorkspace(t *testing.T) {
+	draft := &ContextDraft{
+		Workspace: &ContextWorkspace{
+			ModuleID: "local",
+			Title:    "这台电脑",
+		},
+	}
+	n := NormalizeContext(draft)
+	if n.Workspace == nil || n.Workspace.ModuleID != "local" {
+		t.Fatalf("workspace: %+v", n.Workspace)
+	}
+	if n.Workspace.ProfileID != "" || n.Workspace.SessionID != "" {
+		t.Fatalf("local workspace kept a connection: %+v", n.Workspace)
+	}
+	if !strings.Contains(n.PromptBlock, "local_which") || !strings.Contains(n.PromptBlock, "This computer") {
+		t.Fatalf("missing local workspace rules: %q", n.PromptBlock)
+	}
+}
+
 func TestNormalizeContext_redisWorkspace(t *testing.T) {
 	draft := &ContextDraft{
 		Workspace: &ContextWorkspace{
@@ -285,7 +304,7 @@ func TestAssembleMessages_textFileAttachment(t *testing.T) {
 
 func TestAssembleMessages_injectsContextAndStripsMarkers(t *testing.T) {
 	history := []store.AIMessage{
-		{MessageRole: MessageRoleUser, MessageContent: "⟦nm-ref:x⟧\n\n解释这段"},
+		{MessageRole: MessageRoleUser, MessageContent: "⟦nm-ws:%7B%7D⟧⟦nm-ref:x⟧\n\n解释这段"},
 	}
 	n := NormalizeContext(&ContextDraft{
 		Workspace: &ContextWorkspace{ProfileID: "p1", ModuleID: "vastbase"},
@@ -303,7 +322,7 @@ func TestAssembleMessages_injectsContextAndStripsMarkers(t *testing.T) {
 	}
 	last := msgs[len(msgs)-1]
 	userText, ok := last.Content.(string)
-	if !ok || last.Role != MessageRoleUser || strings.Contains(userText, "nm-ref") {
+	if !ok || last.Role != MessageRoleUser || strings.Contains(userText, "nm-ref") || strings.Contains(userText, "nm-ws") {
 		t.Fatalf("user content: %T %v", last.Content, last.Content)
 	}
 	if userText != "解释这段" {

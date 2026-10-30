@@ -10,7 +10,7 @@ ensis-ops 是一个**全能型 AI 运维桌面平台**，目标能力包括：
 
 | 域 | 能力 |
 |----|------|
-| 主机运维 | SSH、SFTP、FTP |
+| 主机运维 | SSH、RDP、SFTP、FTP |
 | 数据库运维 | MySQL、PostgreSQL、Oracle 等 |
 | 扩展工具 | API 测试、数据格式化、视频生成/拼接 |
 | AI | 统一对话、Tool 调用、自然语言操作（设计见 [24](./24-ai-assistant.md)） |

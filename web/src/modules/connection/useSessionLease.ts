@@ -38,6 +38,8 @@ export interface UseSessionLeaseOptions {
   database?: () => number | undefined
   /** MySQL / Kingbase：按 Tab 目标库建连（见 AcquireOpts.connectDatabase） */
   connectDatabase?: () => string | undefined
+  /** RDP：打开时按画面区域设定远端分辨率 */
+  rdpDesktop?: () => { width: number; height: number } | undefined
   /** acquire / forceReconnect 成功后 */
   onAcquired?: (sessionId: string, isNew: boolean) => void | Promise<void>
   /** 每次 release 时除子组件注册外的额外清理 */
@@ -72,6 +74,7 @@ export function useSessionLease(options: UseSessionLeaseOptions): {
       tabId,
       database: options.database?.(),
       connectDatabase,
+      rdpDesktop: options.rdpDesktop?.(),
     }
   }
 

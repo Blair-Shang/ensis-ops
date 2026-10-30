@@ -5,7 +5,7 @@
  *
  * | sharing | 含义 | 典型协议 |
  * |---------|------|----------|
- * | per_tab | 每 Tab 独立 sessionId | SSH, FTP, MySQL, Kingbase, Dameng, Oracle（多查询 Tab 事务隔离） |
+ * | per_tab | 每 Tab 独立 sessionId | SSH, RDP, FTP, MySQL, Kingbase, Dameng, Oracle（多查询 Tab 事务隔离） |
  * | scoped | 同 profile + scope 字段共享 | Redis（database） |
  * | per_profile | 同站点共享一条连接 | MongoDB, Vastbase |
  *
@@ -28,6 +28,7 @@ export interface SessionPolicy {
 
 export const SESSION_POLICY: Record<ConnKind, SessionPolicy> = {
   ssh: { sharing: 'per_tab', closeOnRelease: true },
+  rdp: { sharing: 'per_tab', closeOnRelease: true },
   sftp: { sharing: 'per_tab', closeOnRelease: true },
   ftp: { sharing: 'per_tab', closeOnRelease: true },
   redis: { sharing: 'scoped', scopeField: 'database', closeOnRelease: false, idleMs: 60_000 },
@@ -62,6 +63,8 @@ export interface AcquireOpts {
    * Dameng 无独立 database，走 schema，无需此项。
    */
   connectDatabase?: string
+  /** RDP：按当前画面区域覆盖远端分辨率。不参与 session key。 */
+  rdpDesktop?: { width: number; height: number }
 }
 
 /** 生成 Layer-1 会话在 Registry 内的唯一 key */

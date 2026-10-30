@@ -46,6 +46,7 @@ import { defineStore } from 'pinia'
 import { ref } from 'vue'
 import {
   clickhouseApi,
+  connectionApi,
   damengApi,
   ftpApi,
   sftpApi,
@@ -54,6 +55,7 @@ import {
   mysqlApi,
   oracleApi,
   postgresApi,
+  rdpApi,
   redisApi,
   sqliteApi,
   sqlserverApi,
@@ -138,6 +140,35 @@ interface AcquireHooks {
   onRelease?: SessionReleaseCleanup
 }
 
+/**
+ * 打开 RDP。带上当前窗口像素时，连同站点选项一起下发，让 platform 覆盖 desktop_width / desktop_height。
+ * 密码仍从站点注入。
+ */
+async function openRdpSession(
+  profileId: string,
+  desktop?: { width: number; height: number },
+) {
+  if (!desktop || desktop.width <= 0 || desktop.height <= 0) {
+    return rdpApi.sessionOpen({ profileId })
+  }
+  const got = await connectionApi.get({ profileId })
+  const profile = got.profile
+  if (!profile?.hostAddress) {
+    return rdpApi.sessionOpen({ profileId })
+  }
+  return rdpApi.sessionOpen({
+    profileId,
+    hostAddress: profile.hostAddress,
+    portNumber: profile.portNumber,
+    loginAccount: profile.loginAccount,
+    options: {
+      ...profile.connectionOptions,
+      desktop_width: desktop.width,
+      desktop_height: desktop.height,
+    },
+  })
+}
+
 export const useSessionRegistry = defineStore('session-registry', () => {
   /** 活跃租约表：sessionKey → SessionLease */
   const leases = ref(new Map<string, SessionLease>())
@@ -171,11 +202,14 @@ export const useSessionRegistry = defineStore('session-registry', () => {
     kind: ConnKind,
     profileId: string,
     connectDatabase?: string,
+    rdpDesktop?: { width: number; height: number },
   ): Promise<{ sessionId: string; dialect?: SqlServerProfile }> {
     const db = connectDatabase?.trim() || undefined
     switch (kind) {
       case 'ssh':
         return { sessionId: (await sshApi.sessionOpen({ profileId })).sessionId }
+      case 'rdp':
+        return { sessionId: (await openRdpSession(profileId, rdpDesktop)).sessionId }
       case 'sftp':
         return { sessionId: (await sftpApi.sessionOpen({ profileId })).sessionId }
       case 'ftp':
@@ -256,6 +290,9 @@ export const useSessionRegistry = defineStore('session-registry', () => {
       switch (kind) {
         case 'ssh':
           await sshApi.sessionClose({ sessionId })
+          break
+        case 'rdp':
+          await rdpApi.sessionClose({ sessionId })
           break
         case 'sftp':
           await sftpApi.sessionClose({ sessionId })
@@ -373,7 +410,7 @@ export const useSessionRegistry = defineStore('session-registry', () => {
 
     let inflight = inflightOpens.get(key)
     if (!inflight) {
-      inflight = openRemoteSession(opts.kind, opts.profileId, opts.connectDatabase)
+      inflight = openRemoteSession(opts.kind, opts.profileId, opts.connectDatabase, opts.rdpDesktop)
       inflightOpens.set(key, inflight)
       try {
         return await inflight

@@ -327,6 +327,8 @@ func workspaceGuide(moduleID, family string) string {
 		return workspaceMongoPrompt
 	case host.IsToolsModule(fam) || host.IsToolsModule(id):
 		return workspaceToolsPrompt
+	case host.IsLocalModule(fam) || host.IsLocalModule(id):
+		return workspaceLocalPrompt
 	default:
 		return ""
 	}

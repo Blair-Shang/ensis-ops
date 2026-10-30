@@ -12,6 +12,7 @@ import type { DamengSessionTestParams } from '@/api/types/dameng'
 import type { OracleSessionTestParams } from '@/api/types/oracle'
 import type { SqlServerSessionTestParams } from '@/api/types/sqlserver'
 import type { PostgresSessionTestParams } from '@/api/types/postgres'
+import type { RdpSessionTestParams } from '@/api/types/rdp'
 import type { ProxyFormState, TunnelFormState } from '@/modules/connection'
 import type { ConnAccentColor, ConnItem } from '@/modules/ops/types'
 
@@ -75,6 +76,7 @@ export type ConnectionTestParams =
   | OracleSessionTestParams
   | SqlServerSessionTestParams
   | PostgresSessionTestParams
+  | RdpSessionTestParams
 
 /** adapter 构造 connection_options 时可使用的通用上下文。 */
 export interface ConnectionFormAdapterBuildContext {

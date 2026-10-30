@@ -1,0 +1,38 @@
+export default {
+  modules: {
+    rdp: {
+      title: 'RDP',
+      homeDesc: 'Pick a Windows Remote Desktop site. The session opens in the workspace.',
+      newSite: 'New site',
+      editSite: 'Edit site',
+      form: {
+        domain: 'Domain',
+        security: 'Security',
+        securityAuto: 'Auto (NLA, then TLS)',
+        securityNla: 'NLA',
+        securityTls: 'TLS',
+        securityRdp: 'RDP (legacy)',
+        verify: 'Certificate',
+        verifyOn: 'Confirm fingerprint on first connect',
+        verifyOff: 'Do not verify (insecure)',
+        width: 'Width',
+        height: 'Height',
+        sizeHint: 'The session matches the window. These sizes apply only when the pane cannot be measured.',
+      },
+      session: {
+        connecting: 'Connecting…',
+        connected: 'Connected',
+        disconnected: 'Disconnected',
+        reconnect: 'Reconnect',
+        upload: 'Upload',
+        openFolder: 'Local folder',
+        shareHint: 'The remote PC shows this folder as the Ensis drive. Upload copies files here. Files copied onto Ensis from the remote desktop appear below.',
+        uploaded: 'Copied to the Ensis drive',
+        directory: 'Folder',
+        connectError: 'Failed to open the remote desktop',
+        certUnknown: 'The certificate for {host}:{port} is not trusted yet.\nFingerprint {fingerprint}\nTrust it and continue?',
+        certChanged: 'The certificate for {host}:{port} does not match the saved fingerprint.\nFingerprint {fingerprint}\nContinue if this change is expected?',
+      },
+    },
+  },
+}

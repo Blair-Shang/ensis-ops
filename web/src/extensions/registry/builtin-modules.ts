@@ -16,6 +16,16 @@ export const builtinModules: ModuleDescriptor[] = [
     load: () => import('@/modules/ssh/views/SshHome.vue'),
   },
   {
+    id: 'rdp',
+    source: 'builtin',
+    labelKey: 'nav.rdp',
+    icon: 'monitor',
+    routePath: '/rdp',
+    order: 11,
+    category: 'ops',
+    load: () => import('@/modules/rdp/views/RdpHome.vue'),
+  },
+  {
     id: 'sftp',
     source: 'builtin',
     labelKey: 'nav.sftp',

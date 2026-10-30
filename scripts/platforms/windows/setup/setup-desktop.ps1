@@ -75,4 +75,10 @@ if (-not (Test-Rust)) {
 & $DownloadCefScript
 if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
 
+$gitPerl = 'C:\Program Files\Git\usr\bin\perl.exe'
+if (-not (Test-Path $gitPerl)) {
+    Write-Host 'Git for Windows perl not found at C:\Program Files\Git\usr\bin\perl.exe.' -ForegroundColor Yellow
+    Write-Host 'rdp-service uses it once to build OpenSSL. Install Git for Windows to the default path, or pass -SkipRdp to build-services.ps1.' -ForegroundColor Yellow
+}
+
 Write-Host 'Setup complete. Next: pnpm dev' -ForegroundColor Green

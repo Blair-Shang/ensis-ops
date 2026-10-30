@@ -16,8 +16,9 @@ param(
     # 可选：为 sqlite-service 启用 SQLCipher（CGO + -tags sqlcipher）；默认关闭以免拖垮 CI
     [switch]$SqlCipher,
 
-    # 默认编入 oracle-service（CMake/C++）；无 VS/CMake 的机器可传 -SkipOracle
-    [switch]$SkipOracle
+    # 默认编入 oracle-service、rdp-service（CMake/C++）；无 VS/CMake/OpenSSL 的机器可传 -SkipOracle / -SkipRdp
+    [switch]$SkipOracle,
+    [switch]$SkipRdp
 )
 
 $ErrorActionPreference = 'Stop'
@@ -378,6 +379,26 @@ if (-not $SkipOracle) {
     Write-Host '==> skip oracle-service (SkipOracle)' -ForegroundColor Gray
 }
 
+$rdpOut = Join-Path $TargetBinDir (Get-BinaryName -BaseName 'ensis-rdp-service' -PlatformName $Platform)
+$rdpBuilt = $false
+if (-not $SkipRdp) {
+    $RdpBuildScript = Join-Path $PSScriptRoot 'build-rdp-service.ps1'
+    if (-not (Test-Path $RdpBuildScript)) {
+        throw "rdp build script missing: $RdpBuildScript"
+    }
+    Write-Host "==> cmake build rdp-service -> $rdpOut" -ForegroundColor Cyan
+    & $RdpBuildScript -Platform $Platform -Arch $Arch -Configuration $Configuration
+    if ($LASTEXITCODE -ne 0) {
+        throw "rdp-service build failed ($LASTEXITCODE)"
+    }
+    if (-not (Test-Path $rdpOut)) {
+        throw "rdp-service output not found: $rdpOut"
+    }
+    $rdpBuilt = $true
+} else {
+    Write-Host '==> skip rdp-service (SkipRdp)' -ForegroundColor Gray
+}
+
 if (Should-SyncLegacyBin) {
     $legacyPlatformOut = Join-Path $BinDir 'ensis-platform-core.exe'
     $legacyApiOut = Join-Path $BinDir 'ensis-api-service.exe'
@@ -397,6 +418,7 @@ if (Should-SyncLegacyBin) {
     $legacySqlserverOut = Join-Path $BinDir 'ensis-sqlserver-service.exe'
     $legacyMcpVastOut = Join-Path $BinDir 'mcp-vastbase-readonly.exe'
     $legacyOracleOut = Join-Path $BinDir 'ensis-oracle-service.exe'
+    $legacyRdpOut = Join-Path $BinDir 'ensis-rdp-service.exe'
     Copy-Item -Force $platformOut $legacyPlatformOut
     Copy-Item -Force $apiOut $legacyApiOut
     Copy-Item -Force $toolsOut $legacyToolsOut
@@ -422,6 +444,9 @@ if (Should-SyncLegacyBin) {
     }
     if ($oracleBuilt -and (Test-Path $oracleOut)) {
         Copy-Item -Force $oracleOut $legacyOracleOut
+    }
+    if ($rdpBuilt -and (Test-Path $rdpOut)) {
+        Copy-Item -Force $rdpOut $legacyRdpOut
     }
 }
 
@@ -458,6 +483,11 @@ if ($oracleBuilt -and (Test-Path $oracleOut)) {
     Write-Host "    $oracleOut"
 } elseif (Test-Path $oracleOut) {
     Write-Host "    $oracleOut (existing file, not rebuilt in this run)" -ForegroundColor Yellow
+}
+if ($rdpBuilt -and (Test-Path $rdpOut)) {
+    Write-Host "    $rdpOut"
+} elseif (Test-Path $rdpOut) {
+    Write-Host "    $rdpOut (existing file, not rebuilt in this run)" -ForegroundColor Yellow
 }
 if (Should-SyncLegacyBin) {
     Write-Host "==> legacy flat bin synced for current Windows host: $BinDir" -ForegroundColor DarkGray

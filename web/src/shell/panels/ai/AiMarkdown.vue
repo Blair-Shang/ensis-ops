@@ -11,6 +11,7 @@ import { useTabStore } from '@/stores/tab'
 import AiMediaLightbox from './AiMediaLightbox.vue'
 import { hydrateMathInElement, renderAiMarkdown, stabilizeStreamingMarkdown } from './markdown'
 import { splitMarkdownBlocks, type AiMarkdownBlock } from './split-markdown-blocks'
+import type { AiOpenTarget } from './workspace-marker'
 
 const AiChartBlock = defineAsyncComponent(() => import('./AiChartBlock.vue'))
 const AiMermaidBlock = defineAsyncComponent(() => import('./AiMermaidBlock.vue'))
@@ -27,10 +28,13 @@ const props = withDefaults(
     streaming?: boolean
     /** 轻量模式：跳过图表等重块（用于 thinking）。 */
     lite?: boolean
+    /** 这条回答所属连接。打开 SQL 时用它，不跟当前页签。 */
+    openTarget?: AiOpenTarget | null
   }>(),
   {
     streaming: false,
     lite: false,
+    openTarget: null,
   },
 )
 
@@ -57,6 +61,17 @@ let copiedTimer: ReturnType<typeof setTimeout> | null = null
 let hydrateSeq = 0
 
 const heavyActive = computed(() => !props.streaming)
+
+function openButtonLabel(): string {
+  const target = props.openTarget
+  const activeProfile =
+    typeof tabStore.activeTab?.props.profileId === 'string' ? tabStore.activeTab.props.profileId : ''
+  const name = target?.title || target?.profileId || ''
+  if (target?.profileId && target.profileId !== activeProfile && name) {
+    return t('ai.openInEditorOn', { name })
+  }
+  return t('ai.openInEditor')
+}
 
 function applyCopyLabels(root: HTMLElement): void {
   for (const btn of root.querySelectorAll<HTMLButtonElement>('[data-nm-ai-copy]')) {
@@ -89,8 +104,10 @@ function applyCopyLabels(root: HTMLElement): void {
     btn.setAttribute('aria-pressed', wrapped ? 'true' : 'false')
   }
   for (const btn of root.querySelectorAll<HTMLButtonElement>('[data-nm-ai-open]')) {
-    btn.textContent = t('ai.openInEditor')
-    btn.title = t('ai.openInEditor')
+    const label = openButtonLabel()
+    btn.textContent = label
+    btn.title = label
+    btn.setAttribute('aria-label', label)
   }
 }
 
@@ -209,6 +226,16 @@ watch(
   { immediate: true },
 )
 
+watch(
+  () => [tabStore.activeTabId, props.openTarget?.profileId, props.openTarget?.title] as const,
+  () => {
+    const root = rootEl.value
+    if (root) {
+      applyCopyLabels(root)
+    }
+  },
+)
+
 async function openExternalHref(href: string): Promise<void> {
   if (isBridgeAvailable()) {
     await shellApi.openExternal({ url: href }).catch(() => {
@@ -265,15 +292,30 @@ async function onClick(e: MouseEvent): Promise<void> {
     e.preventDefault()
     const block = openBtn.closest('.nm-ai-md__codeblock')
     const code = block?.querySelector('code')?.textContent ?? ''
+    const target = props.openTarget
     const active = tabStore.activeTab
-    const profileId = typeof active?.props.profileId === 'string' ? active.props.profileId : undefined
-    if (profileId) {
+    const profileId =
+      target?.profileId ||
+      (typeof active?.props.profileId === 'string' ? active.props.profileId : undefined)
+    const moduleId = target?.moduleId || active?.moduleId
+    if (profileId && moduleId) {
+      const database = target?.profileId
+        ? target.database
+        : typeof active?.props.database === 'string'
+          ? active.props.database
+          : undefined
+      const schema = target?.profileId
+        ? target.schema
+        : typeof active?.props.schema === 'string'
+          ? active.props.schema
+          : undefined
       tabStore.openTab({
-        moduleId: active?.moduleId || 'vastbase',
-        title: active?.title,
+        moduleId,
+        title: target?.title || active?.title,
         props: {
-          ...active?.props,
           profileId,
+          ...(database ? { database } : {}),
+          ...(schema ? { schema } : {}),
           initialTab: 'query',
           initialSql: code,
         },

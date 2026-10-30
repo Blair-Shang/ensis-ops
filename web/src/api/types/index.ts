@@ -159,6 +159,21 @@ export type {
   SftpSessionTestResult,
 } from './sftp'
 export { DEFAULT_SSH_OPTIONS } from './ssh'
+export { DEFAULT_RDP_OPTIONS } from './rdp'
+export type {
+  RdpConnectionOptions,
+  RdpInputKeyParams,
+  RdpInputMouseParams,
+  RdpInputResult,
+  RdpSecurity,
+  RdpSessionCloseParams,
+  RdpSessionCloseResult,
+  RdpSessionInfo,
+  RdpSessionInfoParams,
+  RdpSessionOpenParams,
+  RdpSessionTestParams,
+  RdpSessionTestResult,
+} from './rdp'
 export type {
   SshConnectionOptions,
   SshExecRunParams,

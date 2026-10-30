@@ -267,7 +267,7 @@ export interface AiConversationUpdateResult {
 }
 
 /** Context Pack 草稿（Web 采集；Orchestrator Normalize 后再入模）。见 docs/24 §15.2 */
-export type AiContextAttachmentKind = 'tab' | 'selection' | 'connection' | 'diagnostic' | 'schema'
+export type AiContextAttachmentKind = 'tab' | 'selection' | 'connection' | 'diagnostic' | 'schema' | 'machine'
 
 export interface AiContextAttachmentDraft {
   id: string

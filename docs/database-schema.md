@@ -243,7 +243,7 @@ CREATE TABLE nm_connection_profile (
     profile_id        TEXT NOT NULL PRIMARY KEY,
     workspace_id      TEXT NOT NULL,           -- 逻辑关联 nm_workspace.workspace_id
     profile_name      TEXT NOT NULL,
-    connection_kind   TEXT NOT NULL,           -- ssh | mysql | postgres | oracle | ftp | sftp
+    connection_kind   TEXT NOT NULL,           -- ssh | rdp | mysql | postgres | oracle | ftp | sftp
     host_address      TEXT,
     port_number       INTEGER,
     login_account     TEXT,

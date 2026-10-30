@@ -21,6 +21,11 @@ const BUILTIN_CONN_KIND_LOADERS: Record<
     loadForm: () => import('@/modules/ssh/register-conn-form').then((m) => m.registerForm()),
     load: () => import('@/modules/ssh/register-conn-full').then((m) => m.registerFull()),
   },
+  rdp: {
+    tree: false,
+    loadForm: () => import('@/modules/rdp/register-conn-form').then((m) => m.registerForm()),
+    load: () => import('@/modules/rdp/register-conn-full').then((m) => m.registerFull()),
+  },
   sftp: {
     tree: false,
     loadForm: () => import('@/modules/sftp/register-conn-form').then((m) => m.registerForm()),

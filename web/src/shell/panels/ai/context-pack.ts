@@ -19,6 +19,7 @@ import {
   getEditorSelection,
   listDiagnostics,
 } from './workspace-context'
+import { isLocalMachineAttachment } from './local-machine'
 import { mergeTreeSchemaHint } from './merge-tree-schema'
 
 export { mergeTreeSchemaHint } from './merge-tree-schema'
@@ -36,7 +37,7 @@ const SQL_DIALECT_MODULES = new Set<string>([
   'postgres',
 ])
 
-export type AiContextKind = 'tab' | 'selection' | 'connection' | 'diagnostic' | 'schema'
+export type AiContextKind = 'tab' | 'selection' | 'connection' | 'diagnostic' | 'schema' | 'machine'
 
 export interface AiContextAttachment {
   id: string
@@ -405,15 +406,29 @@ function hashId(s: string): string {
   return Math.abs(h).toString(36)
 }
 
-/** 组装发送用 Context Pack（草稿；入模前由 Orchestrator Normalize）。 */
-export function buildContextPack(attachments: AiContextAttachment[]): AiContextPack {
+/**
+ * 组装发送用 Context Pack（草稿；入模前由 Orchestrator Normalize）。
+ *
+ * @param attachments - 用户 @ 与自动并入的引用
+ * @param options.workspaceTabId - 钉住的页签。找不到时不回退到当前激活页签
+ */
+export function buildContextPack(
+  attachments: AiContextAttachment[],
+  options?: { workspaceTabId?: string | null },
+): AiContextPack {
   const tabStore = useTabStore()
   const sessionRegistry = useSessionRegistry()
+  const live = tabStore.activeTab
+  const requested = options?.workspaceTabId?.trim() || ''
+  const pinned = requested ? (tabStore.allTabs.find((tab) => tab.tabId === requested) ?? null) : live
+  const active = pinned
+  const wantsLocal = attachments.some((item) => isLocalMachineAttachment(item))
   const mergedAttachments = mergeTreeSchemaHint(
     attachments,
-    schemaHintFromTreeFocus(useConnTreeSyncStore().aiFocus),
+    !wantsLocal && (!requested || requested === live?.tabId)
+      ? schemaHintFromTreeFocus(useConnTreeSyncStore().aiFocus)
+      : null,
   )
-  const active = tabStore.activeTab
   const sessionId = active ? sessionRegistry.getSessionIdForTab(active.tabId) ?? undefined : undefined
   // 优先会话探测结果；无 lease 时按当前模块方言回退（非永久禁令）
   const moduleKind = (active?.moduleId && SQL_DIALECT_MODULES.has(active.moduleId)
@@ -442,6 +457,21 @@ export function buildContextPack(attachments: AiContextAttachment[]): AiContextP
     dialectFamily: dialect?.family,
     capabilities: dialect?.capabilities,
     dialectRules: dialect ? buildAiDialectRules(dialect) : undefined,
+  }
+  const machine = mergedAttachments.find((item) => isLocalMachineAttachment(item))
+  if (machine) {
+    workspace.tabId = undefined
+    workspace.moduleId = 'local'
+    workspace.profileId = undefined
+    workspace.sessionId = undefined
+    workspace.title = machine.label || '这台电脑'
+    workspace.database = undefined
+    workspace.schema = undefined
+    workspace.collection = undefined
+    workspace.cwd = undefined
+    workspace.dialectFamily = undefined
+    workspace.capabilities = undefined
+    workspace.dialectRules = undefined
   }
 
   const lines: string[] = []

@@ -1,6 +1,7 @@
 // Package handler 把 tools.list / tools.run 分发到工具目录。
+// 本机检查（localHostInfo 等）只给 AI「这台电脑」，不进工具页目录。
 //
-// platform 按 manifest namespace 去掉前缀后转发，本进程看到的方法名是 list 与 run。
+// platform 按 manifest namespace 去掉前缀后转发，本进程看到的方法名不带 tools. 前缀。
 package handler
 
 import (
@@ -9,6 +10,7 @@ import (
 	"fmt"
 
 	"ensis-ops/pkg/serviceipc/envelope"
+	"ensis-ops/services/tools-service/internal/local"
 	"ensis-ops/services/tools-service/internal/tools"
 )
 
@@ -17,6 +19,11 @@ const (
 	MethodList = "list"
 	// MethodRun 执行一个工具。
 	MethodRun = "run"
+	// 本机检查只给 AI「这台电脑」，不进工具页目录。
+	MethodLocalHostInfo  = "localHostInfo"
+	MethodLocalWhich     = "localWhich"
+	MethodLocalReadFile  = "localReadFile"
+	MethodLocalWriteFile = "localWriteFile"
 )
 
 // Request 是 IPC 请求帧。
@@ -48,6 +55,14 @@ func (d *Dispatcher) dispatch(ctx context.Context, req Request) Response {
 		return envelope.OK(req.ID, tools.List())
 	case MethodRun:
 		return d.run(ctx, req)
+	case MethodLocalHostInfo:
+		return d.localHostInfo(req)
+	case MethodLocalWhich:
+		return d.localWhich(ctx, req)
+	case MethodLocalReadFile:
+		return d.localReadFile(req)
+	case MethodLocalWriteFile:
+		return d.localWriteFile(req)
 	default:
 		return envelope.Fail(req.ID, "method not found: "+req.Method)
 	}
@@ -68,4 +83,55 @@ func (d *Dispatcher) run(ctx context.Context, req Request) Response {
 		return envelope.Fail(req.ID, err.Error())
 	}
 	return envelope.OK(req.ID, result)
+}
+
+func (d *Dispatcher) localHostInfo(req Request) Response {
+	info, err := local.Info()
+	if err != nil {
+		return envelope.Fail(req.ID, err.Error())
+	}
+	return envelope.OK(req.ID, info)
+}
+
+func (d *Dispatcher) localWhich(ctx context.Context, req Request) Response {
+	var params struct {
+		Name string `json:"name"`
+	}
+	if len(req.Params) > 0 && json.Unmarshal(req.Params, &params) != nil {
+		return envelope.Fail(req.ID, "invalid params")
+	}
+	got, err := local.Which(ctx, params.Name)
+	if err != nil {
+		return envelope.Fail(req.ID, err.Error())
+	}
+	return envelope.OK(req.ID, got)
+}
+
+func (d *Dispatcher) localReadFile(req Request) Response {
+	var params struct {
+		Path string `json:"path"`
+	}
+	if len(req.Params) > 0 && json.Unmarshal(req.Params, &params) != nil {
+		return envelope.Fail(req.ID, "invalid params")
+	}
+	got, err := local.ReadFile(params.Path)
+	if err != nil {
+		return envelope.Fail(req.ID, err.Error())
+	}
+	return envelope.OK(req.ID, got)
+}
+
+func (d *Dispatcher) localWriteFile(req Request) Response {
+	var params struct {
+		Path    string `json:"path"`
+		Content string `json:"content"`
+	}
+	if len(req.Params) > 0 && json.Unmarshal(req.Params, &params) != nil {
+		return envelope.Fail(req.ID, "invalid params")
+	}
+	got, err := local.WriteFile(params.Path, params.Content)
+	if err != nil {
+		return envelope.Fail(req.ID, err.Error())
+	}
+	return envelope.OK(req.ID, got)
 }

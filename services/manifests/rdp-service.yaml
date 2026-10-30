@@ -1,0 +1,27 @@
+id: com.ensisops.rdp
+name: RDP Service
+version: 0.1.0
+bridge:
+  namespace: rdp
+  connection_kind: rdp
+session:
+  inject_credentials: true
+  credential_methods:
+    - session.open
+    - session.test
+runtime:
+  executable: bin/ensis-rdp-service.exe
+  executable_windows: bin/ensis-rdp-service.exe
+  executable_unix: bin/ensis-rdp-service
+  lang: cpp
+ipc:
+  transport: named_pipe
+  transport_windows: named_pipe
+  transport_unix: unix_socket
+  address: '\\.\pipe\ensis-ops.rdp'
+  address_windows: '\\.\pipe\ensis-ops.rdp'
+  address_unix: '/tmp/ensis-ops.rdp.sock'
+  protocol: length_prefixed_json
+lifecycle:
+  startup: lazy
+permissions: []

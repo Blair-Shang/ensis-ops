@@ -1,0 +1,38 @@
+export default {
+  modules: {
+    rdp: {
+      title: 'RDP',
+      homeDesc: '选择 Windows 远程桌面站点。连接后在工作区里操作远端画面。',
+      newSite: '新建站点',
+      editSite: '编辑站点',
+      form: {
+        domain: '域',
+        security: '安全层',
+        securityAuto: '自动（NLA，然后 TLS）',
+        securityNla: 'NLA',
+        securityTls: 'TLS',
+        securityRdp: 'RDP（旧）',
+        verify: '证书',
+        verifyOn: '首次确认指纹',
+        verifyOff: '不校验（不安全）',
+        width: '宽度',
+        height: '高度',
+        sizeHint: '打开后按当前窗口的像素铺满。这两项只在窗口还没排出来时使用。',
+      },
+      session: {
+        connecting: '连接中…',
+        connected: '已连接',
+        disconnected: '未连接',
+        reconnect: '重新连接',
+        upload: '上传',
+        openFolder: '本机目录',
+        shareHint: '远端「此电脑」里的 Ensis 磁盘就是这个文件夹。上传写入这里；在远端把文件复制到 Ensis，就会出现在下面。',
+        uploaded: '已放入 Ensis 磁盘',
+        directory: '文件夹',
+        connectError: '连接远程桌面失败',
+        certUnknown: '主机 {host}:{port} 的证书尚未信任。\n指纹 {fingerprint}\n信任并继续连接？',
+        certChanged: '主机 {host}:{port} 的证书与已保存指纹不一致。\n指纹 {fingerprint}\n确认这是预期变更并继续？',
+      },
+    },
+  },
+}

@@ -15,10 +15,10 @@ import type {
 } from '@/api/types/ai'
 import { useAccountStore } from '@/stores/account'
 import {
-  buildContextPack,
   extractAttachmentMarkers,
   type AiContextAttachment,
 } from '@/shell/panels/ai/context-pack'
+import { extractWorkspaceMarker } from '@/shell/panels/ai/workspace-marker'
 import { modelsForProvider } from '@/shell/panels/ai/model-options'
 import {
   ensureSystemAiProvider,
@@ -54,6 +54,18 @@ const EMPTY_TOOLS: AiLiveToolInvocation[] = []
 
 function sessionBusy(slot: ConversationSession): boolean {
   return slot.sending || slot.runStatus === 'running'
+}
+
+/** 重新生成沿用该轮用户消息里的 workspace 快照；没有快照时不读当前页签。 */
+function contextForRegenerate(messages: AiMessage[], assistantIndex: number): AiContextDraft {
+  for (let i = assistantIndex - 1; i >= 0; i -= 1) {
+    const message = messages[i]
+    if (message?.messageRole !== 'user') {
+      continue
+    }
+    return extractWorkspaceMarker(message.messageContent).context ?? { attachments: [] }
+  }
+  return { attachments: [] }
 }
 
 function createSession(): ConversationSession {
@@ -791,7 +803,7 @@ export const useAiStore = defineStore('ai', () => {
     }
   }
 
-  /** 重新生成某条助手回复（截断该消息及之后，不重复插入 user；附带当前工作区 Context）。 */
+  /** 重新生成某条助手回复（截断该消息及之后，不重复插入 user；沿用该轮 workspace）。 */
   async function regenerate(
     assistantMessageId: string,
     options?: { context?: AiContextDraft },
@@ -822,13 +834,7 @@ export const useAiStore = defineStore('ai', () => {
     slot.liveTools = []
     slot.messages = slot.messages.slice(0, idx)
 
-    const pack = options?.context
-      ? null
-      : buildContextPack([])
-    const context: AiContextDraft | undefined = options?.context ?? {
-      workspace: pack!.workspace,
-      attachments: pack!.attachments,
-    }
+    const context: AiContextDraft = options?.context ?? contextForRegenerate(slot.messages, idx)
     const providerId = selectedProviderId.value || undefined
     const modelCode = selectedModelCode.value || undefined
     const skillCode = selectedSkillCode.value || undefined
@@ -909,7 +915,8 @@ export const useAiStore = defineStore('ai', () => {
     if (!msg || msg.messageRole !== 'user') {
       return
     }
-    const { text: userText } = extractAttachmentMarkers(msg.messageContent)
+    const stripped = extractWorkspaceMarker(msg.messageContent).text
+    const { text: userText } = extractAttachmentMarkers(stripped)
     const prior = messages.value.slice(0, idx)
     const historyLines: string[] = []
     for (const m of prior.slice(-12)) {
@@ -917,7 +924,7 @@ export const useAiStore = defineStore('ai', () => {
         continue
       }
       const role = m.messageRole === 'user' ? 'User' : 'Assistant'
-      const body = extractAttachmentMarkers(m.messageContent).text.trim().slice(0, 600)
+      const body = extractAttachmentMarkers(extractWorkspaceMarker(m.messageContent).text).text.trim().slice(0, 600)
       if (body) {
         historyLines.push(`[${role}] ${body}`)
       }
@@ -969,7 +976,7 @@ export const useAiStore = defineStore('ai', () => {
       }
       const role =
         m.messageRole === 'user' ? 'User' : m.messageRole === 'assistant' ? 'Assistant' : String(m.messageRole)
-      let body = m.messageContent.trim()
+      let body = extractWorkspaceMarker(m.messageContent).text.trim()
       if (m.messageRole === 'assistant' && body) {
         body = body
           .replace(/<\s*(?:think|thinking)\s*>[\s\S]*?<\s*\/\s*(?:think|thinking)\s*>/gi, '')

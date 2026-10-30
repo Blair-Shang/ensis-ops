@@ -31,6 +31,8 @@ import sqlserverZh from '../modules/sqlserver/locale/zh-CN'
 import sqlserverEn from '../modules/sqlserver/locale/en-US'
 import postgresZh from '../modules/postgres/locale/zh-CN'
 import postgresEn from '../modules/postgres/locale/en-US'
+import rdpZh from '../modules/rdp/locale/zh-CN'
+import rdpEn from '../modules/rdp/locale/en-US'
 import apiZh from '../modules/api-tester/locale/zh-CN'
 import apiEn from '../modules/api-tester/locale/en-US'
 
@@ -50,6 +52,7 @@ const zhMessages = mergeMessages(
   kingbaseZh,
   sqlserverZh,
   postgresZh,
+  rdpZh,
   apiZh,
 ) as typeof zhCN
 
@@ -69,6 +72,7 @@ const enMessages = mergeMessages(
   kingbaseEn,
   sqlserverEn,
   postgresEn,
+  rdpEn,
   apiEn,
 ) as typeof enUS
 

@@ -13,6 +13,7 @@ import { isSystemAiProvider } from './system-provider'
 import AiMessageItem from './AiMessageItem.vue'
 import AiToolConfirmActions from './AiToolConfirmActions.vue'
 import { extractAttachmentMarkers } from './context-pack'
+import { extractWorkspaceMarker, openTargetFromDraft, type AiOpenTarget } from './workspace-marker'
 import { extractImageMarkers, extractTextMarkers } from './attachment-utils'
 import { parseAssistantContent } from './parse-assistant-content'
 import { partitionAiTools } from './attach-tools'
@@ -58,10 +59,13 @@ const showEmpty = computed(
     !aiStore.streamingText,
 )
 
-const displayMessages = computed(() =>
-  aiStore.messages.map((m) => {
+const displayMessages = computed(() => {
+  let turnTarget: AiOpenTarget | null = null
+  return aiStore.messages.map((m) => {
     if (m.messageRole === 'user') {
-      const withImages = extractImageMarkers(m.messageContent)
+      const marked = extractWorkspaceMarker(m.messageContent)
+      turnTarget = openTargetFromDraft(marked.context)
+      const withImages = extractImageMarkers(marked.text)
       const withFiles = extractTextMarkers(withImages.text)
       const extracted = extractAttachmentMarkers(withFiles.text)
       return {
@@ -73,6 +77,7 @@ const displayMessages = computed(() =>
         files: withFiles.files,
         createdAt: m.createdAt,
         parsed: null,
+        openTarget: turnTarget,
       }
     }
     return {
@@ -84,9 +89,20 @@ const displayMessages = computed(() =>
       files: [] as ReturnType<typeof extractTextMarkers>['files'],
       createdAt: m.createdAt,
       parsed: m.messageRole === 'assistant' ? parseAssistantContent(m.messageContent) : null,
+      openTarget: turnTarget,
     }
-  }),
-)
+  })
+})
+
+const streamingOpenTarget = computed(() => {
+  const list = displayMessages.value
+  for (let i = list.length - 1; i >= 0; i -= 1) {
+    if (list[i]?.messageRole === 'user') {
+      return list[i]?.openTarget ?? null
+    }
+  }
+  return null
+})
 
 const streamingParsed = computed(() => parseAssistantContent(aiStore.streamingText))
 const showCancelled = computed(() => aiStore.runStatus === 'cancelled')
@@ -447,6 +463,7 @@ function focusAttachment(id: string): void {
         :continued="continuesAssistant(index)"
         :tools-before="placementFor(m.messageId).before"
         :tools-after="placementFor(m.messageId).after"
+        :open-target="m.openTarget"
         @focus-attachment="focusAttachment"
       />
 
@@ -456,6 +473,7 @@ function focusAttachment(id: string): void {
           speaker="assistant"
           :content="aiStore.previousAssistantContent || ''"
           :parsed="parseAssistantContent(aiStore.previousAssistantContent || '')"
+          :open-target="streamingOpenTarget"
         />
       </details>
 
@@ -468,6 +486,7 @@ function focusAttachment(id: string): void {
         :parsed="streamingParsed"
         :continued="streamingContinued"
         :tools-before="streamingTools"
+        :open-target="streamingOpenTarget"
         streaming
       />
 

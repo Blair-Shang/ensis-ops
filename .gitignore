@@ -17,6 +17,10 @@
 /third_party/cef/
 /third_party/cef-cache/
 
+# RDP 构建时下载的 OpenSSL 源码与安装前缀
+services/rdp-service/third_party/
+services/rdp-service/build/
+
 # Node
 node_modules/
 .pnpm-store/

@@ -22,6 +22,7 @@
 | [12-ftp-module.md](./12-ftp-module.md) | FTP 管理模块（能力服务 + Web 模块） |
 | [15-file-editor-window.md](./15-file-editor-window.md) | **文件工作台（多 Tab 查看/编辑窗口，全模块复用）** |
 | [16-ssh-sftp-module.md](./16-ssh-sftp-module.md) | SSH / SFTP 管理模块（能力服务 + Web 模块） |
+| [40-rdp-module.md](./40-rdp-module.md) | **RDP 远程桌面（FreeRDP 能力服务 + 画布）** |
 | [18-ops-connection-tree.md](./18-ops-connection-tree.md) | **运维连接树与资源子节点（Redis 库展开、SQL 扩展预留）** |
 | [19-mongodb-module.md](./19-mongodb-module.md) | **MongoDB 管理模块（Go 能力服务 + Navicat 架构对齐）** |
 | [22-vastbase-module.md](./22-vastbase-module.md) | **Vastbase 管理模块（Go + pgx；DialectFamily + CapabilitySet；对象树 / SQL / 调试）** |

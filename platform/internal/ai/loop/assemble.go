@@ -11,6 +11,9 @@ import (
 // nmRefMarkerRe 匹配前端 chip 标记 ⟦nm-ref:…⟧，入模前剥离。
 var nmRefMarkerRe = regexp.MustCompile(`⟦nm-ref:[^⟧]*⟧`)
 
+// nmWsMarkerRe 匹配当轮 workspace 快照 ⟦nm-ws:…⟧。只给重新生成和打开查询用，不入模。
+var nmWsMarkerRe = regexp.MustCompile(`⟦nm-ws:[^⟧]*⟧`)
+
 // nmImgMarkerRe 匹配图片标记 ⟦nm-img:data:image/...;base64,...⟧。
 var nmImgMarkerRe = regexp.MustCompile(`⟦nm-img:(data:image/[a-zA-Z0-9.+-]+;base64,[A-Za-z0-9+/=]+)⟧`)
 
@@ -168,13 +171,15 @@ func decodeFileName(enc string) string {
 }
 
 func stripRefMarkers(s string) string {
-	cleaned := nmRefMarkerRe.ReplaceAllString(s, "")
+	cleaned := nmWsMarkerRe.ReplaceAllString(s, "")
+	cleaned = nmRefMarkerRe.ReplaceAllString(cleaned, "")
 	return strings.TrimSpace(cleaned)
 }
 
 func stripAllMarkers(s string) string {
 	s = nmImgMarkerRe.ReplaceAllString(s, "")
 	s = nmTxtMarkerRe.ReplaceAllString(s, "")
+	s = nmWsMarkerRe.ReplaceAllString(s, "")
 	s = nmRefMarkerRe.ReplaceAllString(s, "")
 	return strings.TrimSpace(s)
 }
