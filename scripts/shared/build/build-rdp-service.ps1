@@ -58,8 +58,38 @@ function Ensure-RdpOpenSsl {
     $vsInstall = & $vswhere -latest -products * -requires Microsoft.VisualStudio.Component.VC.Tools.x86.x64 -property installationPath
     if (-not $vsInstall) { throw 'Visual Studio C++ toolset not found' }
     $vsDev = Join-Path $vsInstall 'Common7\Tools\VsDevCmd.bat'
-    $perl = 'C:\Program Files\Git\usr\bin\perl.exe'
-    if (-not (Test-Path $perl)) { throw "perl not found: $perl (Git for Windows)" }
+    # 托管 runner 的 PATH 里 Strawberry Perl 在 Git perl 前面。
+    # Git perl 是 MSYS（$^O=msys），垫片把 PERL5LIB 设成 /d/a/... 并 -MEnsureWin32Paths。
+    # Strawberry 会把这条路径放进 @INC，但打不开，Configure 在启动时就退出。
+    # $^O 已是 MSWin32 的 perl 直接编 OpenSSL；只有 Git perl 时才加载垫片。
+    $gitPerl = 'C:\Program Files\Git\usr\bin\perl.exe'
+    $perl = $null
+    $useMsysShim = $false
+    $perlSeen = @{}
+    $perlCandidates = @()
+    $pathPerl = Get-Command perl -ErrorAction SilentlyContinue
+    if ($pathPerl -and $pathPerl.Source) { $perlCandidates += $pathPerl.Source }
+    $perlCandidates += 'C:\Strawberry\perl\bin\perl.exe'
+    if ($env:SystemDrive) {
+        $perlCandidates += (Join-Path $env:SystemDrive 'Strawberry\perl\bin\perl.exe')
+    }
+    foreach ($cand in $perlCandidates) {
+        if (-not $cand -or $perlSeen.ContainsKey($cand)) { continue }
+        $perlSeen[$cand] = $true
+        if (-not (Test-Path -LiteralPath $cand)) { continue }
+        $perlOs = (& $cand -e 'print $^O' 2>$null | Out-String).Trim()
+        if ($LASTEXITCODE -eq 0 -and $perlOs -eq 'MSWin32') {
+            $perl = $cand
+            break
+        }
+    }
+    if (-not $perl) {
+        if (-not (Test-Path -LiteralPath $gitPerl)) {
+            throw "perl not found: need a Win32 perl (Strawberry) on PATH, or Git for Windows at $gitPerl"
+        }
+        $perl = $gitPerl
+        $useMsysShim = $true
+    }
 
     New-Item -ItemType Directory -Force -Path $third | Out-Null
     $version = '3.5.4'
@@ -84,6 +114,7 @@ function Ensure-RdpOpenSsl {
         $target = 'VC-WIN64-ARM'
     }
     # Git 自带的 perl 是 MSYS：$^O=msys，路径是 /e/...，OpenSSL 的 VC-WIN64A 会拒绝。
+    # 仅 $useMsysShim 时由 PERL5OPT 加载下面的垫片。Win32 perl 不设置 PERL5LIB / PERL5OPT。
     # 启动时把 $^O 改成 MSWin32，File::Spec 就会给出 E:\ 路径。缺的 Locale::Maketext::Simple 只用于报错文案。
     $perlLib = Join-Path $third 'perl'
     $maketextDir = Join-Path $perlLib 'Locale\Maketext'
@@ -178,21 +209,43 @@ sub import {
         $perlLibMsys = '/' + $Matches[1].ToLower() + '/' + ($Matches[2] -replace '\\', '/')
     }
     $cmdFile = Join-Path $third 'build-openssl.cmd'
-    $lines = @(
-        '@echo off',
-        "call `"$vsDev`" -arch=$vsArch -host_arch=$vsArch",
-        'if errorlevel 1 exit /b 1',
-        "set `"PATH=%PATH%;$perlBin`"",
-        "set `"PERL5LIB=$perlLibMsys`"",
-        'set "PERL5OPT=-MEnsureWin32Paths"',
-        "cd /d `"$src`"",
-        "perl Configure $target no-asm no-shared --prefix=$prefixFwd --openssldir=$prefixFwd/ssl",
-        'if errorlevel 1 exit /b 1',
-        'nmake',
-        'if errorlevel 1 exit /b 1',
-        'nmake install_sw',
-        'if errorlevel 1 exit /b 1'
-    )
+    if ($useMsysShim) {
+        Write-Host "Using Git perl: $perl"
+        $lines = @(
+            '@echo off',
+            "call `"$vsDev`" -arch=$vsArch -host_arch=$vsArch",
+            'if errorlevel 1 exit /b 1',
+            "set `"PATH=%PATH%;$perlBin`"",
+            "set `"PERL5LIB=$perlLibMsys`"",
+            'set "PERL5OPT=-MEnsureWin32Paths"',
+            "cd /d `"$src`"",
+            "perl Configure $target no-asm no-shared --prefix=$prefixFwd --openssldir=$prefixFwd/ssl",
+            'if errorlevel 1 exit /b 1',
+            'nmake',
+            'if errorlevel 1 exit /b 1',
+            'nmake install_sw',
+            'if errorlevel 1 exit /b 1'
+        )
+    } else {
+        # 把这只 perl 放到 PATH 最前，避免 nmake 再叫到 Git 的 MSYS perl。
+        # 清掉 PERL5OPT，防止环境里残留 -MEnsureWin32Paths。
+        Write-Host "Using Win32 perl: $perl"
+        $lines = @(
+            '@echo off',
+            "call `"$vsDev`" -arch=$vsArch -host_arch=$vsArch",
+            'if errorlevel 1 exit /b 1',
+            "set `"PATH=$perlBin;%PATH%`"",
+            "set `"PERL=$perl`"",
+            'set "PERL5OPT="',
+            "cd /d `"$src`"",
+            "`"%PERL%`" Configure $target no-asm no-shared --prefix=$prefixFwd --openssldir=$prefixFwd/ssl",
+            'if errorlevel 1 exit /b 1',
+            'nmake',
+            'if errorlevel 1 exit /b 1',
+            'nmake install_sw',
+            'if errorlevel 1 exit /b 1'
+        )
+    }
     $utf8 = New-Object System.Text.UTF8Encoding $false
     [System.IO.File]::WriteAllText($cmdFile, (($lines -join "`r`n") + "`r`n"), $utf8)
     Write-Host "Building OpenSSL $version (static, no-asm) ..."
