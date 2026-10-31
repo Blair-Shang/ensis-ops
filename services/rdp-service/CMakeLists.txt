@@ -5,6 +5,13 @@ set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_C_STANDARD 11)
 
+# FreeRDP 静态库和本脚本编的 OpenSSL 都使用静态 CRT（/MT）。
+# 必须在 add_subdirectory 之前设定，否则 logutil / serviceipc 仍按 CMake 默认的 /MD 编译，
+# 链接时 LNK2038（RuntimeLibrary MD_DynamicRelease 与 MT_StaticRelease 不一致）。
+if(MSVC)
+  set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
+endif()
+
 # 公共 IPC。单测由本服务不重复跑。
 set(ENSIS_SERVICEIPC_DIR "${CMAKE_CURRENT_SOURCE_DIR}/../../packages/cpp/serviceipc")
 if(NOT EXISTS "${ENSIS_SERVICEIPC_DIR}/CMakeLists.txt")
@@ -19,6 +26,11 @@ if(NOT EXISTS "${ENSIS_LOGUTIL_DIR}/CMakeLists.txt")
 endif()
 set(ENSIS_LOGUTIL_BUILD_TESTS OFF CACHE BOOL "" FORCE)
 add_subdirectory("${ENSIS_LOGUTIL_DIR}" "${CMAKE_BINARY_DIR}/ensis_logutil")
+
+if(MSVC)
+  set_property(TARGET ensis_serviceipc ensis_logutil PROPERTY
+    MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
+endif()
 
 # 脚本会把 OpenSSL 3.5 装到 third_party/openssl。系统里已有时也可传 OPENSSL_ROOT_DIR。
 if(NOT OPENSSL_ROOT_DIR)
