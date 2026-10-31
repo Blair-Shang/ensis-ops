@@ -252,9 +252,17 @@ sub import {
     # 编译日志必须离开函数的成功输出流。调用方会把返回值拼进 -DOPENSSL_ROOT_DIR；
     # nmake 的标准输出一旦混进去，cmake 命令行就会超过 Windows 上限，
     # CreateProcess 报 “The filename or extension is too long”。
+    # 重定向放在 cmd 内部。PowerShell 的 *> 仍会把 stderr 收成 NativeCommandError，
+    # 在 $ErrorActionPreference = Stop 时空白行也会让脚本直接退出。
     $buildLog = Join-Path $third 'build-openssl.log'
-    cmd.exe /c "`"$cmdFile`"" *> $buildLog
-    $buildCode = $LASTEXITCODE
+    $prevEap = $ErrorActionPreference
+    $ErrorActionPreference = 'Continue'
+    try {
+        cmd.exe /d /s /c "`"`"$cmdFile`" > `"$buildLog`" 2>&1`""
+        $buildCode = $LASTEXITCODE
+    } finally {
+        $ErrorActionPreference = $prevEap
+    }
     if (Test-Path -LiteralPath $buildLog) {
         Get-Content -LiteralPath $buildLog | ForEach-Object { Write-Host $_ }
     }
