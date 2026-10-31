@@ -249,13 +249,24 @@ sub import {
     $utf8 = New-Object System.Text.UTF8Encoding $false
     [System.IO.File]::WriteAllText($cmdFile, (($lines -join "`r`n") + "`r`n"), $utf8)
     Write-Host "Building OpenSSL $version (static, no-asm) ..."
-    cmd.exe /c $cmdFile
-    if ($LASTEXITCODE -ne 0) { throw 'openssl build failed' }
+    # 编译日志必须离开函数的成功输出流。调用方会把返回值拼进 -DOPENSSL_ROOT_DIR；
+    # nmake 的标准输出一旦混进去，cmake 命令行就会超过 Windows 上限，
+    # CreateProcess 报 “The filename or extension is too long”。
+    $buildLog = Join-Path $third 'build-openssl.log'
+    cmd.exe /c "`"$cmdFile`"" *> $buildLog
+    $buildCode = $LASTEXITCODE
+    if (Test-Path -LiteralPath $buildLog) {
+        Get-Content -LiteralPath $buildLog | ForEach-Object { Write-Host $_ }
+    }
+    if ($buildCode -ne 0) { throw 'openssl build failed' }
     if (-not (Test-Path $crypto)) { throw "openssl library missing: $crypto" }
     return $prefix
 }
 
 $opensslPrefix = Ensure-RdpOpenSsl -RepoRoot $Root
+if ($opensslPrefix -is [System.Array]) {
+    throw 'openssl prefix was polluted by build log output'
+}
 $exeName = Get-BinaryName -PlatformName $Platform -BaseName 'ensis-rdp-service'
 New-Item -ItemType Directory -Force -Path $BinDir | Out-Null
 New-Item -ItemType Directory -Force -Path $BuildDir | Out-Null
