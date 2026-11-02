@@ -215,6 +215,18 @@ func sanitizePayload(in map[string]any) (map[string]any, bool) {
 	return out, truncated
 }
 
+// noteInactiveSession 说明页签还在，但会话还没建立。缓存里的库和对象仍然保留。
+func noteInactiveSession(b *strings.Builder, ws *ContextWorkspace, scopes []ToolScope) {
+	if ws == nil || strings.TrimSpace(ws.SessionID) != "" {
+		return
+	}
+	fam := host.ModuleFamily(ws.ModuleID)
+	if fam == "" || fam == "local" || fam == "tools" || scopeFamilyPresent(scopes, fam) {
+		return
+	}
+	fmt.Fprintf(b, "%s %q has no session; the tab is cached. Connect it before calling its tools.\n", fam, dash(ws.Title))
+}
+
 func formatContextPrompt(ws *ContextWorkspace, attachments []ContextAttachment, scopes []ToolScope) (string, bool) {
 	if ws == nil && len(attachments) == 0 {
 		return "", false
@@ -236,23 +248,22 @@ func formatContextPrompt(ws *ContextWorkspace, attachments []ContextAttachment, 
 				b.WriteString(dialect)
 				b.WriteByte('\n')
 			}
-			if guide := workspaceGuide(ws.ModuleID, ws.DialectFamily); guide != "" {
-				b.WriteString(guide)
-				b.WriteByte('\n')
+			fam := host.ModuleFamily(ws.ModuleID)
+			needsSession := fam != "" && fam != "local" && fam != "tools"
+			if !needsSession || strings.TrimSpace(ws.SessionID) != "" {
+				if guide := workspaceGuide(ws.ModuleID, ws.DialectFamily); guide != "" {
+					b.WriteString(guide)
+					b.WriteByte('\n')
+				}
 			}
 		}
+		noteInactiveSession(&b, ws, scopes)
 	}
 	if multi {
 		if block := formatScopesBlock(scopes); block != "" {
 			b.WriteString(block)
 			if !strings.HasSuffix(block, "\n") {
 				b.WriteByte('\n')
-			}
-		}
-		if ws != nil {
-			fam := host.ModuleFamily(ws.ModuleID)
-			if fam != "" && !scopeFamilyPresent(scopes, fam) {
-				b.WriteString(fmt.Sprintf("%s %q has no session; connect that tab before calling its tools.\n", fam, dash(ws.Title)))
 			}
 		}
 	}

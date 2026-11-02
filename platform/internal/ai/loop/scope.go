@@ -25,7 +25,7 @@ type ToolScope struct {
 }
 
 // collectScopes 从工作区和 tab/connection 附件收集可执行作用域。
-// 没连上的 SSH（没有 sessionId）不进入列表，避免把命令绑到一条不存在的会话。
+// 没有 sessionId 的页签不进入可执行列表。重启后缓存的页签仍可被 @ 引用，但不能拿别的会话来执行。
 func collectScopes(ws *ContextWorkspace, attachments []ContextAttachment) []ToolScope {
 	var out []ToolScope
 	if ws != nil {
@@ -134,10 +134,8 @@ func executableScope(sc ToolScope) bool {
 	switch sc.Family {
 	case "local", "tools":
 		return true
-	case "ssh":
-		return sc.SessionID != ""
 	default:
-		return sc.SessionID != "" || sc.ProfileID != ""
+		return sc.SessionID != ""
 	}
 }
 

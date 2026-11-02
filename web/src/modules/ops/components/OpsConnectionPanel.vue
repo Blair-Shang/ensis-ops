@@ -12,6 +12,7 @@ import type { RsContextMenuItem, RsTreeDropPosition, RsTreeNode } from 'ensis-ui
 import { computed, nextTick, onMounted, onUnmounted, ref, toRef, toRefs, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import type { ModuleCategory } from '@/extensions/types/module'
+import { useShellStore } from '@/stores/shell'
 import ConnectionFormDialog from '@/modules/ops/components/ConnectionFormDialog.vue'
 import ConnImportExportDialog from '@/modules/ops/components/ConnImportExportDialog.vue'
 import type { ConnIoDialogMode } from '@/modules/ops/components/ConnImportExportDialog.vue'
@@ -62,6 +63,7 @@ const { t } = useI18n()
 const toast = useRsToast()
 const { connect } = useConnectionNavigation()
 const tabStore = useTabStore()
+const shellStore = useShellStore()
 const sessionRegistry = useSessionRegistry()
 const connTreeSync = useConnTreeSyncStore()
 
@@ -243,10 +245,24 @@ const { applyTreeFocus } = useConnTreeFocus({
   treeChildren,
 })
 
+/** 连接树正在侧栏里显示。收起或切到 API / 工具时不算打开。 */
+function connectionTreeShown(): boolean {
+  if (!shellStore.sidebarVisible) {
+    return false
+  }
+  const category = shellStore.activeCategory
+  return category !== 'devtools' && category !== 'tools'
+}
+
 /** 活跃 Tab → 侧栏树聚焦；协议差异由 ConnTreeTabSyncStrategy 提供。 */
 async function syncTreeToActiveTab(): Promise<void> {
+  if (!connectionTreeShown()) {
+    connTreeSync.clearAiFocus()
+    return
+  }
   const tab = tabStore.activeTab
   if (!tab?.moduleId) {
+    connTreeSync.clearAiFocus()
     return
   }
   const kind = tab.moduleId as ConnKind
@@ -289,6 +305,13 @@ watch(
     void syncTreeToActiveTab()
   },
   { immediate: true },
+)
+
+watch(
+  () => [shellStore.sidebarVisible, shellStore.activeCategory] as const,
+  () => {
+    void syncTreeToActiveTab()
+  },
 )
 
 watch(

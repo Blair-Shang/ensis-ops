@@ -58,7 +58,12 @@ const decidingId = ref('')
 let pendingObserver: IntersectionObserver | null = null
 let revealTimer = 0
 let pinFrame = 0
-let pinAttempt = 0
+let pinPending = false
+let pinForce = false
+let pinCorrected = false
+let pinMiss = 0
+let userHoldUntil = 0
+let scrollHost: HTMLElement | null = null
 let pendingObserveFrame = 0
 
 const NEAR_BOTTOM_PX = 96
@@ -372,7 +377,10 @@ function onListScroll(event: Event): void {
   if (!(el instanceof HTMLElement)) {
     return
   }
-  stickToBottom.value = isNearBottom(el)
+  // 上翻后的一小段时间内，靠近底部也不要把滚动抢回去。
+  if (performance.now() >= userHoldUntil) {
+    stickToBottom.value = isNearBottom(el)
+  }
   if (pendingTools.value.length) {
     schedulePendingObserve()
   }
@@ -467,8 +475,44 @@ function dropOffscreenHeights(): void {
   }
 }
 
+function releaseStick(): void {
+  stickToBottom.value = false
+  userHoldUntil = performance.now() + 320
+}
+
+function onUserWheel(event: WheelEvent): void {
+  if (event.deltaY < 0) {
+    releaseStick()
+  }
+}
+
+function onUserTouch(): void {
+  userHoldUntil = performance.now() + 320
+}
+
+function unbindUserScroll(): void {
+  if (!scrollHost) {
+    return
+  }
+  scrollHost.removeEventListener('wheel', onUserWheel)
+  scrollHost.removeEventListener('touchmove', onUserTouch)
+  scrollHost = null
+}
+
+function bindUserScroll(): void {
+  const el = viewport()
+  if (!el || scrollHost === el) {
+    return
+  }
+  unbindUserScroll()
+  scrollHost = el
+  el.addEventListener('wheel', onUserWheel, { passive: true })
+  el.addEventListener('touchmove', onUserTouch, { passive: true })
+}
+
 function bindViewportWidth(): void {
   const el = viewport()
+  bindUserScroll()
   if (!el || typeof ResizeObserver === 'undefined') {
     return
   }
@@ -506,41 +550,57 @@ function bindRow(key: string, el: Element | null): void {
   rowObserver?.observe(el)
 }
 
-/** 滚到最新输出。只改列表自己的 scrollTop，避免 scrollIntoView 冒到外层。 */
+/**
+ * 滚到最新输出。只改列表自己的 scrollTop，避免 scrollIntoView 冒到外层。
+ * 同一帧里的多次请求合并成一次，最多再补一帧等虚拟列表写上新行高。
+ */
 function pinToBottom(force = false): void {
-  if (pinFrame) {
-    cancelAnimationFrame(pinFrame)
-    pinFrame = 0
+  pinForce = pinForce || force
+  if (pinFrame || pinPending) {
+    return
   }
-  pinAttempt = 0
-  const step = (): void => {
+  pinPending = true
+  const apply = (): void => {
     pinFrame = 0
-    if (pendingTools.value.length && !force) {
+    const forceNow = pinForce
+    pinForce = false
+    if (pendingTools.value.length && !forceNow) {
+      pinCorrected = false
       return
     }
-    if (!force && !stickToBottom.value) {
+    if (!forceNow && (!stickToBottom.value || performance.now() < userHoldUntil)) {
+      pinCorrected = false
       return
     }
     const el = viewport()
     if (!el || el.clientHeight <= 0) {
-      if (pinAttempt < 10) {
-        pinAttempt += 1
-        pinFrame = requestAnimationFrame(step)
+      pinCorrected = false
+      if (pinMiss < 8) {
+        pinMiss += 1
+        pinToBottom(forceNow)
       }
       return
     }
+    pinMiss = 0
     const max = Math.max(0, el.scrollHeight - el.clientHeight)
     const gap = max - el.scrollTop
-    if (gap > 2) {
+    if (gap > 1) {
       el.scrollTop = max
     }
-    if (gap > 2 && pinAttempt < 8) {
-      pinAttempt += 1
-      pinFrame = requestAnimationFrame(step)
+    if (gap > 1 && !pinCorrected) {
+      pinCorrected = true
+      pinForce = forceNow
+      pinFrame = requestAnimationFrame(apply)
+      return
     }
+    pinCorrected = false
   }
   void nextTick(() => {
-    pinFrame = requestAnimationFrame(step)
+    pinPending = false
+    if (pinFrame) {
+      return
+    }
+    pinFrame = requestAnimationFrame(apply)
   })
 }
 
@@ -569,7 +629,7 @@ watch(
 )
 
 watch(
-  () => [aiStore.streamingText.length, aiStore.displayTools.length, aiStore.isStreaming] as const,
+  () => [aiStore.displayTools.length, aiStore.isStreaming] as const,
   () => {
     pinToBottom(false)
   },
@@ -669,6 +729,7 @@ onBeforeUnmount(() => {
   rowObserver = null
   widthObserver?.disconnect()
   widthObserver = null
+  unbindUserScroll()
   rowEls.clear()
   if (revealTimer) {
     window.clearTimeout(revealTimer)
@@ -678,6 +739,7 @@ onBeforeUnmount(() => {
     cancelAnimationFrame(pinFrame)
     pinFrame = 0
   }
+  pinPending = false
   if (pendingObserveFrame) {
     cancelAnimationFrame(pendingObserveFrame)
     pendingObserveFrame = 0

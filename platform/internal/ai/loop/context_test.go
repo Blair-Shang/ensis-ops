@@ -370,3 +370,40 @@ func TestAssembleMessages_noCurrentTurnHintWhenPaired(t *testing.T) {
 		t.Fatalf("last user: %v", last.Content)
 	}
 }
+
+func TestNormalizeContext_cachedTabWithoutSession(t *testing.T) {
+	n := NormalizeContext(&ContextDraft{
+		Workspace: &ContextWorkspace{
+			TabID:     "tab-1",
+			ModuleID:  "mysql",
+			ProfileID: "p1",
+			Title:     "orders",
+			Database:  "app",
+			Schema:    "public",
+		},
+		Attachments: []ContextAttachment{{
+			ID:    "tab:tab-1",
+			Kind:  "tab",
+			Label: "orders",
+			Payload: map[string]any{
+				"tabId":     "tab-1",
+				"moduleId":  "mysql",
+				"profileId": "p1",
+				"database":  "app",
+				"schema":    "public",
+			},
+		}},
+	})
+	if len(n.Scopes) != 0 {
+		t.Fatalf("scopes=%d", len(n.Scopes))
+	}
+	if !strings.Contains(n.PromptBlock, "session=-") || !strings.Contains(n.PromptBlock, "database=app") {
+		t.Fatalf("cached fields missing: %s", n.PromptBlock)
+	}
+	if !strings.Contains(n.PromptBlock, "has no session") {
+		t.Fatalf("missing inactive note: %s", n.PromptBlock)
+	}
+	if strings.Contains(n.PromptBlock, "sql_exec") {
+		t.Fatalf("tool guide leaked: %s", n.PromptBlock)
+	}
+}

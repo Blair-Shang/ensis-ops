@@ -470,7 +470,7 @@ dependencies = [
 
 [[package]]
 name = "ensis-sftp-service"
-version = "2.0.5"
+version = "2.0.6"
 dependencies = [
  "async-trait",
  "ensis-logutil",

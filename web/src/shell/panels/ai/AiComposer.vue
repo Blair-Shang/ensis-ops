@@ -2,11 +2,12 @@
 /**
  * AI 输入区：草稿、@ 引用、模型选择、附件、发送 / 停止。
  */
-import { RsIcon, RsSelect, unwrapSelectEntry } from 'ensis-ui'
+import { RsIcon, RsSelect, RsSwitch, unwrapSelectEntry } from 'ensis-ui'
 import type { RsSelectModelValue, RsSelectOption, RsSelectOptions } from 'ensis-ui'
 import { computed, onMounted, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useAiStore } from '@/stores/ai'
+import { useSessionRegistry } from '@/stores/session-registry'
 import { useTabStore } from '@/stores/tab'
 import {
   attachmentFromTab,
@@ -18,7 +19,11 @@ import {
 import { mergeActiveTabAttachment, retainDisplacedTab } from './merge-tab-attachment'
 import { isLocalMachineAttachment, localMachineAttachment } from './local-machine'
 import { mentionAtCaret, stripMentionAtCaret } from './mention-token'
-import { capturedTabAfterDismiss, nextCapturedTabId, resolveWorkspaceTabId } from './pin-composer-tab'
+import {
+  readFollowTabSetting,
+  shouldFollowActiveTab,
+  writeFollowTabSetting,
+} from './pin-composer-tab'
 import { encodeWorkspaceMarker } from './workspace-marker'
 import { acceptDroppedTab } from './drop-tab'
 import { isNiumaTabDrag } from '@/shell/workspace/tab-dnd'
@@ -51,8 +56,6 @@ const tabStore = useTabStore()
 const draft = ref('')
 const attachments = ref<AiContextAttachment[]>([])
 const files = ref<AiComposerFile[]>([])
-/** 草稿或文件还在时钉住的页签；空了才跟着当前页签。 */
-const capturedTabId = ref<string | null>(null)
 const mentionOpen = ref(false)
 const mentionQuery = ref('')
 const inputEl = ref<HTMLTextAreaElement | null>(null)
@@ -64,7 +67,6 @@ const composerCache = new Map<
     draft: string
     attachments: AiContextAttachment[]
     files: AiComposerFile[]
-    capturedTabId: string | null
   }
 >()
 
@@ -80,7 +82,6 @@ function rememberComposer(id: string): void {
       draft: draft.value,
       attachments: [...attachments.value],
       files: [...files.value],
-      capturedTabId: capturedTabId.value,
     })
   }
   const alive = new Set(aiStore.conversations.map((c) => c.conversationId))
@@ -131,7 +132,6 @@ watch(
       rememberComposer(prev)
     }
     const saved = id ? composerCache.get(id) : undefined
-    capturedTabId.value = saved?.capturedTabId ?? null
     draft.value = saved?.draft ?? ''
     attachments.value = saved?.attachments ? [...saved.attachments] : []
     files.value = saved?.files ? [...saved.files] : []
@@ -143,36 +143,57 @@ watch(
 )
 /** 用户关掉自动引用后松开钉子；换页签再跟着新页签。 */
 const dismissedAutoTabId = ref<string | null>(null)
+/** @ 面板里的「跟随当前页签」，默认关，记在本机。 */
+const followTabEnabled = ref(readFollowTabSetting())
+
+watch(followTabEnabled, (enabled) => {
+  writeFollowTabSetting(enabled)
+})
 
 function explicitWorkspaceTabId(): string | null {
+  const open = new Set(tabStore.allTabs.map((tab) => tab.tabId))
   for (let i = attachments.value.length - 1; i >= 0; i -= 1) {
     const item = attachments.value[i]
     if (!item || item.kind !== 'tab') {
       continue
     }
     const id = item.payload.tabId
-    if (typeof id === 'string' && id.trim()) {
+    if (typeof id === 'string' && id.trim() && open.has(id.trim())) {
       return id.trim()
     }
   }
   return null
 }
 
-const composerDirty = computed(
-  () => draft.value.trim().length > 0 || files.value.length > 0,
-)
-
-const workspaceTabId = computed(() =>
-  resolveWorkspaceTabId({
-    explicitTabId: explicitWorkspaceTabId(),
-    capturedTabId: capturedTabId.value,
+/** 开关打开，或这是一段已经确认没有用户消息的空白对话。 */
+const followActiveTab = computed(() =>
+  shouldFollowActiveTab({
+    followEnabled: followTabEnabled.value,
+    hasUserMessage: aiStore.messages.some((message) => message.messageRole === 'user'),
+    historyReady: aiStore.messagesLoaded,
   }),
 )
 
+/** 显式 @ 优先。未打开跟随时不把当前页签写进上下文。 */
+const contextTabId = computed((): string | null => {
+  const explicit = explicitWorkspaceTabId()
+  if (explicit) {
+    return explicit
+  }
+  if (!followActiveTab.value) {
+    return null
+  }
+  const id = tabStore.activeTabId
+  if (!id || dismissedAutoTabId.value === `tab:${id}`) {
+    return null
+  }
+  return id
+})
+
 const scopeTab = computed(() => {
-  const id = workspaceTabId.value
+  const id = contextTabId.value
   if (!id) {
-    return tabStore.activeTab
+    return null
   }
   return tabStore.allTabs.find((tab) => tab.tabId === id) ?? null
 })
@@ -185,7 +206,10 @@ const inputPlaceholder = computed(() => {
 })
 
 const autoTabAttachment = computed((): AiContextAttachment | null => {
-  const id = workspaceTabId.value ?? tabStore.activeTabId
+  if (!followActiveTab.value) {
+    return null
+  }
+  const id = tabStore.activeTabId
   const tab = id ? tabStore.allTabs.find((item) => item.tabId === id) : null
   if (!tab) {
     return null
@@ -200,14 +224,6 @@ const autoTabAttachment = computed((): AiContextAttachment | null => {
   return active
 })
 
-watch(composerDirty, (dirty) => {
-  capturedTabId.value = nextCapturedTabId({
-    capturedTabId: capturedTabId.value,
-    dirty,
-    activeTabId: tabStore.activeTabId,
-  })
-})
-
 const composerAttachments = computed((): AiContextAttachment[] =>
   mergeActiveTabAttachment(attachments.value, autoTabAttachment.value),
 )
@@ -215,10 +231,27 @@ const composerAttachments = computed((): AiContextAttachment[] =>
 watch(
   () => tabStore.activeTabId,
   () => {
-    if (workspaceTabId.value) {
+    if (!followActiveTab.value) {
       return
     }
     dismissedAutoTabId.value = null
+  },
+)
+
+watch(
+  () => tabStore.allTabs.map((tab) => tab.tabId).join('\n'),
+  () => {
+    const open = new Set(tabStore.allTabs.map((tab) => tab.tabId))
+    const next = attachments.value.filter((item) => {
+      if (item.kind !== 'tab') {
+        return true
+      }
+      const id = typeof item.payload.tabId === 'string' ? item.payload.tabId.trim() : ''
+      return !id || open.has(id)
+    })
+    if (next.length !== attachments.value.length) {
+      attachments.value = next
+    }
   },
 )
 
@@ -302,6 +335,30 @@ const selectedSkillLabel = computed(() => {
   return s.skillScope ? `${s.skillName} · ${s.skillScope}` : s.skillName
 })
 
+/** 页签还在缓存里，但这条页签自己的会话还没建立。 */
+function attachmentSessionInactive(item: AiContextAttachment): boolean {
+  if (item.kind !== 'tab' && item.kind !== 'connection') {
+    return false
+  }
+  const profileId = typeof item.payload.profileId === 'string' ? item.payload.profileId.trim() : ''
+  const tabId = typeof item.payload.tabId === 'string' ? item.payload.tabId.trim() : ''
+  if (!profileId || !tabId) {
+    return false
+  }
+  if (!tabStore.allTabs.some((tab) => tab.tabId === tabId)) {
+    return false
+  }
+  return !useSessionRegistry().getSessionIdForTab(tabId)
+}
+
+function chipTitle(item: AiContextAttachment): string {
+  const base = item.detail || item.label
+  if (!attachmentSessionInactive(item)) {
+    return base
+  }
+  return `${base} · ${t('ai.sessionInactive')}`
+}
+
 const kindIcon = (kind: AiContextAttachment['kind']): string => {
   if (kind === 'tab') return 'file-text'
   if (kind === 'connection') return 'plug-zap'
@@ -347,10 +404,11 @@ function mentionDetail(entry: MentionEntry): string {
     return entry.detail?.trim() ?? ''
   }
   const detail = entry.attachment.detail?.trim() ?? ''
-  if (!detail || detail === 'local' || detail === 'connection' || detail === 'schema') {
-    return ''
+  const base = !detail || detail === 'local' || detail === 'connection' || detail === 'schema' ? '' : detail
+  if (!attachmentSessionInactive(entry.attachment)) {
+    return base
   }
-  return detail
+  return base ? `${base} · ${t('ai.sessionInactive')}` : t('ai.sessionInactive')
 }
 
 /** @ 弹出：按 Skill、这台电脑、页签等分组。没有命中的分组不显示。 */
@@ -497,8 +555,6 @@ function removeAttachment(id: string): void {
   const auto = autoTabAttachment.value
   if (auto?.id === id) {
     dismissedAutoTabId.value = id
-    const tabId = typeof auto.payload.tabId === 'string' ? auto.payload.tabId : ''
-    capturedTabId.value = capturedTabAfterDismiss(capturedTabId.value, tabId || null)
     return
   }
   attachments.value = attachments.value.filter((a) => a.id !== id)
@@ -529,19 +585,23 @@ async function onSend(): Promise<void> {
   // 发送前若未显式 @ 选区，但当前页签仍有选区，自动并入 Context
   const { selectionAttachmentFromWorkspace } = await import('./context-pack')
   const { editorSelectionBelongsToTab, latestDiagnosticForTab } = await import('./workspace-context')
-  const scopeTabId = workspaceTabId.value ?? tabStore.activeTabId
+  const scopeTabId = contextTabId.value
   let nextAttachments = [...attachments.value]
   if (autoTabAttachment.value) {
     nextAttachments = mergeActiveTabAttachment(nextAttachments, autoTabAttachment.value)
   }
-  if (!nextAttachments.some((a) => a.kind === 'selection') && editorSelectionBelongsToTab(scopeTabId)) {
+  if (
+    scopeTabId &&
+    !nextAttachments.some((a) => a.kind === 'selection') &&
+    editorSelectionBelongsToTab(scopeTabId)
+  ) {
     const sel = selectionAttachmentFromWorkspace()
     if (sel) {
       nextAttachments = [...nextAttachments, sel]
     }
   }
   // 若未 @ 诊断，只自动附带钉住页签的查询/Explain 等诊断，不带切走之后页签的过期项
-  if (!nextAttachments.some((a) => a.kind === 'diagnostic')) {
+  if (scopeTabId && !nextAttachments.some((a) => a.kind === 'diagnostic')) {
     const diag = latestDiagnosticForTab(scopeTabId)
     if (diag) {
       nextAttachments = [
@@ -556,7 +616,7 @@ async function onSend(): Promise<void> {
       ]
     }
   }
-  const pack = buildContextPack(nextAttachments, { workspaceTabId: workspaceTabId.value })
+  const pack = buildContextPack(nextAttachments, { workspaceTabId: scopeTabId })
   const markers =
     encodeWorkspaceMarker({ workspace: pack.workspace, attachments: pack.attachments }) +
     encodeAttachmentMarkers(nextAttachments) +
@@ -786,7 +846,7 @@ function cancelEditing(): void {
           :key="a.id"
           class="nm-ai-chip"
           role="listitem"
-          :title="a.detail || a.label"
+          :title="chipTitle(a)"
         >
           <RsIcon :name="kindIcon(a.kind)" :size="12" class="nm-ai-chip__icon" />
           <span class="nm-ai-chip__label">{{ a.label }}</span>
@@ -815,7 +875,14 @@ function cancelEditing(): void {
           @input="onInput"
           @paste="onPaste"
         />
-        <div v-if="mentionVisible" class="nm-ai-mention rs-native-scrollbar">
+        <div v-if="mentionOpen" class="nm-ai-mention rs-native-scrollbar">
+          <div class="nm-ai-mention__setting">
+            <RsSwitch v-model="followTabEnabled" size="sm" :aria-label="t('ai.followTab')" />
+            <span class="nm-ai-mention__setting-copy">
+              <span class="nm-ai-mention__setting-label">{{ t('ai.followTab') }}</span>
+              <span class="nm-ai-mention__setting-hint">{{ t('ai.followTabHint') }}</span>
+            </span>
+          </div>
           <section v-for="group in mentionGroups" :key="group.id" class="nm-ai-mention__group">
             <button
               type="button"
@@ -1143,6 +1210,33 @@ function cancelEditing(): void {
   background: var(--nm-elevated-bg);
   box-shadow: var(--nm-elev-shadow);
   scrollbar-width: thin;
+}
+
+.nm-ai-mention__setting {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  padding: 8px 10px;
+  border-bottom: 1px solid var(--rs-border-subtle);
+}
+
+.nm-ai-mention__setting-copy {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.nm-ai-mention__setting-label {
+  font-size: var(--rs-font-size-sm);
+  font-weight: 600;
+  color: var(--rs-text);
+}
+
+.nm-ai-mention__setting-hint {
+  font-size: 11px;
+  line-height: 1.4;
+  color: var(--rs-muted);
 }
 
 .nm-ai-mention__group + .nm-ai-mention__group {

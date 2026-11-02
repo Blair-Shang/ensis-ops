@@ -1,43 +1,52 @@
 /**
- * 输入区自动页签：草稿或文件还在时停在开始输入的页签，空了才放开。
- * 显式 @ 的页签优先于这颗钉子。
+ * 输入区是否自动带上当前页签。
+ * 默认关。空白对话的第一条才自动跟随，之后靠开关或 @。
  */
-
-/** 草稿或文件还在时保留已钉住的页签；变空则放开。 */
-export function nextCapturedTabId(input: {
-  capturedTabId: string | null
-  dirty: boolean
-  activeTabId: string | null
-}): string | null {
-  if (!input.dirty) {
-    return null
-  }
-  return input.capturedTabId ?? input.activeTabId
-}
 
 /**
- * 关掉自动芯片时松开对应钉子。
- * 松开后发送跟着当前页签，不再打到已经藏起来的连接。
+ * 是否自动带上当前页签。
+ * 默认关。只有确认过是空白对话的第一条才自动跟随；之后靠开关或 @。
+ * 历史还没从库里取回来时不当成空白对话，避免重启或切会话的空窗把当前页签写进去。
+ *
+ * @param input.followEnabled - 用户在 @ 面板打开了「跟随当前页签」
+ * @param input.hasUserMessage - 当前对话里已经有用户消息
+ * @param input.historyReady - 当前对话的消息已经取回；还没有会话时视为已就绪
+ * @returns 为 true 时输入区自动引用当前页签
  */
-export function capturedTabAfterDismiss(
-  capturedTabId: string | null,
-  dismissedTabId: string | null,
-): string | null {
-  if (dismissedTabId && capturedTabId === dismissedTabId) {
-    return null
+export function shouldFollowActiveTab(input: {
+  followEnabled: boolean
+  hasUserMessage: boolean
+  historyReady: boolean
+}): boolean {
+  if (input.followEnabled) {
+    return true
   }
-  return capturedTabId
+  if (!input.historyReady) {
+    return false
+  }
+  return !input.hasUserMessage
 }
 
-/** 显式 @ 的页签覆盖钉子；都没有时返回 null，调用方再跟当前页签。 */
-export function resolveWorkspaceTabId(input: {
-  explicitTabId: string | null
-  capturedTabId: string | null
-}): string | null {
-  const explicit = input.explicitTabId?.trim()
-  if (explicit) {
-    return explicit
+const followTabStorageKey = 'nm.ai.followTab'
+
+/** 读取「跟随当前页签」。没有记录时为关。 */
+export function readFollowTabSetting(): boolean {
+  try {
+    return globalThis.localStorage?.getItem(followTabStorageKey) === '1'
+  } catch {
+    return false
   }
-  const captured = input.capturedTabId?.trim()
-  return captured || null
+}
+
+/** 记下「跟随当前页签」。关掉时删掉记录，保持默认关。 */
+export function writeFollowTabSetting(enabled: boolean): void {
+  try {
+    if (enabled) {
+      globalThis.localStorage?.setItem(followTabStorageKey, '1')
+      return
+    }
+    globalThis.localStorage?.removeItem(followTabStorageKey)
+  } catch {
+    /* 无法写入时只保留本次内存开关 */
+  }
 }

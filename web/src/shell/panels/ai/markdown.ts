@@ -245,6 +245,9 @@ export function extractMathPlaceholders(source: string): string {
   })
 }
 
+/** 长回复流式输出时跳过高亮，结束后再上色，避免每帧扫完整段代码。 */
+let skipHighlight = false
+
 function renderCodeBlock(text: string, lang: string | undefined): string {
   const language = sanitizeLang(lang)
   const code = text.replace(/\n$/, '')
@@ -253,7 +256,7 @@ function renderCodeBlock(text: string, lang: string | undefined): string {
   const collapsed = lineCount > CODE_COLLAPSE_LINES
   const wrapped = shouldDefaultWrap(language)
   const showOpen = isSqlOpenLang(language)
-  const highlighted = highlightCode(code, language)
+  const highlighted = skipHighlight ? escapeHtml(code) : highlightCode(code, language)
   const lineNos = lines.map((_, i) => `<span class="nm-ai-md__ln">${i + 1}</span>`).join('')
   const blockClass = [
     'nm-ai-md__codeblock',
@@ -348,7 +351,13 @@ export function renderAiMarkdown(source = '', options?: RenderAiMarkdownOptions)
     // 流式时跳过公式提取，避免半截 $ 误伤；结束后再渲染
     input = extractMathPlaceholders(input)
   }
-  const dirty = wrapTables(marked.parse(input, { async: false }) as string)
+  skipHighlight = Boolean(options?.streaming && input.length >= 4000)
+  let dirty = ''
+  try {
+    dirty = wrapTables(marked.parse(input, { async: false }) as string)
+  } finally {
+    skipHighlight = false
+  }
   return DOMPurify.sanitize(dirty, {
     USE_PROFILES: { html: true },
     ADD_TAGS: ['button'],

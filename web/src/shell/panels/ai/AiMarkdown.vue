@@ -196,12 +196,23 @@ async function afterRender(): Promise<void> {
   }
 }
 
+/** 正文越长，整篇重排越贵。拉长间隔，把主线程让给滚动。 */
+function streamingRenderDelay(length: number): number {
+  if (length >= 12000) {
+    return 160
+  }
+  if (length >= 4000) {
+    return 96
+  }
+  return 48
+}
+
 function scheduleRender(source: string): void {
   if (debounceTimer) {
     clearTimeout(debounceTimer)
     debounceTimer = null
   }
-  const delay = props.streaming ? 48 : 0
+  const delay = props.streaming ? streamingRenderDelay(source.length) : 0
   const run = () => {
     const stabilized = props.streaming ? stabilizeStreamingMarkdown(source) : source
     const blocks = splitMarkdownBlocks(stabilized)

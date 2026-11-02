@@ -122,6 +122,13 @@ export const useAiStore = defineStore('ai', () => {
   })
 
   const messages = computed(() => activeLive.value?.messages ?? EMPTY_MESSAGES)
+  /** 当前对话的消息是否已经从库里取回。还没有会话时视为已就绪。 */
+  const messagesLoaded = computed(() => {
+    if (!activeConversationId.value) {
+      return true
+    }
+    return activeLive.value?.loaded === true
+  })
   const runId = computed(() => activeLive.value?.runId ?? null)
   const streamingText = computed(() => activeLive.value?.streamingText ?? '')
   const runStatus = computed(() => activeLive.value?.runStatus ?? 'idle')
@@ -1043,6 +1050,7 @@ export const useAiStore = defineStore('ai', () => {
     activeConversationId,
     activeConversation,
     messages,
+    messagesLoaded,
     providers,
     skills,
     selectedProviderId,

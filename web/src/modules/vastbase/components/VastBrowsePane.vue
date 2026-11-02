@@ -42,6 +42,7 @@ import {
   parseClipboardMatrix,
   resolveSqlValueType,
   type BrowseDataShellLabels,
+  type BrowseRowChange,
 } from '@/modules/database'
 import { parseEditValue, toSqlLiteral } from '@/modules/vastbase/utils/sql-literal'
 import { openVastbaseDataTask } from '@/modules/vastbase/data-tasks'
@@ -185,6 +186,8 @@ const resultColumns = computed((): RsTableColumn<ResultRow>[] => {
       },
       nullable: nullable !== false,
       emptyAsNull: true,
+      // CLOB / text / json 走弹窗，避免单元格里改大字段后草稿丢
+      editorOptions: valueType === 'textarea' ? { presentation: 'dialog', rows: 16 } : undefined,
       // boolean 交给 RsTable 勾选；date/datetime 规范展示；其余 NULL / JSON
       formatter:
         valueType === 'boolean'
@@ -423,47 +426,83 @@ function pkWhereForRow(rowIdx: number): string | null {
   return parts.join(' AND ')
 }
 
+function columnDataType(name: string): string | undefined {
+  const meta =
+    columnMetaByName.value.get(name) ?? columnMetaByName.value.get(name.toLowerCase())
+  const fromResult = lastResult.value?.columns.find((c) => c.name === name)?.dataType
+  const dataType = (fromResult || meta?.dataType || '').trim()
+  return dataType || undefined
+}
+
 async function onCellEditCommit(
   row: ResultRow,
   column: RsTableColumn<ResultRow>,
   _index: number,
   value: unknown,
 ): Promise<void> {
-  if (!props.sessionId || !props.schema || !props.table) return
+  // row-commit：已有行只暂存，行首确认才写库
+  if (!row.__isNew) return
   const colName = String(column.key)
+  const idx = resultRows.value.findIndex((r) => r.__rowKey === row.__rowKey)
+  if (idx < 0) return
+  const previousRaw = resultRows.value[idx]![colName]
+  const nextRaw = parseEditValue(value, previousRaw)
+  const nextRow: ResultRow = { ...resultRows.value[idx]!, [colName]: nextRaw }
+  const copy = [...resultRows.value]
+  copy[idx] = nextRow
+  resultRows.value = copy
+}
+
+async function applyRowChanges(row: ResultRow, changes: BrowseRowChange[]): Promise<void> {
+  if (!props.sessionId || !props.schema || !props.table) return
 
   if (row.__isNew) {
+    if (changes.length === 0) {
+      void flushNewRow(row)
+      return
+    }
     const idx = resultRows.value.findIndex((r) => r.__rowKey === row.__rowKey)
     if (idx < 0) return
-    const previousRaw = resultRows.value[idx]![colName]
-    const nextRaw = parseEditValue(value, previousRaw)
-    const nextRow: ResultRow = { ...resultRows.value[idx]!, [colName]: nextRaw }
+    const nextRow: ResultRow = { ...resultRows.value[idx]! }
+    for (const ch of changes) {
+      nextRow[ch.colKey] = parseEditValue(ch.value, nextRow[ch.colKey] ?? ch.previous)
+    }
     const copy = [...resultRows.value]
     copy[idx] = nextRow
     resultRows.value = copy
+    void flushNewRow(nextRow)
     return
   }
 
-  if (!canEdit.value) return
+  if (!canEdit.value || changes.length === 0) return
   const rowIdx = row.__rowIndex
   const res = lastResult.value
   if (!res || rowIdx < 0 || rowIdx >= rawRows.value.length) return
 
-  const colIdx = res.columns.findIndex((c) => c.name === colName)
-  if (colIdx < 0) return
-
-  const previousRaw = rawRows.value[rowIdx][colIdx]
-  const nextRaw = parseEditValue(value, previousRaw)
-  if (toSqlLiteral(previousRaw) === toSqlLiteral(nextRaw)) return
-
-  // WHERE 必须用改前主键；先乐观写入显示，避免提交瞬间闪回旧值
+  // WHERE 必须用改前主键
   const where = pkWhereForRow(rowIdx)
   if (!where) return
-  const sql = `UPDATE ${qualifiedName(props.schema, props.table)}\nSET ${quoteIdent(colName)} = ${toSqlLiteral(nextRaw)}\nWHERE ${where}`
+
+  const setParts: string[] = []
+  const applied: Array<{ colIdx: number; nextRaw: unknown; previousRaw: unknown }> = []
+  for (const ch of changes) {
+    const colIdx = res.columns.findIndex((c) => c.name === ch.colKey)
+    if (colIdx < 0) continue
+    const previousRaw = rawRows.value[rowIdx]![colIdx]
+    const nextRaw = parseEditValue(ch.value, previousRaw)
+    if (toSqlLiteral(previousRaw) === toSqlLiteral(nextRaw)) continue
+    setParts.push(
+      `${quoteIdent(ch.colKey)} = ${toSqlLiteral(nextRaw, columnDataType(ch.colKey))}`,
+    )
+    applied.push({ colIdx, nextRaw, previousRaw })
+  }
+  if (!setParts.length) return
+
+  const sql = `UPDATE ${qualifiedName(props.schema, props.table)}\nSET ${setParts.join(', ')}\nWHERE ${where}`
 
   const next = [...rawRows.value]
   const nextRow = [...next[rowIdx]!]
-  nextRow[colIdx] = nextRaw
+  for (const item of applied) nextRow[item.colIdx] = item.nextRaw
   next[rowIdx] = nextRow
   rawRows.value = next
   rebuildDisplayRows()
@@ -479,7 +518,7 @@ async function onCellEditCommit(
   } catch (e) {
     const rollback = [...rawRows.value]
     const rollbackRow = [...rollback[rowIdx]!]
-    rollbackRow[colIdx] = previousRaw
+    for (const item of applied) rollbackRow[item.colIdx] = item.previousRaw
     rollback[rowIdx] = rollbackRow
     rawRows.value = rollback
     rebuildDisplayRows()
@@ -515,7 +554,7 @@ async function flushNewRow(row: ResultRow): Promise<boolean> {
     if (isEmptyCell(raw)) continue
     anyFilled = true
     names.push(quoteIdent(col.name))
-    values.push(toSqlLiteral(parseEditValue(raw)))
+    values.push(toSqlLiteral(parseEditValue(raw), col.dataType))
   }
 
   if (!anyFilled) {
@@ -730,8 +769,12 @@ function isBrowseRowPending(row: ResultRow): boolean {
   return Boolean(row.__isNew)
 }
 
-function onBrowseRowEditCommit(row: ResultRow): void {
-  if (row.__isNew) void flushNewRow(row)
+function onBrowseRowEditCommit(
+  row: ResultRow,
+  _index: number,
+  changes: BrowseRowChange[] = [],
+): void {
+  void applyRowChanges(row, changes)
 }
 
 function onBrowseRowEditRollback(row: ResultRow): void {

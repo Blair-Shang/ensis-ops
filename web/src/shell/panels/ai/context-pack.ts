@@ -21,6 +21,7 @@ import {
 } from './workspace-context'
 import { isLocalMachineAttachment } from './local-machine'
 import { mergeTreeSchemaHint } from './merge-tree-schema'
+import { treeFocusApplies } from './tree-focus'
 
 export { mergeTreeSchemaHint } from './merge-tree-schema'
 
@@ -151,16 +152,61 @@ function payloadText(payload: Record<string, unknown>, key: string): string {
   return typeof value === 'string' ? value.trim() : ''
 }
 
+/**
+ * 页签或连接上的会话号改成当前租约。
+ * 页签已关、断线或进程丢失时去掉会话号，不把关闭前的 session 写进下一条消息。
+ */
+function refreshBoundSession(attachment: AiContextAttachment): AiContextAttachment {
+  if (attachment.kind !== 'tab' && attachment.kind !== 'connection') {
+    return attachment
+  }
+  const sessionId = liveSessionForPayload(attachment.payload)
+  const current = payloadText(attachment.payload, 'sessionId')
+  if ((sessionId ?? '') === current) {
+    return attachment
+  }
+  const payload = { ...attachment.payload }
+  if (sessionId) {
+    payload.sessionId = sessionId
+  } else {
+    delete payload.sessionId
+  }
+  return { ...attachment, payload }
+}
+
+/** 按还开着的页签或连接配置取当前会话；没有租约时返回空。 */
+function liveSessionForPayload(payload: Record<string, unknown>): string | undefined {
+  const registry = useSessionRegistry()
+  const tabId = payloadText(payload, 'tabId')
+  if (tabId) {
+    if (!useTabStore().allTabs.some((tab) => tab.tabId === tabId)) {
+      return undefined
+    }
+    return registry.getSessionIdForTab(tabId) ?? undefined
+  }
+  const profileId = payloadText(payload, 'profileId')
+  if (!profileId) {
+    return undefined
+  }
+  const moduleId = payloadText(payload, 'moduleId')
+  return registry.getSessionIdForProfile(profileId, moduleId ? (moduleId as ConnKind) : undefined) ?? undefined
+}
+
 /** 本地预览用的引用行。入模以后端 Normalize 为准，这里把会话号带上，避免只看见标题。 */
 function attachmentPreviewLine(attachment: AiContextAttachment): string {
   const head = `[${attachment.kind}] ${attachment.label}${attachment.detail ? ` (${attachment.detail})` : ''}`
   if (attachment.kind !== 'tab' && attachment.kind !== 'connection') {
     return head
   }
+  const sessionId = payloadText(attachment.payload, 'sessionId')
+  const profileId = payloadText(attachment.payload, 'profileId')
+  const tabId = payloadText(attachment.payload, 'tabId')
   const extra = [
     payloadText(attachment.payload, 'moduleId') && `module=${payloadText(attachment.payload, 'moduleId')}`,
-    payloadText(attachment.payload, 'sessionId') && `session=${payloadText(attachment.payload, 'sessionId')}`,
-    payloadText(attachment.payload, 'profileId') && `profile=${payloadText(attachment.payload, 'profileId')}`,
+    (sessionId || profileId || tabId) && `session=${sessionId || '-'}`,
+    profileId && `profile=${profileId}`,
+    payloadText(attachment.payload, 'database') && `db=${payloadText(attachment.payload, 'database')}`,
+    payloadText(attachment.payload, 'schema') && `schema=${payloadText(attachment.payload, 'schema')}`,
   ].filter(Boolean)
   return extra.length ? `${head} ${extra.join(' ')}` : head
 }
@@ -374,6 +420,7 @@ export function listMentionCandidates(): AiContextAttachment[] {
         label: String(active.title || profileId),
         detail: 'connection',
         payload: {
+          tabId: active.tabId,
           profileId,
           moduleId: active.moduleId,
           sessionId: activeAttachment.payload.sessionId,
@@ -455,7 +502,7 @@ function hashId(s: string): string {
  * 组装发送用 Context Pack（草稿；入模前由 Orchestrator Normalize）。
  *
  * @param attachments - 用户 @ 与自动并入的引用
- * @param options.workspaceTabId - 钉住的页签。找不到时不回退到当前激活页签
+ * @param options.workspaceTabId - 要写入的页签。传入 null 时不使用当前激活页签
  */
 export function buildContextPack(
   attachments: AiContextAttachment[],
@@ -465,15 +512,30 @@ export function buildContextPack(
   const sessionRegistry = useSessionRegistry()
   const live = tabStore.activeTab
   const requested = options?.workspaceTabId?.trim() || ''
-  const pinned = requested ? (tabStore.allTabs.find((tab) => tab.tabId === requested) ?? null) : live
+  const omitLive = options != null && options.workspaceTabId == null
+  const pinned = requested
+    ? (tabStore.allTabs.find((tab) => tab.tabId === requested) ?? null)
+    : omitLive
+      ? null
+      : live
   const active = pinned
   const wantsLocal = attachments.some((item) => isLocalMachineAttachment(item))
-  const mergedAttachments = mergeTreeSchemaHint(
-    attachments,
-    !wantsLocal && (!requested || requested === live?.tabId)
-      ? schemaHintFromTreeFocus(useConnTreeSyncStore().aiFocus)
-      : null,
-  )
+  const focus = useConnTreeSyncStore().aiFocus
+  const treeHint =
+    !wantsLocal &&
+    active != null &&
+    (!requested || requested === live?.tabId) &&
+    treeFocusApplies({
+      treeVisible: focus != null,
+      focus,
+      tab: {
+        profileId: typeof active.props.profileId === 'string' ? active.props.profileId : undefined,
+        moduleId: active.moduleId,
+      },
+    })
+      ? schemaHintFromTreeFocus(focus)
+      : null
+  const mergedAttachments = mergeTreeSchemaHint(attachments, treeHint).map(refreshBoundSession)
   const sessionId = active ? sessionRegistry.getSessionIdForTab(active.tabId) ?? undefined : undefined
   const dialect = active ? dialectForTab(active, sessionId) : null
   const workspace = {
