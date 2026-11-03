@@ -557,19 +557,9 @@ export function buildContextPack(
     dialectRules: dialect ? buildAiDialectRules(dialect) : undefined,
   }
   const machine = mergedAttachments.find((item) => isLocalMachineAttachment(item))
-  if (machine) {
-    workspace.tabId = undefined
+  if (machine && !active) {
     workspace.moduleId = 'local'
-    workspace.profileId = undefined
-    workspace.sessionId = undefined
     workspace.title = machine.label || '这台电脑'
-    workspace.database = undefined
-    workspace.schema = undefined
-    workspace.collection = undefined
-    workspace.cwd = undefined
-    workspace.dialectFamily = undefined
-    workspace.capabilities = undefined
-    workspace.dialectRules = undefined
   }
 
   const lines: string[] = []

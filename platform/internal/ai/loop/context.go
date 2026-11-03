@@ -215,6 +215,25 @@ func sanitizePayload(in map[string]any) (map[string]any, bool) {
 	return out, truncated
 }
 
+func localToolsAttached(ws *ContextWorkspace, scopes []ToolScope) bool {
+	if ws != nil && (host.IsLocalModule(ws.ModuleID) || host.IsLocalModule(ws.DialectFamily)) {
+		return true
+	}
+	return scopeFamilyPresent(scopes, "local")
+}
+
+func localGuideAlreadyWritten(ws *ContextWorkspace, multi bool) bool {
+	if multi || ws == nil {
+		return false
+	}
+	fam := host.ModuleFamily(ws.ModuleID)
+	needsSession := fam != "" && fam != "local" && fam != "tools"
+	if needsSession && strings.TrimSpace(ws.SessionID) == "" {
+		return false
+	}
+	return host.IsLocalModule(ws.ModuleID) || host.IsLocalModule(ws.DialectFamily)
+}
+
 // noteInactiveSession 说明页签还在，但会话还没建立。缓存里的库和对象仍然保留。
 func noteInactiveSession(b *strings.Builder, ws *ContextWorkspace, scopes []ToolScope) {
 	if ws == nil || strings.TrimSpace(ws.SessionID) != "" {
@@ -258,6 +277,10 @@ func formatContextPrompt(ws *ContextWorkspace, attachments []ContextAttachment, 
 			}
 		}
 		noteInactiveSession(&b, ws, scopes)
+	}
+	if !localGuideAlreadyWritten(ws, multi) && localToolsAttached(ws, scopes) {
+		b.WriteString(workspaceLocalPrompt)
+		b.WriteByte('\n')
 	}
 	if multi {
 		if block := formatScopesBlock(scopes); block != "" {

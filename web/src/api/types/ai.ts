@@ -230,6 +230,8 @@ export interface AiToolInvocationRecord {
   resultSummary?: string
   error?: string
   createdAt: string
+  /** 终态写入时间。进行中时与 createdAt 相同或为空。 */
+  updatedAt?: string
 }
 
 export interface AiConversationGetResult {
@@ -342,6 +344,8 @@ export interface AiLiveToolInvocation {
   risk?: AiToolRiskLevel | string
   /** 用于挂到对应助手轮次（conversation.get 回放或直播推入时写入）。 */
   createdAt?: string
+  /** 工具进入终态的时间。进行中为空，耗时走到当前时刻。 */
+  finishedAt?: string
   runId?: string
 }
 

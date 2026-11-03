@@ -20,11 +20,12 @@ import { mergeActiveTabAttachment, retainDisplacedTab } from './merge-tab-attach
 import { isLocalMachineAttachment, localMachineAttachment } from './local-machine'
 import { mentionAtCaret, stripMentionAtCaret } from './mention-token'
 import {
+  inheritedWorkspaceTabId,
   readFollowTabSetting,
   shouldFollowActiveTab,
   writeFollowTabSetting,
 } from './pin-composer-tab'
-import { encodeWorkspaceMarker } from './workspace-marker'
+import { encodeWorkspaceMarker, extractWorkspaceMarker } from './workspace-marker'
 import { acceptDroppedTab } from './drop-tab'
 import { isNiumaTabDrag } from '@/shell/workspace/tab-dnd'
 import {
@@ -174,16 +175,31 @@ const followActiveTab = computed(() =>
   }),
 )
 
-/** 显式 @ 优先。未打开跟随时不把当前页签写进上下文。 */
+/** 最近一条用户消息带上的页签。还开着才沿用，避免换成当前页签。 */
+const inheritedTabId = computed((): string | null => {
+  if (followActiveTab.value) {
+    return null
+  }
+  const messages = aiStore.messages
+  let latest = ''
+  for (let i = messages.length - 1; i >= 0; i -= 1) {
+    const message = messages[i]
+    if (message?.messageRole !== 'user') {
+      continue
+    }
+    latest = extractWorkspaceMarker(message.messageContent).context?.workspace?.tabId?.trim() || ''
+    break
+  }
+  return inheritedWorkspaceTabId(latest, new Set(tabStore.allTabs.map((tab) => tab.tabId)))
+})
+
+/** 显式 @ 优先。未打开跟随时沿用上一条的页签，不改跟当前页签。 */
 const contextTabId = computed((): string | null => {
   const explicit = explicitWorkspaceTabId()
   if (explicit) {
     return explicit
   }
-  if (!followActiveTab.value) {
-    return null
-  }
-  const id = tabStore.activeTabId
+  const id = followActiveTab.value ? tabStore.activeTabId : inheritedTabId.value
   if (!id || dismissedAutoTabId.value === `tab:${id}`) {
     return null
   }
@@ -206,10 +222,7 @@ const inputPlaceholder = computed(() => {
 })
 
 const autoTabAttachment = computed((): AiContextAttachment | null => {
-  if (!followActiveTab.value) {
-    return null
-  }
-  const id = tabStore.activeTabId
+  const id = followActiveTab.value ? tabStore.activeTabId : inheritedTabId.value
   const tab = id ? tabStore.allTabs.find((item) => item.tabId === id) : null
   if (!tab) {
     return null

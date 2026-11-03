@@ -171,6 +171,70 @@ const showStreamingBubble = computed(() => {
   return last?.messageRole !== 'assistant'
 })
 
+function precedingUserAt(messageId: string): string {
+  const list = aiStore.messages
+  const index = list.findIndex((message) => message.messageId === messageId)
+  for (let i = index - 1; i >= 0; i -= 1) {
+    if (list[i]?.messageRole === 'user') {
+      return list[i]?.createdAt ?? ''
+    }
+  }
+  return ''
+}
+
+/** 本轮最后一段助手回复才显示本轮耗时。流式气泡在时由它来走。 */
+function assistantTurnFooter(messageId: string): boolean {
+  const list = aiStore.messages
+  const index = list.findIndex((message) => message.messageId === messageId)
+  if (index < 0 || list[index]?.messageRole !== 'assistant') {
+    return false
+  }
+  for (let i = index + 1; i < list.length; i += 1) {
+    if (list[i]?.messageRole === 'user') {
+      break
+    }
+    if (list[i]?.messageRole === 'assistant') {
+      return false
+    }
+  }
+  if (showStreamingBubble.value) {
+    for (let i = index + 1; i < list.length; i += 1) {
+      if (list[i]?.messageRole === 'user') {
+        return true
+      }
+    }
+    return false
+  }
+  return true
+}
+
+function messageTurnLive(messageId: string): boolean {
+  if (!assistantTurnFooter(messageId)) {
+    return false
+  }
+  if (!aiStore.isStreaming && aiStore.runStatus !== 'running') {
+    return false
+  }
+  const list = aiStore.messages
+  const index = list.findIndex((message) => message.messageId === messageId)
+  for (let i = index + 1; i < list.length; i += 1) {
+    if (list[i]?.messageRole === 'user') {
+      return false
+    }
+  }
+  return true
+}
+
+const streamingTurnStartedAt = computed(() => {
+  const list = aiStore.messages
+  for (let i = list.length - 1; i >= 0; i -= 1) {
+    if (list[i]?.messageRole === 'user') {
+      return list[i]?.createdAt ?? ''
+    }
+  }
+  return ''
+})
+
 const streamingOpenTarget = computed(() => {
   const list = messageRows.value
   for (let i = list.length - 1; i >= 0; i -= 1) {
@@ -859,6 +923,8 @@ function focusAttachment(id: string): void {
           :tools-before="item.toolsBefore"
           :tools-after="item.toolsAfter"
           :open-target="item.openTarget"
+          :turn-started-at="assistantTurnFooter(item.messageId) ? precedingUserAt(item.messageId) : ''"
+          :turn-live="messageTurnLive(item.messageId)"
           @focus-attachment="focusAttachment"
         />
 
@@ -878,6 +944,8 @@ function focusAttachment(id: string): void {
           :continued="streamingContinued"
           :tools-before="streamingTools"
           :open-target="streamingOpenTarget"
+          :turn-started-at="streamingTurnStartedAt"
+          turn-live
           streaming
         />
 

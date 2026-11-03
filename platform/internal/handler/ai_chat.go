@@ -45,6 +45,7 @@ type aiToolInvocationView struct {
 	ResultSummary  string `json:"resultSummary,omitempty"`
 	ErrorMessage   string `json:"error,omitempty"`
 	CreatedAt      string `json:"createdAt"`
+	UpdatedAt      string `json:"updatedAt,omitempty"`
 }
 
 // toAIConversationView 将仓储会话转为 Bridge 视图。
@@ -100,6 +101,7 @@ func toAIToolInvocationView(inv store.AIToolInvocation) aiToolInvocationView {
 		ResultSummary:  inv.ResultSummary,
 		ErrorMessage:   inv.ErrorMessage,
 		CreatedAt:      inv.CreatedAt,
+		UpdatedAt:      inv.UpdatedAt,
 	}
 }
 

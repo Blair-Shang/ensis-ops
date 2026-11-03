@@ -27,6 +27,26 @@ export function shouldFollowActiveTab(input: {
   return !input.hasUserMessage
 }
 
+/**
+ * 后续轮次沿用上一条用户消息里的页签。
+ * 页签还开着才返回，这样会重新取它自己的会话，不会改跟当前打开的页签。
+ * 上一条没有页签时返回空，不再往更早的消息里找。
+ *
+ * @param latestTabId - 最近一条用户消息快照里的 tabId
+ * @param openTabIds - 当前还开着的页签
+ * @returns 要继续绑定的页签；没有或已关闭时为 null
+ */
+export function inheritedWorkspaceTabId(
+  latestTabId: string | null | undefined,
+  openTabIds: ReadonlySet<string>,
+): string | null {
+  const id = latestTabId?.trim() || ''
+  if (!id || !openTabIds.has(id)) {
+    return null
+  }
+  return id
+}
+
 const followTabStorageKey = 'nm.ai.followTab'
 
 /** 读取「跟随当前页签」。没有记录时为关。 */

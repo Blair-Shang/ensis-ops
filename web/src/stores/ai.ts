@@ -246,9 +246,10 @@ export const useAiStore = defineStore('ai', () => {
 
   /** 进行中的工具收成终态，留在该会话的历史里。 */
   function settleOpenTools(slot: ConversationSession, errorText: string): void {
+    const finishedAt = new Date().toISOString()
     const mark = (t: AiLiveToolInvocation): AiLiveToolInvocation =>
       t.status === 'running' || t.status === 'pending'
-        ? { ...t, status: 'error', error: t.error || errorText }
+        ? { ...t, status: 'error', error: t.error || errorText, finishedAt: t.finishedAt || finishedAt }
         : t
     const byId = new Map(slot.toolHistory.map((t) => [t.invocationId, t]))
     for (const t of slot.liveTools) {
@@ -324,6 +325,7 @@ export const useAiStore = defineStore('ai', () => {
         error: status === 'error' && !error && r.status === 'pending' ? 'stale pending' : error,
         risk: r.risk,
         createdAt: r.createdAt,
+        finishedAt: status === 'running' || status === 'pending' ? undefined : r.updatedAt,
         runId: r.runId,
       }
     })
@@ -426,6 +428,7 @@ export const useAiStore = defineStore('ai', () => {
           status: ev.ok ? 'ok' : 'error',
           resultSummary: ev.resultSummary,
           error: ev.error,
+          finishedAt: t.finishedAt || new Date().toISOString(),
         }
       }
       slot.liveTools = slot.liveTools.map(applyResult)

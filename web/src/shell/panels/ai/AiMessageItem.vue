@@ -7,6 +7,8 @@ import { computed, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import type { AiLiveToolInvocation } from '@/api/types/ai'
 import { useAiStore } from '@/stores/ai'
+import { useElapsedNow } from './elapsed-clock'
+import { elapsedMs, formatElapsed } from './elapsed'
 import AiMarkdown from './AiMarkdown.vue'
 import AiMediaLightbox from './AiMediaLightbox.vue'
 import AiToolCallList from './AiToolCallList.vue'
@@ -34,6 +36,10 @@ const props = withDefaults(
     toolsAfter?: AiLiveToolInvocation[]
     /** 这条回答所属连接；打开 SQL 时用它，不跟当前页签。 */
     openTarget?: AiOpenTarget | null
+    /** 本轮用户消息的发送时间。有值时底部显示本轮耗时。 */
+    turnStartedAt?: string
+    /** 这一轮还在跑，耗时继续走。 */
+    turnLive?: boolean
   }>(),
   {
     messageId: '',
@@ -47,6 +53,8 @@ const props = withDefaults(
     toolsBefore: () => [],
     toolsAfter: () => [],
     openTarget: null,
+    turnStartedAt: '',
+    turnLive: false,
   },
 )
 
@@ -68,6 +76,39 @@ function openImagePreview(src: string): void {
   previewSrc.value = src
   previewOpen.value = true
 }
+
+const toolsStillRunning = computed(() =>
+  [...props.toolsBefore, ...props.toolsAfter].some(
+    (tool) => tool.status === 'running' || tool.status === 'pending',
+  ),
+)
+const turnTicking = computed(
+  () => Boolean(props.turnStartedAt) && (props.streaming || props.turnLive || toolsStillRunning.value),
+)
+const elapsedNow = useElapsedNow(turnTicking)
+const turnElapsedLabel = computed(() => {
+  if (!props.turnStartedAt) {
+    return ''
+  }
+  let end: string | number = props.createdAt
+  if (turnTicking.value) {
+    end = elapsedNow.value
+  } else {
+    let endMs = Date.parse(props.createdAt)
+    if (!Number.isFinite(endMs)) {
+      endMs = 0
+    }
+    for (const tool of [...props.toolsBefore, ...props.toolsAfter]) {
+      const finished = Date.parse(tool.finishedAt || '')
+      if (finished > endMs) {
+        endMs = finished
+      }
+    }
+    end = endMs
+  }
+  const ms = elapsedMs(props.turnStartedAt, end)
+  return ms == null ? '' : formatElapsed(ms)
+})
 
 const timeLabel = computed(() => {
   if (!props.createdAt) {
@@ -317,6 +358,10 @@ async function onBranch(): Promise<void> {
       <div v-else-if="!isAssistant" class="nm-ai-msg__body">{{ viewText }}</div>
       <AiToolCallList v-if="isUser && toolsAfter.length" :tools="toolsAfter" />
 
+      <div v-if="turnElapsedLabel || !streaming" class="nm-ai-msg__foot">
+        <span v-if="turnElapsedLabel" class="nm-ai-msg__elapsed" :title="t('ai.turnElapsed')">
+          {{ turnElapsedLabel }}
+        </span>
       <div v-if="!streaming" class="nm-ai-msg__actions">
         <button
           type="button"
@@ -353,6 +398,7 @@ async function onBranch(): Promise<void> {
         >
           <RsIcon name="git-branch" :size="12" />
         </button>
+      </div>
       </div>
     </div>
   </article>
@@ -444,6 +490,23 @@ async function onBranch(): Promise<void> {
 .nm-ai-msg__time {
   font-size: var(--nm-font-caption);
   font-weight: var(--rs-font-weight-regular);
+  color: var(--rs-muted);
+}
+
+.nm-ai-msg__foot {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 24px;
+}
+
+.nm-ai-msg--user .nm-ai-msg__foot {
+  justify-content: flex-end;
+}
+
+.nm-ai-msg__elapsed {
+  font-size: var(--nm-font-caption);
+  font-variant-numeric: tabular-nums;
   color: var(--rs-muted);
 }
 

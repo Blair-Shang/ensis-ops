@@ -6,6 +6,8 @@ import { computed, ref, watch } from 'vue'
 import { RsIcon } from 'ensis-ui'
 import { useI18n } from 'vue-i18n'
 import AiToolConfirmActions from './AiToolConfirmActions.vue'
+import { useElapsedNow } from './elapsed-clock'
+import { elapsedMs, formatElapsed } from './elapsed'
 
 export type AiToolStatus = 'running' | 'ok' | 'error' | 'pending'
 
@@ -18,6 +20,10 @@ const props = withDefaults(
     error?: string
     source?: string
     risk?: string
+    /** 工具开始时间。 */
+    startedAt?: string
+    /** 工具进入终态的时间。进行中为空。 */
+    finishedAt?: string
     /** 为 true 时展示 Approve/Reject（直播工具卡）。 */
     confirmable?: boolean
   }>(),
@@ -29,6 +35,8 @@ const props = withDefaults(
     error: '',
     source: '',
     risk: '',
+    startedAt: '',
+    finishedAt: '',
     confirmable: false,
   },
 )
@@ -155,6 +163,14 @@ const showConfirm = computed(
   () => props.confirmable && displayStatus.value === 'pending',
 )
 
+const timing = computed(() => displayStatus.value === 'running' || displayStatus.value === 'pending')
+const elapsedNow = useElapsedNow(timing)
+const elapsedLabel = computed(() => {
+  const end = timing.value ? elapsedNow.value : props.finishedAt
+  const ms = elapsedMs(props.startedAt, end)
+  return ms == null ? '' : formatElapsed(ms)
+})
+
 const SCOPE_MARK = ' · '
 
 /** 摘要以「连接名 · 参数」开头时，连接名单独放在工具名旁边。 */
@@ -204,6 +220,7 @@ async function onReject(): Promise<void> {
       <span v-if="scopedArgs.scope" class="nm-ai-tool__scope">{{ scopedArgs.scope }}</span>
       <span v-if="!open && lineHint" class="nm-ai-tool__line">{{ lineHint }}</span>
       <span v-if="riskLabel" class="nm-ai-tool__risk">{{ riskLabel }}</span>
+      <span v-if="elapsedLabel" class="nm-ai-tool__elapsed" :title="t('ai.toolElapsed')">{{ elapsedLabel }}</span>
       <span class="nm-ai-tool__status">{{ statusLabel }}</span>
       <RsIcon :name="open ? 'chevron-down' : 'chevron-right'" :size="12" class="nm-ai-tool__chev" />
     </button>
@@ -333,8 +350,15 @@ async function onReject(): Promise<void> {
   color: var(--rs-muted);
 }
 
+.nm-ai-tool__elapsed {
+  margin-left: auto;
+}
+
+.nm-ai-tool__elapsed,
 .nm-ai-tool__status {
+  flex-shrink: 0;
   font-size: var(--nm-font-caption);
+  font-variant-numeric: tabular-nums;
   color: var(--rs-muted);
 }
 

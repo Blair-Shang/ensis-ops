@@ -97,6 +97,13 @@ func scopeFromWorkspace(ws *ContextWorkspace) (ToolScope, bool) {
 }
 
 func scopeFromAttachment(a ContextAttachment) (ToolScope, bool) {
+	if isLocalMachineAttachment(a) {
+		return ToolScope{
+			Label:    strings.TrimSpace(a.Label),
+			ModuleID: "local",
+			Family:   "local",
+		}, true
+	}
 	if a.Kind != "tab" && a.Kind != "connection" {
 		return ToolScope{}, false
 	}
@@ -148,7 +155,17 @@ func indexSameScope(list []ToolScope, sc ToolScope) int {
 	return -1
 }
 
+func isLocalMachineAttachment(a ContextAttachment) bool {
+	if strings.EqualFold(strings.TrimSpace(a.Kind), "machine") {
+		return true
+	}
+	return strings.EqualFold(payloadString(a.Payload, "moduleId"), "local")
+}
+
 func sameScope(a, b ToolScope) bool {
+	if a.Family == "local" && b.Family == "local" {
+		return true
+	}
 	if a.Family != b.Family {
 		return false
 	}

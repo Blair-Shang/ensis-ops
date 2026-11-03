@@ -112,6 +112,10 @@ func dialogueRunes(turns []dialogueTurn) int {
 }
 
 func formatHistoryNote(dropped []dialogueTurn) string {
+	return formatSummary(dropped, "【更早会话摘要 · 共 "+itoa(len(dropped))+" 轮】")
+}
+
+func formatSummary(dropped []dialogueTurn, title string) string {
 	var goals, rules, conclusions []string
 	var unfinished string
 	for _, turn := range dropped {
@@ -140,9 +144,8 @@ func formatHistoryNote(dropped []dialogueTurn) string {
 		}
 	}
 	var b strings.Builder
-	b.WriteString("【更早会话摘要 · 共 ")
-	b.WriteString(itoa(len(dropped)))
-	b.WriteString(" 轮】\n")
+	b.WriteString(title)
+	b.WriteByte('\n')
 	writeNoteLine(&b, "目标", goals)
 	writeNoteLine(&b, "约定", rules)
 	writeNoteLine(&b, "结论", conclusions)

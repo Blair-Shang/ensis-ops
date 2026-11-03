@@ -102,6 +102,40 @@ func TestNormalizeContext_localWorkspace(t *testing.T) {
 	if !strings.Contains(n.PromptBlock, "local_which") || !strings.Contains(n.PromptBlock, "This computer") {
 		t.Fatalf("missing local workspace rules: %q", n.PromptBlock)
 	}
+	if !strings.Contains(n.PromptBlock, "does not read or write anything by itself") {
+		t.Fatalf("attaching the computer must not imply a write: %s", n.PromptBlock)
+	}
+}
+
+func TestNormalizeContext_localAttachmentKeepsServer(t *testing.T) {
+	draft := &ContextDraft{
+		Workspace: &ContextWorkspace{
+			ModuleID:  "ssh",
+			SessionID: "s-ssh",
+			Title:     "web-1",
+		},
+		Attachments: []ContextAttachment{{
+			ID:      "machine:local",
+			Kind:    "machine",
+			Label:   "这台电脑",
+			Payload: map[string]any{"moduleId": "local"},
+		}},
+	}
+	n := NormalizeContext(draft)
+	if n.Workspace == nil || n.Workspace.ModuleID != "ssh" || n.Workspace.SessionID != "s-ssh" {
+		t.Fatalf("server workspace replaced: %+v", n.Workspace)
+	}
+	ids := toolModuleIDs(n.Workspace, n.Scopes)
+	joined := strings.Join(ids, ",")
+	if !strings.Contains(joined, "ssh") || !strings.Contains(joined, "local") {
+		t.Fatalf("tools: %s", joined)
+	}
+	if !strings.Contains(n.PromptBlock, "local_write_file") || !strings.Contains(n.PromptBlock, "server diagnosis from earlier") {
+		t.Fatalf("missing save intent: %s", n.PromptBlock)
+	}
+	if !strings.Contains(n.PromptBlock, "does not read or write anything by itself") {
+		t.Fatalf("attach still implies a write: %s", n.PromptBlock)
+	}
 }
 
 func TestNormalizeContext_redisWorkspace(t *testing.T) {

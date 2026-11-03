@@ -26,6 +26,8 @@ const aiStore = useAiStore()
       :result-summary="tool.resultSummary"
       :error="tool.error"
       :risk="tool.risk"
+      :started-at="tool.createdAt"
+      :finished-at="tool.finishedAt"
       :confirmable="tool.status === 'pending'"
       @approve="(scope) => aiStore.confirmTool(tool.invocationId, 'approve', scope)"
       @reject="aiStore.confirmTool(tool.invocationId, 'reject')"

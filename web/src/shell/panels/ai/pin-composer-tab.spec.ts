@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { shouldFollowActiveTab } from './pin-composer-tab'
+import { inheritedWorkspaceTabId, shouldFollowActiveTab } from './pin-composer-tab'
 
 describe('shouldFollowActiveTab', () => {
   it('follows on the first message of a blank chat when the switch is off', () => {
@@ -24,5 +24,19 @@ describe('shouldFollowActiveTab', () => {
     expect(
       shouldFollowActiveTab({ followEnabled: true, hasUserMessage: false, historyReady: false }),
     ).toBe(true)
+  })
+})
+
+describe('inheritedWorkspaceTabId', () => {
+  const open = new Set(['tab-a'])
+
+  it('keeps the previous turn tab while it is still open', () => {
+    expect(inheritedWorkspaceTabId('tab-a', open)).toBe('tab-a')
+  })
+
+  it('does not substitute another open tab', () => {
+    expect(inheritedWorkspaceTabId('tab-b', open)).toBeNull()
+    expect(inheritedWorkspaceTabId('', open)).toBeNull()
+    expect(inheritedWorkspaceTabId(null, open)).toBeNull()
   })
 })
